@@ -14,16 +14,23 @@ import util.gui.misc.GInput;
 public class GInputInt extends GuiSection{
 
 	private final INTE in;
-	
-	private final StringInputSprite sp = new StringInputSprite(9, UI.FONT().S) {
-		
+
+
+	private final StringInputSprite sp = new StringInputSprite(10, UI.FONT().S) {
+
 		@Override
 		protected void change() {
 			int num = 0;
+			int sign = 1;
 			for (int i = 0; i < text().length(); i++) {
+				if (i == 0 && text().charAt(i) == '-') {
+					sign = -1;
+					continue;
+				}
+
 				int n = text().charAt(i)- '0';
-				
-				if (n >= 0 || n < 10) {
+
+				if (n >= 0 && n < 10) {
 					if (num*10 + n > in.max())
 						break;
 					num*= 10;
@@ -33,10 +40,16 @@ public class GInputInt extends GuiSection{
 					return;
 				}
 			}
-			in.set(CLAMP.i(num, in.min(), in.max()));
-			text().clear().add(in.get());
+			if (num == 0 && sign == -1 && in.min() < 0) {
+				in.set(0);
+				text().clear().add('-');
+			}else {
+				in.set(CLAMP.i(num*sign, in.min(), in.max()));
+				text().clear().add(in.get());
+			}
+
 		};
-		
+
 
 	}.placeHolder("0")
 	 .setNumeric(true);

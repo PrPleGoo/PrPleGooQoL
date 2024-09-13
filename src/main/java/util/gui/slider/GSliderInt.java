@@ -1,9 +1,11 @@
 package util.gui.slider;
 
-import init.D;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
+import init.text.D;
 import snake2d.*;
+import snake2d.MButt;
+import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.gui.GUI_BOX;

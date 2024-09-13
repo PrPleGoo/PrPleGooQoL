@@ -10,6 +10,7 @@ import snake2d.util.color.COLOR;
 import snake2d.util.color.OPACITY;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
+import snake2d.util.gui.Hoverable.HOVERABLE;
 import snake2d.util.gui.renderable.RENDEROBJ;
 import snake2d.util.misc.ACTION;
 import snake2d.util.sets.LinkedList;
@@ -17,7 +18,12 @@ import snake2d.util.sprite.SPRITE;
 import util.colors.GCOLOR;
 import util.data.GETTER.GETTER_IMP;
 import util.dic.Dic;
-import util.gui.misc.*;
+import util.gui.misc.GBox;
+import util.gui.misc.GButt;
+import util.gui.misc.GHeader;
+import util.gui.misc.GMeter;
+import util.gui.misc.GStat;
+import util.gui.misc.GText;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
 import view.main.VIEW;
@@ -115,22 +121,22 @@ final class PlayPop extends GuiSection{
 				
 				
 			}.hh(UI.icons().m.rebellion), 252);
-			
-			h.addCentredY(new Sprite(UI.icons().m.descrimination) {
+
+			h.addCentredY(new HOVERABLE.Sprite(UI.icons().m.descrimination) {
 				@Override
 				public void hoverInfoGet(GUI_BOX text) {
 					RD.RACES().edicts.sanction.info.hover(text);
 				}
 			},476);
-			
-			h.addCentredY(new Sprite(UI.icons().m.exit) {
+
+			h.addCentredY(new HOVERABLE.Sprite(UI.icons().m.exit) {
 				@Override
 				public void hoverInfoGet(GUI_BOX text) {
 					RD.RACES().edicts.exile.info.hover(text);
 				}
 			},476+32);
-			
-			h.addCentredY(new Sprite(UI.icons().m.skull) {
+
+			h.addCentredY(new HOVERABLE.Sprite(UI.icons().m.skull) {
 				@Override
 				public void hoverInfoGet(GUI_BOX text) {
 					RD.RACES().edicts.massacre.info.hover(text);
@@ -144,7 +150,7 @@ final class PlayPop extends GuiSection{
 		
 		for (RDRace r : RD.RACES().all) {
 			GuiSection row = new GuiSection();
-			row.addRightC(0, new Sprite(r.race.appearance().icon){
+			row.addRightC(0, new HOVERABLE.Sprite(r.race.appearance().icon){
 
 				
 				@Override
@@ -208,8 +214,8 @@ final class PlayPop extends GuiSection{
 				}
 				
 			};
-			
-			RENDEROBJ p = new RenderImp(140, 16) {
+
+			RENDEROBJ p = new RENDEROBJ.RenderImp(140, 16) {
 				
 				@Override
 				public void render(SPRITE_RENDERER rr, float ds) {
@@ -336,8 +342,8 @@ final class PlayPop extends GuiSection{
 			
 			
 			row.body().setWidth(width-24);
-			
-			row.add(new RenderImp(row.body().width(), 4) {
+
+			row.add(new RENDEROBJ.RenderImp(row.body().width(), 4) {
 				
 				@Override
 				public void render(SPRITE_RENDERER r, float ds) {

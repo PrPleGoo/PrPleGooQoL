@@ -1,17 +1,12 @@
 package snake2d;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCharCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import snake2d.CORE;
-import snake2d.CORE_STATE;
-import snake2d.GraphicContext;
+import static org.lwjgl.glfw.GLFW.*;
+
+import org.lwjgl.glfw.*;
+
 import snake2d.Input.CHAR_LISTENER;
-import snake2d.KEYCODES;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
-
-import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 
 public class KeyBoard {
 

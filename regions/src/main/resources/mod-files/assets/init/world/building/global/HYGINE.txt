@@ -1,0 +1,20 @@
+AI_BUILDS: true,
+
+LEVELS: [
+	{
+		ICON: 32->HEALTH->1, 
+		CREDITS: 20000,
+		REQUIRES: {
+			LESS: {
+				BUILDING_GLOBAL_HYGINE_KINGDOM: 11,
+			},
+		},
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -5,
+			CIVIC_ADMIN>ADD: -40,
+		},
+		BOOST_GLOBAL: {
+			WORLD_HEALTH>ADD: 0.5,
+		},
+	},
+],

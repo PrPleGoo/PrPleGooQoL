@@ -1,0 +1,19 @@
+AI_BUILDS: true,
+LEVELS: [
+	{
+		ICON: 32->WORK->2, 
+		CREDITS: 20000,
+		REQUIRES: {
+			LESS: {
+				BUILDING_GLOBAL_WGUILD_KINGDOM: 11,
+			},
+		},
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -5,
+			CIVIC_ADMIN>ADD: -40,
+		},
+		BOOST_GLOBAL: {
+			WORLD_WORKFORCE>ADD: 1,
+		},
+	},
+],

@@ -1,0 +1,17 @@
+AI_BUILDS: true,
+EFFICIENCY: {
+	FOREST: {
+		FROM: 0.1,
+		TO: 2.0,
+	},
+},
+
+LEVELS: [
+	{
+		ICON: 32->WORK->0,
+		CREDITS: 2000,
+		BOOST: {
+			WORLD_RESOURCE_PRODUCTION__WOOD>ADD: 0,
+		},
+	},
+],

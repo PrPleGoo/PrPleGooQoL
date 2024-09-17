@@ -1,0 +1,51 @@
+AI_BUILDS: true,
+LEVELS: [
+	{
+		ICON: 32->INFRA->6,
+		CREDITS: 40000,
+		REQUIRES: {
+			LESS: {
+				BUILDING_GLOBAL_A_POLICE_KINGDOM: 4,
+			},
+		},
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -5,
+			CIVIC_ADMIN>ADD: -40,
+		},
+		BOOST_GLOBAL: {
+			WORLD_LOYALTY*>ADD: 0.1,
+		},
+	},
+	{
+		ICON: 32->INFRA->6,
+		CREDITS: 150000,
+		REQUIRES: {
+			LESS: {
+				BUILDING_GLOBAL_A_POLICE_KINGDOM: 5,
+			},
+		},
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -14,
+			CIVIC_ADMIN>ADD: -120,
+		},
+		BOOST_GLOBAL: {
+			WORLD_LOYALTY*>ADD: 0.3,
+		},
+	},
+	{
+		ICON: 32->INFRA->6,
+		CREDITS: 400000,
+		REQUIRES: {
+			LESS: {
+				BUILDING_GLOBAL_A_POLICE_KINGDOM: 5,
+			},
+		},
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -20,
+			CIVIC_ADMIN>ADD: -200,
+		},
+		BOOST_GLOBAL: {
+			WORLD_LOYALTY*>ADD: 0.5,
+		},
+	},
+],

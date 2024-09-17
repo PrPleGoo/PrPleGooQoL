@@ -101,27 +101,27 @@
         <mod.version>${project.version}</mod.version>
         <mod.name>PrPleGooQoL</mod.name>
         <mod.description>
-            Hold shift to max/min values. Commit war crimes with less wrist strain by holding down shift. Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
+Hold shift to max/min values. Commit war crimes with less wrist strain by holding down shift. Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info>
-            Greetings despot,
+Greetings despot,
 
-            This mod changes a few interactions in the game:
-            - Holding shift when when clicking plus or minus buttons will set their value to the maximum or minimum respectively.
-            - You can no longer input text into an input field that prompts you for a number.
-            - Keypad enter to work on all places where enter works.
-            - Holding shift when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
-            - Enter (so keypad enter too) now confirms confirmation dialogues.
+This mod changes a few interactions in the game:
+- Holding shift when when clicking plus or minus buttons will set their value to the maximum or minimum respectively.
+- You can no longer input text into an input field that prompts you for a number.
+- Keypad enter to work on all places where enter works.
+- Holding shift when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
+- Enter (so keypad enter too) now confirms confirmation dialogues.
 
-            I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
-            If you have any more suggestions like this, feel free to contact me on discord or steam.
+I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
+If you have any more suggestions like this, feel free to contact me on discord or steam.
 
-            Enjoy!
+Enjoy!
 
-            - a fellow despot
+- a fellow despot
 
-            Available on github.
+Available on github.
         </mod.info>
         <game.version.major>67</game.version.major>
         <game.version.minor>28</game.version.minor>

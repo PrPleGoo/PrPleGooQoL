@@ -101,20 +101,20 @@
         <mod.version>${project.version}</mod.version>
         <mod.name>Region rework</mod.name>
         <mod.description>
-            Completely reworks regions
+Completely reworks regions
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info>
-            Greetings despot,
+Greetings despot,
 
-            This mod completely reworks regions.
-            As per my idea listed in: https://discord.com/channels/509357720617615369/1260697511996428429
+This mod completely reworks regions.
+As per my idea listed in: https://discord.com/channels/509357720617615369/1260697511996428429
 
-            Enjoy!
+Enjoy!
 
-            - a fellow despot
+- a fellow despot
 
-            Available on github.
+Available on github.
         </mod.info>
         <game.version.major>67</game.version.major>
         <game.version.minor>28</game.version.minor>

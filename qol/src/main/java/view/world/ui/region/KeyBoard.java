@@ -101,7 +101,8 @@ public class KeyBoard {
 					if (c == KEYCODES.KEY_DELETE)
 						listener.del();
 				}
-				if (c == KEYCODES.KEY_ENTER) {
+				if (c == KEYCODES.KEY_ENTER
+						|| c == KEYCODES.KEY_KP_ENTER) {
 					
 					polls.add(pollsA.get(pi++).assign(keys[i], KEYACTION.ALL.get(keys[i+1]), keys[i+2]));
 				}

@@ -5,6 +5,7 @@ EFFICIENCY: {
 		TO: 2.0,
 	},
 	ROOM: WOODCUTTER,
+	POP_SCALING: true,
 },
 
 LEVELS: [

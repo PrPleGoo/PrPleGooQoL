@@ -290,6 +290,17 @@ public class RDBuildingCat {
             }
         };
 
+        new Efficiency("POP_SCALING") {
+            @Override
+            void apply(RDBuilding bu, Json json) {
+                if(!json.bool("POP_SCALING")){
+                    return;
+                }
+
+                PrPleGooEfficiencies.POP_SCALING(bu);
+            }
+        };
+
     }
 
 

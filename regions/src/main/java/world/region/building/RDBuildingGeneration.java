@@ -20,6 +20,7 @@ import settlement.room.food.orchard.ROOM_ORCHARD;
 import settlement.room.industry.mine.ROOM_MINE;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry.IndustryResource;
+import settlement.room.industry.woodcutter.ROOM_WOODCUTTER;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
@@ -67,7 +68,7 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
-                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -92,7 +93,7 @@ class RDBuildingGeneration {
 
                     bu.baseFactors.add(bo);
 
-                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -115,7 +116,7 @@ class RDBuildingGeneration {
 
                     }
 
-                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -138,7 +139,7 @@ class RDBuildingGeneration {
                         bu.baseFactors.add(bo);
                     }
 
-                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -149,15 +150,21 @@ class RDBuildingGeneration {
         }
 
         {
-            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().MINES)) {
+            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().MINES).join(SETT.ROOMS().WOOD_CUTTER)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    ROOM_MINE f = (ROOM_MINE) blue;
-                    BoostSpec bo = Efficiencies.MINABLE(f.minable, 0, 1, true).add(bu.efficiency);
+                    if (blue instanceof ROOM_WOODCUTTER) {
+                        BoostSpec bo = Efficiencies.FOREST(0.1, 2.0, true).add(bu.efficiency);
+                        bu.baseFactors.add(bo);
+                    }
+                    else {
+                        ROOM_MINE f = (ROOM_MINE) blue;
+                        BoostSpec bo = Efficiencies.MINABLE(f.minable, 0, 1, true).add(bu.efficiency);
 
-                    bu.baseFactors.add(bo);
+                        bu.baseFactors.add(bo);
+                    }
 
-                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -281,22 +288,6 @@ class RDBuildingGeneration {
                 ss.push(new LBoost(bu, v, mul), bo);
             }
         }
-
-//		protected void connectConsume(RDBuilding bu, double endPoint, Boostable bo) {
-//			double delta = (1-endPoint)/(bu.levels.size()-1);
-//			for (int i = 1; i < bu.levels.size(); i++) {
-//				RDBuildingLevel b = bu.levels.get(i);
-//				int am = (int) Math.round(100*delta);
-//				if (i == bu.levels.size()-1)
-//					am = (int) Math.ceil(100*delta);
-//				if (am != 0) {
-//					b.local.push(new LBoost(bu, am/100.0, false), bo);
-//
-//				}
-//
-//			}
-//		}
-
     }
 
     private class GenIndustry extends Gen {
@@ -311,24 +302,11 @@ class RDBuildingGeneration {
 
             INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
 
-
             for (IndustryResource r : h.industries().get(0).outs()) {
                 consume(bu, local, r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
                 consume(bu, global, r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
             }
-
-
-
-//			for (RDRace r : RD.RACES().all) {
-//				double wb = r.race.pref().getWork(blue.employment())-0.5;
-//				if (wb != 0) {
-//
-//					connectConsume(bu, wb, r.loyalty.target);
-//				}
-//			}
         }
-
-
     }
 
     protected static void connectRan(RDBuilding bu, RoomBlueprintImp ins) {

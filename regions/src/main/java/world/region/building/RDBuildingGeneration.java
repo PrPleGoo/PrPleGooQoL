@@ -132,15 +132,14 @@ class RDBuildingGeneration {
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
-
-                        PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
-
-                    }else {
+                    }
+                    else {
                         BoostSpec bo = Efficiencies.FERTILITY(0.75, 1.25, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
-
-                        PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
                     }
+
+                    PrPleGooEfficiencies.ROOM((INDUSTRY_HASER) blue, bu);
+
                     super.connect(bu, blue, local, global);
                 }
             };
@@ -164,26 +163,6 @@ class RDBuildingGeneration {
                 }
             };
         }
-
-//		{
-//
-//			LinkedList<RoomBlueprintImp> li = new LinkedList<RoomBlueprintImp>();
-//			for (ROOM_NURSERY n : SETT.ROOMS().NURSERIES) {
-//				if (RD.RACE(n.race) != null)
-//					li.add(n);
-//			}
-//
-//			new Gen("growth", "_GENERATE", li) {
-//
-//				@Override
-//				void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-//					ROOM_NURSERY t = (ROOM_NURSERY) blue;
-//					consume(bu, local, RD.RACE(t.race).pop.dtarget, false, false);
-//					consume(bu, global, RD.RACE(t.race).pop.dtarget, false, true);
-//					consume(bu, local, 0.5, RD.RACES().capacity, false, false);
-//				}
-//			};
-//		}
 
         {
             new Gen("religion", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().TEMPLES.ALL)) {

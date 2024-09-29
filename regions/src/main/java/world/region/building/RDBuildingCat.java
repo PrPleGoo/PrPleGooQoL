@@ -280,6 +280,7 @@ public class RDBuildingCat {
         new Efficiency("ROOM") {
             @Override
             void apply(RDBuilding bu, Json json) {
+
                 INDUSTRY_HASER room = RoomsHashMap.GetRoom(json.value("ROOM"));
                 if(room == null){
                     return;
@@ -287,7 +288,7 @@ public class RDBuildingCat {
 
                 for (Industry industry : room.industries()) {
                     for(Industry.IndustryResource industryResource : industry.outs()){
-                        bu.baseFactors.add(PrPleGooEfficiencies.ROOM(industryResource).add(bu.efficiency));
+                        bu.baseFactors.add(PrPleGooEfficiencies.ROOM(industryResource, bu.efficiency));
                     }
                 }
             }

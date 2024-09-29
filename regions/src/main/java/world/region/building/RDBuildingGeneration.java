@@ -149,7 +149,7 @@ class RDBuildingGeneration {
         }
 
         {
-            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().MINES).join(SETT.ROOMS().WOOD_CUTTER)) {
+            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WOOD_CUTTER).join(SETT.ROOMS().MINES)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());

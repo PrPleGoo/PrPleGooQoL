@@ -286,11 +286,7 @@ public class RDBuildingCat {
                     return;
                 }
 
-                for (Industry industry : room.industries()) {
-                    for(Industry.IndustryResource industryResource : industry.outs()){
-                        bu.baseFactors.add(PrPleGooEfficiencies.ROOM(industryResource, bu.efficiency));
-                    }
-                }
+                PrPleGooEfficiencies.ROOM(room, bu);
             }
         };
 

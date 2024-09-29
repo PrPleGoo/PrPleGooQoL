@@ -51,8 +51,7 @@ public class PrPleGooEfficiencies {
 
                     for (RDBuilding building : RD.BUILDINGS().all)
                     {
-                        if(building.level.get(t) == 0
-                                && RD.BUILDINGS().tmp().level(building, t) == 0)
+                        if(RD.BUILDINGS().tmp().level(building, t) == 0)
                         {
                             continue;
                         }

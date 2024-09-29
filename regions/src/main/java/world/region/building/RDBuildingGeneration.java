@@ -113,7 +113,6 @@ class RDBuildingGeneration {
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
-
                     }
 
                     PrPleGooEfficiencies.POP_SCALING(bu);
@@ -263,8 +262,6 @@ class RDBuildingGeneration {
                 l.cost = j.i("CREDITS", 0, 1000000, 0);
             }
 
-
-
             return bu;
         }
 
@@ -276,7 +273,6 @@ class RDBuildingGeneration {
         }
 
         protected void consume(RDBuilding bu, double[] values, double dv, Boostable bo, boolean mul, boolean global) {
-
             for (int i = 0; i < values.length; i++) {
                 RDBuildingLevel b = bu.levels.get(i+1);
                 double v = values[i]*dv;
@@ -294,12 +290,10 @@ class RDBuildingGeneration {
 
         GenIndustry(String folder, String file, LIST<RoomBlueprintImp> rooms) {
             super(folder, file, rooms);
-
         }
 
         @Override
         void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-
             INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
 
             for (IndustryResource r : h.industries().get(0).outs()) {
@@ -307,18 +301,6 @@ class RDBuildingGeneration {
                 consume(bu, global, r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
             }
         }
-    }
-
-    protected static void connectRan(RDBuilding bu, RoomBlueprintImp ins) {
-        BoostSpec bo = new RBooster(new BSourceInfo(Dic.¤¤Prospect, ins.icon), 0.6, 1.5, true) {
-
-            @Override
-            public double get(Region t) {
-                return RD.RAN().get(t, ins.index()*2, 2)/3.0;
-            };
-
-        }.add(bu.efficiency);
-        bu.baseFactors.add(bo);
     }
 
     protected static void mimic(RDBuilding bu, Boostable bo) {

@@ -152,6 +152,7 @@ class RDBuildingGeneration {
             new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().MINES).join(SETT.ROOMS().WOOD_CUTTER)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
+                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     if (blue instanceof ROOM_WOODCUTTER) {
                         BoostSpec bo = Efficiencies.FOREST(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);

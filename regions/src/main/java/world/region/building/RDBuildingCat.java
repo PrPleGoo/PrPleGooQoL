@@ -17,6 +17,10 @@ import init.resources.RESOURCES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.type.CLIMATES;
+import prplegoo.regions.api.RoomsHashMap;
+import prplegoo.regions.api.PrPleGooEfficiencies;
+import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
 import snake2d.util.file.Json;
@@ -131,7 +135,6 @@ public class RDBuildingCat {
             }
 
         };
-
     }
 
     static final BValue lValue = new BValueSimple() {
@@ -207,26 +210,6 @@ public class RDBuildingCat {
 
     }
 
-    abstract class EfficiencyClimate extends Efficiency {
-
-        public EfficiencyClimate(String key) {
-            super("CLIMATE");
-        }
-
-        @Override
-        void apply(RDBuilding bu, Json json) {
-            json = json.json(key);
-            double from = json.d("FROM");
-            double to = json.d("TO");
-            boolean mul = json.bool("IS_MUL", true);
-            apply(bu, from, to, mul);
-        }
-
-        abstract void apply(RDBuilding bu, double from, double to, boolean isMul);
-
-    }
-
-
     {
         new EfficiencyValue("RAN_PROSPECT") {
             @Override
@@ -291,6 +274,22 @@ public class RDBuildingCat {
                 BoostSpec bo = 	Efficiencies.MINABLE(m, 0, 1, true).add(bu.efficiency);
                 bu.baseFactors.add(bo);
 
+            }
+        };
+
+        new Efficiency("ROOM") {
+            @Override
+            void apply(RDBuilding bu, Json json) {
+                INDUSTRY_HASER room = RoomsHashMap.GetRoom(json.value("ROOM"));
+                if(room == null){
+                    return;
+                }
+
+                for (Industry industry : room.industries()) {
+                    for(Industry.IndustryResource industryResource : industry.outs()){
+                        bu.baseFactors.add(PrPleGooEfficiencies.ROOM(industryResource).add(bu.efficiency));
+                    }
+                }
             }
         };
 

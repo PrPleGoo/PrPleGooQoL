@@ -4,6 +4,7 @@ EFFICIENCY: {
 		FROM: 0.1,
 		TO: 2.0,
 	},
+	ROOM: WOODCUTTER,
 },
 
 LEVELS: [

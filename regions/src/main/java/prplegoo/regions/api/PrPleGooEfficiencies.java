@@ -26,7 +26,11 @@ public class PrPleGooEfficiencies {
                 @Override
                 public double get(Region t) {
                     int totalPop = RD.RACES().population.get(t);
-                    return CLAMP.d((double) totalPop / 1000000, 0.0, 1.0);
+                    double workforce = RD.RACES().workforce.get(t);
+
+                    double workingPopulation = (double) totalPop / 100 * workforce;
+
+                    return CLAMP.d(workingPopulation / 1000000, 0.0, 1.0);
                 }
             }.add(efficiency),
         };

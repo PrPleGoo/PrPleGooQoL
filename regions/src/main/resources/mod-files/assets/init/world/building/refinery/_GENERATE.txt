@@ -1,0 +1,19 @@
+OMITT_ROOMS: [
+	
+],
+	
+LEVELS: [
+	{
+		CREDITS: 16000,
+	},
+],
+
+	
+LOCAL_LEVELS: [
+	1,
+],
+	
+GLOBAL_LEVELS: [
+	0,
+],
+

@@ -1,11 +1,6 @@
 package world.region.building;
 
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.Boostable;
-import game.boosting.BoosterImp;
+import game.boosting.*;
 import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lockable;
@@ -37,7 +32,6 @@ import snake2d.util.sprite.text.Str;
 import util.dic.Dic;
 import util.info.GFORMAT;
 import world.map.regions.Region;
-import world.region.RBooster;
 import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.pop.RDRace;
@@ -83,10 +77,9 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     double mi = 0.1;
-                    double ma = 2.0;
+                    double ma = 1.0;
                     if (blue instanceof ROOM_ORCHARD) {
                         mi = 0.5;
-                        ma = 1.5;
                     }
 
                     BoostSpec bo = Efficiencies.FERTILITY(mi, ma, true).add(bu.efficiency);
@@ -163,6 +156,19 @@ class RDBuildingGeneration {
 
                         bu.baseFactors.add(bo);
                     }
+
+                    PrPleGooEfficiencies.POP_SCALING(bu);
+
+                    super.connect(bu, blue, local, global);
+                }
+            };
+        }
+
+        {
+            new GenIndustry("refinery", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().REFINERS)) {
+                @Override
+                void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
+                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
                     PrPleGooEfficiencies.POP_SCALING(bu);
 
@@ -301,6 +307,11 @@ class RDBuildingGeneration {
                 consume(bu, local, r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
                 consume(bu, global, r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
             }
+
+            for (IndustryResource r : h.industries().get(0).ins()) {
+                consume(bu, local, -r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
+                consume(bu, global, -r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
+            }
         }
     }
 
@@ -330,7 +341,7 @@ class RDBuildingGeneration {
 
     }
 
-    private static class LBoost extends BoosterImp{
+    private static class LBoost extends BoosterImp {
 
         private final RDBuilding bu;
 
@@ -341,11 +352,7 @@ class RDBuildingGeneration {
 
         @Override
         public double vGet(Region reg) {
-            if (isPositive(1.0))
-                return getValue(bu.efficiency.get(reg));
-            else {
-                return getValue(1.0);
-            }
+            return getValue(bu.efficiency.get(reg));
         }
 
         @Override
@@ -357,8 +364,5 @@ class RDBuildingGeneration {
         public double vGet(Faction f) {
             return 0;
         }
-
     }
-
-
 }

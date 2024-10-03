@@ -108,7 +108,40 @@ Completely reworks regions
 Greetings despot,
 
 This mod completely reworks regions.
-As per my idea listed in: https://discord.com/channels/509357720617615369/1260697511996428429
+As per my idea listed in the suggestion forum on discord.
+A lot of that idea is either not implemented, WIP or deemed too difficult to mod.
+Basically the idea is that regions are just abstracted cities that work on pretty much the same rules as your capital does.
+I never really liked that they seemed to operate on a completely separate set of rules.
+
+This also has a lot of balance implications, so make sure you are ready to relearn region management!
+Not compatible with existing saves!
+
+Features:
+- Region production reworked, basing output numbers on available population.
+- Workforce is now the percentage of available workers.
+- You can build refineries and workshops in regions.
+- A lot of buildings have been changed to cost less or no workforce.
+- Population numbers in regions have been reduced drastically.
+- Production scaling now goes off the "normal" values, instead of weird "region" values.
+- Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
+- Organisation use has been completely removed, admin costs increased to compensate.
+
+Open issues:
+- Negative taxes aren't handled.
+- Can't select different recipes for refineries/workshops.
+
+Planned features (in order, subject to change):
+- Use racial preferences to make production buildings give some loyalty.
+- High loyalty/health boosts population.
+- Low loyalty/health drops population.
+- Use sliders to allocate workers to specific buildings.
+- Make nerfed global buildings useful again.
+- No resources from places without a town hall.
+- Slaves from taxes.
+- Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
+- AI empires use production to do work on their stockpiles.
+- Instruct vassals to produce specific goods.
+- Supply armies directly from your regions.
 
 Enjoy!
 

@@ -127,7 +127,10 @@ class RDBuildingGeneration {
                         bu.baseFactors.add(bo);
                     }
                     else {
-                        BoostSpec bo = Efficiencies.FERTILITY(0.75, 1.25, true).add(bu.efficiency);
+                        BoostSpec bo = Efficiencies.FERTILITY(0.1, 1.0, true).add(bu.efficiency);
+                        bu.baseFactors.add(bo);
+
+                        bo = Efficiencies.WATER(1.00, 1.25, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
                     }
 
@@ -147,7 +150,7 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     if (blue instanceof ROOM_WOODCUTTER) {
-                        BoostSpec bo = Efficiencies.FOREST(0.1, 2.0, true).add(bu.efficiency);
+                        BoostSpec bo = Efficiencies.FOREST(0.1, 1.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
                     }
                     else {
@@ -352,7 +355,13 @@ class RDBuildingGeneration {
 
         @Override
         public double vGet(Region reg) {
-            return getValue(bu.efficiency.get(reg));
+            if (isPositive(1.0)) {
+                return getValue(bu.efficiency.get(reg));
+            }
+            else
+            {
+                return getValue(1.0);
+            }
         }
 
         @Override

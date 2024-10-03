@@ -3,8 +3,6 @@ package prplegoo.regions.api;
 import game.boosting.BSourceInfo;
 import game.boosting.BoostSpec;
 import init.sprite.UI.UI;
-import settlement.room.industry.module.INDUSTRY_HASER;
-import settlement.room.industry.module.Industry;
 import snake2d.util.misc.CLAMP;
 import world.map.regions.Region;
 import world.region.RBooster;

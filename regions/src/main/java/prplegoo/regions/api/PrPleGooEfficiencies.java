@@ -37,7 +37,7 @@ public class PrPleGooEfficiencies {
                         {
                             if(booster.booster.info.name == TOTAL_WORKFORCE_SPLIT_DESC)
                             {
-                                totalWorkforceSplit += RD.BUILDINGS().tmp().level(building, t);
+                                totalWorkforceSplit += 1;
                                 break;
                             }
                         }

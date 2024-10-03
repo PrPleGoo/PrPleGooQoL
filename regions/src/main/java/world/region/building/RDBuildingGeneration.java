@@ -14,6 +14,7 @@ import settlement.room.food.fish.ROOM_FISHERY;
 import settlement.room.food.orchard.ROOM_ORCHARD;
 import settlement.room.industry.mine.ROOM_MINE;
 import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.Industry.IndustryResource;
 import settlement.room.industry.woodcutter.ROOM_WOODCUTTER;
 import settlement.room.main.RoomBlueprint;
@@ -168,27 +169,27 @@ class RDBuildingGeneration {
         }
 
         {
-            new GenIndustry("refinery", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().REFINERS)) {
+            new GenIndustryWithRecipes("refinery", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().REFINERS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
                     PrPleGooEfficiencies.POP_SCALING(bu);
 
-                    super.connect(bu, blue, local, global);
+                    connect(bu, blue);
                 }
             };
         }
 
         {
-            new GenIndustry("workshop", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WORKSHOPS)) {
+            new GenIndustryWithRecipes("workshop", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WORKSHOPS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
                     PrPleGooEfficiencies.POP_SCALING(bu);
 
-                    super.connect(bu, blue, local, global);
+                    connect(bu, blue);
                 }
             };
         }
@@ -328,6 +329,64 @@ class RDBuildingGeneration {
                 consume(bu, local, -r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
                 consume(bu, global, -r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
             }
+        }
+    }
+
+    private class GenIndustryWithRecipes extends Gen {
+
+        GenIndustryWithRecipes(String folder, String file, LIST<RoomBlueprintImp> rooms) {
+            super(folder, file, rooms);
+        }
+
+        @Override
+        RDBuilding generate(LISTE<RDBuilding> all, RDInit init, Json[] jlevels, RDBuildingCat cat, RoomBlueprintImp blue, boolean aiBuild, String order)
+        {
+            INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
+            ArrayListGrower<RDBuildingLevel> levels = new ArrayListGrower<>();
+
+            for (int i = 0; i < h.industries().size(); i++) {
+                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i+1);
+                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_"+(i+1), n, blue.info.desc, blue.iconBig());
+
+                RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
+                levels.add(b);
+            }
+
+            RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order);
+
+            for (int i = 0; i < jlevels.length; i++) {
+                RDBuildingLevel l = bu.levels.get(i+1);
+                Json j = jlevels[0];
+                l.cost = j.i("CREDITS", 0, 1000000, 0);
+            }
+
+            return bu;
+        }
+
+        @Override
+        void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) { }
+
+        void connect(RDBuilding bu, RoomBlueprintImp blue) {
+            INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
+
+            for(int i = 0; i < h.industries().size(); i++)
+            {
+                Industry recipe = h.industries().get(i);
+
+                for (IndustryResource r : recipe.outs()) {
+                    consume(bu, i, r.rate, RD.OUTPUT().get(r.resource).boost);
+                }
+
+                for (IndustryResource r : recipe.ins()) {
+                    consume(bu, i, -r.rate, RD.OUTPUT().get(r.resource).boost);
+                }
+            }
+        }
+
+        private void consume(RDBuilding bu, int i, double dv, Boostable bo) {
+            RDBuildingLevel b = bu.levels.get(i + 1);
+
+            b.local.push(new LBoost(bu, dv, false), bo);
         }
     }
 

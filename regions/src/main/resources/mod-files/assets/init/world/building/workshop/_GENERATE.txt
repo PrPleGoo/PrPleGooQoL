@@ -10,10 +10,8 @@ LEVELS: [
 
 	
 LOCAL_LEVELS: [
-	1,
 ],
 	
 GLOBAL_LEVELS: [
-	0,
 ],
 

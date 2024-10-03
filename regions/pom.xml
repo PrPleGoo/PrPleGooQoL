@@ -127,7 +127,6 @@ Features:
 - Organisation use has been completely removed, admin costs increased to compensate.
 
 Known issues:
-- Can't select different recipes for refineries/workshops.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".
 
 Planned features (in order, subject to change):

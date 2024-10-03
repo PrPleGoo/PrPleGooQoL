@@ -181,6 +181,19 @@ class RDBuildingGeneration {
         }
 
         {
+            new GenIndustry("workshop", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WORKSHOPS)) {
+                @Override
+                void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
+                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
+
+                    PrPleGooEfficiencies.POP_SCALING(bu);
+
+                    super.connect(bu, blue, local, global);
+                }
+            };
+        }
+
+        {
             new Gen("religion", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().TEMPLES.ALL)) {
 
                 @Override

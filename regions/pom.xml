@@ -127,14 +127,14 @@ Features:
 - Organisation use has been completely removed, admin costs increased to compensate.
 
 Known issues:
-- Negative taxes aren't handled.
 - Can't select different recipes for refineries/workshops.
+- All production stuff is displayed as being super efficient because population scaling is "efficiency".
 
 Planned features (in order, subject to change):
+- Use sliders to allocate workers to specific buildings.
 - Use racial preferences to make production buildings give some loyalty.
 - High loyalty/health boosts population.
 - Low loyalty/health drops population.
-- Use sliders to allocate workers to specific buildings.
 - Make nerfed global buildings useful again.
 - No resources from places without a town hall.
 - Slaves from taxes.

@@ -14,11 +14,15 @@ public class PrPleGooEfficiencies {
 
     public static void POP_SCALING(RDBuilding bu) {
         bu.baseFactors.add(
-            new RBooster(new BSourceInfo(TOTAL_WORKFORCE_SPLIT_DESC, UI.icons().s.citizen), 1, 1000000, true) {
+            new RBooster(new BSourceInfo(TOTAL_WORKFORCE_SPLIT_DESC, UI.icons().s.citizen), 0, 1000000, true) {
                 @Override
                 public double get(Region t) {
                     int totalPop = RD.RACES().population.get(t);
                     double workforce = RD.RACES().workforce.get(t);
+
+                    if(workforce <= 0){
+                        return 0;
+                    }
 
                     double totalWorkforceSplit = 0;
 

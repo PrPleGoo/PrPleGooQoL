@@ -126,7 +126,7 @@ Features:
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
 - Organisation use has been completely removed, admin costs increased to compensate.
 
-Open issues:
+Known issues:
 - Negative taxes aren't handled.
 - Can't select different recipes for refineries/workshops.
 

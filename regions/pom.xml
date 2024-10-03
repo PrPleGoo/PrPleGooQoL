@@ -124,13 +124,16 @@ Features:
 - Population numbers in regions have been reduced drastically.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
-- Organisation use has been completely removed, admin costs increased to compensate.
+- Organization use has been completely removed, admin costs increased to compensate.
+- Negative production values are grabbed from your capital.
 
 Known issues:
+- Negative production values could be ignored for a massive early game boost.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".
 
 Planned features (in order, subject to change):
 - Use sliders to allocate workers to specific buildings.
+- Tax buildings should be multipliers.
 - Use racial preferences to make production buildings give some loyalty.
 - High loyalty/health boosts population.
 - Low loyalty/health drops population.

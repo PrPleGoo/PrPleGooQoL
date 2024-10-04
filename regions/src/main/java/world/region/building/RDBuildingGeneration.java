@@ -281,8 +281,6 @@ class RDBuildingGeneration {
                 l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.global.read("BOOST_GLOBAL", j, RDBuildingCat.lGlobal, Dic.¤¤global, false);
 
-
-
                 l.cost = j.i("CREDITS", 0, 1000000, 0);
             }
 
@@ -357,6 +355,7 @@ class RDBuildingGeneration {
             for (int i = 0; i < jlevels.length; i++) {
                 RDBuildingLevel l = bu.levels.get(i+1);
                 Json j = jlevels[0];
+                l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.cost = j.i("CREDITS", 0, 1000000, 0);
             }
 

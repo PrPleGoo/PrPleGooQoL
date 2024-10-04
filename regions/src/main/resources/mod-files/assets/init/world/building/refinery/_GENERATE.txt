@@ -5,6 +5,9 @@ OMITT_ROOMS: [
 LEVELS: [
 	{
 		CREDITS: 16000,
+		BOOST: {
+			WORLD_WORKFORCE>ADD: -2,
+		},
 	},
 ],
 

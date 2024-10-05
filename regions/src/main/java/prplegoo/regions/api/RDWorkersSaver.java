@@ -17,7 +17,7 @@ public class RDWorkersSaver extends AbstractModSdkScript {
 
     @Override
     protected void registerPhases(PhaseManager phaseManager) {
-        phaseManager.register(Phase.INIT_SETTLEMENT_UI_PRESENT, RD.WORKERS());
+        phaseManager.register(Phase.INIT_MOD_CREATE_INSTANCE, RD.WORKERS());
         phaseManager.register(Phase.ON_GAME_SAVED, RD.WORKERS());
         phaseManager.register(Phase.ON_GAME_SAVE_LOADED, RD.WORKERS());
     }

@@ -5,6 +5,7 @@ import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
 import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
 import lombok.Data;
+import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 import world.WORLD;
 import world.map.regions.Region;
@@ -33,17 +34,20 @@ public class RDWorkers implements Phases {
     public RDWorkers(){}
 
     @Override
-    public void initSettlementUiPresent() {
+    public void initModCreateInstance() {
+        LOG.ln("RWWorkers.initModCreateInstance");
         jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
     }
 
     @Override
     public void onGameSaved(Path saveFilePath) {
+        LOG.ln("RWWorkers.onGameSaved");
         jsonConfigStore.save(new JsonStore(allocatedWorkers));
     }
 
     @Override
     public void onGameSaveLoaded(Path saveFilePath) {
+        LOG.ln("RWWorkers.onGameSaveLoaded");
         JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
         if (data == null) {
             initialize();

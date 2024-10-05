@@ -5,6 +5,9 @@ import static world.WORLD.REGIONS;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.github.argon.sos.mod.sdk.log.Level;
+import com.github.argon.sos.mod.sdk.log.Loggers;
+import com.sun.media.jfxmedia.logging.Logger;
 import game.GameDisposable;
 import game.Profiler;
 import game.faction.FACTIONS;
@@ -92,6 +95,8 @@ public class RD extends WorldResource {
         deva = new RDDevastation(init);
         org = new RDOrg(init);
         workers = new RDWorkers();
+
+        Loggers.setLevels(Level.DEBUG);
 
         Arrays.fill(factionI, -1);
 

@@ -31,23 +31,14 @@ public class RDWorkers implements Phases {
         }
     }
 
-    public RDWorkers(){}
-
-    @Override
-    public void initModCreateInstance() {
-        LOG.ln("RWWorkers.initModCreateInstance");
-        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
-    }
-
-    @Override
-    public void onGameSaved(Path saveFilePath) {
-        LOG.ln("RWWorkers.onGameSaved");
-        jsonConfigStore.save(new JsonStore(allocatedWorkers));
+    public RDWorkers() {
+        initialize();
     }
 
     @Override
     public void onGameSaveLoaded(Path saveFilePath) {
         LOG.ln("RWWorkers.onGameSaveLoaded");
+        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
         JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
         if (data == null) {
             initialize();
@@ -55,6 +46,12 @@ public class RDWorkers implements Phases {
         }
 
         allocatedWorkers = data.data;
+    }
+
+    @Override
+    public void onGameSaved(Path saveFilePath) {
+        LOG.ln("RWWorkers.onGameSaved");
+        jsonConfigStore.save(new JsonStore(allocatedWorkers));
     }
 
     private void initialize() {

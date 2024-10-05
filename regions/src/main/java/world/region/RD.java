@@ -17,6 +17,7 @@ import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.RDWorkers;
+import snake2d.LOG;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -97,6 +98,7 @@ public class RD extends WorldResource {
         workers = new RDWorkers();
 
         Loggers.setLevels(Level.DEBUG);
+        LOG.ln("RD.ctor");
 
         Arrays.fill(factionI, -1);
 

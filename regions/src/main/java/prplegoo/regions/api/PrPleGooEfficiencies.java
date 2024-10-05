@@ -11,42 +11,45 @@ import world.region.building.RDBuilding;
 
 public class PrPleGooEfficiencies {
     public static final CharSequence TOTAL_WORKFORCE_SPLIT_DESC = "Population";
+    private static final int MAX_ASSIGNABLE_WORKERS = 1000000;
 
     public static void POP_SCALING(RDBuilding bu) {
         bu.baseFactors.add(
-            new RBooster(new BSourceInfo(TOTAL_WORKFORCE_SPLIT_DESC, UI.icons().s.citizen), 0, 1000000, true) {
+            new RBooster(new BSourceInfo(TOTAL_WORKFORCE_SPLIT_DESC, UI.icons().s.citizen), 0, MAX_ASSIGNABLE_WORKERS, true) {
+                private final RDBuilding building = bu;
+
                 @Override
                 public double get(Region t) {
-                    int totalPop = RD.RACES().population.get(t);
                     double workforce = RD.RACES().workforce.get(t);
 
                     if(workforce <= 0){
                         return 0;
                     }
 
-                    double totalWorkforceSplit = 0;
+                    int assignedWorkersInRegion = RD.WORKERS().getTotal(t);
 
-                    for (RDBuilding building : RD.BUILDINGS().all)
-                    {
-                        if(RD.BUILDINGS().tmp().level(building, t) == 0)
-                        {
-                            continue;
-                        }
-
-                        for(BoostSpec booster : building.baseFactors)
-                        {
-                            if(booster.booster.info.name == TOTAL_WORKFORCE_SPLIT_DESC)
-                            {
-                                totalWorkforceSplit += 1;
-                                break;
-                            }
-                        }
+                    if(assignedWorkersInRegion <= 0){
+                        return 0;
                     }
 
-                    totalWorkforceSplit = CLAMP.d(totalWorkforceSplit, 1, 1000000);
+                    int assignedWorkersInThisBuilding = RD.WORKERS().get(t, building);
 
-                    double workingPopulation = (double) totalPop / totalWorkforceSplit / 100 * workforce;
-                    return CLAMP.d(workingPopulation / 1000000, 0.0, 1.0);
+                    if(assignedWorkersInThisBuilding <= 0){
+                        return 0;
+                    }
+
+                    int totalPop = RD.RACES().population.get(t);
+
+                    if(totalPop <= 0){
+                        return 0;
+                    }
+
+                    double assignableWorkforce = totalPop * workforce / 100;
+                    double workerSplit = (double) assignedWorkersInThisBuilding / assignedWorkersInRegion;
+
+                    double assignedWorkforce = assignableWorkforce * workerSplit;
+
+                    return CLAMP.d(assignedWorkforce / MAX_ASSIGNABLE_WORKERS, 0.0, 1.0);
                 }
             }.add(bu.efficiency));
     }

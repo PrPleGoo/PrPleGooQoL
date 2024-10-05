@@ -13,6 +13,7 @@ import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.WorkerIntE;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -121,26 +122,7 @@ class PlayBuildingsPop {
                 }
 
                 if (b.isPopScaler) {
-                    GSliderInt gg = new GSliderInt(new INT.INTE() {
-                        @Override
-                        public void set(int t) {
-                        }
-
-                        @Override
-                        public int get() {
-                            return 50;
-                        }
-
-                        @Override
-                        public int min() {
-                            return 1;
-                        }
-
-                        @Override
-                        public int max() {
-                            return 100;
-                        }
-                    }, bb.body.width() + 24, 24, false, true);
+                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() + 24, 24, true, true);
                     row.addDownC(0, gg);
                 }
                 i++;

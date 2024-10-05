@@ -44,9 +44,9 @@ public class RDWorkers extends AbstractModSdkScript {
 
     @Override
     protected void registerPhases(PhaseManager phaseManager) {
-        phaseManager.register(Phase.INIT_GAME_UI_PRESENT, new Phases() {
+        phaseManager.register(Phase.INIT_SETTLEMENT_UI_PRESENT, new Phases() {
             @Override
-            public void initGameUiPresent() {
+            public void initSettlementUiPresent() {
                 jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
             }
         });

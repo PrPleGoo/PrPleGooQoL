@@ -3,13 +3,18 @@
     <classpathModifications>
       <entry path="C:\Program Files (x86)\Steam\steamapps\common\Songs of Syx\base\script\Examples.jar" />
       <entry path="C:\Program Files (x86)\Steam\steamapps\common\Songs of Syx\base\script\Tutorial.jar" />
-      <entry path="D:\Git\SoS\Mods\PrPleGooQoL\regions\src\main\java\prplegoo\regions\api" />
+      <entry path="D:\Git\SoS\Mods\PrPleGooQoL\regions\target\Region rework.jar" />
     </classpathModifications>
+    <envs>
+      <env name="MOD.LOG_LEVEL" value="debug" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="init.MainProcess" />
     <module name="region-rework-mod" />
     <option name="WORKING_DIRECTORY" value="C:/Program Files (x86)/Steam/steamapps/common/Songs of Syx" />
     <method v="2">
       <option name="Make" enabled="true" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="clean" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="install" />
     </method>
   </configuration>
 </component>

@@ -363,6 +363,10 @@ Credits:
                             <artifactSet>
                                 <excludes>
                                     <exclude>com.songsofsyx:*</exclude>
+                                    <exclude>org.jetbrains:*</exclude>
+                                    <exclude>com.fasterxml.jackson.core:*</exclude>
+                                    <exclude>com.fasterxml.jackson.dataformat:*</exclude>
+                                    <exclude>com.github.argon.sos:sos-mod-sdk</exclude>
                                 </excludes>
                             </artifactSet>
                             <createDependencyReducedPom>false</createDependencyReducedPom>

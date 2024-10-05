@@ -3,6 +3,11 @@ package prplegoo.regions.api;
 import com.github.argon.sos.mod.sdk.AbstractModSdkScript;
 import com.github.argon.sos.mod.sdk.ModSdkModule;
 import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
+import com.github.argon.sos.mod.sdk.log.Level;
+import com.github.argon.sos.mod.sdk.log.Loggers;
+import com.github.argon.sos.mod.sdk.phase.Phase;
+import com.github.argon.sos.mod.sdk.phase.PhaseManager;
+import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
 import lombok.Data;
 import snake2d.LOG;
@@ -17,8 +22,9 @@ import world.region.building.RDBuilding;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
+import java.nio.file.Path;
 
-public class RDWorkers {
+public class RDWorkers extends AbstractModSdkScript {
     private final JsonConfigStore jsonConfigStore = ModSdkModule.jsonConfigStore();
 
     public static final int MIN_WORKERS = 1;
@@ -35,60 +41,47 @@ public class RDWorkers {
         }
     }
 
-    public RDWorkers(RD.RDInit init) {
-        allocatedWorkers = new int[WORLD.REGIONS().all().size()][RD.BUILDINGS().all.size()];
-        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
+    public CharSequence name() {
+        return "RDWorkers.Saver";
+    }
 
-        init.savable.add(new SAVABLE() {
+    @Override
+    public CharSequence desc() {
+        return "Saves RDWorkers.";
+    }
+
+    @Override
+    protected void registerPhases(PhaseManager phaseManager) {
+
+        phaseManager.register(Phase.INIT_GAME_UI_PRESENT, new Phases() {
             @Override
-            public void save(FilePutter file) {
+            public void initGameUiPresent() {
+                jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
+            }
+        });
+        phaseManager.register(Phase.ON_GAME_SAVED, new Phases() {
+            @Override
+            public void onGameSaved(Path saveFilePath) {
                 jsonConfigStore.save(new JsonStore(allocatedWorkers));
             }
-
+        });
+        phaseManager.register(Phase.ON_GAME_SAVE_LOADED, new Phases() {
             @Override
-            public void load(FileGetter file) throws IOException {
+            public void onGameSaveLoaded(Path saveFilePath) {
                 JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
                 if (data == null) {
-                    clear();
+                    initialize();
                     return;
                 }
 
                 allocatedWorkers = data.data;
-//                clear();
-//                int initialPosition = file.getPosition();
-//                LOG.ln("file position guard, " + initialPosition);
-//
-//                file.is(allocatedWorkers);
-//                if (dataInvalid())
-//                {
-//                    LOG.ln("data invalid, fallback executed");
-//                    clear();
-//                    file.setPosition(initialPosition);
-//                    LOG.ln("file position set, " + file.getPosition());
-//                }
-            }
-
-            @Override
-            public void clear() {
-                initialize();
             }
         });
     }
 
-    private boolean dataInvalid() {
-        for (int[] allocatedWorker : allocatedWorkers) {
-            for (int i : allocatedWorker) {
-                if (i < MIN_WORKERS || i > MAX_WORKERS) {
-                    LOG.ln("data invalid");
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     private void initialize() {
+        allocatedWorkers = new int[WORLD.REGIONS().all().size()][RD.BUILDINGS().all.size()];
+
         for (Region region : WORLD.REGIONS().all()) {
             for (RDBuilding building : RD.BUILDINGS().all) {
                 set(region, building, 50);

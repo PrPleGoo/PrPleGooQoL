@@ -128,10 +128,8 @@ class PlayBuildingsPop {
                         @Override
                         public void render(SPRITE_RENDERER r, float ds) {
                             if (RD.BUILDINGS().tmp().level(b, g.get()) > 0 && !active) {
-                                LOG.ln("Enabling buttons");
                                 activeSet(true);
                             } else if (RD.BUILDINGS().tmp().level(b, g.get()) <= 0 && active) {
-                                LOG.ln("Disabling buttons");
                                 activeSet(false);
                             }
 

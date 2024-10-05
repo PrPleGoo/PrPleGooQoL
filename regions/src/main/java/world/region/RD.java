@@ -91,7 +91,7 @@ public class RD extends WorldResource {
         owner = new RDOwner(init);
         deva = new RDDevastation(init);
         org = new RDOrg(init);
-        workers = new RDWorkers(init);
+        workers = new RDWorkers();
 
         Arrays.fill(factionI, -1);
 

@@ -3,25 +3,17 @@ package prplegoo.regions.api;
 import com.github.argon.sos.mod.sdk.AbstractModSdkScript;
 import com.github.argon.sos.mod.sdk.ModSdkModule;
 import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
-import com.github.argon.sos.mod.sdk.log.Level;
-import com.github.argon.sos.mod.sdk.log.Loggers;
 import com.github.argon.sos.mod.sdk.phase.Phase;
 import com.github.argon.sos.mod.sdk.phase.PhaseManager;
 import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
 import lombok.Data;
-import snake2d.LOG;
-import snake2d.util.file.FileGetter;
-import snake2d.util.file.FilePutter;
-import snake2d.util.file.SAVABLE;
 import snake2d.util.misc.CLAMP;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
-import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
 public class RDWorkers extends AbstractModSdkScript {
@@ -52,7 +44,6 @@ public class RDWorkers extends AbstractModSdkScript {
 
     @Override
     protected void registerPhases(PhaseManager phaseManager) {
-
         phaseManager.register(Phase.INIT_GAME_UI_PRESENT, new Phases() {
             @Override
             public void initGameUiPresent() {

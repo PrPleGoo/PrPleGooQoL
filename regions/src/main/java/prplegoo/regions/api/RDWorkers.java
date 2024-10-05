@@ -1,10 +1,7 @@
 package prplegoo.regions.api;
 
-import com.github.argon.sos.mod.sdk.AbstractModSdkScript;
 import com.github.argon.sos.mod.sdk.ModSdkModule;
 import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
-import com.github.argon.sos.mod.sdk.phase.Phase;
-import com.github.argon.sos.mod.sdk.phase.PhaseManager;
 import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
 import lombok.Data;
@@ -16,7 +13,7 @@ import world.region.building.RDBuilding;
 
 import java.nio.file.Path;
 
-public class RDWorkers extends AbstractModSdkScript {
+public class RDWorkers implements Phases {
     private final JsonConfigStore jsonConfigStore = ModSdkModule.jsonConfigStore();
 
     public static final int MIN_WORKERS = 1;
@@ -33,41 +30,27 @@ public class RDWorkers extends AbstractModSdkScript {
         }
     }
 
-    public CharSequence name() {
-        return "RDWorkers.Saver";
+    public RDWorkers(){}
+
+    @Override
+    public void initSettlementUiPresent() {
+        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
     }
 
     @Override
-    public CharSequence desc() {
-        return "Saves RDWorkers.";
+    public void onGameSaved(Path saveFilePath) {
+        jsonConfigStore.save(new JsonStore(allocatedWorkers));
     }
 
     @Override
-    protected void registerPhases(PhaseManager phaseManager) {
-        phaseManager.register(Phase.INIT_SETTLEMENT_UI_PRESENT, new Phases() {
-            @Override
-            public void initSettlementUiPresent() {
-                jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
-            }
-        });
-        phaseManager.register(Phase.ON_GAME_SAVED, new Phases() {
-            @Override
-            public void onGameSaved(Path saveFilePath) {
-                jsonConfigStore.save(new JsonStore(allocatedWorkers));
-            }
-        });
-        phaseManager.register(Phase.ON_GAME_SAVE_LOADED, new Phases() {
-            @Override
-            public void onGameSaveLoaded(Path saveFilePath) {
-                JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
-                if (data == null) {
-                    initialize();
-                    return;
-                }
+    public void onGameSaveLoaded(Path saveFilePath) {
+        JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
+        if (data == null) {
+            initialize();
+            return;
+        }
 
-                allocatedWorkers = data.data;
-            }
-        });
+        allocatedWorkers = data.data;
     }
 
     private void initialize() {
@@ -101,4 +84,3 @@ public class RDWorkers extends AbstractModSdkScript {
         return 0;
     }
 }
-

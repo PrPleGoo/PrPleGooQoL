@@ -1,11 +1,13 @@
 package prplegoo.regions.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.argon.sos.mod.sdk.ModSdkModule;
 import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
 import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
-import lombok.Data;
+import lombok.*;
 import snake2d.LOG;
+import snake2d.util.file.Json;
 import snake2d.util.misc.CLAMP;
 import world.WORLD;
 import world.map.regions.Region;
@@ -21,15 +23,6 @@ public class RDWorkers implements Phases {
     public static final int MAX_WORKERS = 100;
 
     private int[][] allocatedWorkers;
-
-    @Data
-    private class JsonStore {
-        private final int[][] data;
-
-        public JsonStore(int[][] data) {
-            this.data = data;
-        }
-    }
 
     public RDWorkers() {
         initialize();
@@ -85,3 +78,4 @@ public class RDWorkers implements Phases {
         return 0;
     }
 }
+

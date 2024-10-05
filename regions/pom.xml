@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.43.0</version>
+    <version>0.67.43.1</version>
 
     <profiles>
         <profile>
@@ -191,6 +191,7 @@ Features:
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
 - Organization use has been completely removed, admin costs increased to compensate.
 - Negative production values are grabbed from your capital.
+- Use sliders to allocate workers to specific buildings.
 
 Known issues:
 - Missing icons for region techs.
@@ -200,7 +201,6 @@ Known issues:
 - Unlockable recipes' lock-status have no relation to how useable the recipes are in regions.
 
 Planned features (in order, subject to change):
-- Use sliders to allocate workers to specific buildings.
 - Tax buildings should be multipliers.
 - Use racial preferences to make production buildings give some loyalty.
 - High loyalty/health boosts population.
@@ -222,6 +222,7 @@ Available on github.
 
 Credits:
 - Redic, thumbnail art
+- Argoon, SDK mod and technical support.
         </mod.info>
         <game.version.major>67</game.version.major>
         <game.version.minor>43</game.version.minor>

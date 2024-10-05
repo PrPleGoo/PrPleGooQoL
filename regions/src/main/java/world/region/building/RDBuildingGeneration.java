@@ -215,6 +215,10 @@ class RDBuildingGeneration {
         private final LIST<RoomBlueprintImp> rooms;
         private final ArrayListGrower<Tuple<RDBuilding, RoomBlueprintImp>> tmps = new ArrayListGrower<>();
 
+        protected boolean isPopScaler(){
+            return false;
+        }
+
         Gen(String folder, String file, LIST<RoomBlueprintImp> rooms){
             this.file = file;
             this.rooms = new ArrayList<>(rooms);
@@ -273,7 +277,7 @@ class RDBuildingGeneration {
 
             }
 
-            RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order);
+            RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, isPopScaler());
 
             for (int i = 0; i < jlevels.length; i++) {
                 RDBuildingLevel l = bu.levels.get(i+1);
@@ -309,6 +313,10 @@ class RDBuildingGeneration {
     }
 
     private class GenIndustry extends Gen {
+        @Override
+        protected boolean isPopScaler(){
+            return true;
+        }
 
         GenIndustry(String folder, String file, LIST<RoomBlueprintImp> rooms) {
             super(folder, file, rooms);
@@ -350,7 +358,7 @@ class RDBuildingGeneration {
                 levels.add(b);
             }
 
-            RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order);
+            RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, true);
 
             for (int i = 0; i < jlevels.length; i++) {
                 RDBuildingLevel l = bu.levels.get(i+1);

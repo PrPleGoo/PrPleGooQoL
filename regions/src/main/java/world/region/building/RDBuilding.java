@@ -50,12 +50,19 @@ public final class RDBuilding implements MAPPED{
     final String order;
     private final ArrayList<INT_OE<Faction>> levelAm;
 
-    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order) {
+    public final boolean isPopScaler;
+
+    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order){
+        this(all, init, cat, key, info, levels,  AIBuilds, notify, order, false);
+    }
+
+    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, boolean isPopScaler) {
         this.info = info;
         this.cat = cat;
         this.AIBuild = AIBuilds;
         this.notify = notify;
         this.order = order;
+        this.isPopScaler = isPopScaler;
         cat.all.add(this);
         index = all.add(this);
         kk = cat.key + "_" + key;

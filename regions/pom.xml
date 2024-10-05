@@ -193,6 +193,7 @@ Features:
 - Negative production values are grabbed from your capital.
 
 Known issues:
+- Missing icons for region techs.
 - Diseases only scale outputs to 0, inputs will still be negative.
 - Negative production values could be ignored for a massive early game boost.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".

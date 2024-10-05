@@ -8,11 +8,13 @@ import world.region.RD;
 
 public class RDWorkersSaver extends AbstractModSdkScript {
     public CharSequence name() {
+        LOG.ln("RDWorkersSaver.name");
         return "RDWorkers.Saver";
     }
 
     @Override
     public CharSequence desc() {
+        LOG.ln("RDWorkersSaver.desc");
         return "Saves RDWorkers.";
     }
 

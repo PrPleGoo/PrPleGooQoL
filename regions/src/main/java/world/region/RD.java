@@ -97,9 +97,6 @@ public class RD extends WorldResource {
         org = new RDOrg(init);
         workers = new RDWorkers();
 
-        Loggers.setLevels(Level.DEBUG);
-        LOG.ln("RD.ctor");
-
         Arrays.fill(factionI, -1);
 
         regionData = new long[WREGIONS.MAX][init.count.longCount()];

@@ -124,18 +124,7 @@ class PlayBuildingsPop {
                 }
 
                 if (b.isPopScaler) {
-                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false) {
-                        @Override
-                        public void render(SPRITE_RENDERER r, float ds) {
-                            if (RD.BUILDINGS().tmp().level(b, g.get()) > 0 && !active) {
-                                activeSet(true);
-                            } else if (RD.BUILDINGS().tmp().level(b, g.get()) <= 0 && active) {
-                                activeSet(false);
-                            }
-
-                            super.render(r, ds);
-                        }
-                    };
+                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false);
                     row.addDownC(0, gg);
                 }
                 i++;

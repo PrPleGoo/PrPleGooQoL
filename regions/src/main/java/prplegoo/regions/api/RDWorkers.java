@@ -28,16 +28,16 @@ public class RDWorkers implements Phases {
     @Override
     public void onGameSaveLoaded(Path saveFilePath) {
         LOG.ln("RWWorkers.onGameSaveLoaded " + saveFilePath);
-        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
+        jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), false);
 
         JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
         if (data == null) {
-            LOG.ln("RWWorkers.onGameSaveReloaded: data null, initializing");
+            LOG.ln("RWWorkers.onGameSaveLoaded: data null, initializing");
             initialize();
             return;
         }
 
-        LOG.ln("RWWorkers.onGameSaveReloaded: data found, writing");
+        LOG.ln("RWWorkers.onGameSaveLoaded: data found, writing");
         allocatedWorkers = data.data;
     }
 

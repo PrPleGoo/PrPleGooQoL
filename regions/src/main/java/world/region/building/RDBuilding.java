@@ -16,6 +16,7 @@ import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
+import prplegoo.regions.api.MagicStringChecker;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
@@ -441,11 +442,11 @@ public final class RDBuilding implements MAPPED{
 
         private double g(Region t) {
             double ta = tos[RD.BUILDINGS().tmp().level(bu, t)];
-            if (!b.booster.isMul && ta < 0 && !b.boostable.key.contains("RESOURCE_"))
+            if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
                 return ta;
             int i = RD.BUILDINGS().tmp().level(bu, t);
             double vv = tos[i];
-            if (b.booster.isMul || b.boostable.key.contains("RESOURCE_")) {
+            if (b.booster.isMul || MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
                 return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);
             }
             return vv;

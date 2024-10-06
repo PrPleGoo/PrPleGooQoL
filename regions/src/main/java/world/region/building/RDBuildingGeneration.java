@@ -330,11 +330,6 @@ class RDBuildingGeneration {
                 consume(bu, local, r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
                 consume(bu, global, r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
             }
-
-            for (IndustryResource r : h.industries().get(0).ins()) {
-                consume(bu, local, -r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
-                consume(bu, global, -r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
-            }
         }
     }
 
@@ -422,7 +417,7 @@ class RDBuildingGeneration {
         }
 
     }
-
+    
     private static class LBoost extends BoosterImp {
 
         private final RDBuilding bu;

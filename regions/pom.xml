@@ -194,8 +194,7 @@ Features:
 - Use sliders to allocate workers to specific buildings.
 
 Known issues:
-- After a battle all your pop allocation values are reset.
-- Diseases only scale outputs to 0, inputs will still be negative.
+- After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - There's no way to punish the player for going into negative admin.
 - Upper levels of service buildings too good for admin investment.
 - Missing icons for region techs.

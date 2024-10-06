@@ -194,8 +194,11 @@ Features:
 - Use sliders to allocate workers to specific buildings.
 
 Known issues:
-- Missing icons for region techs.
+- After a battle all your pop allocation values are reset.
 - Diseases only scale outputs to 0, inputs will still be negative.
+- There's no way to punish the player for going into negative admin.
+- Upper levels of service buildings too good for admin investment.
+- Missing icons for region techs.
 - Negative production values could be ignored for a massive early game boost.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".
 - Unlockable recipes' lock-status have no relation to how useable the recipes are in regions.

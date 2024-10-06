@@ -1,13 +1,10 @@
 package prplegoo.regions.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.argon.sos.mod.sdk.ModSdkModule;
 import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
 import com.github.argon.sos.mod.sdk.phase.Phases;
 import init.paths.PATHS;
-import lombok.*;
 import snake2d.LOG;
-import snake2d.util.file.Json;
 import snake2d.util.misc.CLAMP;
 import world.WORLD;
 import world.map.regions.Region;
@@ -30,20 +27,23 @@ public class RDWorkers implements Phases {
 
     @Override
     public void onGameSaveLoaded(Path saveFilePath) {
-        LOG.ln("RWWorkers.onGameSaveLoaded");
+        LOG.ln("RWWorkers.onGameSaveLoaded " + saveFilePath);
         jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), true);
+
         JsonStore data = jsonConfigStore.get(JsonStore.class).orElse(null);
         if (data == null) {
+            LOG.ln("RWWorkers.onGameSaveReloaded: data null, initializing");
             initialize();
             return;
         }
 
+        LOG.ln("RWWorkers.onGameSaveReloaded: data found, writing");
         allocatedWorkers = data.data;
     }
 
     @Override
     public void onGameSaved(Path saveFilePath) {
-        LOG.ln("RWWorkers.onGameSaved");
+        LOG.ln("RWWorkers.onGameSaved " + saveFilePath);
         jsonConfigStore.save(new JsonStore(allocatedWorkers));
     }
 

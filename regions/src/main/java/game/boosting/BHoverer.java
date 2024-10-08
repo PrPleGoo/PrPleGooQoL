@@ -17,7 +17,9 @@ public final class BHoverer {
 
     }
 
-
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops){
+        hoverDetailed(box, all, f, name, baseValue, keepNops, false);
+    }
 
     public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;

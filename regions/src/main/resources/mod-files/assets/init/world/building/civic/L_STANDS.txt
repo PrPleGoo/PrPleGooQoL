@@ -25,7 +25,7 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -2,
 			WORLD_LOYALTY*>ADD: 7.74,
-			CIVIC_ADMIN>ADD: -40,
+			CIVIC_ADMIN>ADD: -60,
 		},
 	},
 	{
@@ -34,7 +34,7 @@ LEVELS: [
 				BOOST: {
 			WORLD_WORKFORCE>ADD: -1.75,
 			WORLD_LOYALTY*>ADD: 14.4,
-			CIVIC_ADMIN>ADD: -80,
+			CIVIC_ADMIN>ADD: -110,
 		},
 	},
 ],

@@ -1,13 +1,5 @@
 package world.region;
 
-import static world.WORLD.REGIONS;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import com.github.argon.sos.mod.sdk.log.Level;
-import com.github.argon.sos.mod.sdk.log.Loggers;
-import com.sun.media.jfxmedia.logging.Logger;
 import game.GameDisposable;
 import game.Profiler;
 import game.faction.FACTIONS;
@@ -17,7 +9,6 @@ import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.RDWorkers;
-import snake2d.LOG;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -40,6 +31,11 @@ import world.region.building.RDBuildings;
 import world.region.pop.RDRace;
 import world.region.pop.RDRaces;
 import world.region.updating.RDUpdater;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static world.WORLD.REGIONS;
 
 public class RD extends WorldResource {
 

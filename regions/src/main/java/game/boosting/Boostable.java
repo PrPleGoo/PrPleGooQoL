@@ -169,6 +169,10 @@ public final class Boostable extends INFO implements MAPPED {
 
     static final int htab = 7;
 
+    public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops) {
+        hoverDetailed(box, f, name, keepNops, false);
+    }
+
     public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops, boolean isResourceProductionBooster) {
         BHoverer.hoverDetailed(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
     }

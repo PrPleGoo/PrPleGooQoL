@@ -69,6 +69,10 @@ public final class BHoverer {
 
     }
 
+    public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
+        hover(box, all, f, name, baseValue, keepNops, false);
+    }
+
     public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
         hoverNoTot(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
@@ -100,6 +104,9 @@ public final class BHoverer {
 
     }
 
+    public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
+        hoverNoTot(box, all, f, name, baseValue, keepNops, false);
+    }
 
     public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;

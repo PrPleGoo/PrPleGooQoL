@@ -200,8 +200,8 @@ class RDBuildingGeneration {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     ROOM_TEMPLE t = (ROOM_TEMPLE) blue;
-                    consume(bu, local, t.religion.conversion, false, false);
-                    consume(bu, global, t.religion.conversion, false, true);
+                    consume(bu, local, t.religion.conversionRealm, false, false);
+                    consume(bu, global, t.religion.conversionRealm, false, true);
                 }
             };
         }

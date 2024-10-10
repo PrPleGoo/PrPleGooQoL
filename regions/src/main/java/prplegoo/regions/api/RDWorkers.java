@@ -26,7 +26,7 @@ public class RDWorkers implements Phases {
     }
 
     @Override
-    public void onGameSaveLoaded(Path saveFilePath) {
+    public void onGameLoaded(Path saveFilePath) {
         LOG.ln("RWWorkers.onGameSaveLoaded " + saveFilePath);
         jsonConfigStore.bindToSave(JsonStore.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), false);
 

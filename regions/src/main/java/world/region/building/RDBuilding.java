@@ -17,6 +17,7 @@ import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
 import prplegoo.regions.api.MagicStringChecker;
+import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
@@ -218,13 +219,15 @@ public final class RDBuilding implements MAPPED{
 
                         RDDef def = init.deficiencies.get(lb.boostable, b);
                         if (def != null) {
+                            //LOG.ln("Connecting: " + info.name + ", level: " + l.name + ", BoostSpec: " + lb.tName + ", lb.boostable.key: " + lb.boostable.key + ", def.bo.key: " + def.bo.key + ", l.index: " + l.index);
                             new BoosterImp(new BSourceInfo("< " + lb.boostable.name, l.icon), 0, 1.0, true) {
 
                                 @Override
                                 public double vGet(Region t) {
                                     if (t.faction() == FACTIONS.player()) {
-                                        if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= l.index)
+                                        if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= l.index) {
                                             return def.get(t);
+                                        }
                                     }
                                     return 1;
                                 }

@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.43.4</version>
+    <version>0.67.43.5</version>
 
     <profiles>
         <profile>
@@ -196,7 +196,6 @@ Features:
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - There's no way to punish the player for going into negative admin.
-- Missing icons for region techs.
 - Negative production values could be ignored for a massive early game boost.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".
 - Unlockable recipes' lock-status have no relation to how useable the recipes are in regions.

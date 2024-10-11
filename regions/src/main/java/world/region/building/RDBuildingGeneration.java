@@ -20,6 +20,7 @@ import settlement.room.industry.woodcutter.ROOM_WOODCUTTER;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
+import snake2d.LOG;
 import snake2d.util.file.Json;
 import snake2d.util.misc.ACTION;
 import snake2d.util.sets.ArrayList;

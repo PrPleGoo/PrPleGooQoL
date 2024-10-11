@@ -1,6 +1,7 @@
 package world.region.building;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import game.boosting.BOOSTABLE_O;
 import game.boosting.BOOSTING;
@@ -208,7 +209,6 @@ public final class RDBuilding implements MAPPED{
         KeyMap<Integer> defmap = new KeyMap<>();
 
         for (RDBuildingLevel l : levels) {
-
             for (int bi = 0; bi < l.local.all().size(); bi++) {
                 BoostSpec lb = l.local.all().get(bi);
 
@@ -219,13 +219,12 @@ public final class RDBuilding implements MAPPED{
 
                         RDDef def = init.deficiencies.get(lb.boostable, b);
                         if (def != null) {
-                            //LOG.ln("Connecting: " + info.name + ", level: " + l.name + ", BoostSpec: " + lb.tName + ", lb.boostable.key: " + lb.boostable.key + ", def.bo.key: " + def.bo.key + ", l.index: " + l.index);
                             new BoosterImp(new BSourceInfo("< " + lb.boostable.name, l.icon), 0, 1.0, true) {
 
                                 @Override
                                 public double vGet(Region t) {
                                     if (t.faction() == FACTIONS.player()) {
-                                        if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= l.index) {
+                                        if (RDBuilding.this.level.get(t) >= l.index) {
                                             return def.get(t);
                                         }
                                     }
@@ -449,7 +448,7 @@ public final class RDBuilding implements MAPPED{
                 return ta;
             int i = RD.BUILDINGS().tmp().level(bu, t);
             double vv = tos[i];
-            if (b.booster.isMul || MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
+            if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
                 return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);
             }
             return vv;

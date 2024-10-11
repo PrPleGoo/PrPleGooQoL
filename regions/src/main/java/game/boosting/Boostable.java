@@ -4,6 +4,7 @@ import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.type.POP_CL;
 import prplegoo.regions.api.MagicStringChecker;
+import snake2d.LOG;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -89,14 +90,14 @@ public final class Boostable extends INFO implements MAPPED {
         return CLAMP.d(padd * mul, minValue, Double.MAX_VALUE);
     }
 
-    public double progress(BOOSTABLE_O b) {
-        double min = min(b.getClass());
-        double max = max(b.getClass());
-
-        double delta = max - min;
-        return CLAMP.d(get(b) / delta, 0, 1);
-
-    }
+//    public double progress(BOOSTABLE_O b) {
+//        double min = min(b.getClass());
+//        double max = max(b.getClass());
+//
+//        double delta = max - min;
+//        return CLAMP.d(get(b) / delta, 0, 1);
+//
+//    }
 
     public double get(BOOSTABLE_O t) {
         if (deadlockCheck > 1) {
@@ -123,7 +124,6 @@ public final class Boostable extends INFO implements MAPPED {
                         padd += a;
                     }
                 }
-
             }
             res = CLAMP.d(padd * mul + sub, minValue, Double.MAX_VALUE);
         } else {

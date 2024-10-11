@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.45.1</version>
+    <version>0.67.45.2</version>
 
     <profiles>
         <profile>
@@ -192,26 +192,30 @@ Features:
 - Organization use has been completely removed, admin costs increased to compensate.
 - Negative production values are grabbed from your capital.
 - Use sliders to allocate workers to specific buildings.
+- Woodcutter worker maximum now tied to area and forest coverage.
+- Mine worker maximum now tied to deposits instead of scaling output.
+- Region health deteriorates 50% more.
 
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - Negative production values could be ignored for a massive early game boost.
 - All production stuff is displayed as being super efficient because population scaling is "efficiency".
 - Unlockable recipes' lock-status have no relation to how useable the recipes are in regions.
+- There's no way to view the maximum assignable workers to a woodcutter/mine.
 
 Planned features (in order, subject to change):
 - Tax buildings should be multipliers.
 - Use racial preferences to make production buildings give some loyalty.
+- Use food instead of admin to grow cities.
 - High loyalty/health boosts population.
 - Low loyalty/health drops population.
-- Make nerfed global buildings useful again.
 - No resources from places without a town hall.
 - Slaves from taxes.
 - Temple sacrifices.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
+- Supply armies directly from your regions.
 - AI empires use production to do work on their stockpiles.
 - Instruct vassals to produce specific goods.
-- Supply armies directly from your regions.
 
 Enjoy!
 

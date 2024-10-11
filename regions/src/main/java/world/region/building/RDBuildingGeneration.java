@@ -152,17 +152,14 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     if (blue instanceof ROOM_WOODCUTTER) {
-                        BoostSpec bo = Efficiencies.FOREST(0.1, 1.0, true).add(bu.efficiency);
-                        bu.baseFactors.add(bo);
+                        PrPleGooEfficiencies.POP_SCALING_WOOD(bu);
                     }
                     else {
                         ROOM_MINE f = (ROOM_MINE) blue;
-                        BoostSpec bo = Efficiencies.MINABLE(f.minable, 0, 1, true).add(bu.efficiency);
 
-                        bu.baseFactors.add(bo);
+                        PrPleGooEfficiencies.POP_SCALING_MINABLE(bu, f.minable);
                     }
 
-                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }

@@ -5,6 +5,9 @@ import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
+import init.type.HTYPE;
+import init.type.HTYPES;
+import prplegoo.regions.api.RDSlavery;
 import world.WORLD;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
@@ -50,6 +53,11 @@ final class Shipper {
             am += Math.abs(a);
         }
 
+        for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+            int a = rdSlave.getDelivery(r, days);
+            am += Math.abs(a);
+        }
+
         if (am <= 0)
             return;
 
@@ -69,8 +77,12 @@ final class Shipper {
                     f.seller().remove(res.res, -a, ITYPE.tax);
                 }
             }
-        }
 
+            for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+                int a = rdSlave.getDelivery(r, days);
+                c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
+            }
+        }
     }
 
     public void shipAll(Faction f, double days) {

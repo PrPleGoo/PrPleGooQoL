@@ -2,6 +2,7 @@ package prplegoo.regions.api;
 
 import game.boosting.BSourceInfo;
 import game.boosting.BoostSpec;
+import game.boosting.BoostSpecs;
 import init.resources.Minable;
 import init.sprite.UI.UI;
 import init.type.TERRAINS;
@@ -11,6 +12,7 @@ import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
 import world.region.building.RDBuilding;
+import world.region.pop.RDRace;
 
 public class PrPleGooEfficiencies {
     public static void POP_SCALING(RDBuilding bu) {
@@ -58,5 +60,17 @@ public class PrPleGooEfficiencies {
             }
 
         }.add(bu.efficiency));
+    }
+
+    public static void SLAVERY(RDBuilding bu, double from, double to) {
+        for(RDRace rdRace : RD.RACES().all){
+            bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Population, rdRace.race.appearance().icon), from, to, true) {
+                @Override
+                public double get(Region t) {
+                    return rdRace.pop.get(t) / 100.0;
+                }
+
+            }, RD.SLAVERY().boostable(rdRace));
+        }
     }
 }

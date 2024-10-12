@@ -8,6 +8,7 @@ import game.faction.npc.FactionNPC;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.RDSlavery;
 import prplegoo.regions.api.RDWorkers;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -56,6 +57,7 @@ public class RD extends WorldResource {
     private final RDDevastation deva;
     private final RDOrg org;
     private final RDWorkers workers;
+    private final RDSlavery slavery;
 
     private RDUpdater updater;
     private boolean distDirty = true;
@@ -92,6 +94,7 @@ public class RD extends WorldResource {
         deva = new RDDevastation(init);
         org = new RDOrg(init);
         workers = new RDWorkers();
+        slavery = new RDSlavery();
 
         Arrays.fill(factionI, -1);
 
@@ -369,6 +372,10 @@ public class RD extends WorldResource {
 
     public static RDWorkers WORKERS() {
         return self.workers;
+    }
+
+    public static RDSlavery SLAVERY(){
+        return self.slavery;
     }
 
     public static RDUpdater UPDATER() {

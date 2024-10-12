@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.45.3</version>
+    <version>0.67.46.0</version>
 
     <profiles>
         <profile>
@@ -195,6 +195,7 @@ Features:
 - Woodcutter worker maximum now tied to area and forest coverage.
 - Mine worker maximum now tied to deposits instead of scaling output.
 - Region health deteriorates 50% more.
+- Law gives you PoWs as tax from a region.
 
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
@@ -210,7 +211,6 @@ Planned features (in order, subject to change):
 - High loyalty/health boosts population.
 - Low loyalty/health drops population.
 - No resources from places without a town hall.
-- Slaves from taxes.
 - Temple sacrifices.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Supply armies directly from your regions.
@@ -228,7 +228,7 @@ Credits:
 - Argoon, SDK mod and technical support.
         </mod.info>
         <game.version.major>67</game.version.major>
-        <game.version.minor>45</game.version.minor>
+        <game.version.minor>46</game.version.minor>
 
         <!-- Mod SDK (this only applies when "mod-sdk" profile is enabled) -->
         <mod.sdk.version>0</mod.sdk.version>

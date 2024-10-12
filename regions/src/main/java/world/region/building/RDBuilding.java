@@ -443,10 +443,10 @@ public final class RDBuilding implements MAPPED{
         };
 
         private double g(Region t) {
-            double ta = tos[RD.BUILDINGS().tmp().level(bu, t)];
+            int i = RD.BUILDINGS().tmp().level(bu, t);
+            double ta = tos[i];
             if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
                 return ta;
-            int i = RD.BUILDINGS().tmp().level(bu, t);
             double vv = tos[i];
             if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
                 return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);

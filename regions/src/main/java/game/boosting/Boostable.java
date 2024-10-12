@@ -4,7 +4,6 @@ import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.type.POP_CL;
 import prplegoo.regions.api.MagicStringChecker;
-import snake2d.LOG;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;

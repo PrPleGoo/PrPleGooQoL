@@ -23,10 +23,14 @@ public abstract class PopScalerBooster extends RBooster {
 
     public abstract double getLimitScaler(Region t);
 
-    public abstract int getAssignedWorkforceLimit(Region t);
+    public int getAssignedWorkforceLimit(Region t) {
+        return -1;
+    }
 
     @Override
     public double get(Region t) {
+        // Sometimes we get a wrong result on the first get (´･ω･`)?
+        RD.RACES().workforce.get(t);
         double workforce = RD.RACES().workforce.get(t);
 
         if (workforce <= 0) {
@@ -71,7 +75,7 @@ public abstract class PopScalerBooster extends RBooster {
 
         int x = 1;
 
-        while(assignedWorkforce > maxAssignableWorkers && x > 0){
+        while(assignedWorkforce > maxAssignableWorkers && x < assignedWorkersInThisBuilding){
             assignedWorkforce = assignableWorkforce * (assignedWorkersInThisBuilding - x) / (assignedWorkersInRegion - x);
             x++;
         }

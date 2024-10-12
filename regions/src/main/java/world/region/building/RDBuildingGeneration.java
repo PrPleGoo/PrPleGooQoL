@@ -157,6 +157,7 @@ class RDBuildingGeneration {
                     else {
                         ROOM_MINE f = (ROOM_MINE) blue;
 
+                        PrPleGooEfficiencies.MINABLE(bu, f.minable, 0.3, 1.5);
                         PrPleGooEfficiencies.POP_SCALING_MINABLE(bu, f.minable);
                     }
 

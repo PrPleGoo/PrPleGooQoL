@@ -71,7 +71,7 @@ public class RDWorkers implements Phases {
     }
 
     public int get(Region region, RDBuilding building) {
-        if (building.isPopScaler && building.level.get(region) != 0) {
+        if (building.isPopScaler && (building.level.get(region) != 0 || RD.BUILDINGS().tmp().level(building, region) != 0)) {
             return allocatedWorkers[region.index()][building.index()];
         }
 

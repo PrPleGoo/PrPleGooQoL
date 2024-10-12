@@ -74,7 +74,7 @@ class RDBuildingGeneration {
                 if (!b.constructor().mustBeIndoors())
                     all.add(b);
             }
-            new GenIndustry("agriculture", "_GENERATE_OUTDOORS", all){
+            new GenIndustry("agriculture", "_GENERATE_OUTDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
@@ -120,15 +120,14 @@ class RDBuildingGeneration {
                 if (!b.constructor().mustBeIndoors())
                     all.add(b);
             }
-            new GenIndustry("pasture", "_GENERATE_OUTDOORS", all){
+            new GenIndustry("pasture", "_GENERATE_OUTDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
-                    }
-                    else {
+                    } else {
                         BoostSpec bo = Efficiencies.FERTILITY(0.1, 1.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
 
@@ -143,7 +142,6 @@ class RDBuildingGeneration {
             };
 
 
-
         }
 
         {
@@ -153,8 +151,7 @@ class RDBuildingGeneration {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
                     if (blue instanceof ROOM_WOODCUTTER) {
                         PrPleGooEfficiencies.POP_SCALING_WOOD(bu);
-                    }
-                    else {
+                    } else {
                         ROOM_MINE f = (ROOM_MINE) blue;
 
                         PrPleGooEfficiencies.MINABLE(bu, f.minable, 0.3, 1.5);
@@ -214,11 +211,11 @@ class RDBuildingGeneration {
         private final LIST<RoomBlueprintImp> rooms;
         private final ArrayListGrower<Tuple<RDBuilding, RoomBlueprintImp>> tmps = new ArrayListGrower<>();
 
-        protected boolean isPopScaler(){
+        protected boolean isPopScaler() {
             return false;
         }
 
-        Gen(String folder, String file, LIST<RoomBlueprintImp> rooms){
+        Gen(String folder, String file, LIST<RoomBlueprintImp> rooms) {
             this.file = file;
             this.rooms = new ArrayList<>(rooms);
             if (!gens.containsKey(folder))
@@ -247,6 +244,7 @@ class RDBuildingGeneration {
                 if (omitt.contains(room))
                     continue;
                 RDBuilding bu = generate(all, init, levels, cat, room, aibuild, order);
+
                 tmps.add(new Tuple.TupleImp<>(bu, room));
             }
 
@@ -268,8 +266,8 @@ class RDBuildingGeneration {
             ArrayListGrower<RDBuildingLevel> levels = new ArrayListGrower<>();
 
             for (int i = 0; i < jlevels.length; i++) {
-                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i+1);
-                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_"+(i+1), n, blue.info.desc, blue.iconBig());
+                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i + 1);
+                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_" + (i + 1), n, blue.info.desc, blue.iconBig());
 
                 RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
                 levels.add(b);
@@ -279,7 +277,7 @@ class RDBuildingGeneration {
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, isPopScaler());
 
             for (int i = 0; i < jlevels.length; i++) {
-                RDBuildingLevel l = bu.levels.get(i+1);
+                RDBuildingLevel l = bu.levels.get(i + 1);
                 Json j = jlevels[i];
                 l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.global.read("BOOST_GLOBAL", j, RDBuildingCat.lGlobal, Dic.¤¤global, false);
@@ -299,8 +297,8 @@ class RDBuildingGeneration {
 
         protected void consume(RDBuilding bu, double[] values, double dv, Boostable bo, boolean mul, boolean global) {
             for (int i = 0; i < values.length; i++) {
-                RDBuildingLevel b = bu.levels.get(i+1);
-                double v = values[i]*dv;
+                RDBuildingLevel b = bu.levels.get(i + 1);
+                double v = values[i] * dv;
                 if (v == 0 && !mul)
                     continue;
                 if (v == 1 && mul)
@@ -313,7 +311,7 @@ class RDBuildingGeneration {
 
     private class GenIndustry extends Gen {
         @Override
-        protected boolean isPopScaler(){
+        protected boolean isPopScaler() {
             return true;
         }
 
@@ -339,14 +337,13 @@ class RDBuildingGeneration {
         }
 
         @Override
-        RDBuilding generate(LISTE<RDBuilding> all, RDInit init, Json[] jlevels, RDBuildingCat cat, RoomBlueprintImp blue, boolean aiBuild, String order)
-        {
+        RDBuilding generate(LISTE<RDBuilding> all, RDInit init, Json[] jlevels, RDBuildingCat cat, RoomBlueprintImp blue, boolean aiBuild, String order) {
             INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
             ArrayListGrower<RDBuildingLevel> levels = new ArrayListGrower<>();
 
             for (int i = 0; i < h.industries().size(); i++) {
-                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i+1);
-                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_"+(i+1), n, blue.info.desc, blue.iconBig());
+                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i + 1);
+                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_" + (i + 1), n, blue.info.desc, blue.iconBig());
 
                 RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
                 levels.add(b);
@@ -355,7 +352,7 @@ class RDBuildingGeneration {
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, true);
 
             for (int i = 0; i < jlevels.length; i++) {
-                RDBuildingLevel l = bu.levels.get(i+1);
+                RDBuildingLevel l = bu.levels.get(i + 1);
                 Json j = jlevels[0];
                 l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.cost = j.i("CREDITS", 0, 1000000, 0);
@@ -365,13 +362,13 @@ class RDBuildingGeneration {
         }
 
         @Override
-        void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) { }
+        void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
+        }
 
         void connect(RDBuilding bu, RoomBlueprintImp blue) {
             INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
 
-            for(int i = 0; i < h.industries().size(); i++)
-            {
+            for (int i = 0; i < h.industries().size(); i++) {
                 Industry recipe = h.industries().get(i);
 
                 for (IndustryResource r : recipe.outs()) {
@@ -416,7 +413,7 @@ class RDBuildingGeneration {
         }
 
     }
-    
+
     private static class LBoost extends BoosterImp {
 
         private final RDBuilding bu;
@@ -430,9 +427,7 @@ class RDBuildingGeneration {
         public double vGet(Region reg) {
             if (isPositive(1.0)) {
                 return getValue(bu.efficiency.get(reg));
-            }
-            else
-            {
+            } else {
                 return getValue(1.0);
             }
         }
@@ -440,7 +435,9 @@ class RDBuildingGeneration {
         @Override
         public boolean has(Class<?> b) {
             return b == Region.class;
-        };
+        }
+
+        ;
 
         @Override
         public double vGet(Faction f) {

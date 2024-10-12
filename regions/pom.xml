@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.0</version>
+    <version>0.67.46.1</version>
 
     <profiles>
         <profile>
@@ -196,6 +196,7 @@ Features:
 - Mine worker maximum now tied to deposits instead of scaling output.
 - Region health deteriorates 50% more.
 - Law gives you PoWs as tax from a region.
+- Tax buildings are now multipliers.
 
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
@@ -205,7 +206,6 @@ Known issues:
 - There's no way to view the maximum assignable workers to a woodcutter/mine.
 
 Planned features (in order, subject to change):
-- Tax buildings should be multipliers.
 - Use racial preferences to make production buildings give some loyalty.
 - Use food instead of admin to grow cities.
 - High loyalty/health boosts population.

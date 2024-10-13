@@ -206,15 +206,11 @@ Known issues:
 - Getting flooded with PoW for cheap loyalty is annoying, makes PoWs toggleable.
 
 Planned features (in order, subject to change):
-- Use racial preferences to make production buildings give some loyalty.
 - Use food instead of admin to grow cities.
 - A building that specializes in slave output.
 - No resources from places without a town hall.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Supply armies directly from your regions.
-- Temple sacrifices.
-- High loyalty/health boosts population.
-- Low loyalty/health drops population.
 - AI empires use production to do work on their stockpiles.
 - Instruct vassals to produce specific goods.
 

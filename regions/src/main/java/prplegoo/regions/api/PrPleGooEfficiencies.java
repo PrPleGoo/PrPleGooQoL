@@ -1,10 +1,7 @@
 package prplegoo.regions.api;
 
-import game.boosting.BSourceInfo;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
+import game.boosting.*;
 import init.resources.Minable;
-import init.sprite.UI.UI;
 import init.type.TERRAINS;
 import snake2d.util.misc.CLAMP;
 import util.dic.Dic;
@@ -15,17 +12,17 @@ import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
 public class PrPleGooEfficiencies {
-    public static void POP_SCALING(RDBuilding bu) {
-        bu.baseFactors.add(new PopScalerBooster(bu) {
+    public static RBooster POP_SCALING(RDBuilding bu) {
+        return new PopScalerBooster(bu) {
             @Override
             public double getLimitScaler(Region t) {
                 return 1.0;
             }
-        }.add(bu.efficiency));
+        };
     }
 
-    public static void POP_SCALING_WOOD(RDBuilding bu) {
-        bu.baseFactors.add(new PopScalerBooster(bu) {
+    public static RBooster POP_SCALING_WOOD(RDBuilding bu) {
+        return new PopScalerBooster(bu) {
             @Override
             public double getLimitScaler(Region t) {
                 return t.info.terrain(TERRAINS.FOREST());
@@ -35,11 +32,11 @@ public class PrPleGooEfficiencies {
             public int getAssignedWorkforceLimit(Region t) {
                 return t.info.area() * 15;
             }
-        }.add(bu.efficiency));
+        };
     }
 
-    public static void POP_SCALING_MINABLE(RDBuilding bu, Minable minable) {
-        bu.baseFactors.add(new PopScalerBooster(bu) {
+    public static RBooster POP_SCALING_MINABLE(RDBuilding bu, Minable minable) {
+        return new PopScalerBooster(bu) {
             @Override
             public double getLimitScaler(Region t) {
                 return t.info.minableD(minable);
@@ -49,7 +46,7 @@ public class PrPleGooEfficiencies {
             public int getAssignedWorkforceLimit(Region t) {
                 return 150;
             }
-        }.add(bu.efficiency));
+        };
     }
 
     public static void MINABLE(RDBuilding bu, Minable minable, double from, double to) {
@@ -58,12 +55,11 @@ public class PrPleGooEfficiencies {
             public double get(Region t) {
                 return CLAMP.d(t.info.minableD(minable) / 2, from, to);
             }
-
         }.add(bu.efficiency));
     }
 
     public static void SLAVERY(RDBuilding bu, double from, double to) {
-        for(RDRace rdRace : RD.RACES().all){
+        for (RDRace rdRace : RD.RACES().all) {
             bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Population, rdRace.race.appearance().icon), from, to, true) {
                 @Override
                 public double get(Region t) {

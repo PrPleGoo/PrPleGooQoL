@@ -1,29 +1,13 @@
 package world.region.building;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import game.boosting.BOOSTABLE_O;
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.Boostable;
-import game.boosting.BoostableCat;
-import game.boosting.BoosterImp;
-import game.boosting.BoosterSimple;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
 import prplegoo.regions.api.MagicStringChecker;
-import snake2d.LOG;
-import snake2d.util.sets.ArrayList;
-import snake2d.util.sets.ArrayListGrower;
-import snake2d.util.sets.KeyMap;
-import snake2d.util.sets.LIST;
-import snake2d.util.sets.LISTE;
+import snake2d.util.sets.*;
 import snake2d.util.sprite.SPRITE;
 import util.data.BOOLEANO;
 import util.data.INT_O;
@@ -32,9 +16,12 @@ import util.dic.Dic;
 import util.info.INFO;
 import util.keymap.MAPPED;
 import world.map.regions.Region;
+import world.region.RBooster;
 import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.RDDefis.RDDef;
+
+import java.util.Arrays;
 
 public final class RDBuilding implements MAPPED{
 
@@ -42,6 +29,7 @@ public final class RDBuilding implements MAPPED{
     private final BoostSpecs boosters;
     private final ArrayListGrower<BBoost> bboosts = new ArrayListGrower<>();
     public final Boostable efficiency;
+    public RBooster popScaling;
     public final INT_OE<Region> level;
     public final LIST<RDBuildingLevel> levels;
     public final INFO info;
@@ -449,7 +437,7 @@ public final class RDBuilding implements MAPPED{
                 return ta;
             double vv = tos[i];
             if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
-                return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);
+                return froms[i] + bu.efficiency.get(t) * (tos[i] - froms[i]) * (bu.isPopScaler ? bu.popScaling.vGet(t) : 1);
             }
             return vv;
 

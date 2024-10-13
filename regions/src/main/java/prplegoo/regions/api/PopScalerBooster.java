@@ -10,7 +10,7 @@ import world.region.RD;
 import world.region.building.RDBuilding;
 
 public abstract class PopScalerBooster extends RBooster {
-    public static final CharSequence TOTAL_WORKFORCE_SPLIT_DESC = "Population";
+    public static final CharSequence TOTAL_WORKFORCE_SPLIT_DESC = "Allocated workers:";
     private static final int MAX_ASSIGNABLE_WORKERS = 1000000;
 
     private final RDBuilding building;
@@ -64,7 +64,7 @@ public abstract class PopScalerBooster extends RBooster {
             assignedWorkforce = correctWorkerSplit(assignedWorkforce, assignableWorkforce, assignedWorkersInThisBuilding, assignedWorkersInRegion, t);
         }
 
-        return CLAMP.d(assignedWorkforce / MAX_ASSIGNABLE_WORKERS, 0.0, 1.0);
+        return CLAMP.d(assignedWorkforce, 0.0, MAX_ASSIGNABLE_WORKERS);
     }
 
     private double correctWorkerSplit(double assignedWorkforce, double assignableWorkforce, int assignedWorkersInThisBuilding, int assignedWorkersInRegion, Region region) {

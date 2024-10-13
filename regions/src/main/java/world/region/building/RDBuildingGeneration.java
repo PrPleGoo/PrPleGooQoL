@@ -38,6 +38,8 @@ import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.pop.RDRace;
 
+import java.util.HashMap;
+
 class RDBuildingGeneration {
 
     private final KeyMap<LISTE<Gen>> gens = new KeyMap<>();
@@ -62,9 +64,8 @@ class RDBuildingGeneration {
             new GenIndustry("agriculture", "_GENERATE_INDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -77,7 +78,8 @@ class RDBuildingGeneration {
             new GenIndustry("agriculture", "_GENERATE_OUTDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
                     double mi = 0.1;
                     double ma = 1.0;
                     if (blue instanceof ROOM_ORCHARD) {
@@ -87,8 +89,6 @@ class RDBuildingGeneration {
                     BoostSpec bo = Efficiencies.FERTILITY(mi, ma, true).add(bu.efficiency);
 
                     bu.baseFactors.add(bo);
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -104,13 +104,12 @@ class RDBuildingGeneration {
             new GenIndustry("pasture", "_GENERATE_INDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
                     }
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -123,7 +122,8 @@ class RDBuildingGeneration {
             new GenIndustry("pasture", "_GENERATE_OUTDOORS", all) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
@@ -134,8 +134,6 @@ class RDBuildingGeneration {
                         bo = Efficiencies.WATER(1.00, 1.25, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
                     }
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
 
                     super.connect(bu, blue, local, global);
                 }
@@ -149,15 +147,11 @@ class RDBuildingGeneration {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-                    if (blue instanceof ROOM_WOODCUTTER) {
-                        PrPleGooEfficiencies.POP_SCALING_WOOD(bu);
-                    } else {
-                        ROOM_MINE f = (ROOM_MINE) blue;
 
-                        PrPleGooEfficiencies.MINABLE(bu, f.minable, 0.3, 1.5);
-                        PrPleGooEfficiencies.POP_SCALING_MINABLE(bu, f.minable);
+                    if(blue instanceof ROOM_MINE){
+                        ROOM_MINE mine = (ROOM_MINE) blue;
+                        PrPleGooEfficiencies.MINABLE(bu, mine.minable, 0.3, 2);
                     }
-
 
                     super.connect(bu, blue, local, global);
                 }
@@ -168,9 +162,8 @@ class RDBuildingGeneration {
             new GenIndustryWithRecipes("refinery", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().REFINERS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
 
                     connect(bu, blue);
                 }
@@ -181,9 +174,8 @@ class RDBuildingGeneration {
             new GenIndustryWithRecipes("workshop", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WORKSHOPS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-
-                    PrPleGooEfficiencies.POP_SCALING(bu);
+                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
+                    mimic(bu, boost);
 
                     connect(bu, blue);
                 }
@@ -304,7 +296,8 @@ class RDBuildingGeneration {
                 if (v == 1 && mul)
                     continue;
                 BoostSpecs ss = global ? b.global : b.local;
-                ss.push(new LBoost(bu, v, mul), bo);
+                BoosterImp lBoost = new LBoost(bu, v, mul);
+                ss.push(lBoost, bo);
             }
         }
     }
@@ -322,10 +315,22 @@ class RDBuildingGeneration {
         @Override
         void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
             INDUSTRY_HASER h = (INDUSTRY_HASER) blue;
-
             for (IndustryResource r : h.industries().get(0).outs()) {
-                consume(bu, local, r.rate, RD.OUTPUT().get(r.resource).boost, false, false);
-                consume(bu, global, r.rate, RD.OUTPUT().get(r.resource).boost, false, true);
+                Boostable boost = RD.OUTPUT().get(r.resource).boost;
+
+                consume(bu, local, r.rate, boost, false, false);
+                consume(bu, global, r.rate, boost, false, true);
+            }
+            if (bu.isPopScaler) {
+                if(blue instanceof ROOM_WOODCUTTER){
+                    bu.popScaling = PrPleGooEfficiencies.POP_SCALING_WOOD(bu);
+                } else if(blue instanceof ROOM_MINE){
+                    ROOM_MINE mine = (ROOM_MINE) blue;
+
+                    bu.popScaling = PrPleGooEfficiencies.POP_SCALING_MINABLE(bu, mine.minable);
+                }else {
+                    bu.popScaling = PrPleGooEfficiencies.POP_SCALING(bu);
+                }
             }
         }
     }
@@ -372,19 +377,24 @@ class RDBuildingGeneration {
                 Industry recipe = h.industries().get(i);
 
                 for (IndustryResource r : recipe.outs()) {
-                    consume(bu, i, r.rate, RD.OUTPUT().get(r.resource).boost);
+                    Boostable boost = RD.OUTPUT().get(r.resource).boost;
+                    consume(bu, i, r.rate, boost);
                 }
 
                 for (IndustryResource r : recipe.ins()) {
-                    consume(bu, i, -r.rate, RD.OUTPUT().get(r.resource).boost);
+                    Boostable boost = RD.OUTPUT().get(r.resource).boost;
+                    consume(bu, i, -r.rate, boost);
                 }
             }
+
+            bu.popScaling = PrPleGooEfficiencies.POP_SCALING(bu);
         }
 
         private void consume(RDBuilding bu, int i, double dv, Boostable bo) {
             RDBuildingLevel b = bu.levels.get(i + 1);
 
-            b.local.push(new LBoost(bu, dv, false), bo);
+            BoosterImp lBoost = new LBoost(bu, dv, false);
+            b.local.push(lBoost, bo);
         }
     }
 
@@ -436,8 +446,6 @@ class RDBuildingGeneration {
         public boolean has(Class<?> b) {
             return b == Region.class;
         }
-
-        ;
 
         @Override
         public double vGet(Faction f) {

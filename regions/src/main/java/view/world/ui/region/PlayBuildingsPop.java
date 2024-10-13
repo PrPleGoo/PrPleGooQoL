@@ -201,14 +201,11 @@ class PlayBuildingsPop {
             GFORMAT.toNumeral(num, level);
             num.renderCY(r, body().x1() + 48, body.cY());
 
-            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
-                if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
-                    OPACITY.O50.bind();
-                    COLOR.BLACK.render(r, body, -1);
-                    OPACITY.unbind();
-                }
+            if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
+                OPACITY.O50.bind();
+                COLOR.BLACK.render(r, body, -1);
+                OPACITY.unbind();
             }
-
         }
 
         @Override

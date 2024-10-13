@@ -106,10 +106,6 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
                     mimic(bu, boost);
-                    if (blue instanceof ROOM_FISHERY) {
-                        BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
-                        bu.baseFactors.add(bo);
-                    }
 
                     super.connect(bu, blue, local, global);
                 }
@@ -150,7 +146,7 @@ class RDBuildingGeneration {
 
                     if(blue instanceof ROOM_MINE){
                         ROOM_MINE mine = (ROOM_MINE) blue;
-                        PrPleGooEfficiencies.MINABLE(bu, mine.minable, 0.3, 2);
+                        PrPleGooEfficiencies.MINABLE(bu, mine.minable, 0.5, 2);
                     }
 
                     super.connect(bu, blue, local, global);
@@ -263,7 +259,6 @@ class RDBuildingGeneration {
 
                 RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
                 levels.add(b);
-
             }
 
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, isPopScaler());

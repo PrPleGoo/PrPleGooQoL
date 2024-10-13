@@ -201,8 +201,8 @@ Features:
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - Negative production values could be ignored for a massive early game boost.
-- Unlockable recipes' lock-status have no relation to how useable the recipes are in regions.
 - There's no way to view the maximum assignable workers to a woodcutter/mine.
+- The assigned worker count is now even more obfuscated.
 - Getting flooded with PoW for cheap loyalty is annoying, makes PoWs toggleable.
 
 Planned features (in order, subject to change):

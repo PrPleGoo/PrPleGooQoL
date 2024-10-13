@@ -275,7 +275,7 @@ public final class RDBuilding implements MAPPED{
                         @Override
                         public double vGet(Region t) {
                             if (t.faction() == FACTIONS.player()) {
-                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= ll)
+                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) == ll)
                                     return l.unlocker.inUnlocked(t) ? 1 : 0;
                             }
                             return 1;
@@ -303,9 +303,6 @@ public final class RDBuilding implements MAPPED{
     }
 
     public boolean canAfford(Region reg, int lc, int level) {
-
-        if (level <= lc)
-            return true;
         if (level >= levels.size())
             return false;
 
@@ -316,10 +313,8 @@ public final class RDBuilding implements MAPPED{
         }
 
 
-        for (int i =lc; i <= level; i++) {
-            if (!levels.get(i).reqs.passes(reg))
-                return false;
-        }
+        if (!levels.get(level).reqs.passes(reg))
+            return false;
 
         for (BBoost b : bboosts)
             if (!b.canAfford(reg, lc, level))

@@ -3,8 +3,6 @@ package prplegoo.regions.api;
 import game.boosting.*;
 import init.resources.Minable;
 import init.type.TERRAINS;
-import snake2d.LOG;
-import snake2d.util.misc.CLAMP;
 import util.dic.Dic;
 import world.map.regions.Region;
 import world.region.RBooster;
@@ -48,15 +46,6 @@ public class PrPleGooEfficiencies {
                 return 150;
             }
         };
-    }
-
-    public static void MINABLE(RDBuilding bu, Minable minable, double from, double to) {
-        bu.baseFactors.add(new RBooster(new BSourceInfo(Dic.¤¤Minerals, minable.resource.icon()), from, to, true) {
-            @Override
-            public double get(Region t) {
-                return CLAMP.d((t.info.minableD(minable) - from) / to / to, 0, 1);
-            }
-        }.add(bu.efficiency));
     }
 
     public static void SLAVERY(RDBuilding bu, double from, double to) {

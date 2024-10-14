@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.2</version>
+    <version>0.67.46.3</version>
 
     <profiles>
         <profile>
@@ -194,7 +194,6 @@ Features:
 - Use sliders to allocate workers to specific buildings.
 - Woodcutter worker maximum now tied to area and forest coverage.
 - Mine worker maximum now tied to deposits instead of scaling output.
-- Region health deteriorates 50% more.
 - Law gives you PoWs as tax from a region.
 - Tax buildings are now multipliers.
 
@@ -203,7 +202,7 @@ Known issues:
 - Negative production values could be ignored for a massive early game boost.
 - There's no way to view the maximum assignable workers to a woodcutter/mine.
 - The assigned worker count is now even more obfuscated.
-- Getting flooded with PoW for cheap loyalty is annoying, makes PoWs toggleable.
+- Getting flooded with PoWs for cheap loyalty can be annoying, getting PoWs should be toggleable.
 
 Planned features (in order, subject to change):
 - Use food instead of admin to grow cities.

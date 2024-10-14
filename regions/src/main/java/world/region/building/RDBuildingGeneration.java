@@ -144,11 +144,6 @@ class RDBuildingGeneration {
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
-                    if(blue instanceof ROOM_MINE){
-                        ROOM_MINE mine = (ROOM_MINE) blue;
-                        PrPleGooEfficiencies.MINABLE(bu, mine.minable, 0.5, 2);
-                    }
-
                     super.connect(bu, blue, local, global);
                 }
             };
@@ -158,8 +153,7 @@ class RDBuildingGeneration {
             new GenIndustryWithRecipes("refinery", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().REFINERS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
-                    mimic(bu, boost);
+                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
                     connect(bu, blue);
                 }
@@ -170,8 +164,7 @@ class RDBuildingGeneration {
             new GenIndustryWithRecipes("workshop", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WORKSHOPS)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
-                    Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
-                    mimic(bu, boost);
+                    mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
 
                     connect(bu, blue);
                 }

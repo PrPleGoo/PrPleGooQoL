@@ -113,6 +113,8 @@ This mod changes a few interactions in the game:
 - Keypad enter to work on all places where enter works.
 - Holding shift when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
 - Enter (so keypad enter too) now confirms confirmation dialogues.
+- Hold shift to not get prompted for assigning punishments in the stockades.
+- You can filter punishments by race in the stockades.
 
 I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
 If you have any more suggestions like this, feel free to contact me on discord or steam.

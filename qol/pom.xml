@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.67.46.0</version>
+    <version>0.67.46.1</version>
 
     <profiles>
         <profile>
@@ -115,6 +115,7 @@ This mod changes a few interactions in the game:
 - Enter (so keypad enter too) now confirms confirmation dialogues.
 - Hold shift to not get prompted for assigning punishments in the stockades.
 - You can filter punishments by race in the stockades.
+- A little arrow over the resources to show if your consumption is outpacing your income.
 
 I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
 If you have any more suggestions like this, feel free to contact me on discord or steam.

@@ -60,7 +60,7 @@ public abstract class PopScalerBooster extends RBooster {
 
         double assignedWorkforce = assignableWorkforce * workerSplit;
 
-        if (getAssignedWorkforceLimit(t) != -1 && assignedWorkersInRegion != assignedWorkersInThisBuilding) {
+        if (getAssignedWorkforceLimit(t) != -1) {
             assignedWorkforce = correctWorkerSplit(assignedWorkforce, assignableWorkforce, assignedWorkersInThisBuilding, assignedWorkersInRegion, t);
         }
 
@@ -71,6 +71,10 @@ public abstract class PopScalerBooster extends RBooster {
         double maxAssignableWorkers = getAssignedWorkforceLimit(region) * getLimitScaler(region);
         if (maxAssignableWorkers > assignedWorkforce) {
             return assignedWorkforce;
+        }
+
+        if(assignedWorkersInRegion == assignedWorkersInThisBuilding){
+            return maxAssignableWorkers;
         }
 
         int x = 1;

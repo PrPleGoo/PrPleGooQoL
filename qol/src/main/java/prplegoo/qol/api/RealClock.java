@@ -1,7 +1,6 @@
 package prplegoo.qol.api;
 
-import snake2d.util.gui.GuiSection;
-import snake2d.util.gui.renderable.RENDEROBJ;
+import snake2d.SPRITE_RENDERER;
 import util.gui.misc.GBox;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,18 @@ public class RealClock extends GBox {
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
             .toFormatter();
 
-    public RealClock() {
+    public RealClock(){
+        setTime();
+    }
+
+    private void setTime(){
         text(LocalDateTime.now().format(HOUR_MINUTE));
+    }
+
+    @Override
+    public void render(SPRITE_RENDERER r, int X1, int X2, int Y1, int Y2) {
+        clear();
+        setTime();
+        super.render(r, X1, X2, Y1, Y2);
     }
 }

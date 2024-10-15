@@ -1,0 +1,8 @@
+AI_BUILDS: false,
+LEVELS: [
+	{
+		ICON: 32->SERVICE->6,
+		CREDITS: 0,
+	},
+],
+

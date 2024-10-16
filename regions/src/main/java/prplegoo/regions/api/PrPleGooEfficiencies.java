@@ -53,7 +53,7 @@ public class PrPleGooEfficiencies {
 
     public static void SLAVERY(RDBuilding bu, double from, double to) {
         for (RDRace rdRace : RD.RACES().all) {
-            bu.boosters().push(new RBooster(new BSourceInfo("¤Prisoners", rdRace.race.appearance().icon), from, to, true) {
+            bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Population, rdRace.race.appearance().icon), from, to, true) {
                 @Override
                 public double get(Region t) {
                     return rdRace.pop.get(t) / 100.0;
@@ -64,8 +64,6 @@ public class PrPleGooEfficiencies {
     }
 
     public static void FOOD_CONSUMER(RDBuilding bu) {
-        final int MAX_FOOD_CONSUMPTION = 1000000;
-
         for (RESOURCE food : RESOURCES.EDI().res()) {
             bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Food, food.icon()), 0, 1, false) {
                 @Override

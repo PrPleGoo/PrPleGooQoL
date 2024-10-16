@@ -4,7 +4,6 @@ import com.github.argon.sos.mod.sdk.phase.Phases;
 import game.boosting.BOOSTING;
 import game.boosting.Boostable;
 import game.boosting.BoostableCat;
-import init.resources.RESOURCES;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import util.dic.Dic;
@@ -14,7 +13,7 @@ import world.region.pop.RDRace;
 
 import java.nio.file.Path;
 
-public class RDSlavery implements Phases {
+public class RDSlavery {
 
     private ArrayList<RDSlave> all;
 
@@ -29,19 +28,6 @@ public class RDSlavery implements Phases {
             all.add(new RDSlavery.RDSlave(race));
         }
         this.all = all;
-    }
-
-    @Override
-    public void onGameLoaded(Path saveFilePath) {
-        LOG.ln("RDSlavery.onGameSaveLoaded " + saveFilePath);
-    }
-
-    @Override
-    public void onGameSaved(Path saveFilePath) {
-        LOG.ln("RDSlavery.onGameSaved " + saveFilePath);
-    }
-
-    private void initialize() {
     }
 
     public Boostable boostable(RDRace rdRace) {

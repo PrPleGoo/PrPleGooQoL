@@ -1,5 +1,5 @@
-NAME: "Placeholder",
-DESC: "Does nothing",
+NAME: "Food distribution",
+DESC: "Feed the plebs in this region to increase the workforce. Pleb love getting food servings so it boosts loyalty as well. Please select the types of foods you'd like them to receive.",
 
 LEVELS: [
 	

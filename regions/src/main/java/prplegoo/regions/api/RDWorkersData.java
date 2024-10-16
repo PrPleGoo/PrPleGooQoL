@@ -9,11 +9,12 @@ import lombok.*;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
-public class JsonStore {
+public class RDWorkersData {
     @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
     public int[][] data;
 
-    public JsonStore(int[][] data) {
+    public RDWorkersData(int[][] data) {
         this.data = data;
     }
 }
+

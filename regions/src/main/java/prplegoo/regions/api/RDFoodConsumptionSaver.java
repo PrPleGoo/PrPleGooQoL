@@ -9,37 +9,36 @@ import world.region.RD;
 
 import java.nio.file.Path;
 
-public class RDWorkersSaver extends AbstractModSdkScript {
+public class RDFoodConsumptionSaver extends AbstractModSdkScript {
     @Override
     public boolean forceInit() {
-        LOG.ln("RDWorkersSaver.forceInit");
+        LOG.ln("RDFoodConsumptionSaver.forceInit");
         return true;
     }
 
     public CharSequence name() {
-        return "RDWorkers.Saver";
+        return "RDFoodConsumptionSaver.Saver";
     }
 
     @Override
     public CharSequence desc() {
-        return "Saves RDWorkers.";
+        return "Saves RDFoodConsumptionSaver.";
     }
 
     @Override
     protected void registerPhases(PhaseManager phaseManager) {
-        LOG.ln("RDWorkersSaver.registerPhases");
+        LOG.ln("RDFoodConsumptionSaver.registerPhases");
         phaseManager.register(Phase.ON_GAME_SAVE_LOADED, new Phases() {
             @Override
             public void onGameLoaded(Path saveFilePath) {
-                RD.WORKERS().onGameLoaded(saveFilePath);
+                RD.FOOD_CONSUMPTION().onGameLoaded(saveFilePath);
             }
         });
         phaseManager.register(Phase.ON_GAME_SAVED, new Phases() {
             @Override
             public void onGameSaved(Path saveFilePath) {
-                RD.WORKERS().onGameSaved(saveFilePath);
+                RD.FOOD_CONSUMPTION().onGameSaved(saveFilePath);
             }
         });
     }
 }
-

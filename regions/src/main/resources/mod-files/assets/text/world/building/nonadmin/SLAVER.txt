@@ -1,5 +1,5 @@
-NAME: "Placeholder",
-DESC: "Does nothing",
+NAME: "Slaver's guild",
+DESC: "Actively persecute plebs in this region. The capital needs its meatsacks and by the grace of the Gods we shall have our fill.",
 
 LEVELS: [
 	

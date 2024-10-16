@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.4</version>
+    <version>0.67.46.5</version>
 
     <profiles>
         <profile>
@@ -196,18 +196,17 @@ Features:
 - Mine worker maximum now tied to deposits instead of scaling output.
 - Law gives you PoWs as tax from a region.
 - Tax buildings are now multipliers.
+- A food stall to use food instead of admin to grow cities.
+- Slaver's guild building that specializes in PoW output.
 
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - Negative production values could be ignored for a massive early game boost.
 - There's no way to view the maximum assignable workers to a woodcutter/mine.
 - The assigned worker count is now even more obfuscated.
-- Getting flooded with PoWs for cheap loyalty can be annoying, getting PoWs should be toggleable.
 
 Planned features (in order, subject to change):
-- Use food instead of admin to grow cities.
-- A building that specializes in slave output.
-- No resources from places without a town hall.
+- Nerf base taxe rate.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Supply armies directly from your regions.
 - AI empires use production to do work on their stockpiles.

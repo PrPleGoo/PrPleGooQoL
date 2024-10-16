@@ -15,11 +15,11 @@ public class RealClock extends GBox {
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
             .toFormatter();
 
-    public RealClock(){
+    public RealClock() {
         setTime();
     }
 
-    private void setTime(){
+    private void setTime() {
         text(LocalDateTime.now().format(HOUR_MINUTE));
     }
 

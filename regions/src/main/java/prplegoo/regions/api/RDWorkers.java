@@ -31,7 +31,7 @@ public class RDWorkers implements Phases {
         jsonConfigStore.bindToSave(RDWorkersData.class, "RDWorkers", PATHS.local().SAVE.get().resolve("PrPleGoo"), false);
 
         RDWorkersData data = jsonConfigStore.get(RDWorkersData.class).orElse(null);
-        if (data == null) {
+        if (data == null || !isValid(data.data)) {
             LOG.ln("RWWorkers.onGameSaveLoaded: data null, initializing");
             initialize();
             return;
@@ -45,6 +45,10 @@ public class RDWorkers implements Phases {
     public void onGameSaved(Path saveFilePath) {
         LOG.ln("RWWorkers.onGameSaved " + saveFilePath);
         jsonConfigStore.save(new RDWorkersData(allocatedWorkers));
+    }
+
+    private boolean isValid(int[][] data){
+        return data.length == WORLD.REGIONS().all().size() && data[0].length == RD.BUILDINGS().all.size();
     }
 
     private void initialize() {

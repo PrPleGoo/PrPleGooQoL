@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.5</version>
+    <version>0.67.46.6</version>
 
     <profiles>
         <profile>
@@ -198,6 +198,7 @@ Features:
 - Tax buildings are now multipliers.
 - A food stall to use food instead of admin to grow cities.
 - Slaver's guild building that specializes in PoW output.
+- Fixed distance for regions, meaning you now need to build roads for regions to be effective.
 
 Known issues:
 - After a battle all your pop allocation values are reset (waiting on fix in SDK).
@@ -206,7 +207,7 @@ Known issues:
 - The assigned worker count is now even more obfuscated.
 
 Planned features (in order, subject to change):
-- Nerf base taxe rate.
+- Nerf base taxe rate (denari).
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Supply armies directly from your regions.
 - AI empires use production to do work on their stockpiles.

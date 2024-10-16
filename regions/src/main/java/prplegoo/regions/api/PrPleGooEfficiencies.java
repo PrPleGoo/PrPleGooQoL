@@ -76,7 +76,6 @@ public class PrPleGooEfficiencies {
                     int totalPop = RD.RACES().population.get(t);
                     double foodConsumption = RD.FOOD_CONSUMPTION().booster.get(t);
 
-                    LOG.ln("foodConsumption: " + foodConsumption + " totalPop: " + totalPop + " totalFoods: " + totalFoods);
                     return foodConsumption * totalPop / totalFoods;
                 }
 

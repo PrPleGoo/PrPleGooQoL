@@ -1,15 +1,11 @@
 package init.sprite.UI;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 
 import game.GAME;
 import game.time.TIME;
 import init.paths.PATHS;
-import javafx.util.converter.LocalDateTimeStringConverter;
-import prplegoo.qol.api.RealClock;
+import prplegoo.qol.ui.RealClock;
 import settlement.main.SETT;
 import snake2d.CORE;
 import snake2d.SPRITE_RENDERER;

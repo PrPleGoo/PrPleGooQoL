@@ -272,7 +272,7 @@ final class UIMiniResources extends Expansion {
             public void render(SPRITE_RENDERER r, float ds) {
                 int currentDay = TIME.days().bitCurrent();
                 if(currentDay != lastDayChecked){
-                    productionLastYear = GAME.player().res().total().history(res).getPeriodSum(-(int) TIME.years().bitConversion(TIME.days()), 0);
+                    productionLastYear = GAME.player().res().total().history(res).getPeriodSum(-3, 0);
                     lastDayChecked = currentDay;
                 }
 

@@ -23,7 +23,7 @@ public class RDSlavery implements Phases {
     }
 
     public RDSlavery(){
-        ArrayList<RDSlavery.RDSlave> all = new ArrayList<>(RESOURCES.ALL().size());
+        ArrayList<RDSlavery.RDSlave> all = new ArrayList<>(RD.RACES().all.size());
 
         for (RDRace race : RD.RACES().all) {
             all.add(new RDSlavery.RDSlave(race));

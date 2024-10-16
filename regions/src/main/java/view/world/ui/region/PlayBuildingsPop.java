@@ -13,7 +13,9 @@ import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.WorkerIntE;
+import prplegoo.regions.ui.FoodSelector;
 import snake2d.LOG;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
@@ -32,7 +34,6 @@ import snake2d.util.misc.CLAMP;
 import snake2d.util.sprite.SPRITE;
 import util.colors.GCOLOR;
 import util.data.GETTER.GETTER_IMP;
-import util.data.INT;
 import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
@@ -43,7 +44,6 @@ import util.gui.slider.GSliderInt;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
 import view.main.VIEW;
-import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
@@ -117,7 +117,7 @@ class PlayBuildingsPop {
                 Butt bb = new Butt(b);
                 hi = bb.body.height() + 12;
                 butts[i] = bb;
-                if (i == 0) {
+                if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
                     row.addRightC(0, bb);
                 } else {
                     row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
@@ -127,6 +127,12 @@ class PlayBuildingsPop {
                     GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false);
                     row.addDownC(0, gg);
                 }
+
+                if(MagicStringChecker.isFoodStallBuilding(b.key())){
+                    GuiSection foodSelector = new FoodSelector(g);
+                    row.addRightC(0, foodSelector);
+                }
+
                 i++;
             }
             rows.add(new RENDEROBJ.RenderDummy(1, 12));

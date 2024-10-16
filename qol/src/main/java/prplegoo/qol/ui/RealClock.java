@@ -1,4 +1,4 @@
-package prplegoo.qol.api;
+package prplegoo.qol.ui;
 
 import snake2d.SPRITE_RENDERER;
 import util.gui.misc.GBox;

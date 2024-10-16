@@ -126,6 +126,10 @@ public class RDBuildingCat {
             BOOSTING.connecter(() -> PrPleGooEfficiencies.SLAVERY(b, 0, 1));
         }
 
+        if (json.bool("FOOD_CONSUMER", false)) {
+            BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
+        }
+
         new RMAP.MAPJson<Efficiency>("EFFICIENCY", json, emap, error) {
 
             @Override

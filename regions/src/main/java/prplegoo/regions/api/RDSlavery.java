@@ -49,6 +49,8 @@ public class RDSlavery implements Phases {
 
             }.add(slave.boost);
         }
+
+        initialize();
     }
 
     public Boostable boostable(RDRace rdRace) {

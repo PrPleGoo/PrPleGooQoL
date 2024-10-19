@@ -14,12 +14,11 @@ import java.util.HashMap;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
-public class RDFoodConsumptionData {
+public class RDSlaveryData {
     @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
     public HashMap<Integer, HashMap<Integer, Boolean>> data;
 
-    public RDFoodConsumptionData(HashMap<Integer, HashMap<Integer, Boolean>> data) {
+    public RDSlaveryData(HashMap<Integer, HashMap<Integer, Boolean>> data) {
         this.data = data;
     }
 }
-

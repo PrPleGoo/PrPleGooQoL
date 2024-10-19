@@ -12,6 +12,7 @@ import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.RDSlavery;
 import snake2d.LOG;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -97,8 +98,12 @@ public class RDDistance {
                 for (RDRace r : RD.RACES().all) {
                     bo.add(r.loyalty.target);
                 }
-                for (RDResource o : RD.OUTPUT().all)
+                for (RDResource o : RD.OUTPUT().all) {
                     bo.add(o.boost);
+                }
+                for (RDSlavery.RDSlave o : RD.SLAVERY().all()) {
+                    bo.add(o.boost);
+                }
             }
         });
 

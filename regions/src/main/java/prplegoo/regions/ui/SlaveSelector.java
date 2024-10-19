@@ -1,7 +1,5 @@
 package prplegoo.regions.ui;
 
-import init.resources.RESOURCES;
-import init.resources.ResG;
 import snake2d.util.gui.GuiSection;
 import util.data.GETTER;
 import util.gui.misc.GButt;
@@ -9,21 +7,21 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.pop.RDRace;
 
-public class FoodSelector extends GuiSection {
-    public FoodSelector(GETTER.GETTER_IMP<Region> region){
+public class SlaveSelector extends GuiSection {
+    public SlaveSelector(GETTER.GETTER_IMP<Region> region){
         int i = 0;
-        for (ResG e : RESOURCES.EDI().all()) {
+        for (RDRace e : RD.RACES().all) {
 
-            GButt.ButtPanel b = new GButt.ButtPanel(e.resource.icon()) {
+            GButt.ButtPanel b = new GButt.ButtPanel(e.race.appearance().icon) {
 
                 @Override
                 protected void renAction() {
-                    selectedSet(RD.FOOD_CONSUMPTION().has(region.get(), e.resource));
+                    selectedSet(RD.SLAVERY().has(region.get(), e));
                 }
 
                 @Override
                 protected void clickA() {
-                    RD.FOOD_CONSUMPTION().toggleFood(region.get(), e.resource);
+                    RD.SLAVERY().toggleSlave(region.get(), e);
                 }
             };
             b.pad(4, 4);

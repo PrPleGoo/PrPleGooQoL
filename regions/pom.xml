@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.6</version>
+    <version>0.67.46.7</version>
 
     <profiles>
         <profile>
@@ -208,8 +208,12 @@ Known issues:
 
 Planned features (in order, subject to change):
 - Nerf base taxe rate (denari).
+- Display available/total workforce (and resulting pop count).
+- Display 1 decimal point for wf.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
+- Workshop/Refiner efficiency based on recipe ins/outs.
 - Supply armies directly from your regions.
+- Take science boosts and use the school to apply them.
 - AI empires use production to do work on their stockpiles.
 - Instruct vassals to produce specific goods.
 

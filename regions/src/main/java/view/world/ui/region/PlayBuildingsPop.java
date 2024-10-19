@@ -16,6 +16,7 @@ import init.text.D;
 import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.WorkerIntE;
 import prplegoo.regions.ui.FoodSelector;
+import prplegoo.regions.ui.SlaveSelector;
 import snake2d.LOG;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
@@ -131,6 +132,11 @@ class PlayBuildingsPop {
                 if(MagicStringChecker.isFoodStallBuilding(b.key())){
                     GuiSection foodSelector = new FoodSelector(g);
                     row.addRightC(0, foodSelector);
+                }
+
+                if(MagicStringChecker.isSlaverBuilding(b.key())){
+                    GuiSection slaveSelector = new SlaveSelector(g);
+                    row.addRightC(0, slaveSelector);
                 }
 
                 i++;

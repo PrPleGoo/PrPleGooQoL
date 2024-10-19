@@ -126,9 +126,6 @@ class RDBuildingGeneration {
                     } else {
                         BoostSpec bo = Efficiencies.FERTILITY(0.1, 1.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
-
-                        bo = Efficiencies.WATER(1.00, 1.25, true).add(bu.efficiency);
-                        bu.baseFactors.add(bo);
                     }
 
                     super.connect(bu, blue, local, global);
@@ -344,8 +341,8 @@ class RDBuildingGeneration {
 
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, true);
 
-            for (int i = 0; i < jlevels.length; i++) {
-                RDBuildingLevel l = bu.levels.get(i + 1);
+            for (int i = 1; i < bu.levels.size(); i++) {
+                RDBuildingLevel l = bu.levels.get(i);
                 Json j = jlevels[0];
                 l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.cost = j.i("CREDITS", 0, 1000000, 0);

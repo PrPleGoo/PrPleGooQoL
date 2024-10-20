@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.46.9</version>
+    <version>0.67.47.0</version>
 
     <profiles>
         <profile>
@@ -228,7 +228,7 @@ Credits:
 - Argoon, SDK mod and technical support.
         </mod.info>
         <game.version.major>67</game.version.major>
-        <game.version.minor>46</game.version.minor>
+        <game.version.minor>47</game.version.minor>
 
         <!-- Mod SDK (this only applies when "mod-sdk" profile is enabled) -->
         <mod.sdk.version>0</mod.sdk.version>

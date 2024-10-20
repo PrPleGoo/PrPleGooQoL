@@ -89,14 +89,14 @@ public final class Boostable extends INFO implements MAPPED {
         return CLAMP.d(padd * mul, minValue, Double.MAX_VALUE);
     }
 
-//    public double progress(BOOSTABLE_O b) {
-//        double min = min(b.getClass());
-//        double max = max(b.getClass());
-//
-//        double delta = max - min;
-//        return CLAMP.d(get(b) / delta, 0, 1);
-//
-//    }
+    public double progress(BOOSTABLE_O b) {
+        double min = min(b.getClass());
+        double max = max(b.getClass());
+
+        double delta = max - min;
+        return CLAMP.d(get(b) / delta, 0, 1);
+
+    }
 
     public double get(BOOSTABLE_O t) {
         if (deadlockCheck > 1) {

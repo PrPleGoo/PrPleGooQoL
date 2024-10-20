@@ -62,9 +62,9 @@ PREFERRED: {
 		CIVIC_L_STANDS: 1.5,
 	},
 	RELIGION: {
-		*0.05,
-		AMINION: 1,
-		ATHURI: 0.75,
+		*: 0.67,
+		CRATOR: 1,
+		ATHURI: 1,
 	},	
 },
 POPULATION: {

@@ -74,7 +74,7 @@ PREFERRED: {
 		CIVIC_L_ARENA: 1.5,
 	},
 	RELIGION: {
-		*: 0,
+		*: 0.01,
 		SHMALOR: 0.5,
 		AMINION: 1.0,
 	},	

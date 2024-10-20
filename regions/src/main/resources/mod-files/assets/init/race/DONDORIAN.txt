@@ -70,7 +70,8 @@ PREFERRED: {
 		CIVIC_L_TAVERN: 1.5,
 	},
 	RELIGION: {
-		*: 0,
+		*: 0.01,
+		CRATOR: 0.05,
 		ATHURI: 1.0,
 	},	
 },

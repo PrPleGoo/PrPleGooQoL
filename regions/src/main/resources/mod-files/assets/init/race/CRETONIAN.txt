@@ -73,7 +73,8 @@ PREFERRED: {
 		CIVIC_L_STANDS: 1.25,
 	},
 	RELIGION: {
-		*: 0,
+		*: 0.01,
+		ATHURI: 0.1,
 		CRATOR: 1.0,
 	},	
 },

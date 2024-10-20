@@ -66,8 +66,8 @@ PREFERRED: {
 		CIVIC_L_ARENA: 1.5,
 	},
 	RELIGION: {
-		*: 0.1,
-		CRATOR: 1.0,
+		*: 0.17,
+		CRATOR: 1,
 	},	
 },
 POPULATION: {

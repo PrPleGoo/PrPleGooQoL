@@ -76,6 +76,10 @@ public class RDDistance {
 
             @Override
             public double get(Region t) {
+                if(t.faction() == null) {
+                    return 0;
+                }
+
                 return CLAMP.d((WORLD.PATH().distance(t, t.faction().capitolRegion()) - 48.0) * II, 0, 1);
             }
 

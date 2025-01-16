@@ -15,9 +15,13 @@ public final class BHoverer {
 
     }
 
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops){
 
+        hoverDetailed(box, all, f, name, baseValue, keepNops, false);
+    }
 
-    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops
+            , boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
         if (name != null)
             b.textLL(name);
@@ -41,7 +45,7 @@ public final class BHoverer {
             }
         }
 
-        tot(box, all, f, baseValue);
+        tot(box, all, f, baseValue, isResourceProductionBooster);
 
         if (keepNops) {
             b.NL(4);
@@ -66,12 +70,16 @@ public final class BHoverer {
     }
 
     public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
+        hover(box, all, f, name, baseValue, keepNops, false);
+    }
+
+    public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
-        hoverNoTot(box, all, f, name, baseValue, keepNops);
+        hoverNoTot(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
 
         b.NL(8);
 
-        tot(box, all, f, baseValue);
+        tot(box, all, f, baseValue, isResourceProductionBooster);
         b.NL(8);
 
         if (keepNops) {
@@ -96,8 +104,11 @@ public final class BHoverer {
 
     }
 
-
     public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
+        hoverNoTot(box, all, f, name, baseValue, keepNops, false);
+    }
+
+    public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
         if (name != null)
             b.textLL(name);
@@ -107,7 +118,7 @@ public final class BHoverer {
         int ii = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && d > 0 && !l.isMul) {
+            if (l.has(f.getClass()) && (d > 0 || (d != 0 && isResourceProductionBooster)) && !l.isMul) {
                 sort.add(ii);
             }
             ii++;
@@ -115,7 +126,7 @@ public final class BHoverer {
         int i = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && d < 0 && !l.isMul) {
+            if (l.has(f.getClass()) && (d < 0 && !isResourceProductionBooster) && !l.isMul) {
                 if (i < sort.size()) {
                     hov(f, b, all.get(sort.get(i)), 0);
                     i++;
@@ -161,7 +172,7 @@ public final class BHoverer {
 
     }
 
-    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue) {
+    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue, boolean isResourceProductionName) {
         double mul = 1;
         double padd = baseValue > 0 ? baseValue : 0;
         double sub = baseValue < 0 ? baseValue : 0;
@@ -171,7 +182,7 @@ public final class BHoverer {
                     mul *= s.get(t);
                 else {
                     double a = s.get(t);
-                    if (a < 0)
+                    if (a < 0 && !isResourceProductionName)
                         sub += a;
                     else
                         padd += a;

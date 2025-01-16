@@ -3,7 +3,6 @@ package game.boosting;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.type.POP_CL;
-import prplegoo.regions.api.MagicStringChecker;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -15,7 +14,7 @@ import util.info.GFORMAT;
 import util.info.INFO;
 import util.keymap.MAPPED;
 
-public final class Boostable extends INFO implements MAPPED {
+public final class Boostable extends INFO implements MAPPED{
 
     final ArrayListGrower<Booster> all = new ArrayListGrower<>();
 
@@ -28,14 +27,12 @@ public final class Boostable extends INFO implements MAPPED {
     public final Icon icon;
     public final BoostableCat cat;
     public final double minValue;
-    private final boolean isResourceProductionBooster;
 
     public Boostable(int index, String key, double baseValue, CharSequence name, CharSequence desc, SPRITE icon, BoostableCat category, double minValue) {
         super(name, desc);
         this.index = index;
         this.baseValue = baseValue;
         this.key = key;
-        this.isResourceProductionBooster = MagicStringChecker.isResourceProductionBooster(key);
         this.icon = icon != null ? new Icon(Icon.S, icon) : UI.icons().s.DUMMY;
         this.cat = category;
         this.minValue = minValue;
@@ -78,7 +75,7 @@ public final class Boostable extends INFO implements MAPPED {
                     mul *= s.get(t);
                 else {
                     double a = s.get(t);
-                    if (a > 0 || (a != 0 && isResourceProductionBooster))
+                    if (a > 0)
                         padd += a;
 
                 }
@@ -86,15 +83,16 @@ public final class Boostable extends INFO implements MAPPED {
 
         }
 
-        return CLAMP.d(padd * mul, minValue, Double.MAX_VALUE);
+
+        return CLAMP.d(padd*mul, minValue, Double.MAX_VALUE);
     }
 
     public double progress(BOOSTABLE_O b) {
         double min = min(b.getClass());
         double max = max(b.getClass());
 
-        double delta = max - min;
-        return CLAMP.d(get(b) / delta, 0, 1);
+        double delta = max-min;
+        return CLAMP.d(get(b)/delta, 0,1);
 
     }
 
@@ -105,29 +103,7 @@ public final class Boostable extends INFO implements MAPPED {
         }
 
         deadlockCheck++;
-        double res;
-        if (isResourceProductionBooster) {
-            double padd = baseValue > 0 ? baseValue : 0;
-            double sub = baseValue < 0 ? baseValue : 0;
-            double mul = 1;
-            for (BoosterAbs<BOOSTABLE_O> s : all) {
-                if (s.has(t.getClass())) {
-                    if (s.isMul)
-                        mul *= s.get(t);
-                    else {
-                        double a = s.get(t);
-                        if (a == 0) {
-                            continue;
-                        }
-
-                        padd += a;
-                    }
-                }
-            }
-            res = CLAMP.d(padd * mul + sub, minValue, Double.MAX_VALUE);
-        } else {
-            res = BUtil.value(all, t, baseValue, 1, minValue);
-        }
+        double res =  BUtil.value(all, t, baseValue, 1, minValue);
         deadlockCheck--;
         return res;
     }
@@ -141,11 +117,11 @@ public final class Boostable extends INFO implements MAPPED {
         for (Booster l : all) {
             double d = l.getValue(l.vGet(o, daysBack));
             if (!l.isMul && d != 0) {
-                if (d > 0 || isResourceProductionBooster)
+                if (d > 0)
                     add += d;
                 else
                     sub += d;
-            } else if (l.isMul && d != 1) {
+            }else if (l.isMul && d != 1) {
                 mul *= d;
             }
         }
@@ -169,11 +145,7 @@ public final class Boostable extends INFO implements MAPPED {
     static final int htab = 7;
 
     public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops) {
-        hoverDetailed(box, f, name, keepNops, false);
-    }
-
-    public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops, boolean isResourceProductionBooster) {
-        BHoverer.hoverDetailed(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
+        BHoverer.hoverDetailed(box, all, f, name, baseValue, keepNops);
     }
 
     public void hoverDetailedHistoric(GUI_BOX box, POP_CL o, CharSequence name, boolean keepNops, int daysBack) {
@@ -200,7 +172,7 @@ public final class Boostable extends INFO implements MAPPED {
         b.NL(4);
 
         for (Booster l : all) {
-            double d = l.getValue(l.vGet(o, daysBack));
+            double d = l. getValue(l.vGet(o, daysBack));
             if (l.isMul && d != 1) {
                 l.hoverDetailed(box, d);
                 mul *= d;
@@ -219,7 +191,7 @@ public final class Boostable extends INFO implements MAPPED {
             if (sub != 0)
                 b.add(GFORMAT.f0(b.text(), sub));
             b.add(b.text().add('='));
-            b.add(GFORMAT.fRel(b.text(), Math.max(mul * add + sub, minValue), baseValue));
+            b.add(GFORMAT.fRel(b.text(),Math.max(mul * add + sub, minValue), baseValue));
         }
 
         b.NL();
@@ -245,10 +217,11 @@ public final class Boostable extends INFO implements MAPPED {
         b.NL();
 
 
+
     }
 
     public void hover(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops) {
-        BHoverer.hover(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
+        BHoverer.hover(box, all, f, name, baseValue, keepNops);
     }
 
     @Override

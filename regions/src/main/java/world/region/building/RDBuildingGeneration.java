@@ -1,6 +1,11 @@
 package world.region.building;
 
-import game.boosting.*;
+import game.boosting.BOOSTING;
+import game.boosting.BSourceInfo;
+import game.boosting.BoostSpec;
+import game.boosting.BoostSpecs;
+import game.boosting.Boostable;
+import game.boosting.BoosterImp;
 import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lockable;
@@ -34,6 +39,7 @@ import snake2d.util.sprite.text.Str;
 import util.dic.Dic;
 import util.info.GFORMAT;
 import world.map.regions.Region;
+import world.region.RBooster;
 import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.pop.RDRace;
@@ -75,21 +81,22 @@ class RDBuildingGeneration {
                 if (!b.constructor().mustBeIndoors())
                     all.add(b);
             }
-            new GenIndustry("agriculture", "_GENERATE_OUTDOORS", all) {
+            new GenIndustry("agriculture", "_GENERATE_OUTDOORS", all){
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
                     mimic(bu, boost);
                     double mi = 0.1;
-                    double ma = 1.0;
+                    double ma = 2.0;
                     if (blue instanceof ROOM_ORCHARD) {
                         mi = 0.5;
+                        ma = 1.5;
                     }
+
 
                     BoostSpec bo = Efficiencies.FERTILITY(mi, ma, true).add(bu.efficiency);
 
                     bu.baseFactors.add(bo);
-
                     super.connect(bu, blue, local, global);
                 }
             };
@@ -115,7 +122,7 @@ class RDBuildingGeneration {
                 if (!b.constructor().mustBeIndoors())
                     all.add(b);
             }
-            new GenIndustry("pasture", "_GENERATE_OUTDOORS", all) {
+            new GenIndustry("pasture", "_GENERATE_OUTDOORS", all){
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     Boostable boost = ((INDUSTRY_HASER) blue).industries().get(0).bonus();
@@ -123,8 +130,9 @@ class RDBuildingGeneration {
                     if (blue instanceof ROOM_FISHERY) {
                         BoostSpec bo = Efficiencies.WATER(0.1, 2.0, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
+
                     } else {
-                        BoostSpec bo = Efficiencies.FERTILITY(0.1, 1.0, true).add(bu.efficiency);
+                        BoostSpec bo = Efficiencies.FERTILITY(0.75, 1.25, true).add(bu.efficiency);
                         bu.baseFactors.add(bo);
                     }
 
@@ -133,10 +141,11 @@ class RDBuildingGeneration {
             };
 
 
+
         }
 
         {
-            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().WOOD_CUTTER).join(SETT.ROOMS().MINES)) {
+            new GenIndustry("mine", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().MINES)) {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
@@ -151,7 +160,6 @@ class RDBuildingGeneration {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-
                     connect(bu, blue);
                 }
             };
@@ -162,11 +170,11 @@ class RDBuildingGeneration {
                 @Override
                 void connect(RDBuilding bu, RoomBlueprintImp blue, double[] local, double[] global) {
                     mimic(bu, ((INDUSTRY_HASER) blue).industries().get(0).bonus());
-
                     connect(bu, blue);
                 }
             };
         }
+
 
         {
             new Gen("religion", "_GENERATE", new LinkedList<RoomBlueprintImp>().join(SETT.ROOMS().TEMPLES.ALL)) {
@@ -193,7 +201,7 @@ class RDBuildingGeneration {
             return false;
         }
 
-        Gen(String folder, String file, LIST<RoomBlueprintImp> rooms) {
+        Gen(String folder, String file, LIST<RoomBlueprintImp> rooms){
             this.file = file;
             this.rooms = new ArrayList<>(rooms);
             if (!gens.containsKey(folder))
@@ -222,7 +230,6 @@ class RDBuildingGeneration {
                 if (omitt.contains(room))
                     continue;
                 RDBuilding bu = generate(all, init, levels, cat, room, aibuild, order);
-
                 tmps.add(new Tuple.TupleImp<>(bu, room));
             }
 
@@ -244,23 +251,28 @@ class RDBuildingGeneration {
             ArrayListGrower<RDBuildingLevel> levels = new ArrayListGrower<>();
 
             for (int i = 0; i < jlevels.length; i++) {
-                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i + 1);
-                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_" + (i + 1), n, blue.info.desc, blue.iconBig());
+                String n = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), i+1);
+                Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + blue.key + "_"+(i+1), n, blue.info.desc, blue.iconBig());
 
                 RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
                 levels.add(b);
+
             }
 
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, isPopScaler());
 
             for (int i = 0; i < jlevels.length; i++) {
-                RDBuildingLevel l = bu.levels.get(i + 1);
+                RDBuildingLevel l = bu.levels.get(i+1);
                 Json j = jlevels[i];
                 l.local.read("BOOST", j, RDBuildingCat.lValue);
                 l.global.read("BOOST_GLOBAL", j, RDBuildingCat.lGlobal, Dic.¤¤global, false);
 
+
+
                 l.cost = j.i("CREDITS", 0, 1000000, 0);
             }
+
+
 
             return bu;
         }
@@ -273,18 +285,34 @@ class RDBuildingGeneration {
         }
 
         protected void consume(RDBuilding bu, double[] values, double dv, Boostable bo, boolean mul, boolean global) {
+
             for (int i = 0; i < values.length; i++) {
-                RDBuildingLevel b = bu.levels.get(i + 1);
-                double v = values[i] * dv;
+                RDBuildingLevel b = bu.levels.get(i+1);
+                double v = values[i]*dv;
                 if (v == 0 && !mul)
                     continue;
                 if (v == 1 && mul)
                     continue;
                 BoostSpecs ss = global ? b.global : b.local;
-                BoosterImp lBoost = new LBoost(bu, v, mul);
-                ss.push(lBoost, bo);
+                ss.push(new LBoost(bu, v, mul), bo);
             }
         }
+
+//		protected void connectConsume(RDBuilding bu, double endPoint, Boostable bo) {
+//			double delta = (1-endPoint)/(bu.levels.size()-1);
+//			for (int i = 1; i < bu.levels.size(); i++) {
+//				RDBuildingLevel b = bu.levels.get(i);
+//				int am = (int) Math.round(100*delta);
+//				if (i == bu.levels.size()-1)
+//					am = (int) Math.ceil(100*delta);
+//				if (am != 0) {
+//					b.local.push(new LBoost(bu, am/100.0, false), bo);
+//
+//				}
+//
+//			}
+//		}
+
     }
 
     private class GenIndustry extends Gen {
@@ -293,8 +321,10 @@ class RDBuildingGeneration {
             return true;
         }
 
+
         GenIndustry(String folder, String file, LIST<RoomBlueprintImp> rooms) {
             super(folder, file, rooms);
+
         }
 
         @Override
@@ -337,6 +367,7 @@ class RDBuildingGeneration {
 
                 RDBuildingLevel b = new RDBuildingLevel(n, blue.iconBig(), needs);
                 levels.add(b);
+
             }
 
             RDBuilding bu = new RDBuilding(all, init, cat, blue.key, blue.info, levels, aiBuild, false, order, true);
@@ -349,6 +380,12 @@ class RDBuildingGeneration {
             }
 
             return bu;
+
+
+
+
+
+
         }
 
         @Override
@@ -383,6 +420,18 @@ class RDBuildingGeneration {
         }
     }
 
+    protected static void connectRan(RDBuilding bu, RoomBlueprintImp ins) {
+        BoostSpec bo = new RBooster(new BSourceInfo(Dic.¤¤Prospect, ins.icon), 0.6, 1.5, true) {
+
+            @Override
+            public double get(Region t) {
+                return RD.RAN().get(t, ins.index()*2, 2)/3.0;
+            };
+
+        }.add(bu.efficiency);
+        bu.baseFactors.add(bo);
+    }
+
     protected static void mimic(RDBuilding bu, Boostable bo) {
 
         for (CLIMATE c : CLIMATES.ALL()) {
@@ -409,7 +458,7 @@ class RDBuildingGeneration {
 
     }
 
-    private static class LBoost extends BoosterImp {
+    private static class LBoost extends BoosterImp{
 
         private final RDBuilding bu;
 
@@ -420,9 +469,9 @@ class RDBuildingGeneration {
 
         @Override
         public double vGet(Region reg) {
-            if (isPositive(1.0)) {
+            if (isPositive(1.0))
                 return getValue(bu.efficiency.get(reg));
-            } else {
+            else {
                 return getValue(1.0);
             }
         }
@@ -430,11 +479,14 @@ class RDBuildingGeneration {
         @Override
         public boolean has(Class<?> b) {
             return b == Region.class;
-        }
+        };
 
         @Override
         public double vGet(Faction f) {
             return 0;
         }
+
     }
+
+
 }

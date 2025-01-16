@@ -13,6 +13,9 @@ import game.faction.npc.FactionNPC;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.RDFoodConsumption;
+import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.RDWorkers;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -54,6 +57,9 @@ public class RD extends WorldResource{
     private final RDOwner owner;
     private final RDDevastation deva;
     private final RDOrg org;
+    private final RDWorkers workers;
+    private final RDSlavery slavery;
+    private final RDFoodConsumption foodConsumption;
     private RDUpdater updater;
     private boolean distDirty = true;
 
@@ -88,6 +94,9 @@ public class RD extends WorldResource{
         owner = new RDOwner(init);
         deva = new RDDevastation(init);
         org = new RDOrg(init);
+        workers = new RDWorkers();
+        slavery = new RDSlavery();
+        foodConsumption = new RDFoodConsumption();
 
         Arrays.fill(factionI, -1);
 
@@ -352,6 +361,18 @@ public class RD extends WorldResource{
 
     public static RDOrg ORG() {
         return self.org;
+    }
+
+    public static RDWorkers WORKERS() {
+        return self.workers;
+    }
+
+    public static RDSlavery SLAVERY(){
+        return self.slavery;
+    }
+
+    public static RDFoodConsumption FOOD_CONSUMPTION(){
+        return self.foodConsumption;
     }
 
     public static RDUpdater UPDATER() {

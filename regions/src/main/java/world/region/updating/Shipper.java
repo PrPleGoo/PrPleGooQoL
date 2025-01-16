@@ -78,6 +78,7 @@ final class Shipper {
                 }
             }
 
+
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
                 int a = rdSlave.getDelivery(r, days);
                 c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());

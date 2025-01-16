@@ -12,6 +12,8 @@ import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.RDSlavery;
+import snake2d.LOG;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -24,6 +26,7 @@ import util.data.INT_O;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
 import world.WORLD;
+import world.map.pathing.WPATHING;
 import world.map.pathing.WRegSel;
 import world.map.pathing.WRegs.RDist;
 import world.map.pathing.WTREATY;
@@ -73,7 +76,7 @@ public class RDDistance {
 
             @Override
             public double get(Region t) {
-                return CLAMP.d((data.get(t)-128)*II, 0, 1);
+                return CLAMP.d((WORLD.PATH().distance(t, t.faction().capitolRegion())-128)*II, 0, 1);
             }
 
         }.add(boostable);
@@ -97,6 +100,9 @@ public class RDDistance {
                 }
                 for (RDResource o : RD.OUTPUT().all)
                     bo.add(o.boost);
+                for (RDSlavery.RDSlave o : RD.SLAVERY().all()) {
+                    bo.add(o.boost);
+                }
             }
         });
 

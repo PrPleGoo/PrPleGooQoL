@@ -13,6 +13,11 @@ import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.MagicStringChecker;
+import prplegoo.regions.api.WorkerIntE;
+import prplegoo.regions.ui.FoodSelector;
+import prplegoo.regions.ui.SlaveSelector;
+import snake2d.LOG;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -36,6 +41,7 @@ import util.gui.misc.GButt;
 import util.gui.misc.GStat;
 import util.gui.misc.GText;
 import util.gui.panel.GPanel;
+import util.gui.slider.GSliderInt;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
 import view.main.VIEW;
@@ -99,15 +105,37 @@ class PlayBuildingsPop {
             int i = 0;
             GuiSection row = new GuiSection();
             rows.add(row);
+            Butt[] butts = new Butt[wam];
             for (RDBuilding b : cat.all()) {
                 if (i >= wam) {
+                    butts = new Butt[wam];
                     row = new GuiSection();
                     rows.add(row);
                     i = 0;
                 }
                 Butt bb = new Butt(b);
-                hi = bb.body.height()+12;
-                row.addRightC(0, bb);
+                hi = bb.body.height()+12;butts[i] = bb;
+                if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
+                    row.addRightC(0, bb);
+                } else {
+                    row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
+                }
+
+                if (b.isPopScaler) {
+                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false);
+                    row.addDownC(0, gg);
+                }
+
+                if(MagicStringChecker.isFoodStallBuilding(b.key())){
+                    GuiSection foodSelector = new FoodSelector(g);
+                    row.addRightC(0, foodSelector);
+                }
+
+                if(MagicStringChecker.isSlaverBuilding(b.key())){
+                    GuiSection slaveSelector = new SlaveSelector(g);
+                    row.addRightC(0, slaveSelector);
+                }
+
                 i++;
             }
             rows.add(new RENDEROBJ.RenderDummy(1, 12));
@@ -182,13 +210,13 @@ class PlayBuildingsPop {
             GFORMAT.toNumeral(num, level);
             num.renderCY(r, body().x1()+48, body.cY());
 
-            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
+//            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
                 if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
                     OPACITY.O50.bind();
                     COLOR.BLACK.render(r, body, -1);
                     OPACITY.unbind();
                 }
-            }
+//            }
 
         }
 

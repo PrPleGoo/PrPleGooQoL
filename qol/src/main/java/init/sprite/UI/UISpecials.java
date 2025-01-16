@@ -149,7 +149,7 @@ public final class UISpecials {
             public void render(SPRITE_RENDERER r, float ds) {
                 GAME.SPEED.poll();
                 super.render(r, ds);
-            }
+            };
         };
         if (!simplified)
             s.add(background, 0, 0);
@@ -168,8 +168,7 @@ public final class UISpecials {
         }
 
         if (!simplified){
-            ClockWork clock = new ClockWork();
-            s.add(clock, 48,29);
+            s.add(new ClockWork(), 48,29);
             s.addDownC(10, new RealClock());
             s.moveLastToBack();
             s.moveLastToBack();

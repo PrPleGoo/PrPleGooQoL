@@ -167,10 +167,14 @@ public class GInputInt extends GuiSection{
 		unfuck();
 		super.render(r, ds);
 	}
-	
+
 	private void unfuck() {
-		sp.text().clear();
 		int am = in.get();
+		if (am == 0 && sp.text().length() == 1 && sp.text().charAt(0) == '-' && in.min()<0) {
+			return;
+		}
+		sp.text().clear();
+
 		if (am != 0)
 			sp.text().add(am);
 	}

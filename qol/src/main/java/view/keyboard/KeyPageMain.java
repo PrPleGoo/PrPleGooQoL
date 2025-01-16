@@ -4,8 +4,8 @@ import init.text.D;
 import snake2d.KEYCODES;
 import util.dic.Dic;
 
-public class KeyPageMain extends KeyPage {
-	
+public class KeyPageMain extends KeyPage{
+
 	KeyPageMain(){
 		super("MAIN");
 	}
@@ -55,12 +55,14 @@ public class KeyPageMain extends KeyPage {
 
 	public final Key SWAP = new Key("SWAP", D.g("toggle", "Toggle view"),D.g("toggleD", "Toggle between world view and city view."),this, KEYCODES.KEY_TAB);
 
+
+
 	@Override
 	public CharSequence name() {
 		return Dic.¤¤General;
 	}
-	
 
-	
-	
+
+
+
 }

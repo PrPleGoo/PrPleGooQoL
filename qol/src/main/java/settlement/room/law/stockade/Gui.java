@@ -17,7 +17,6 @@ import settlement.stats.law.Processing.Punishment;
 import snake2d.CORE;
 import snake2d.KEYCODES;
 import snake2d.SPRITE_RENDERER;
-import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
@@ -46,9 +45,6 @@ import view.main.VIEW;
 import view.sett.ui.room.UIRoomModule.UIRoomModuleImp;
 import view.ui.message.MessageSection;
 
-import java.lang.reflect.Array;
-import java.util.stream.IntStream;
-
 class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
 
     private static CharSequence ¤¤Food = "¤Food To Fetch";
@@ -60,6 +56,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
     private static CharSequence ¤¤mTitle = "Prisoner Escape!";
     private static CharSequence ¤¤mBody = "Since our stockade was poorly staffed and tended, the prisoners have escaped!";
     private static CharSequence ¤¤emp = "¤Insufficient employees or lack of food might cause incidents. Full employment is required.";
+    private static CharSequence ¤¤cancel = "Cancel all manually assigned punishments, and let the prisoners be punished according to your law settings.";
 
     private static boolean[] raceFilter;
 
@@ -107,8 +104,9 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
             };
             b.pad(4, 4);
 
-            s.add(b, (i % 4) * b.body().width(), (i / 4) * b.body().height());
+            s.add(b, (i%4)*b.body().width(), (i/4)*b.body().height());
             i++;
+
 
 
         }
@@ -126,6 +124,54 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
 
         {
             GuiSection ss = new GuiSection();
+
+            int gi = 0;
+
+            {
+                GButt.ButtPanel b = new GButt.ButtPanel(UI.icons().m.cancel) {
+
+                    @Override
+                    protected void clickA() {
+                        makePrisoners(g.get());
+                        for (Humanoid h : list) {
+                            if(!raceFilter[h.race().index]){
+                                continue;
+                            }
+
+                            if (AIModule_Prisoner.DATA().punishmentSet.get(h.ai()) != null) {
+                                AIModule_Prisoner.DATA().punishmentSet.set(h.ai(), null);
+                                h.interrupt();
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    protected void renAction() {
+                        boolean a = false;
+                        makePrisoners(g.get());
+                        for (Humanoid h : list) {
+                            if (AIModule_Prisoner.DATA().punishmentSet.get(h.ai()) != null) {
+                                a = true;
+                                break;
+                            }
+
+                        }
+                        activeSet(a);
+                    }
+
+                    @Override
+                    public void hoverInfoGet(GUI_BOX text) {
+                        GBox b = (GBox) text;
+                        b.text(¤¤cancel);
+                    }
+
+                };
+
+                b.setDim(40, 40);
+                ss.addGrid(b, gi++, 6, 2, 2);
+            }
+
             for (Punishment p : LAW.process().punishments) {
                 GButt.ButtPanel b = new GButt.ButtPanel(p.icon) {
 
@@ -135,11 +181,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                         public void exe() {
                             makePrisoners(g.get());
                             for (Humanoid h : list) {
-                                if(!raceFilter[h.race().index]){
-                                    continue;
-                                }
-
-                                AIModule_Prisoner.DATA().punishment.set(h.ai(), p);
+                                AIModule_Prisoner.DATA().punishmentSet.set(h.ai(), p);
                                 h.interrupt();
                             }
                         }
@@ -166,7 +208,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
 
                 b.setDim(40, 40);
 
-                ss.addGrid(b, p.index(), 6, 2, 2);
+                ss.addGrid(b, gi++, 6, 2, 2);
             }
 
             section.addRelBody(8, DIR.S, ss);
@@ -176,7 +218,6 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
             GuiSection ss = new GuiSection();
             for (Race r : RACES.all()) {
                 GButt.ButtPanel b = new GButt.ButtPanel(r.appearance().icon) {
-
                     @Override
                     protected void clickA() {
                         raceFilter[r.index] = !raceFilter[r.index];
@@ -220,6 +261,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                 return new CLICKABLE.ClickableAbs(280, 54) {
 
 
+
                     @Override
                     public void hoverInfoGet(GUI_BOX text) {
                         int k = ier.get();
@@ -233,8 +275,8 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                     @Override
                     protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected,
                                           boolean isHovered) {
-                        GCOLOR.UI().border().render(r, body, -1);
-                        GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body, -2);
+                        GCOLOR.UI().border().render(r, body,-1);
+                        GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
 
                         int k = ier.get();
                         if (k >= list.size())
@@ -248,12 +290,12 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                         t.clear();
                         t.add(STATS.LAW().prisonerType.get(h.indu()).name);
                         GCOLOR.T().H1.bind();
-                        UI.FONT().M.render(r, t, x1 + 50, body().y1() + 8);
+                        UI.FONT().M.render(r, t, x1+50, body().y1()+8);
 
                         t.clear();
-                        t.add(AIModule_Prisoner.DATA().punishment.get(h.ai()).action);
+                        t.add(AIModule_Prisoner.punishment(h, h.ai()).action);
                         GCOLOR.T().H2.bind();
-                        UI.FONT().S.render(r, t, x1 + 50, body().y1() + 32);
+                        UI.FONT().S.render(r, t, x1+50, body().y1()+32);
 
                     }
 
@@ -268,7 +310,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                 };
             }
         });
-        int he = ISidePanel.HEIGHT - section.body().height() - 16;
+        int he = ISidePanel.HEIGHT-section.body().height()-16;
         section.addRelBody(8, DIR.S, b.createHeight(he, false));
 
     }
@@ -317,12 +359,10 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                     b.add(cc);
 
 
-                }
-
-                ;
+                };
             }.hv(e.resource.icon());
 
-            s.add(r, (i % 4) * 42, (i / 4) * 48);
+            s.add(r, (i%4)*42, (i/4)*48);
             i++;
 
         }
@@ -340,7 +380,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
 
     }
 
-    private final ArrayListResize<Humanoid> list = new ArrayListResize<>(164, 1024 * 2);
+    private final ArrayListResize<Humanoid> list = new ArrayListResize<>(164, 1024*2);
     private int upI = -1;
 
     private void makePrisoners(StockInstance ins) {
@@ -361,7 +401,6 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
     }
 
     static void mWarn(StockInstance ins) {
-        GAME.Notify(ins.mX() + " " + ins.mY());
         new Mess(¤¤mWTitle, ¤¤mWBody, ins.body().cX(), ins.body().cY()).send();
 
     }
@@ -379,12 +418,12 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
          *
          */
         private static final long serialVersionUID = 1L;
-        private int tx, ty;
+        private int tx,ty;
         private String desc;
 
-        Mess(CharSequence title, CharSequence desc, int tx, int ty) {
+        Mess(CharSequence title, CharSequence desc, int tx, int ty){
             super(title);
-            this.desc = "" + desc;
+            this.desc = ""+desc;
             this.tx = tx;
             this.ty = ty;
         }

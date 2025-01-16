@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.67.47.3</version>
+    <version>0.68.2.0</version>
 
     <profiles>
         <profile>
@@ -91,69 +91,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>mod-sdk-steam</id>
-            <properties>
-                <mod.sdk.directory>${game.workshop.directory}/${mod.sdk.workshop.id}</mod.sdk.directory>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>mod-sdk</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <executions>
-                            <!-- Install mod-sdk jar as dependency code -->
-                            <execution>
-                                <id>install-mod-sdk-jar</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                                <configuration>
-                                    <groupId>com.github.argon.sos</groupId>
-                                    <artifactId>sos-mod-sdk</artifactId>
-                                    <version>sdk-${mod.sdk.version}</version>
-                                    <packaging>jar</packaging>
-                                    <file>${mod.sdk.jar.directory}/${mod.sdk.name}.jar</file>
-                                    <generatePom>true</generatePom>
-                                </configuration>
-                            </execution>
-
-                            <!-- Install mod-sdk source jar as dependency code -->
-                            <execution>
-                                <id>install-mod-sdk-sources-jar</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                                <configuration>
-                                    <groupId>com.github.argon.sos</groupId>
-                                    <artifactId>sos-mod-sdk</artifactId>
-                                    <version>sdk-${mod.sdk.version}</version>
-                                    <packaging>jar</packaging>
-                                    <classifier>sources</classifier>
-                                    <file>${mod.sdk.jar.src.directory}/${mod.sdk.name}-sources.jar</file>
-                                    <generatePom>false</generatePom>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.github.argon.sos</groupId>
-                    <artifactId>sos-mod-sdk</artifactId>
-                    <version>sdk-${mod.sdk.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
     <properties>
@@ -227,16 +164,8 @@ Credits:
 - Redic, thumbnail art
 - Argoon, SDK mod and technical support.
         </mod.info>
-        <game.version.major>67</game.version.major>
-        <game.version.minor>47</game.version.minor>
-
-        <!-- Mod SDK (this only applies when "mod-sdk" profile is enabled) -->
-        <mod.sdk.version>0</mod.sdk.version>
-        <mod.sdk.name>Mod SDK V${mod.sdk.version}</mod.sdk.name>
-        <mod.sdk.workshop.id>3331182511</mod.sdk.workshop.id>
-        <mod.sdk.directory>${game.mod.directory}/${mod.sdk.name}</mod.sdk.directory>
-        <mod.sdk.jar.directory>${mod.sdk.directory}/${game.version.directory}/script</mod.sdk.jar.directory>
-        <mod.sdk.jar.src.directory>${mod.sdk.jar.directory}/_src</mod.sdk.jar.src.directory>
+        <game.version.major>68</game.version.major>
+        <game.version.minor>3</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

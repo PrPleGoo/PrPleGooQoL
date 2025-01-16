@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.67.47.0</version>
+    <version>0.68.3.3</version>
 
     <profiles>
         <profile>
@@ -127,8 +127,8 @@ Enjoy!
 
 Available on github.
         </mod.info>
-        <game.version.major>67</game.version.major>
-        <game.version.minor>47</game.version.minor>
+        <game.version.major>68</game.version.major>
+        <game.version.minor>3</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

@@ -16,7 +16,7 @@ import snake2d.util.sprite.text.Str;
 public class StringInputSprite extends CHAR_LISTENER implements SPRITE{
 
 	private Font f;
-	private static final String promt = "|";
+	private static final String promt = "" + '|';
 	private CharSequence placeholder;
 	public int marker = 0;
 	private static final Str tmp = new Str(512);

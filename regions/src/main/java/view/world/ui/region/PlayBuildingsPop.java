@@ -13,11 +13,6 @@ import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.text.D;
-import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.api.WorkerIntE;
-import prplegoo.regions.ui.FoodSelector;
-import prplegoo.regions.ui.SlaveSelector;
-import snake2d.LOG;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -41,7 +36,6 @@ import util.gui.misc.GButt;
 import util.gui.misc.GStat;
 import util.gui.misc.GText;
 import util.gui.panel.GPanel;
-import util.gui.slider.GSliderInt;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
 import view.main.VIEW;
@@ -55,8 +49,8 @@ class PlayBuildingsPop {
 
     private final COLOR[] buCols = COLOR.interpolate(new ColorImp(100, 100, 100), new ColorImp(127, 110, 10), 16);
     private final GText num = new GText(UI.FONT().S, 8);
-    public static int width = 64 + 16;
-    public static final int height = 64 + 24;
+    public static int width = 64+16;
+    public static final int height = 64+24;
     private final GETTER_IMP<Region> g;
     private Region current;
     private Levs levs = new Levs();
@@ -86,13 +80,11 @@ class PlayBuildingsPop {
         public void hoverInfoGet(GUI_BOX text) {
             RD.BUILDINGS().tmp(false, g.get());
             super.hoverInfoGet(text);
-        }
-
-        ;
+        };
 
     };
 
-    public PlayBuildingsPop(PlayBuildings buildings, GETTER_IMP<Region> g) {
+    public PlayBuildingsPop(PlayBuildings buildings, GETTER_IMP<Region> g){
 
         this.g = g;
 
@@ -107,45 +99,22 @@ class PlayBuildingsPop {
             int i = 0;
             GuiSection row = new GuiSection();
             rows.add(row);
-            Butt[] butts = new Butt[wam];
             for (RDBuilding b : cat.all()) {
                 if (i >= wam) {
-                    butts = new Butt[wam];
                     row = new GuiSection();
                     rows.add(row);
                     i = 0;
                 }
                 Butt bb = new Butt(b);
-                hi = bb.body.height() + 12;
-                butts[i] = bb;
-                if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
-                    row.addRightC(0, bb);
-                } else {
-                    row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
-                }
-
-                if (b.isPopScaler) {
-                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false);
-                    row.addDownC(0, gg);
-                }
-
-                if(MagicStringChecker.isFoodStallBuilding(b.key())){
-                    GuiSection foodSelector = new FoodSelector(g);
-                    row.addRightC(0, foodSelector);
-                }
-
-                if(MagicStringChecker.isSlaverBuilding(b.key())){
-                    GuiSection slaveSelector = new SlaveSelector(g);
-                    row.addRightC(0, slaveSelector);
-                }
-
+                hi = bb.body.height()+12;
+                row.addRightC(0, bb);
                 i++;
             }
             rows.add(new RENDEROBJ.RenderDummy(1, 12));
         }
 
-        int hh = C.HEIGHT() - 200 - s.body().height();
-        hh = (int) Math.ceil((double) hh / hi);
+        int hh =  C.HEIGHT()-200-s.body().height();
+        hh = (int) Math.ceil((double)hh/hi);
         hh *= hi;
 
         GScrollRows sc = new GScrollRows(rows, hh);
@@ -185,12 +154,12 @@ class PlayBuildingsPop {
         VIEW.inters().section.activate(s);
     }
 
-    private class LevelButt extends ClickableAbs {
+    private class LevelButt extends ClickableAbs{
 
         private final RDBuilding bu;
         private final int level;
 
-        LevelButt(RDBuilding b, int level) {
+        LevelButt(RDBuilding b, int level){
             body.setDim(128, 40);
             this.bu = b;
             this.level = level;
@@ -198,26 +167,29 @@ class PlayBuildingsPop {
 
         @Override
         protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
-            GCOLOR.UI().border().render(r, body, -1);
+            GCOLOR.UI().border().render(r, body,-1);
 
             if (RD.BUILDINGS().tmp().level(bu, g.get()) == level) {
-                COLOR.WHITE100.render(r, body, -2);
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body, -4);
-            } else {
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body, -2);
+                COLOR.WHITE100.render(r, body,-2);
+                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
+            }else {
+                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
             }
 
-            bu.levels().get(level).icon.big.renderCY(r, body().x1() + 8, body().cY());
+            bu.levels().get(level).icon.big.renderCY(r, body().x1()+8, body().cY());
             num.clear();
             num.color(COLOR.WHITE100);
             GFORMAT.toNumeral(num, level);
-            num.renderCY(r, body().x1() + 48, body.cY());
+            num.renderCY(r, body().x1()+48, body.cY());
 
-            if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
-                OPACITY.O50.bind();
-                COLOR.BLACK.render(r, body, -1);
-                OPACITY.unbind();
+            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
+                if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
+                    OPACITY.O50.bind();
+                    COLOR.BLACK.render(r, body, -1);
+                    OPACITY.unbind();
+                }
             }
+
         }
 
         @Override
@@ -268,10 +240,12 @@ class PlayBuildingsPop {
     }
 
 
+
+
     private double efficiency(RDBuilding bu) {
         double mul = 1;
         for (BoostSpec f : bu.baseFactors) {
-            mul *= f.get(g.get());
+            mul*= f.get(g.get());
         }
         return mul;
     }
@@ -326,9 +300,9 @@ class PlayBuildingsPop {
         b.textLL(Dic.¤¤Cost);
         b.NL();
 
-        int cr = credits(bu, fromL, toL);
+        int cr =  credits(bu, fromL, toL);
         if (cr > 0) {
-            hoverCost(text, UI.icons().s.money, Dic.¤¤Curr, -cr, (int) FACTIONS.player().credits().getD());
+            hoverCost(text, UI.icons().s.money, Dic.¤¤Curr, -cr, (int)FACTIONS.player().credits().getD());
             b.NL();
         }
 
@@ -360,10 +334,10 @@ class PlayBuildingsPop {
         if (value > 0) {
             nn.normalify();
             vv.normalify();
-        } else if (current < -value) {
+        }else if (current  < -value) {
             nn.errorify();
             vv.errorify();
-        } else {
+        }else {
             nn.normalify2();
             vv.normalify2();
         }
@@ -384,14 +358,14 @@ class PlayBuildingsPop {
         int current;
         private final GText num = new GText(UI.FONT().S, 8);
 
-        Levs() {
-            super(Icon.L + 4);
+        Levs(){
+            super(Icon.L+4);
         }
 
         @Override
         public void render(SPRITE_RENDERER r, float ds) {
             for (int i = 1; i < bu.levels.size(); i++) {
-                int x1 = body.x1() + (i - 1) * (Icon.L + 4);
+                int x1 = body.x1()+(i-1)*(Icon.L+4);
                 bu.levels.get(i).icon.big.render(r, x1, body.y1());
 
                 num.clear();
@@ -400,7 +374,7 @@ class PlayBuildingsPop {
 
                 OPACITY.O75.bind();
                 num.color(COLOR.BLACK);
-                num.render(r, x1 + 1, body.y1() + 1);
+                num.render(r, x1+1, body.y1()+1);
                 num.color(GCOLOR.T().H1);
                 OPACITY.unbind();
                 num.render(r, x1, body.y1());
@@ -408,7 +382,7 @@ class PlayBuildingsPop {
 
                 if (current != i) {
                     OPACITY.O50.bind();
-                    COLOR.BLACK.render(r, x1, x1 + Icon.L, body.y1(), body.y1() + Icon.L);
+                    COLOR.BLACK.render(r,  x1, x1+Icon.L, body.y1(),  body.y1()+Icon.L);
                     OPACITY.unbind();
                 }
 
@@ -425,19 +399,19 @@ class PlayBuildingsPop {
 
     private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r, double d) {
         d -= 1;
-        int am = (int) (d * 8);
+        int am = (int) (d*8);
         am = CLAMP.i(am, -7, 7);
         if (am != 0) {
             am = Math.abs(am);
             SPRITE s = UI.icons().s.chevron(DIR.N);
-            if (d < 0) {
+            if (d<0) {
                 COLOR.RED100.bind();
                 s = UI.icons().s.chevron(DIR.S);
-            } else {
+            }else {
                 COLOR.GREEN100.bind();
             }
             for (int i = 0; i < am; i++) {
-                s.render(r, body.x2() - 18, body.y1() + i * 8);
+                s.render(r, body.x2()-18, body.y1()+i*8);
             }
 
         }
@@ -445,7 +419,7 @@ class PlayBuildingsPop {
     }
 
     private static int credits(RDBuilding bu, int fromL, int toL) {
-        int cost = bu.levels.get(toL).cost - bu.levels.get(fromL).cost;
+        int cost = bu.levels.get(toL).cost-bu.levels.get(fromL).cost;
         return cost;
     }
 
@@ -474,15 +448,15 @@ class PlayBuildingsPop {
         return am;
     }
 
-    public class Butt extends ClickableAbs {
+    public class Butt extends ClickableAbs{
 
         private final GuiSection lPop = new GuiSection();
         protected final RDBuilding bu;
 
-        Butt(RDBuilding b) {
+        Butt(RDBuilding b){
             body.setDim(width, height);
             this.bu = b;
-            for (int i = b.levels().size() - 1; i >= 0; i--) {
+            for (int i = b.levels().size()-1; i >= 0; i--) {
                 lPop.addDown(0, new LevelButt(b, i));
             }
 
@@ -495,7 +469,7 @@ class PlayBuildingsPop {
                 if (S.get().developer || RD.BUILDINGS().tmp().canAfford(bu, g.get(), 1)) {
                     RD.BUILDINGS().tmp().levelSet(bu, 1);
                 }
-            } else {
+            }else {
                 VIEW.inters().popup2.show(lPop, this);
             }
 
@@ -517,6 +491,7 @@ class PlayBuildingsPop {
     }
 
     public void render(RDBuilding bu, Region reg, RECTANGLE body, SPRITE_RENDERER r, boolean isActive, boolean isSelected, boolean isHovered) {
+
         ColorImp cc = ColorImp.TMP;
         cc.set(bu.cat.color);
         cc.render(r, body);
@@ -526,12 +501,17 @@ class PlayBuildingsPop {
 
         int tl = RD.BUILDINGS().tmp().level(bu, g.get());
 
-        Rec.TEMP.setDim(body.width() - 4, body.height() - 4);
+        Rec.TEMP.setDim(body.width()-4, body.height()-4);
         Rec.TEMP.moveC(body.cX(), body.cY());
         GButt.ButtPanel.renderBG(r, isActive, isSelected, isHovered, Rec.TEMP);
 
-        bu.levels().get(Math.max(tl, 1)).icon.huge.renderC(r, body.cX(), body.cY() + 2);
+
+
+
+        bu.levels().get(Math.max(tl, 1)).icon.huge.renderC(r, body.cX(), body.cY()+2);
         renderEfficiency(bu, body, r, efficiency(bu));
+
+
 
         if (tl > 0) {
 
@@ -541,26 +521,31 @@ class PlayBuildingsPop {
 
             OPACITY.O75.bind();
             num.color(COLOR.BLACK);
-            num.renderC(r, body.cX() + 1, body.y1() + 14 + 1);
-            COLOR col = buCols[(int) ((double) (buCols.length - 1) * RD.BUILDINGS().tmp().level(bu, g.get()) / ((bu.levels().size() - 1)))];
+            num.renderC(r, body.cX()+1, body.y1()+14+1);
+            COLOR col = buCols[(int) ((double)(buCols.length-1)*RD.BUILDINGS().tmp().level(bu, g.get())/((bu.levels().size()-1)))];
             num.color(col);
             OPACITY.unbind();
-            num.renderC(r, body.cX(), body.y1() + 14);
+            num.renderC(r, body.cX(), body.y1()+14);
 
-            if ((tl < bu.level.max(reg) && RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl + 1))) {
+            if ((tl <  bu.level.max(reg) && RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1))) {
                 COLOR.YELLOW100.bind();
-                UI.icons().s.chevron(DIR.N).renderC(r, body.cX() - 8, body.y1() + 4);
-                UI.icons().s.chevron(DIR.N).renderC(r, body.cX(), body.y1() + 4);
-                UI.icons().s.chevron(DIR.N).renderC(r, body.cX() + 8, body.y1() + 4);
+                UI.icons().s.chevron(DIR.N).renderC(r, body.cX()-8, body.y1()+4);
+                UI.icons().s.chevron(DIR.N).renderC(r, body.cX(), body.y1()+4);
+                UI.icons().s.chevron(DIR.N).renderC(r, body.cX()+8, body.y1()+4);
                 COLOR.unbind();
             }
-        } else {
-            if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl + 1)) {
+
+        }else {
+            if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1)) {
                 OPACITY.O66.bind();
                 COLOR.BLACK.render(r, body, -4);
                 OPACITY.unbind();
             }
+
         }
+
+
+
 
         GButt.ButtPanel.renderFrame(r, isActive, isSelected, isHovered, body);
     }
@@ -572,7 +557,7 @@ class PlayBuildingsPop {
         if (lev == 0) {
 
             b.title(bu.info.name);
-            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev + 1))
+            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev+1))
                 b.textL(¤¤Available);
             else
                 b.error(¤¤UnAvailable);
@@ -598,12 +583,12 @@ class PlayBuildingsPop {
 
             b.NL(8);
             hoverNonCosts(g.get(), bu, 0, 1, text);
-        } else {
+        }else {
 
             RDBuildingLevel l = bu.levels().get(RD.BUILDINGS().tmp().level(bu, g.get()));
             b.title(l.name);
 
-            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev + 1))
+            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev+1))
                 b.textL(¤¤ConstructedUp);
             else
                 b.textL(¤¤Constructed);
@@ -678,9 +663,7 @@ class PlayBuildingsPop {
                 @Override
                 protected void renAction() {
                     activeSet(RD.BUILDINGS().tmp().hasChange());
-                }
-
-                ;
+                };
 
 
             }.pad(4, 4).hoverInfoSet(Dic.¤¤cancel);
@@ -705,9 +688,7 @@ class PlayBuildingsPop {
                             break;
                         }
                     activeSet(a);
-                }
-
-                ;
+                };
 
             }.pad(4, 4).hoverInfoSet(¤¤RemoveAll);
             addRightC(0, b);
@@ -737,6 +718,8 @@ class PlayBuildingsPop {
             addRelBody(4, DIR.N, butts);
 
 
+
+
         }
 
         private RENDEROBJ boost(Boostable bo, SPRITE icon) {
@@ -745,7 +728,7 @@ class PlayBuildingsPop {
                 @Override
                 public void update(GText text) {
                     bo.get(g.get());
-                    GFORMAT.iIncr(text, (int) bo.get(g.get()));
+                    GFORMAT.iIncr(text, (int)bo.get(g.get()));
                 }
 
 
@@ -756,9 +739,7 @@ class PlayBuildingsPop {
                     b.text(bo.desc);
                     b.sep();
                     bo.hover(b, g.get(), null, true);
-                }
-
-                ;
+                };
 
             }.hh(icon);
         }

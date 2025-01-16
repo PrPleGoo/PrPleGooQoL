@@ -111,7 +111,7 @@ public final class RaceBoosts {
     public BoostSpec pushIfDoesntExist(Race c, double v, Boostable bo, boolean isMul) {
         String k = bo.key + isMul;
         double none = isMul ? 1 : 0;
-        if (bvmap.containsKey(k) && bvmap.get(k).dd[c.index()] == none)
+        if (v == none || (bvmap.containsKey(k) && bvmap.get(k).dd[c.index()] == v))
             return null;
 
         if (!bvmap.containsKey(k)) {

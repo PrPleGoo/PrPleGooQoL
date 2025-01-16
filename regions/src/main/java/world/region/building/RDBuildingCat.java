@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 
-import game.boosting.BOOSTING;
 import game.boosting.BValue;
 import game.boosting.BValue.BValueSimple;
 import game.boosting.BoostSpec;
@@ -18,11 +17,13 @@ import init.resources.RESOURCES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.type.CLIMATES;
-import prplegoo.regions.api.PrPleGooEfficiencies;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
 import snake2d.util.file.Json;
-import snake2d.util.sets.*;
+import snake2d.util.sets.ArrayListGrower;
+import snake2d.util.sets.KeyMap;
+import snake2d.util.sets.LIST;
+import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.text.Str;
 import util.dic.Dic;
 import util.info.GFORMAT;
@@ -120,14 +121,6 @@ public class RDBuildingCat {
             l.local.read("BOOST", j, lValue);
             l.global.read("BOOST_GLOBAL", j, lGlobal, Dic.¤¤global, true, "ADMIN");
             l.cost = j.i("CREDITS", 0, 1000000, 0);
-        }
-
-        if (json.bool("SLAVERY", false)) {
-            BOOSTING.connecter(() -> PrPleGooEfficiencies.SLAVERY(b, 0, 1));
-        }
-
-        if (json.bool("FOOD_CONSUMER", false)) {
-            BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
         }
 
         new RMAP.MAPJson<Efficiency>("EFFICIENCY", json, emap, error) {

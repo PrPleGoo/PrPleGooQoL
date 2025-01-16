@@ -12,8 +12,6 @@ import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import init.sprite.UI.UI;
 import init.text.D;
-import prplegoo.regions.api.RDSlavery;
-import snake2d.LOG;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -26,7 +24,6 @@ import util.data.INT_O;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
 import world.WORLD;
-import world.map.pathing.WPATHING;
 import world.map.pathing.WRegSel;
 import world.map.pathing.WRegs.RDist;
 import world.map.pathing.WTREATY;
@@ -72,15 +69,11 @@ public class RDDistance {
 
         new RBooster(new BSourceInfo(Dic.¤¤Distance, UI.icons().s.wheel), 1, 0.01, true) {
 
-            final double II = 1.0/(256+128);
+            final double II = 1.0/1024;
 
             @Override
             public double get(Region t) {
-                if(t.faction() == null) {
-                    return 0;
-                }
-
-                return CLAMP.d((WORLD.PATH().distance(t, t.faction().capitolRegion()) - 48.0) * II, 0, 1);
+                return CLAMP.d((data.get(t)-128)*II, 0, 1);
             }
 
         }.add(boostable);
@@ -102,12 +95,8 @@ public class RDDistance {
                 for (RDRace r : RD.RACES().all) {
                     bo.add(r.loyalty.target);
                 }
-                for (RDResource o : RD.OUTPUT().all) {
+                for (RDResource o : RD.OUTPUT().all)
                     bo.add(o.boost);
-                }
-                for (RDSlavery.RDSlave o : RD.SLAVERY().all()) {
-                    bo.add(o.boost);
-                }
             }
         });
 

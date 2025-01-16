@@ -1,6 +1,7 @@
 package view.world.ui.region;
 
 import init.sprite.UI.UI;
+import prplegoo.regions.api.RDSlavery;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
@@ -21,9 +22,9 @@ final class PlayOutput extends GuiSection{
 
 
 
-    private final RENDEROBJ[] butts = new RENDEROBJ[RD.OUTPUT().all.size()];
+    private final RENDEROBJ[] butts = new RENDEROBJ[RD.OUTPUT().all.size() + RD.SLAVERY().size()];
     private final GETTER_IMP<Region> g;
-    private final ArrayList<RENDEROBJ> activeButts = new ArrayList<RENDEROBJ>(RD.OUTPUT().all.size());
+    private final ArrayList<RENDEROBJ> activeButts = new ArrayList<RENDEROBJ>(RD.OUTPUT().all.size() + RD.SLAVERY().size());
     private final int width;
     public static final int height = 30;
     private final int amX;
@@ -33,6 +34,10 @@ final class PlayOutput extends GuiSection{
         this.g = g;
         for (int i = 0; i < RD.OUTPUT().all.size(); i++) {
             butts[i] = new ResButt(RD.OUTPUT().all.get(i));
+        }
+
+        for (int i = 0; i < RD.RACES().all.size(); i++) {
+            butts[i + RD.OUTPUT().all.size()] = new RaceButt(RD.SLAVERY().get(i));
         }
 
         amX = 5;
@@ -64,8 +69,17 @@ final class PlayOutput extends GuiSection{
         activeButts.clearSloppy();
         for (int i = 0; i < RD.OUTPUT().all.size(); i++) {
             RDResource b = RD.OUTPUT().all.get(i);
-            if (b.boost.get(g.get()) > 0) {
+
+            if (b.boost.get(g.get()) != 0) {
                 activeButts.add(butts[i]);
+            }
+        }
+
+        for (int i = 0; i < RD.RACES().all.size(); i++) {
+            RDSlavery.RDSlave b = RD.SLAVERY().get(i);
+
+            if (b.boost.get(g.get()) != 0) {
+                activeButts.add(butts[i + RD.OUTPUT().all.size()]);
             }
         }
         super.render(r, ds);
@@ -131,4 +145,34 @@ final class PlayOutput extends GuiSection{
 
     }
 
+    private class RaceButt extends ClickableAbs {
+
+        private final RDSlavery.RDSlave rdSlave;
+        private final GText tt = new GText(UI.FONT().S, 8);
+
+        RaceButt(RDSlavery.RDSlave rdSlave) {
+            body.setDim(width, height);
+            this.rdSlave = rdSlave;
+        }
+
+        @Override
+        protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
+
+            GCOLOR.UI().border().render(r, body);
+            GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body, -1);
+
+            rdSlave.rdRace.race.appearance().icon.renderC(r, body.x1() + 16, body.cY());
+
+            tt.clear();
+            GFORMAT.i(tt, rdSlave.getDelivery(g.get(), 1));
+
+            tt.renderC(r, body.x1() + 32, body.cY());
+        }
+
+        @Override
+        public void hoverInfoGet(GUI_BOX text) {
+            rdSlave.boost.hover(text, g.get(), true);
+
+        }
+    }
 }

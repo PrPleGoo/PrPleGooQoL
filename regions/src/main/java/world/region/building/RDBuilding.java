@@ -16,6 +16,7 @@ import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
+import prplegoo.regions.api.MagicStringChecker;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
@@ -29,6 +30,7 @@ import util.dic.Dic;
 import util.info.INFO;
 import util.keymap.MAPPED;
 import world.map.regions.Region;
+import world.region.RBooster;
 import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.RDDefis.RDDef;
@@ -39,6 +41,7 @@ public final class RDBuilding implements MAPPED{
     private final BoostSpecs boosters;
     private final ArrayListGrower<BBoost> bboosts = new ArrayListGrower<>();
     public final Boostable efficiency;
+    public RBooster popScaling;
     public final INT_OE<Region> level;
     public final LIST<RDBuildingLevel> levels;
     public final INFO info;
@@ -50,12 +53,19 @@ public final class RDBuilding implements MAPPED{
     final String order;
     private final ArrayList<INT_OE<Faction>> levelAm;
 
-    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order) {
+    public final boolean isPopScaler;
+
+    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order){
+        this(all, init, cat, key, info, levels,  AIBuilds, notify, order, false);
+    }
+
+    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, boolean isPopScaler) {
         this.info = info;
         this.cat = cat;
         this.AIBuild = AIBuilds;
         this.notify = notify;
         this.order = order;
+        this.isPopScaler = isPopScaler;
         cat.all.add(this);
         index = all.add(this);
         kk = cat.key + "_" + key;
@@ -277,7 +287,7 @@ public final class RDBuilding implements MAPPED{
                         @Override
                         public double vGet(Region t) {
                             if (t.faction() == FACTIONS.player()) {
-                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= ll)
+                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) == ll)
                                     return l.unlocker.inUnlocked(t) ? 1 : 0;
                             }
                             return 1;
@@ -434,12 +444,12 @@ public final class RDBuilding implements MAPPED{
 
         private double g(Region t) {
             double ta = tos[RD.BUILDINGS().tmp().level(bu, t)];
-            if (!b.booster.isMul && ta < 0)
+            if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
                 return ta;
             int i = RD.BUILDINGS().tmp().level(bu, t);
             double vv = tos[i];
-            if (b.booster.isMul || vv > 0) {
-                return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);
+            if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
+                return froms[i] + bu.efficiency.get(t) * (tos[i] - froms[i]) * (bu.isPopScaler ? bu.popScaling.vGet(t) : 1);
             }
             return vv;
 

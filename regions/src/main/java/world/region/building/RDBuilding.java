@@ -1,13 +1,26 @@
 package world.region.building;
 
-import game.boosting.*;
+import java.util.Arrays;
+
+import game.boosting.BOOSTABLE_O;
+import game.boosting.BOOSTING;
+import game.boosting.BSourceInfo;
+import game.boosting.BoostSpec;
+import game.boosting.BoostSpecs;
+import game.boosting.Boostable;
+import game.boosting.BoostableCat;
+import game.boosting.BoosterImp;
+import game.boosting.BoosterSimple;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
-import prplegoo.regions.api.MagicStringChecker;
-import snake2d.util.sets.*;
+import snake2d.util.sets.ArrayList;
+import snake2d.util.sets.ArrayListGrower;
+import snake2d.util.sets.KeyMap;
+import snake2d.util.sets.LIST;
+import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.SPRITE;
 import util.data.BOOLEANO;
 import util.data.INT_O;
@@ -16,12 +29,9 @@ import util.dic.Dic;
 import util.info.INFO;
 import util.keymap.MAPPED;
 import world.map.regions.Region;
-import world.region.RBooster;
 import world.region.RD;
 import world.region.RD.RDInit;
 import world.region.RDDefis.RDDef;
-
-import java.util.Arrays;
 
 public final class RDBuilding implements MAPPED{
 
@@ -29,7 +39,6 @@ public final class RDBuilding implements MAPPED{
     private final BoostSpecs boosters;
     private final ArrayListGrower<BBoost> bboosts = new ArrayListGrower<>();
     public final Boostable efficiency;
-    public RBooster popScaling;
     public final INT_OE<Region> level;
     public final LIST<RDBuildingLevel> levels;
     public final INFO info;
@@ -41,19 +50,12 @@ public final class RDBuilding implements MAPPED{
     final String order;
     private final ArrayList<INT_OE<Faction>> levelAm;
 
-    public final boolean isPopScaler;
-
-    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order){
-        this(all, init, cat, key, info, levels,  AIBuilds, notify, order, false);
-    }
-
-    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, boolean isPopScaler) {
+    RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order) {
         this.info = info;
         this.cat = cat;
         this.AIBuild = AIBuilds;
         this.notify = notify;
         this.order = order;
-        this.isPopScaler = isPopScaler;
         cat.all.add(this);
         index = all.add(this);
         kk = cat.key + "_" + key;
@@ -197,6 +199,7 @@ public final class RDBuilding implements MAPPED{
         KeyMap<Integer> defmap = new KeyMap<>();
 
         for (RDBuildingLevel l : levels) {
+
             for (int bi = 0; bi < l.local.all().size(); bi++) {
                 BoostSpec lb = l.local.all().get(bi);
 
@@ -212,9 +215,8 @@ public final class RDBuilding implements MAPPED{
                                 @Override
                                 public double vGet(Region t) {
                                     if (t.faction() == FACTIONS.player()) {
-                                        if (RDBuilding.this.level.get(t) >= l.index) {
+                                        if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= l.index)
                                             return def.get(t);
-                                        }
                                     }
                                     return 1;
                                 }
@@ -275,7 +277,7 @@ public final class RDBuilding implements MAPPED{
                         @Override
                         public double vGet(Region t) {
                             if (t.faction() == FACTIONS.player()) {
-                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) == ll)
+                                if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= ll)
                                     return l.unlocker.inUnlocked(t) ? 1 : 0;
                             }
                             return 1;
@@ -303,6 +305,9 @@ public final class RDBuilding implements MAPPED{
     }
 
     public boolean canAfford(Region reg, int lc, int level) {
+
+        if (level <= lc)
+            return true;
         if (level >= levels.size())
             return false;
 
@@ -313,8 +318,10 @@ public final class RDBuilding implements MAPPED{
         }
 
 
-        if (!levels.get(level).reqs.passes(reg))
-            return false;
+        for (int i =lc; i <= level; i++) {
+            if (!levels.get(i).reqs.passes(reg))
+                return false;
+        }
 
         for (BBoost b : bboosts)
             if (!b.canAfford(reg, lc, level))
@@ -426,13 +433,13 @@ public final class RDBuilding implements MAPPED{
         };
 
         private double g(Region t) {
-            int i = RD.BUILDINGS().tmp().level(bu, t);
-            double ta = tos[i];
-            if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
+            double ta = tos[RD.BUILDINGS().tmp().level(bu, t)];
+            if (!b.booster.isMul && ta < 0)
                 return ta;
+            int i = RD.BUILDINGS().tmp().level(bu, t);
             double vv = tos[i];
-            if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
-                return froms[i] + bu.efficiency.get(t) * (tos[i] - froms[i]) * (bu.isPopScaler ? bu.popScaling.vGet(t) : 1);
+            if (b.booster.isMul || vv > 0) {
+                return froms[i] + bu.efficiency.get(t)*(tos[i]-froms[i]);
             }
             return vv;
 

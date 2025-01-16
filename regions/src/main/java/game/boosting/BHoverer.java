@@ -1,7 +1,5 @@
 package game.boosting;
 
-import prplegoo.regions.api.MagicStringChecker;
-import snake2d.LOG;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.sets.ArrayListInt;
 import snake2d.util.sets.LIST;
@@ -17,11 +15,9 @@ public final class BHoverer {
 
     }
 
-    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops){
-        hoverDetailed(box, all, f, name, baseValue, keepNops, false);
-    }
 
-    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
+
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
         GBox b = (GBox) box;
         if (name != null)
             b.textLL(name);
@@ -45,7 +41,7 @@ public final class BHoverer {
             }
         }
 
-        tot(box, all, f, baseValue, isResourceProductionBooster);
+        tot(box, all, f, baseValue);
 
         if (keepNops) {
             b.NL(4);
@@ -70,16 +66,12 @@ public final class BHoverer {
     }
 
     public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
-        hover(box, all, f, name, baseValue, keepNops, false);
-    }
-
-    public static <T> void hover(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
-        hoverNoTot(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
+        hoverNoTot(box, all, f, name, baseValue, keepNops);
 
         b.NL(8);
 
-        tot(box, all, f, baseValue, isResourceProductionBooster);
+        tot(box, all, f, baseValue);
         b.NL(8);
 
         if (keepNops) {
@@ -104,11 +96,8 @@ public final class BHoverer {
 
     }
 
-    public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
-        hoverNoTot(box, all, f, name, baseValue, keepNops, false);
-    }
 
-    public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
+    public static <T> void hoverNoTot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
         GBox b = (GBox) box;
         if (name != null)
             b.textLL(name);
@@ -118,7 +107,7 @@ public final class BHoverer {
         int ii = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && (d > 0 || (d != 0 && isResourceProductionBooster)) && !l.isMul) {
+            if (l.has(f.getClass()) && d > 0 && !l.isMul) {
                 sort.add(ii);
             }
             ii++;
@@ -126,7 +115,7 @@ public final class BHoverer {
         int i = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && (d < 0 && !isResourceProductionBooster) && !l.isMul) {
+            if (l.has(f.getClass()) && d < 0 && !l.isMul) {
                 if (i < sort.size()) {
                     hov(f, b, all.get(sort.get(i)), 0);
                     i++;
@@ -172,7 +161,7 @@ public final class BHoverer {
 
     }
 
-    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue, boolean isResourceProductionName) {
+    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue) {
         double mul = 1;
         double padd = baseValue > 0 ? baseValue : 0;
         double sub = baseValue < 0 ? baseValue : 0;
@@ -182,7 +171,7 @@ public final class BHoverer {
                     mul *= s.get(t);
                 else {
                     double a = s.get(t);
-                    if (a < 0 && !isResourceProductionName)
+                    if (a < 0)
                         sub += a;
                     else
                         padd += a;

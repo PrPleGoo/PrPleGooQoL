@@ -3,6 +3,7 @@ package game.boosting;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.type.POP_CL;
+import prplegoo.regions.api.MagicStringChecker;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -27,12 +28,14 @@ public final class Boostable extends INFO implements MAPPED{
     public final Icon icon;
     public final BoostableCat cat;
     public final double minValue;
+    private final boolean isResourceProductionBooster;
 
     public Boostable(int index, String key, double baseValue, CharSequence name, CharSequence desc, SPRITE icon, BoostableCat category, double minValue) {
         super(name, desc);
         this.index = index;
         this.baseValue = baseValue;
         this.key = key;
+        this.isResourceProductionBooster = MagicStringChecker.isResourceProductionBooster(key);
         this.icon = icon != null ? new Icon(Icon.S, icon) : UI.icons().s.DUMMY;
         this.cat = category;
         this.minValue = minValue;
@@ -75,7 +78,7 @@ public final class Boostable extends INFO implements MAPPED{
                     mul *= s.get(t);
                 else {
                     double a = s.get(t);
-                    if (a > 0)
+                    if (a > 0 || (a != 0 && isResourceProductionBooster))
                         padd += a;
 
                 }
@@ -103,7 +106,29 @@ public final class Boostable extends INFO implements MAPPED{
         }
 
         deadlockCheck++;
-        double res =  BUtil.value(all, t, baseValue, 1, minValue);
+        double res;
+        if (isResourceProductionBooster) {
+            double padd = baseValue > 0 ? baseValue : 0;
+            double sub = baseValue < 0 ? baseValue : 0;
+            double mul = 1;
+            for (BoosterAbs<BOOSTABLE_O> s : all) {
+                if (s.has(t.getClass())) {
+                    if (s.isMul)
+                        mul *= s.get(t);
+                    else {
+                        double a = s.get(t);
+                        if (a == 0) {
+                            continue;
+                        }
+
+                        padd += a;
+                    }
+                }
+            }
+            res = CLAMP.d(padd * mul + sub, minValue, Double.MAX_VALUE);
+        } else {
+            res = BUtil.value(all, t, baseValue, 1, minValue);
+        }
         deadlockCheck--;
         return res;
     }
@@ -117,7 +142,7 @@ public final class Boostable extends INFO implements MAPPED{
         for (Booster l : all) {
             double d = l.getValue(l.vGet(o, daysBack));
             if (!l.isMul && d != 0) {
-                if (d > 0)
+                if (d > 0 || isResourceProductionBooster)
                     add += d;
                 else
                     sub += d;
@@ -145,7 +170,11 @@ public final class Boostable extends INFO implements MAPPED{
     static final int htab = 7;
 
     public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops) {
-        BHoverer.hoverDetailed(box, all, f, name, baseValue, keepNops);
+        hoverDetailed(box, f, name, keepNops, false);
+    }
+
+    public void hoverDetailed(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops, boolean isResourceProductionBooster) {
+        BHoverer.hoverDetailed(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
     }
 
     public void hoverDetailedHistoric(GUI_BOX box, POP_CL o, CharSequence name, boolean keepNops, int daysBack) {
@@ -221,7 +250,7 @@ public final class Boostable extends INFO implements MAPPED{
     }
 
     public void hover(GUI_BOX box, BOOSTABLE_O f, CharSequence name, boolean keepNops) {
-        BHoverer.hover(box, all, f, name, baseValue, keepNops);
+        BHoverer.hover(box, all, f, name, baseValue, keepNops, isResourceProductionBooster);
     }
 
     @Override

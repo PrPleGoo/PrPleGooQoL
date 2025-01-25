@@ -342,7 +342,7 @@ TECHS: {
 			ROOM_MINE_GEM,
 		],
         UNLOCKS_REGION: [
-            BUILDING_MINE_GEM_1,
+            BUILDING_MINE_MINE_GEM_1,
         ],
 	},
 	GEM01: {
@@ -418,7 +418,7 @@ TECHS: {
 			ROOM_MINE_SITHILON,
 		],
         UNLOCKS_REGION: [
-            BUILDING_MINE_SITHILON_1,
+            BUILDING_MINE_MINE_SITHILON_1,
         ],
 	},
 	SITH1: {

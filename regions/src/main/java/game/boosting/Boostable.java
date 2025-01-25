@@ -114,9 +114,9 @@ public final class Boostable extends INFO implements MAPPED{
                     padd += a;
                 }
             }
-            return CLAMP.d(padd*mul + sub, minValue, Double.MAX_VALUE);
+            res = CLAMP.d(padd*mul + sub, minValue, Double.MAX_VALUE);
         }else{
-        res =  BUtil.value(all, t, baseValue, 1, minValue);
+            res =  BUtil.value(all, t, baseValue, 1, minValue);
         }
         deadlockCheck--;
         return res;

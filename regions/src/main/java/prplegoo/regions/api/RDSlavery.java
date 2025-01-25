@@ -38,6 +38,13 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
                 }
 
             }.add(slave.boost);
+            new RBooster(new BSourceInfo(Dic.¤¤Population, slave.rdRace.race.appearance().icon), 0, 40000, true) {
+                @Override
+                public double get(Region t) {
+                    return slave.rdRace.pop.get(t) / 40000.0 / 100.0;
+                }
+
+            }.add(slave.boost);
         }
 
         initialize();
@@ -92,6 +99,8 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
             selectedSlaves.put(region.index(), selectedSlave);
         }
+
+        slaveDelivery = new double[WORLD.REGIONS().all().size()][RD.RACES().all.size()];
     }
 
     public boolean has(Region t, RDRace e) {

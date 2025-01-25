@@ -23,8 +23,6 @@ TECHS: {
 		},
 		UNLOCKS_REGION: [
             BUILDING_CIVIC_CENTRE_4,
-            BUILDING_CIVIC_CENTRE_5,
-			BUILDING_CIVIC_CENTRE_6,
 		],
 	},
 	CENT2: {

@@ -137,7 +137,7 @@ final class PlayOutput extends GuiSection{
     private boolean hasValue(Boostable bo, Region reg) {
 
         for (Booster b : bo.all()) {
-            double v = b.get(reg);
+            double v = bo.get(reg);
             if ((!b.isMul && v > 0)) {
                 return true;
             }
@@ -247,7 +247,7 @@ final class PlayOutput extends GuiSection{
             rdSlave.rdRace.race.appearance().icon.renderC(r, body.x1() + 16, body.cY());
 
             tt.clear();
-            GFORMAT.i(tt, rdSlave.getDelivery(g.get(), 1));
+            GFORMAT.f(tt, rdSlave.boost.get(g.get()));
 
             tt.renderC(r, body.x1() + 32, body.cY());
         }

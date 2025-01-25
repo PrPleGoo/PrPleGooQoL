@@ -14,12 +14,12 @@ import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
 public class PrPleGooEfficiencies {
-    public static void SLAVERY(RDBuilding bu, double from, double to) {
+    public static void SLAVERY(RDBuilding bu) {
         for (RDRace rdRace : RD.RACES().all) {
-            bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Population, rdRace.race.appearance().icon), from, to, true) {
+            bu.boosters().push(new RBooster(new BSourceInfo(bu.info.name, rdRace.race.appearance().icon), 0, 1, true) {
                 @Override
                 public double get(Region t) {
-                    return rdRace.pop.get(t) / 100.0;
+                    return 1;
                 }
 
             }, RD.SLAVERY().boostable(rdRace));

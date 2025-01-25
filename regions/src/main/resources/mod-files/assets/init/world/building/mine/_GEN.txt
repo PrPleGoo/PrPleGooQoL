@@ -1,0 +1,114 @@
+GENS: [
+	{
+		INDUSTRIES: [
+			MINE_CLAY,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_CLAY: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			MINE_COAL,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_COAL: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			MINE_GEM,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_GEM: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			MINE_ORE,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_ORE: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			MINE_SITHILON,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_SITHILON: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			MINE_STONE,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_MINABLE_STONE: [0.5,1,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			_WOODCUTTER,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_TERRAIN_FOREST: [0.5,1,],
+			},
+		},
+	},
+],

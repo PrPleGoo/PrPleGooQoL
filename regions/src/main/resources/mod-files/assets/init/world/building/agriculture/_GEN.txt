@@ -1,0 +1,53 @@
+GENS: [
+	{
+		INDUSTRIES: [
+			FARM_GRAIN,
+			FARM_FRUIT,
+			FARM_VEG,
+			FARM_COTTON,
+			FARM_SPICES,
+			FARM_HERB,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_FERTILTIY: [0, 1.2,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			ORCHARD*,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			BOOST: {
+				PROP_FERTILTIY: [0.5, 0.7,],
+			},
+		},
+	},
+	{
+		INDUSTRIES: [
+			FARM_MUSHROOM*,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+		EFFICIENCY: {
+			PROSPECT: [0.8, 0.6,],
+		},		
+	},
+],

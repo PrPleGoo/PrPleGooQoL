@@ -1,0 +1,13 @@
+GENS: [
+	{
+		INDUSTRIES: [
+			REFINER_*,
+		],
+		LEVELS: 10,
+		OUTPUT: 500,
+		CREDITS: 1000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -50,
+		},
+	},
+],

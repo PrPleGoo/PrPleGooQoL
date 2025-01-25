@@ -1,0 +1,79 @@
+TREE: {
+	0: [_____,_____,_____,_____,_____,],
+	1: [_____,WORK0,_____,LOYA0,_____,],
+	3: [_____,_____,CENT0,_____,_____,],
+	4: [_____,HEAL0,CENT1,TAX00,_____,],
+	5: [_____,_____,CENT2,_____,_____,],
+},
+TECHS: {
+	CENT0: {
+		COSTS: {
+			CIVIC_INNOVATION: 5,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_CIVIC_CENTRE_3,
+		],
+	},
+	CENT1: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 50,
+		},
+		REQUIRES_TECH_LEVEL: {
+			CENT0: 1,
+		},
+		UNLOCKS_REGION: [
+            BUILDING_CIVIC_CENTRE_4,
+            BUILDING_CIVIC_CENTRE_5,
+			BUILDING_CIVIC_CENTRE_6,
+		],
+	},
+	CENT2: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 100,
+		},
+		REQUIRES_TECH_LEVEL: {
+			CENT1: 1,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_CIVIC_CENTRE_7,
+		],
+	},
+
+	HEAL0: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		REQUIRES_TECH_LEVEL: {
+			CENT0: 1,
+		},
+		UNLOCKS_REGION: [
+	        BUILDING_GLOBAL_HYGINE_1,
+		],
+	},
+	LOYA0: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_GLOBAL_A_POLICE_1,
+		],
+	},
+	
+	TAX00: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_GLOBAL_TAX_1,
+		],
+	},
+	WORK0: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_GLOBAL_WGUILD_1,
+		],
+	},
+},
+

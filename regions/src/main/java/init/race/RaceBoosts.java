@@ -6,17 +6,15 @@ import java.util.HashMap;
 import game.boosting.BOOSTABLE_O;
 import game.boosting.BOOSTING;
 import game.boosting.BSourceInfo;
+import game.boosting.BValue;
 import game.boosting.BoostSpec;
 import game.boosting.BoostSpecs;
 import game.boosting.Boostable;
 import game.boosting.Booster;
-import game.faction.Faction;
-import game.faction.npc.NPCBonus;
-import init.religion.Religion;
-import init.religion.Religions;
+import game.faction.npc.FactionNPC;
+import game.faction.player.Player;
 import init.sprite.UI.UI;
-import init.type.POP_CL;
-import settlement.army.Div;
+import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.main.employment.RoomEmploymentSimple;
 import settlement.stats.Induvidual;
@@ -34,7 +32,6 @@ public final class RaceBoosts {
     private double[][] priorities;
     private double[][] skillRelative;
     private double[][] skill;
-    private  double[][] religions ;
 
     public final BoostSpecs boosters = new BoostSpecs(RACES.name(), UI.icons().s.citizen, true);
     private final KeyMap<BV> bvmap = new KeyMap<BV>();
@@ -46,14 +43,7 @@ public final class RaceBoosts {
 
             @Override
             public void exe() {
-//				for (Religion r : Religions.ALL()) {
-//					double[] vv = religions[r.index()];
-//					Arrays.fill(vv, 0);
-//					for (Religion rel : Religions.ALL()) {
-//						vv[rel.index()] = rel.inclination;
-//					}
-//				}
-                religions = new double[RACES.all().size()][Religions.ALL().size()];
+
                 for (Race c : RACES.all()) {
 
 
@@ -67,40 +57,9 @@ public final class RaceBoosts {
                         bvmap.get(k).set(c, s.booster.to());
                     }
 
-                    for (Religion r : Religions.ALL()) {
-
-                        if (c.pref().Religion(r) > 0) {
-                            String k = r.conversionCity.key + false;
-                            if (!bvmap.containsKey(k)) {
-                                bvmap.put(k, new BV(boosters, r.conversionCity, false));
-                            }
-                            bvmap.get(k).set(c, c.pref().Religion(r));
-                            k = r.conversionRealm.key + false;
-                            if (!bvmap.containsKey(k)) {
-                                bvmap.put(k, new BV(boosters, r.conversionRealm, false));
-                            }
-                            bvmap.get(k).set(c, c.pref().Religion(r));
-                            religions[c.index][r.index()] = c.pref().Religion(r);
-                        }
-                    }
                 }
                 setPrio();
-                for (Race c : RACES.all()) {
-                    double[] dd = religions[c.index()];
-                    double tot = 0;
-                    for (Religion r : Religions.ALL()) {
-                        tot += dd[r.index()];
-                    }
-                    if (tot == 0) {
-                        for (Religion r : Religions.ALL()) {
-                            tot += 1;
-                            dd[r.index()] = 1;
-                        }
-                    }
-                    for (Religion r : Religions.ALL()) {
-                        dd[r.index()] = dd[r.index()]/tot;
-                    }
-                }
+
             }
         };
         BOOSTING.connecter(a);
@@ -114,16 +73,20 @@ public final class RaceBoosts {
         if (v == none || (bvmap.containsKey(k) && bvmap.get(k).dd[c.index()] == v))
             return null;
 
+        boolean ret = false;
         if (!bvmap.containsKey(k)) {
+            ret = true;
             bvmap.put(k, new BV(boosters, bo, isMul));
+
         }
 
         BV bv = bvmap.get(k);
         bv.set(c, v);
         setPrio();
         //setRel();
-        return bv.spec;
+        return ret ? bv.spec : null;
     }
+
 
     void setPrio() {
 
@@ -161,7 +124,7 @@ public final class RaceBoosts {
                 }
                 for (RoomEmploymentSimple p : SETT.ROOMS().employment.ALLS()) {
                     if (p.blueprint().bonus() != null) {
-                        double v = r.boosts.value(p.blueprint().bonus());
+                        double v = r.bvalue(p.blueprint().bonus());
                         v -= min;
                         v /= (max-min);
                         vv[p.eindex()] = v;
@@ -187,7 +150,7 @@ public final class RaceBoosts {
                 Boostable bo = e.blueprint().bonus();
                 double ave = 0;
                 for (Race r : RACES.all()) {
-                    ave += r.boosts.value(bo)-1;
+                    ave += r.bvalue(bo)-1;
                 }
                 if (ave != 0)
                     ave /= RACES.all().size();
@@ -195,12 +158,12 @@ public final class RaceBoosts {
 
                 for (Race r : RACES.all()) {
                     double[] vv = skillRelative[r.index()];
-                    double v = r.boosts.value(bo)/ave;
+                    double v = r.bvalue(bo)/ave;
                     v = CLAMP.d(v, 0, 2);
                     v /= 2;
 
                     vv[e.eindex()] = v;
-                    skill[r.index()][e.eindex()] = r.boosts.value(bo);
+                    skill[r.index()][e.eindex()] = r.bvalue(bo);
                 }
 
             }else {
@@ -239,11 +202,6 @@ public final class RaceBoosts {
         return skill[race.index()][e.eindex()];
     }
 
-    public double religion(Race race, Religion r) {
-        return religions[race.index()][r.index()];
-    }
-
-
 
     private static class BV extends Booster{
 
@@ -252,6 +210,7 @@ public final class RaceBoosts {
         private final double[] dd = new double[RACES.all().size()];
         private final boolean isMul;
         public final BoostSpec spec;
+        private final BValue value;
 
         BV(BoostSpecs bos, Boostable target, boolean isMul){
             super(new BSourceInfo(RACES.name(), UI.icons().s.citizen), isMul);
@@ -261,6 +220,67 @@ public final class RaceBoosts {
             set();
 
             spec = bos.push(this, target);
+
+            value = new BValue() {
+
+                @Override
+                public double vGet(FactionNPC f) {
+                    if (f == null || f.capitolRegion() == null)
+                        return 0;
+                    return vGet(f.capitolRegion());
+                }
+
+                @Override
+                public double vGet(Player f) {
+                    return isMul ? 1.0 : 1;
+                }
+
+                @Override
+                public double vGet(PopTime popTime) {
+                    if (popTime.pop.race == null) {
+                        double acc = 0;
+                        double tot = 0;
+                        for (int ri = 0; ri < RACES.all().size(); ri++) {
+                            Race r = RACES.all().get(ri);
+                            double pop = STATS.POP().POP.data(popTime.pop.cl).get(r);
+
+                            acc += dd[r.index()]*pop;
+                            tot += pop;
+                        }
+                        if (tot == 0)
+                            return 0;
+                        return acc/tot;
+
+                    }else {
+                        return dd[popTime.pop.race.index()];
+                    }
+                }
+
+                @Override
+                public double vGet(Div div) {
+                    return dd[div.info.race().index()];
+                }
+
+                @Override
+                public double vGet(Induvidual indu) {
+                    return dd[indu.race().index()];
+                }
+
+                @Override
+                public double vGet(Region reg) {
+                    double acc = 0;
+                    double tot = 0;
+                    for (int ri = 0; ri < RD.RACES().all.size(); ri++) {
+                        RDRace r = RD.RACES().all.get(ri);
+                        double pop = r.pop.get(reg);
+                        acc += dd[r.race.index()]*pop;
+                        tot += pop;
+                    }
+                    if (tot == 0)
+                        return 0;
+                    return acc/tot;
+                }
+            };
         }
 
         void set(Race c, double value) {
@@ -284,80 +304,8 @@ public final class RaceBoosts {
         }
 
         @Override
-        public double get(BOOSTABLE_O o) {
-            return o.boostableValue(this);
-        }
-
-        @Override
         public double getValue(double input) {
             return input;
-        }
-
-        @Override
-        public double vGet(Region reg) {
-            double acc = 0;
-            double tot = 0;
-            for (int ri = 0; ri < RD.RACES().all.size(); ri++) {
-                RDRace r = RD.RACES().all.get(ri);
-                double pop = r.pop.get(reg);
-                acc += dd[r.race.index()]*pop;
-                tot += pop;
-            }
-            if (tot == 0)
-                return 0;
-            return acc/tot;
-        }
-
-        @Override
-        public double vGet(Induvidual indu) {
-            return dd[indu.race().index()];
-        }
-
-        @Override
-        public double vGet(Div div) {
-            return dd[div.info.race().index()];
-        }
-
-        @Override
-        public double vGet(Faction f) {
-            return isMul ? 1 : 0;
-        }
-
-        @Override
-        public double vGet(NPCBonus bonus) {
-            return vGet(bonus.faction.capitolRegion());
-        }
-
-        @Override
-        public double vGet(POP_CL reg) {
-            return vGet(reg, 0);
-        }
-
-        @Override
-        public double vGet(POP_CL reg, int daysBack) {
-
-            if (reg.race == null) {
-                double acc = 0;
-                double tot = 0;
-                for (int ri = 0; ri < RACES.all().size(); ri++) {
-                    Race r = RACES.all().get(ri);
-                    double pop = STATS.POP().POP.data(reg.cl).get(r);
-
-                    acc += dd[r.index()]*pop;
-                    tot += pop;
-                }
-                if (tot == 0)
-                    return 0;
-                return acc/tot;
-
-            }else {
-                return dd[reg.race.index()];
-            }
-        }
-
-        @Override
-        public boolean has(Class<?> b) {
-            return b != Faction.class;
         }
 
         @Override
@@ -368,6 +316,11 @@ public final class RaceBoosts {
         @Override
         public double to() {
             return to;
+        }
+
+        @Override
+        protected double pget(BOOSTABLE_O o) {
+            return o.boostableValue(value);
         }
 
 

@@ -5,17 +5,18 @@ import static world.WORLD.REGIONS;
 import java.io.IOException;
 import java.util.Arrays;
 
+import game.GAME;
 import game.GameDisposable;
 import game.Profiler;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
+import game.values.GVALUES;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.RDFoodConsumption;
 import prplegoo.regions.api.RDSlavery;
-import prplegoo.regions.api.RDWorkers;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -25,6 +26,8 @@ import snake2d.util.sets.LIST;
 import snake2d.util.sets.LinkedList;
 import snake2d.util.sprite.text.Str;
 import util.data.DataO;
+import util.data.INT_O;
+import util.data.INT_O.INT_OE;
 import view.tool.PLACABLE;
 import view.tool.ToolManager;
 import world.WORLD;
@@ -33,6 +36,7 @@ import world.WORLD.WorldResource;
 import world.WORLD.WorldResourceManager;
 import world.map.regions.Region;
 import world.map.regions.WREGIONS;
+import world.region.building.RDBuildPoints;
 import world.region.building.RDBuilding;
 import world.region.building.RDBuildings;
 import world.region.pop.RDRace;
@@ -45,27 +49,26 @@ public class RD extends WorldResource{
 
 
     private final RDBuildings buildings;
-    private final RDOutput resources;
+    private final RDOutputs resources;
     private final RDRandom random;
     private final RDRaces races;
-    private final RDAdmin admin;
     private final RDMilitary military;
-    private final RDTax tax;
     private final RDHealth health;
     private final RDDistance distance;
     private final RDReligions religion;
     private final RDOwner owner;
     private final RDDevastation deva;
-    private final RDOrg org;
-    private final RDWorkers workers;
     private final RDSlavery slavery;
     private final RDFoodConsumption foodConsumption;
     private RDUpdater updater;
-    private boolean distDirty = true;
 
+    private final EventData event;
+    private final EventData mark;
     private final long[][] regionData;
     private final long[][] factionData;
     private final int[] factionI = new int[WREGIONS.MAX];
+
+
 
     //	final RegData[] dreg = new RegData[WREGIONS.MAX];
     final Realm[] drea = new Realm[FACTIONS.MAX];
@@ -81,22 +84,21 @@ public class RD extends WorldResource{
         super("region Data", "RD");
         self = this;
 
-        admin = new RDAdmin(init);
         distance = new RDDistance(init);
         random = new RDRandom(init);
         health = new RDHealth(init);
-        resources = new RDOutput(init);
+        resources = new RDOutputs(init);
         military = new RDMilitary(init);
         races = new RDRaces(init);
-        tax = new RDTax(init);
         religion = new RDReligions(init);
         buildings = new RDBuildings(init);
         owner = new RDOwner(init);
         deva = new RDDevastation(init);
-        org = new RDOrg(init);
-        workers = new RDWorkers();
         slavery = new RDSlavery();
         foodConsumption = new RDFoodConsumption();
+        mark = new EventData(init, "EVENT_MARK");
+
+        event = new EventData(init, "EVENT_SELECTION");
 
         Arrays.fill(factionI, -1);
 
@@ -104,6 +106,17 @@ public class RD extends WorldResource{
         factionData = new long[FACTIONS.MAX][init.rCount.longCount()];
         for (int i = 0; i < drea.length; i++)
             drea[i] = new Realm(i);
+
+        GAME.addOnInit(new ACTION() {
+
+            @Override
+            public void exe() {
+                buildings.init(init);
+                races.init();
+                updater = new RDUpdater(init);
+
+            }
+        });
 
     }
 
@@ -142,8 +155,9 @@ public class RD extends WorldResource{
                 s.load(file);
 
             updater.saver.load(file);
-            distDirty = true;
-            RD.ADMIN().change(FACTIONS.player().capitolRegion());
+            RD.BUILDINGS().costs.setDirty();
+            mark.load();
+            event.load();
         }
 
         @Override
@@ -164,8 +178,9 @@ public class RD extends WorldResource{
             for (SAVABLE s : init.savable)
                 s.clear();;
             updater.saver.clear();
-            distDirty = false;
             WORLD.MINIMAP().repaint();
+            event.am = 0;
+            mark.am = 0;
         }
 
         @Override
@@ -254,10 +269,6 @@ public class RD extends WorldResource{
     @Override
     public void update(float ds, Profiler prof) {
         prof.logStart(this);
-        if (distDirty) {
-            distDirty = false;
-            distance.init();
-        }
 
         updater.update(ds);
         prof.logEnd(this);
@@ -266,14 +277,6 @@ public class RD extends WorldResource{
     @Override
     protected void afterTick() {
         buildings.update();
-    }
-    @Override
-    public void initAfterGameSetup() {
-        buildings.init(init);
-        races.init();
-
-        updater = new RDUpdater(init);
-        distDirty = true;
     }
 
     public final class RDInit {
@@ -299,7 +302,7 @@ public class RD extends WorldResource{
         public final LinkedList<RDUpdatable> upers = new LinkedList<>();
 
         public final LinkedList<SAVABLE> savable = new LinkedList<>();
-        public final RDDefis deficiencies = new RDDefis();
+        public RDBuildPoints points;
 
     }
 
@@ -319,7 +322,7 @@ public class RD extends WorldResource{
         return self.buildings;
     }
 
-    public static RDOutput OUTPUT() {
+    public static RDOutputs OUTPUT() {
         return self.resources;
     }
 
@@ -331,17 +334,10 @@ public class RD extends WorldResource{
         return self.races;
     }
 
-    public static RDAdmin ADMIN() {
-        return self.admin;
-    }
-
     public static RDMilitary MILITARY() {
         return self.military;
     }
 
-    public static RDTax TAX() {
-        return self.tax;
-    }
 
     public static RDHealth HEALTH() {
         return self.health;
@@ -359,12 +355,12 @@ public class RD extends WorldResource{
         return self.owner;
     }
 
-    public static RDOrg ORG() {
-        return self.org;
+    public static RDUpdater UPDATER() {
+        return self.updater;
     }
 
-    public static RDWorkers WORKERS() {
-        return self.workers;
+    public static RDDevastation DEVASTATION() {
+        return self.deva;
     }
 
     public static RDSlavery SLAVERY(){
@@ -375,16 +371,12 @@ public class RD extends WorldResource{
         return self.foodConsumption;
     }
 
-    public static RDUpdater UPDATER() {
-        return self.updater;
+    public static EventData event(){
+        return self.event;
     }
 
-    public static RDDevastation DEVASTATION() {
-        return self.deva;
-    }
-
-    public static RDDefis DEFS() {
-        return self.init.deficiencies;
+    public static EventData mark(){
+        return self.mark;
     }
 
     public static Realm REALM(Region reg) {
@@ -423,6 +415,7 @@ public class RD extends WorldResource{
         if (f != null && REALM(f) == oldRealm)
             return;
 
+        self.mark.ii.set(region, 0);
         RD.OWNER().ownerI.set(region, (RD.OWNER().ownerI.get(region)+1)%RD.OWNER().ownerI.max(region));
 
         final Faction fold = region.faction();
@@ -454,8 +447,6 @@ public class RD extends WorldResource{
                 fold.realm().ferArea += r.info.area()*r.info.fertility();
             }
         }
-
-        self.distDirty = true;
 
         WORLD.MINIMAP().updateRegion(region);
 
@@ -494,7 +485,6 @@ public class RD extends WorldResource{
         Region old = region.faction().capitolRegion();
 
         rr.capitolI = (short) region.index();
-        self.distDirty = true;
 
         for (RDOwnerChanger ch : RDOwnerChanger.ownerChanges) {
             ch.change(region, region.faction(), region.faction());
@@ -532,7 +522,56 @@ public class RD extends WorldResource{
         public abstract void change(Region reg, Faction oldOwner, Faction newOwner);
     }
 
+    public static class EventData {
+
+        private int am;
+        public final INT_OE<Region> ii;
+
+        EventData(RDInit init, String key){
+            ii = init.count.new DataBit(key) {
+                @Override
+                public void set(Region t, int s) {
+                    am -= get(t);
+                    super.set(t, s);
+                    am += get(t);
+                }
+
+                @Override
+                public int get(Region t) {
+                    if (t == null)
+                        return am;
+                    return super.get(t);
+                }
+            };
+
+            GVALUES.REGION.pushI(key, key, UI.icons().s.question, ii);
+            GVALUES.FACTION.push(key, key, UI.icons().s.question, new INT_O<Faction>() {
+
+                @Override
+                public int get(Faction t) {
+                    return am;
+                }
+
+                @Override
+                public int min(Faction t) {
+                    return 0;
+                }
+
+                @Override
+                public int max(Faction t) {
+                    return WREGIONS.MAX;
+                }
 
 
+            });
+        }
+
+        private void load() {
+            am = 0;
+            for (Region reg : WORLD.REGIONS().all())
+                am += ii.get(reg);
+        }
+
+    }
 
 }

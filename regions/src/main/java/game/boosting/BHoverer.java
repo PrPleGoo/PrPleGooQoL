@@ -15,13 +15,11 @@ public final class BHoverer {
 
     }
 
-    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops){
-
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops) {
         hoverDetailed(box, all, f, name, baseValue, keepNops, false);
     }
 
-    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops
-            , boolean isResourceProductionBooster) {
+    public static <T> void hoverDetailed(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T f, CharSequence name, double baseValue, boolean keepNops, boolean isResourceProductionBooster) {
         GBox b = (GBox) box;
         if (name != null)
             b.textLL(name);
@@ -30,7 +28,7 @@ public final class BHoverer {
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
 
-            if (l.has(f.getClass()) && !l.isMul && d != 0) {
+            if (!l.isMul && d != 0) {
                 l.hoverDetailed(box, d);
 
             }
@@ -40,7 +38,7 @@ public final class BHoverer {
 
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && l.isMul && d != 1) {
+            if (l.isMul && d != 1) {
                 l.hoverDetailed(box, d);
             }
         }
@@ -52,13 +50,13 @@ public final class BHoverer {
 
             for (BoosterAbs<T> l : all) {
                 double d = l.get(f);
-                if (l.has(f.getClass()) && !l.isMul && d == 0) {
+                if (!l.isMul && d == 0) {
                     l.hoverDetailed(box, d);
                 }
             }
             for (BoosterAbs<T> l : all) {
                 double d = l.get(f);
-                if (l.has(f.getClass()) && l.isMul && d == 1) {
+                if (l.isMul && d == 1) {
                     l.hoverDetailed(box, d);
                 }
             }
@@ -85,8 +83,6 @@ public final class BHoverer {
         if (keepNops) {
             int t = 0;
             for (BoosterAbs<T> l : all) {
-                if (!l.has(f.getClass()))
-                    continue;
                 if (t > 1) {
                     t = 0;
                     b.NL();
@@ -118,7 +114,7 @@ public final class BHoverer {
         int ii = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && (d > 0 || (d != 0 && isResourceProductionBooster)) && !l.isMul) {
+            if ((d > 0 || (isResourceProductionBooster && d != 0)) && !l.isMul) {
                 sort.add(ii);
             }
             ii++;
@@ -126,7 +122,7 @@ public final class BHoverer {
         int i = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && (d < 0 && !isResourceProductionBooster) && !l.isMul) {
+            if ((d > 0 || (isResourceProductionBooster && d != 0)) && !l.isMul) {
                 if (i < sort.size()) {
                     hov(f, b, all.get(sort.get(i)), 0);
                     i++;
@@ -145,7 +141,7 @@ public final class BHoverer {
         ii = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && d > 1 && l.isMul) {
+            if (d > 1 && l.isMul) {
                 sort.add(ii);
             }
             ii++;
@@ -153,7 +149,7 @@ public final class BHoverer {
         i = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if (l.has(f.getClass()) && d < 1 && l.isMul) {
+            if (d < 1 && l.isMul) {
                 if (i < sort.size()) {
                     hov(f, b, all.get(sort.get(i)), 0);
                     i++;
@@ -172,21 +168,23 @@ public final class BHoverer {
 
     }
 
-    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue, boolean isResourceProductionName) {
+    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue) {
+        tot(box, all, t, baseValue, false);
+    }
+
+    public static <T> void tot(GUI_BOX box, LIST<? extends BoosterAbs<T>> all, T t, double baseValue, boolean isResourceProductionBooster) {
         double mul = 1;
         double padd = baseValue > 0 ? baseValue : 0;
         double sub = baseValue < 0 ? baseValue : 0;
         for (BoosterAbs<T> s : all) {
-            if (s.has(t.getClass())) {
-                if (s.isMul)
-                    mul *= s.get(t);
-                else {
-                    double a = s.get(t);
-                    if (a < 0 && !isResourceProductionName)
-                        sub += a;
-                    else
-                        padd += a;
-                }
+            if (s.isMul)
+                mul *= s.get(t);
+            else {
+                double a = s.get(t);
+                if (a < 0 && !isResourceProductionBooster)
+                    sub += a;
+                else
+                    padd += a;
             }
 
         }
@@ -213,8 +211,7 @@ public final class BHoverer {
 
         l.hover(b, l.get(f), tab);
 
-        if (!l.has(f.getClass()))
-            b.text("!");
+
     }
 
 }

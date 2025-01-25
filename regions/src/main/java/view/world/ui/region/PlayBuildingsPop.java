@@ -3,21 +3,19 @@ package view.world.ui.region;
 import java.util.LinkedList;
 
 import game.GAME;
+import game.boosting.BHoverer;
 import game.boosting.BoostSpec;
 import game.boosting.Boostable;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
-import game.faction.Faction;
 import init.C;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.api.WorkerIntE;
 import prplegoo.regions.ui.FoodSelector;
 import prplegoo.regions.ui.SlaveSelector;
-import snake2d.LOG;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -32,7 +30,9 @@ import snake2d.util.gui.clickable.CLICKABLE.ClickableAbs;
 import snake2d.util.gui.renderable.RENDEROBJ;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
+import snake2d.util.sets.ArrayListResize;
 import snake2d.util.sprite.SPRITE;
+import snake2d.util.sprite.text.Str;
 import util.colors.GCOLOR;
 import util.data.GETTER.GETTER_IMP;
 import util.dic.Dic;
@@ -41,12 +41,12 @@ import util.gui.misc.GButt;
 import util.gui.misc.GStat;
 import util.gui.misc.GText;
 import util.gui.panel.GPanel;
-import util.gui.slider.GSliderInt;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
 import view.main.VIEW;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.building.RDBuildPoints.RDBuildPoint;
 import world.region.building.RDBuilding;
 import world.region.building.RDBuildingCat;
 import world.region.building.RDBuildingLevel;
@@ -63,9 +63,8 @@ class PlayBuildingsPop {
 
     private static CharSequence ¤¤RemoveAll = "Remove all constructed buildings?";
     private static CharSequence ¤¤Constructed = "This building has been constructed.";
-    private static CharSequence ¤¤ConstructedUp = "This building has upgrades.";
+    private static CharSequence ¤¤ConstructedUp = "This building can be upgrades.";
     private static CharSequence ¤¤Available = "This building can be constructed.";
-    private static CharSequence ¤¤UnAvailable = "This building is unavailable.";
 
     static {
         D.ts(PlayBuildingsPop.class);
@@ -75,7 +74,7 @@ class PlayBuildingsPop {
 
         @Override
         public void render(SPRITE_RENDERER r, float ds) {
-            if (g.get() != current)
+            if (g.get() != current || VIEW.current() != VIEW.world())
                 VIEW.inters().section.close();
             GAME.SPEED.tmpPause();
             RD.BUILDINGS().tmp(false, g.get());
@@ -114,16 +113,12 @@ class PlayBuildingsPop {
                     i = 0;
                 }
                 Butt bb = new Butt(b);
-                hi = bb.body.height()+12;butts[i] = bb;
+                hi = bb.body.height()+12;
+                butts[i] = bb;
                 if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
                     row.addRightC(0, bb);
                 } else {
                     row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
-                }
-
-                if (b.isPopScaler) {
-                    GSliderInt gg = new GSliderInt(new WorkerIntE(g, b), bb.body.width() - 64, 24, true, false);
-                    row.addDownC(0, gg);
                 }
 
                 if(MagicStringChecker.isFoodStallBuilding(b.key())){
@@ -135,7 +130,6 @@ class PlayBuildingsPop {
                     GuiSection slaveSelector = new SlaveSelector(g);
                     row.addRightC(0, slaveSelector);
                 }
-
                 i++;
             }
             rows.add(new RENDEROBJ.RenderDummy(1, 12));
@@ -210,13 +204,13 @@ class PlayBuildingsPop {
             GFORMAT.toNumeral(num, level);
             num.renderCY(r, body().x1()+48, body.cY());
 
-//            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
-                if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
+            if (level > RD.BUILDINGS().tmp().level(bu, g.get())) {
+                if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), level) != null) {
                     OPACITY.O50.bind();
                     COLOR.BLACK.render(r, body, -1);
                     OPACITY.unbind();
                 }
-//            }
+            }
 
         }
 
@@ -228,6 +222,12 @@ class PlayBuildingsPop {
             b.title(bu.levels().get(level).name);
             if (level == 0)
                 return;
+
+            CharSequence prob = bu.canAfford(reg,  RD.BUILDINGS().tmp().level(bu, g.get()), level);
+            if (prob != null)
+                b.error(prob);
+            b.NL();
+
             b.text(bu.info.desc);
 
             b.sep();
@@ -242,12 +242,13 @@ class PlayBuildingsPop {
             hoverCosts(reg, bu, RD.BUILDINGS().tmp().level(bu, g.get()), level, text);
             hoverNonCosts(reg, bu, RD.BUILDINGS().tmp().level(bu, g.get()), level, text);
 
+
         }
 
         @Override
         protected void clickA() {
 
-            if (S.get().developer || RD.BUILDINGS().tmp().canAfford(bu, g.get(), level)) {
+            if (S.get().developer || RD.BUILDINGS().tmp().canAfford(bu, g.get(), level) == null) {
 
                 RD.BUILDINGS().tmp().levelSet(bu, level);
 //				bu.level.set(g.get(), level);
@@ -270,54 +271,73 @@ class PlayBuildingsPop {
 
 
 
-    private double efficiency(RDBuilding bu) {
-        double mul = 1;
-        for (BoostSpec f : bu.baseFactors) {
-            mul*= f.get(g.get());
+    private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r) {
+        double d = bu.baseEfficiency(g.get())-1;
+        d*= 2;
+        int am = 0;
+        if (d < 0) {
+            am = (int) (-d*7);
+        }else {
+            am = (int) (d*4);
         }
-        return mul;
+        am = CLAMP.i(am, -7, 7);
+
+        if (am != 0) {
+            am = Math.abs(am);
+            SPRITE s = UI.icons().s.chevron(DIR.N);
+            if (d<0) {
+                COLOR.RED100.bind();
+                s = UI.icons().s.chevron(DIR.S);
+            }else {
+                COLOR.GREEN100.bind();
+            }
+            for (int i = 0; i < am; i++) {
+                s.render(r, body.x2()-18, body.y1()+i*8);
+            }
+
+        }
+        COLOR.unbind();
     }
+
+    private static ArrayListResize<BoostSpec> tmp = new ArrayListResize<>(16);
 
     private void hoverNonCosts(Region reg, RDBuilding bu, int fromL, int toL, GUI_BOX text) {
         GBox b = (GBox) text;
 
-        boolean global = false;
-        boolean local = false;
-        for (BoostSpec s : bu.boosters().all()) {
-            if (!s.booster.isMul && RD.DEFS().get(s.boostable, s.booster) != null && !s.booster.has(Faction.class)) {
+        b.add(b.text().lablify().add(Dic.¤¤Effects));
+        b.NL();
+
+        tmp.clearSoft();
+        for (BoostSpec s : bu.levels.get(fromL).local.all()) {
+            if (RD.BUILDINGS().costs.get(s.boostable, s.booster) != null) {
                 continue;
             }
-            global |= s.booster.has(Faction.class);
-            local |= !global;
+            tmp.add(s);
         }
 
-        if (local) {
-            b.add(b.text().lablify().add(Dic.¤¤Effects).add(':').s().add(Dic.¤¤Region));
-            b.NL();
-            for (BoostSpec s : bu.boosters().all()) {
-                if (!s.booster.isMul && RD.DEFS().get(s.boostable, s.booster) != null && !s.booster.has(Faction.class)) {
-                    continue;
-                }
-                if (!s.booster.has(Faction.class)) {
-                    bu.boosters().hover(b, s, getB(bu, fromL, toL, s), 0);
-                    b.NL();
-                }
+        for (BoostSpec s : bu.levels.get(toL).local.all()) {
+            if (RD.BUILDINGS().costs.get(s.boostable, s.booster) != null) {
+                continue;
             }
+            boolean has = false;
+            for (BoostSpec s2 : tmp) {
+                if (s.isSameAs(s2) && Str.isSame(s.tName, s2.tName)) {
+                    has = true;
+                    break;
+                }
+
+            }
+            if (!has)
+                tmp.add(s);
         }
 
 
-        if (global) {
-            b.add(b.text().lablify().add(Dic.¤¤Effects).add(':').s().add(Dic.¤¤Realm));
-            b.NL();
-            for (BoostSpec s : bu.boosters().all()) {
-                if (!s.booster.isMul && RD.DEFS().get(s.boostable, s.booster) != null && !s.booster.has(Faction.class)) {
-                    continue;
-                }
-                if (s.booster.has(Faction.class)) {
-                    bu.boosters().hover(b, s, getB(bu, fromL, toL, s), 0);
-                    b.NL();
-                }
+        for (BoostSpec s : tmp) {
+            if (RD.BUILDINGS().costs.get(s.boostable, s.booster) != null) {
+                continue;
             }
+            bu.boosters().hover(b, s, getB(bu, fromL, toL, s, true), 0);
+            b.NL();
         }
     }
 
@@ -335,15 +355,39 @@ class PlayBuildingsPop {
         }
 
         for (BoostSpec s : bu.boosters().all()) {
+            if (RD.BUILDINGS().costs.get(s.boostable, s.booster) != null) {
 
-            if (!s.booster.isMul && RD.DEFS().get(s.boostable, s.booster) != null && !s.booster.has(Faction.class)) {
-                double value = getB(bu, fromL, toL, s);
-
+                double value = getB(bu, fromL, toL, s, true);
 
                 hoverCost(text, s.boostable.icon, s.boostable.name, value, s.boostable.get(reg));
                 b.NL();
             }
         }
+    }
+
+    private static double getB(RDBuilding bu, int fromL, int toL, BoostSpec spec, boolean local) {
+        double am = 0;
+        RDBuildingLevel l = bu.levels.get(toL);
+        boolean mm = spec.booster.isMul;
+        for (BoostSpec boo : l.local.all()) {
+            if (spec.isSameAs(boo) && Str.isSame(spec.tName, boo.tName)) {
+                am += boo.booster.to();
+                if (mm)
+                    am -= 1;
+            }
+        }
+        l = bu.levels.get(fromL);
+        for (BoostSpec boo : l.local.all()) {
+
+            if (spec.isSameAs(boo) && Str.isSame(spec.tName, boo.tName)) {
+                am -= boo.booster.to();
+                if (mm)
+                    am += 1;
+            }
+        }
+        if (mm)
+            am += 1;
+        return am;
     }
 
     private static void hoverCost(GUI_BOX text, SPRITE icon, CharSequence name, double value, double current) {
@@ -420,65 +464,31 @@ class PlayBuildingsPop {
         RENDEROBJ get(RDBuilding bu, int level) {
             this.bu = bu;
             this.current = level;
+            body.setWidth(bu.levels.size()*Icon.L);
             return this;
         }
 
     }
 
-    private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r, double d) {
-        d -= 1;
-        int am = (int) (d*8);
-        am = CLAMP.i(am, -7, 7);
-        if (am != 0) {
-            am = Math.abs(am);
-            SPRITE s = UI.icons().s.chevron(DIR.N);
-            if (d<0) {
-                COLOR.RED100.bind();
-                s = UI.icons().s.chevron(DIR.S);
-            }else {
-                COLOR.GREEN100.bind();
-            }
-            for (int i = 0; i < am; i++) {
-                s.render(r, body.x2()-18, body.y1()+i*8);
-            }
 
-        }
-        COLOR.unbind();
-    }
 
     private static int credits(RDBuilding bu, int fromL, int toL) {
         int cost = bu.levels.get(toL).cost-bu.levels.get(fromL).cost;
         return cost;
     }
 
-    private static double getB(RDBuilding bu, int fromL, int toL, BoostSpec spec) {
-        double am = 0;
-        RDBuildingLevel l = bu.levels.get(toL);
-        boolean mm = spec.booster.isMul;
-        for (BoostSpec boo : l.local.all()) {
-            if (spec.isSameAs(boo)) {
-                am += boo.booster.to();
-                if (mm)
-                    am -= 1;
-            }
-        }
-        l = bu.levels.get(fromL);
-        for (BoostSpec boo : l.local.all()) {
 
-            if (spec.isSameAs(boo)) {
-                am -= boo.booster.to();
-                if (mm)
-                    am += 1;
-            }
-        }
-        if (mm)
-            am += 1;
-        return am;
-    }
 
     public class Butt extends ClickableAbs{
 
-        private final GuiSection lPop = new GuiSection();
+        private final GuiSection lPop = new GuiSection() {
+            @Override
+            public final void render(SPRITE_RENDERER r, float ds) {
+                if (VIEW.inters().section.current() != s)
+                    VIEW.inters().popup2.close();
+                super.render(r, ds);
+            }
+        };
         protected final RDBuilding bu;
 
         Butt(RDBuilding b){
@@ -494,7 +504,7 @@ class PlayBuildingsPop {
         protected void clickA() {
 
             if (RD.BUILDINGS().tmp().level(bu, g.get()) == 0) {
-                if (S.get().developer || RD.BUILDINGS().tmp().canAfford(bu, g.get(), 1)) {
+                if (S.get().developer || RD.BUILDINGS().tmp().canAfford(bu, g.get(), 1) == null) {
                     RD.BUILDINGS().tmp().levelSet(bu, 1);
                 }
             }else {
@@ -537,7 +547,7 @@ class PlayBuildingsPop {
 
 
         bu.levels().get(Math.max(tl, 1)).icon.huge.renderC(r, body.cX(), body.cY()+2);
-        renderEfficiency(bu, body, r, efficiency(bu));
+        renderEfficiency(bu, body, r);
 
 
 
@@ -555,7 +565,7 @@ class PlayBuildingsPop {
             OPACITY.unbind();
             num.renderC(r, body.cX(), body.y1()+14);
 
-            if ((tl <  bu.level.max(reg) && RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1))) {
+            if ((tl <  bu.level.max(reg) && RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1) == null)) {
                 COLOR.YELLOW100.bind();
                 UI.icons().s.chevron(DIR.N).renderC(r, body.cX()-8, body.y1()+4);
                 UI.icons().s.chevron(DIR.N).renderC(r, body.cX(), body.y1()+4);
@@ -564,7 +574,7 @@ class PlayBuildingsPop {
             }
 
         }else {
-            if (!RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1)) {
+            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), tl+1) != null) {
                 OPACITY.O66.bind();
                 COLOR.BLACK.render(r, body, -4);
                 OPACITY.unbind();
@@ -579,47 +589,43 @@ class PlayBuildingsPop {
     }
 
     public void hover(RDBuilding bu, Region reg, GUI_BOX text) {
-        int lev = RD.BUILDINGS().tmp().level(bu, g.get());
+        int lev = RD.BUILDINGS().tmp().level(bu, reg);
         GBox b = (GBox) text;
-
         if (lev == 0) {
 
             b.title(bu.info.name);
-            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev+1))
-                b.textL(¤¤Available);
+            CharSequence prob = RD.BUILDINGS().tmp().canAfford(bu, reg, lev+1);
+            if (prob == null)
+                b.add(b.text().normalify2().add(¤¤Available));
             else
-                b.error(¤¤UnAvailable);
+                b.add(b.text().errorify().add(prob));
             b.NL(4);
             b.text(bu.info.desc);
             b.NL();
             b.add(levs.get(bu, 1));
             b.sep();
 
-            if (bu.baseFactors.size() > 0) {
-                b.textSLL(Dic.¤¤Efficiency);
-                b.NL();
-                for (BoostSpec bo : bu.baseFactors) {
-                    bo.booster.hover(b, bo.get(g.get()));
-                    b.NL();
-                }
-            }
+            BHoverer.hover(b, bu.baseFactors, reg, Dic.¤¤Efficiency, 1, false);
+            b.sep();
 
-            bu.levels().get(1).reqs.hover(text, g.get());
+
+
+            bu.levels().get(1).reqs.hover(text, reg);
 
             b.NL(8);
-            hoverCosts(g.get(), bu, 0, 1, text);
+            hoverCosts(reg, bu, 0, 1, text);
 
             b.NL(8);
-            hoverNonCosts(g.get(), bu, 0, 1, text);
+            hoverNonCosts(reg, bu, 0, 1, text);
         }else {
 
             RDBuildingLevel l = bu.levels().get(RD.BUILDINGS().tmp().level(bu, g.get()));
             b.title(l.name);
-
-            if (RD.BUILDINGS().tmp().canAfford(bu, g.get(), lev+1))
-                b.textL(¤¤ConstructedUp);
+            CharSequence prob = RD.BUILDINGS().tmp().canAfford(bu, reg, lev+1);
+            if (prob == null)
+                b.add(b.text().normalify2().add(¤¤ConstructedUp));
             else
-                b.textL(¤¤Constructed);
+                b.add(b.text().normalify2().add(¤¤Constructed));
             b.NL(4);
 
             b.text(bu.info.desc);
@@ -627,11 +633,12 @@ class PlayBuildingsPop {
             b.add(levs.get(bu, lev));
             b.sep();
 
-            double mul = bu.efficiency.get(reg);
+            if (bu.efficiency.all().size() > 0) {
 
-            if (mul != 1) {
                 bu.efficiency.hover(b, reg, Dic.¤¤Efficiency, true);
                 b.sep();
+
+
             }
 
             bu.boosters().hover(text, reg);
@@ -738,8 +745,9 @@ class PlayBuildingsPop {
                 }
             }.hh(UI.icons().s.money));
 
-            butts.addRightC(64, boost(RD.RACES().workforce, UI.icons().m.stength));
-            butts.addRightC(64, boost(RD.ADMIN().boost, UI.icons().m.admin));
+            for (RDBuildPoint c : RD.BUILDINGS().costs.all) {
+                butts.addRightC(64, boost(c.bo, c.icon));
+            }
 
             butts.body().incrW(64);
 

@@ -1,15 +1,12 @@
 package prplegoo.regions.api;
 
-import com.github.argon.sos.mod.sdk.ModSdkModule;
-import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
-import com.github.argon.sos.mod.sdk.phase.Phases;
 import game.boosting.BOOSTING;
 import game.boosting.Boostable;
 import game.boosting.BoostableCat;
-import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.sprite.UI.UI;
+import prplegoo.regions.persistence.IDataPersistence;
 import snake2d.LOG;
 import util.dic.Dic;
 import world.WORLD;
@@ -18,23 +15,27 @@ import world.map.regions.Region;
 import java.nio.file.Path;
 import java.util.HashMap;
 
-public class RDFoodConsumption implements Phases {
-    private final JsonConfigStore jsonConfigStore = ModSdkModule.jsonConfigStore();
-
+public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData> {
     public final Boostable booster;
     private HashMap<Integer, HashMap<Integer, Boolean>> selectedFoods;
 
     public RDFoodConsumption() {
-        booster = BOOSTING.push("FOOD_CONSUMPTION", 0, Dic.¤¤Food, Dic.¤¤Food, UI.icons().s.sprout, BoostableCat.WORLD_PRODUCTION);
+        booster = BOOSTING.push("FOOD_CONSUMPTION", 0, Dic.¤¤Food, Dic.¤¤Food, UI.icons().s.sprout, BoostableCat.ALL().WORLD);
         initialize();
     }
 
     @Override
-    public void onGameLoaded(Path saveFilePath) {
-        LOG.ln("RDFoodConsumption.onGameSaveLoaded " + saveFilePath);
-        jsonConfigStore.bindToSave(RDFoodConsumptionData.class, "RDFoodConsumption", PATHS.local().SAVE.get().resolve("PrPleGoo"), false);
+    public String getKey() {
+        return RDFoodConsumption.class.toString();
+    }
 
-        RDFoodConsumptionData data = jsonConfigStore.get(RDFoodConsumptionData.class).orElse(null);
+    @Override
+    public RDFoodConsumptionData getData() {
+        return new RDFoodConsumptionData(selectedFoods);
+    }
+
+    @Override
+    public void putData(RDFoodConsumptionData data) {
         if (data == null) {
             LOG.ln("RDFoodConsumption.onGameSaveLoaded: data null, initializing");
             initialize();
@@ -43,12 +44,6 @@ public class RDFoodConsumption implements Phases {
 
         LOG.ln("RDFoodConsumption.onGameSaveLoaded: data found, writing");
         selectedFoods = data.data;
-    }
-
-    @Override
-    public void onGameSaved(Path saveFilePath) {
-        LOG.ln("RDFoodConsumption.onGameSaved " + saveFilePath);
-        jsonConfigStore.save(new RDFoodConsumptionData(selectedFoods));
     }
 
     private void initialize() {

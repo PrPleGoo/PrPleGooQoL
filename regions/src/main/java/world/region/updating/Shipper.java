@@ -5,14 +5,14 @@ import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
-import init.type.HTYPE;
-import init.type.HTYPES;
+import init.resources.Growable;
+import init.resources.RESOURCES;
 import prplegoo.regions.api.RDSlavery;
 import world.WORLD;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
 import world.region.RD;
-import world.region.RDOutput.RDResource;
+import world.region.RDOutputs.RDResource;
 
 final class Shipper {
 
@@ -33,7 +33,10 @@ final class Shipper {
         if (r.besieged())
             return;
 
-
+        if (false) {
+            //fix farm expoit.
+            //fix performance stuttering
+        }
 
         if (f.capitolRegion() == null)
             return;
@@ -46,9 +49,9 @@ final class Shipper {
                 return;
         }
 
-        f.credits().inc(RD.TAX().boost.get(r)*days, CTYPE.TAX);
+        f.credits().inc(RD.OUTPUT().MONEY.boost.get(r)*days, CTYPE.TAX);
 
-        for (RDResource res : RD.OUTPUT().all) {
+        for (RDResource res : RD.OUTPUT().RES) {
             int a = (int) Math.ceil(res.boost.get(r)*days);
             am += Math.abs(a);
         }
@@ -63,26 +66,30 @@ final class Shipper {
 
         Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), ITYPE.tax);
         if (c != null) {
-            for (RDResource res : RD.OUTPUT().all) {
-                int a = (int) Math.ceil(res.boost.get(r)*days);
-                if (a == 0)
-                {
-                    continue;
-                }
-
+            for (RDResource res : RD.OUTPUT().RES) {
+                int a = amount(res, r, seconds);
                 if (a > 0) {
                     c.loadAndReserve(res.res, a);
                 }
-                else {
-                    f.seller().remove(res.res, -a, ITYPE.tax);
-                }
             }
+        }
 
+    }
 
-            for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-                int a = rdSlave.getDelivery(r, days);
-                c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
+    private int amount(RDResource res, Region r, double seconds) {
+        Growable g = RESOURCES.growable().get(res.res);
+        if (g != null) {
+            double year = TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
+            double harvest = g.seasonalOffset*TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
+            double now = TIME.currentSecond()%year;
+            double before = (TIME.currentSecond()-seconds)%year;
+            if (now >= harvest && before <= harvest || (now < harvest && before > harvest)) {
+                return(int) Math.ceil(res.boost.get(r)*TIME.years().bitConversion(TIME.days()));
             }
+            return 0;
+
+        }else {
+            return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI);
         }
     }
 
@@ -90,7 +97,7 @@ final class Shipper {
 
         for (int ri = 0; ri < f.realm().regions(); ri++) {
             Region reg = f.realm().region(ri);
-            for (RDResource res : RD.OUTPUT().all) {
+            for (RDResource res : RD.OUTPUT().RES) {
                 int a = (int) Math.ceil(res.boost.get(reg)*days);
                 if (a > 0) {
                     f.buyer().deliver(res.res, a, ITYPE.tax);

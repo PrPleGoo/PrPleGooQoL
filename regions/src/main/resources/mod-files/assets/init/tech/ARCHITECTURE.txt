@@ -1,0 +1,276 @@
+
+TREE: {
+	0: [WAT00,_____,BASE0,_____,_____,_____,_____,],
+	1: [WELL0,WAT01,_____,STAT0,HOME0,HEAR0,BENC0,],
+	2: [BATH0,_____,_____,STAT1,HOME1,HEAR1,TORC0,],
+	3: [WELL1,_____,_____,_____,_____,_____,_____,],
+	4: [_____,_____,BASE1,STOR0,_____,MISC3,_____,],
+	5: [_____,_____,BASE2,STOR1,MAIN0,_____,_____,],
+},
+
+TECHS: {
+	BASE0: {
+		COSTS: {
+			CIVIC_INNOVATION: 2,
+		},
+		REQUIRES_TECH_LEVEL: {
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			FLOOR_NATURE1,
+			FLOOR_DARK1,
+			FLOOR_STONE1,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	BASE1: {
+		COSTS: {
+			CIVIC_INNOVATION: 15,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			FLOOR_STONE2,
+			FLOOR_NATURE2,
+			FLOOR_DARK2,
+			FLOOR_STONE_BRICK,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	BASE2: {
+		COSTS: {
+			CIVIC_INNOVATION: 25,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE1: 1,
+		},
+		REQUIRES: {
+		},
+		UNLOCKS_FACTION: [
+			FLOOR_DARK3,
+			FLOOR_DECOR1,
+			FLOOR_DECOR2,
+			FLOOR_DECOR3,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	HOME0: {
+		COSTS: {
+			CIVIC_INNOVATION: 15,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			ROOM_HOME_UPGRADE_1,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	HOME1: {
+		COSTS: {
+			CIVIC_INNOVATION: 30,
+		},
+		REQUIRES_TECH_LEVEL: {
+			HOME0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			ROOM_HOME_UPGRADE_2,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	MAIN0: {
+		LEVEL_MAX: 10,
+		COSTS: {
+			CIVIC_INNOVATION: 25,
+		},
+		LEVEL_COST_INC: 25,
+		REQUIRES_TECH_LEVEL: {
+			STOR0: 1,
+		},
+		BOOST: {
+			CIVIC_MAINTENANCE>ADD: 0.05,
+		},
+	},
+
+	MISC3: {
+		LEVEL_MAX: 25,
+		COSTS: {
+			CIVIC_KNOWLEDGE: 25,
+		},
+		LEVEL_COST_INC: 25,
+		REQUIRES_TECH_LEVEL: {
+			STOR0: 1,
+		},
+		BOOST: {
+			CIVIC_SPOILAGE>ADD: 0.1,
+		},
+	},
+	STOR0: {
+		LEVEL_MAX: 10,
+		COSTS: {
+			CIVIC_KNOWLEDGE: 25,
+		},
+		LEVEL_COST_INC: 25,
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [],
+		UNLOCKS_REGION: [],
+		BOOST: {
+			ROOM_STOCKPILE>ADD: 1.0,
+		},
+	},
+	STOR1: {
+		COSTS: {
+			CIVIC_INNOVATION: 10.0,
+		},
+		REQUIRES_TECH_LEVEL: {
+			STOR0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			ROOM_TRANSPORT,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	STAT0: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			ROOM_MONUMENT_PILLAR,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	STAT1: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		REQUIRES: {},
+		UNLOCKS_FACTION: [
+			ROOM_MONUMENT_STATUE,
+		],
+		UNLOCKS_REGION: [],
+		BOOST: {},
+	},
+	HEAR0: {
+		COSTS: {
+			CIVIC_INNOVATION: 5,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_HEARTH_UPGRADE_1,
+		],
+	},
+	HEAR1: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 50,
+		},
+		REQUIRES_TECH_LEVEL: {
+			HEAR0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_HEARTH_UPGRADE_2,
+		],
+	},
+	BENC0: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 20,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BASE0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_BENCH_UPGRADE_1,
+		],
+	},
+	TORC0: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 50,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BENC0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_MONUMENT_TORCH_UPGRADE_1,
+		],
+	},
+	WAT00: {
+		COSTS: {
+			CIVIC_INNOVATION: 10,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_WATERDRAIN,
+			ROOM_WATERPUMP,
+			ROOM_WATERCANAL,
+		],
+	},	
+	WAT01: {
+		COSTS: {
+			CIVIC_INNOVATION: 5,
+		},
+		REQUIRES_TECH_LEVEL: {
+			WAT00: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_POOL_MOAT,
+			ROOM_POOL_POND,
+			ROOM_POOL_STONE,
+		],
+	},	
+	WELL0: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 15,
+		},
+		REQUIRES_TECH_LEVEL: {
+			WAT00: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_WELL_NORMAL_UPGRADE_1,
+		],
+	},	
+	BATH0: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 50,
+		},
+		REQUIRES_TECH_LEVEL: {
+			WELL0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_BATH_NORMAL,
+		],
+	},	
+	WELL1: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 100,
+		},
+		REQUIRES_TECH_LEVEL: {
+			BATH0: 1,
+		},
+		UNLOCKS_FACTION: [
+			ROOM_WELL_NORMAL_UPGRADE_2,
+		],
+	},	
+},
+

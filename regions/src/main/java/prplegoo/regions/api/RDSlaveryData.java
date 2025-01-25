@@ -17,8 +17,12 @@ import java.util.HashMap;
 public class RDSlaveryData {
     @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
     public HashMap<Integer, HashMap<Integer, Boolean>> data;
+    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
+    public double[][] slaveDelivery;
 
-    public RDSlaveryData(HashMap<Integer, HashMap<Integer, Boolean>> data) {
+    public RDSlaveryData(HashMap<Integer, HashMap<Integer, Boolean>> data,
+                         double[][] slaveDelivery) {
         this.data = data;
+        this.slaveDelivery = slaveDelivery;
     }
 }

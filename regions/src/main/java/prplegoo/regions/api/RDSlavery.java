@@ -1,32 +1,22 @@
 package prplegoo.regions.api;
 
-import com.github.argon.sos.mod.sdk.ModSdkModule;
-import com.github.argon.sos.mod.sdk.config.json.JsonConfigStore;
-import com.github.argon.sos.mod.sdk.phase.Phases;
 import game.boosting.*;
-import game.faction.FACTIONS;
-import init.paths.PATHS;
-import init.sprite.UI.UI;
+import prplegoo.regions.persistence.IDataPersistence;
 import snake2d.LOG;
-import snake2d.util.misc.ACTION;
-import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import util.dic.Dic;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
-import world.region.RDOutput;
 import world.region.pop.RDRace;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 
-public class RDSlavery implements Phases {
-    private final JsonConfigStore jsonConfigStore = ModSdkModule.jsonConfigStore();
-
+public class RDSlavery implements IDataPersistence<RDSlaveryData> {
     private ArrayList<RDSlave> all;
     private HashMap<Integer, HashMap<Integer, Boolean>> selectedSlaves;
+    private double[][] slaveDelivery;
 
     public double boost(RDRace race, Region region){
         return all.get(race.index()).boost.get(region);
@@ -70,11 +60,17 @@ public class RDSlavery implements Phases {
     }
 
     @Override
-    public void onGameLoaded(Path saveFilePath) {
-        LOG.ln("RDSlavery.onGameSaveLoaded " + saveFilePath);
-        jsonConfigStore.bindToSave(RDSlaveryData.class, "RDSlavery", PATHS.local().SAVE.get().resolve("PrPleGoo"), false);
+    public String getKey() {
+        return RDSlaveryData.class.toString();
+    }
 
-        RDSlaveryData data = jsonConfigStore.get(RDSlaveryData.class).orElse(null);
+    @Override
+    public RDSlaveryData getData() {
+        return new RDSlaveryData(selectedSlaves, slaveDelivery);
+    }
+
+    @Override
+    public void putData(RDSlaveryData data) {
         if (data == null) {
             LOG.ln("RDSlavery.onGameSaveLoaded: data null, initializing");
             initialize();
@@ -83,12 +79,7 @@ public class RDSlavery implements Phases {
 
         LOG.ln("RDSlavery.onGameSaveLoaded: data found, writing");
         selectedSlaves = data.data;
-    }
-
-    @Override
-    public void onGameSaved(Path saveFilePath) {
-        LOG.ln("RDSlavery.onGameSaved " + saveFilePath);
-        jsonConfigStore.save(new RDSlaveryData(selectedSlaves));
+        slaveDelivery = data.slaveDelivery;
     }
 
     private void initialize() {
@@ -120,18 +111,25 @@ public class RDSlavery implements Phases {
         selectedSlave.replace(race.index(), !selectedSlave.get(race.index()));
     }
 
+    public int pushDelivery(Region reg, RDRace rdRace, double value){
+        slaveDelivery[reg.index()][rdRace.index()] += value;
+        int result = (int) slaveDelivery[reg.index()][rdRace.index()];
+        slaveDelivery[reg.index()][rdRace.index()] -= result;
+        return result;
+    }
+
     public static class RDSlave {
 
         public final Boostable boost;
         public final RDRace rdRace;
 
         RDSlave(RDRace race) {
-            boost = BOOSTING.push("SLAVE_PRODUCTION_" + race.race.key, 0, Dic.¤¤Law + ": " + race.race.info.name, race.race.info.desc, race.race.appearance().icon, BoostableCat.WORLD_PRODUCTION);
+            boost = BOOSTING.push("SLAVE_PRODUCTION_" + race.race.key, 0, Dic.¤¤Law + ": " + race.race.info.name, race.race.info.desc, race.race.appearance().icon, BoostableCat.ALL().WORLD);
             this.rdRace = race;
         }
 
         public int getDelivery(Region reg, double days) {
-            return (int) Math.ceil(boost.get(reg) * days);
+            return RD.SLAVERY().pushDelivery(reg, this.rdRace, boost.get(reg) * days);
         }
     }
 }

@@ -122,7 +122,7 @@ public final class BHoverer {
         int i = 0;
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
-            if ((d > 0 || (isResourceProductionBooster && d != 0)) && !l.isMul) {
+            if ((d < 0 && !isResourceProductionBooster) && !l.isMul) {
                 if (i < sort.size()) {
                     hov(f, b, all.get(sort.get(i)), 0);
                     i++;

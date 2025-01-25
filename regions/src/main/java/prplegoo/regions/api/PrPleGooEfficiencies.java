@@ -16,20 +16,19 @@ import world.region.pop.RDRace;
 public class PrPleGooEfficiencies {
     public static void FOOD_CONSUMER(RDBuilding bu) {
         for (RESOURCE food : RESOURCES.EDI().res()) {
-            bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Food, food.icon()), 0, 1, false) {
+            bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Food, food.icon()), 0, -50000, false) {
                 @Override
-                public double get(Region t) {
-                    if (!RD.FOOD_CONSUMPTION().has(t, food)) {
+                public double get(Region reg) {
+                    if (!RD.FOOD_CONSUMPTION().has(reg, food)) {
                         return 0.0;
                     }
 
-                    int totalFoods = RD.FOOD_CONSUMPTION().getFoodTypeCount(t);
-                    int totalPop = RD.RACES().population.get(t);
-                    double foodConsumption = RD.FOOD_CONSUMPTION().booster.get(t);
+                    double totalFoods = RD.FOOD_CONSUMPTION().getFoodTypeCount(reg);
+                    double totalPop = RD.RACES().population.get(reg);
+                    double foodConsumption = RD.FOOD_CONSUMPTION().booster.get(reg);
 
-                    return foodConsumption * totalPop / totalFoods;
+                    return (foodConsumption * totalPop / totalFoods) / -50000.0;
                 }
-
             }, RD.OUTPUT().get(food).boost);
         }
     }

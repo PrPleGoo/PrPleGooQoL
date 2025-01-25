@@ -10,10 +10,9 @@ LEVELS: [
 		},
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -5,
-			CIVIC_ADMIN>ADD: -10,
 		},
 		BOOST_GLOBAL: {
-			WORLD_TAX_INCOME>MUL: 1.05,
+			WORLD_TAX_INCOME>ADD: 200,
 		},
 	},
 ],

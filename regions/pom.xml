@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.2.0</version>
+    <version>0.68.15.0</version>
 
     <profiles>
         <profile>
@@ -165,7 +165,7 @@ Credits:
 - Argoon, SDK mod and technical support.
         </mod.info>
         <game.version.major>68</game.version.major>
-        <game.version.minor>3</game.version.minor>
+        <game.version.minor>15</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>
@@ -213,6 +213,16 @@ Credits:
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Data -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-properties</artifactId>
         </dependency>
 
         <!-- Testing -->
@@ -298,9 +308,6 @@ Credits:
                                 <excludes>
                                     <exclude>com.songsofsyx:*</exclude>
                                     <exclude>org.jetbrains:*</exclude>
-                                    <exclude>com.fasterxml.jackson.core:*</exclude>
-                                    <exclude>com.fasterxml.jackson.dataformat:*</exclude>
-                                    <exclude>com.github.argon.sos:sos-mod-sdk</exclude>
                                 </excludes>
                             </artifactSet>
                             <createDependencyReducedPom>false</createDependencyReducedPom>

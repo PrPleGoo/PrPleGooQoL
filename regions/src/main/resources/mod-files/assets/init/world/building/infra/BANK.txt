@@ -6,7 +6,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -3,
 			WORLD_TAX_INCOME>MUL: 1.5,
-			CIVIC_ADMIN>ADD: -50,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -10,
 		},
 	},
 	{
@@ -15,7 +17,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -4,
 			WORLD_TAX_INCOME>MUL: 2,
-			CIVIC_ADMIN>ADD: -100,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -20,
 		},
 	},
 	{
@@ -24,7 +28,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -5,
 			WORLD_TAX_INCOME>MUL: 2.5,
-			CIVIC_ADMIN>ADD: -150,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -30,
 		},
 	},	
 ],

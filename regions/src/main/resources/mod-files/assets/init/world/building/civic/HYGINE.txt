@@ -6,7 +6,6 @@ LEVELS: [
 		CREDITS: 5000,
 		BOOST: {
 			WORLD_HEALTH>ADD: 1,
-			CIVIC_ADMIN>ADD: -10,
 		},
 	},
 	{
@@ -15,7 +14,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -0.5,
 			WORLD_HEALTH>ADD: 2.5,
-			CIVIC_ADMIN>ADD: -40,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -8,
 		},
 	},
 	{
@@ -24,7 +25,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -0.75,	
 			WORLD_HEALTH>ADD: 5,
-			CIVIC_ADMIN>ADD: -160,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -32,
 		},
 	},
 	{
@@ -33,7 +36,9 @@ LEVELS: [
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -1,	
 			WORLD_HEALTH>ADD: 10,
-			CIVIC_ADMIN>ADD: -640,
+		},
+		BOOST_GLOBAL: {
+			CIVIC_GOV>ADD: -128,
 		},
 	},
 ],

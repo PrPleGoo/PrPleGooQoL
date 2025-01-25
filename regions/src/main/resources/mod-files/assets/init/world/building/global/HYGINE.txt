@@ -11,10 +11,9 @@ LEVELS: [
 		},
 		BOOST: {
 			WORLD_WORKFORCE>ADD: -5,
-			CIVIC_ADMIN>ADD: -40,
 		},
 		BOOST_GLOBAL: {
-			WORLD_HEALTH>ADD: 0.5,
+			WORLD_HEALTH>ADD: 0.1,
 		},
 	},
 ],

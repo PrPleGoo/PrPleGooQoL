@@ -14,18 +14,18 @@ public class FileGetterApi implements IFileLoad {
     private HashMap<String, JsonNode> loadedData;
 
     @Override
-    public <T> T get(String key, Class<T> type) {
-        JsonNode json = loadedData.get(key);
+    public <T> T get(IDataPersistence<T> dataPersistence) {
+        JsonNode json = loadedData.get(dataPersistence.getKey());
 
         try {
-            return ObjectMapperFactory.build().readValue(json.toString(), type);
+            return ObjectMapperFactory.build().readValue(json.toString(), new TypeReference<T>() { });
         } catch (JsonProcessingException e) {
-            LOG.err("Failed to deserialize json with key: " + key + ", value: " + json.toString());
+            LOG.err("Failed to deserialize json with key: " + dataPersistence.getKey() + ", value: " + json.toString());
             return null;
         }
     }
 
-    void onGameLoaded(FileGetter fileGetter) throws IOException {
+    public void onGameLoaded(FileGetter fileGetter) throws IOException {
         if (fileGetter == null) {
             return;
         }

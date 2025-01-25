@@ -28,6 +28,9 @@ public class RegionsPersistence implements SCRIPT.SCRIPT_INSTANCE {
     @Override
     public void load(FileGetter file) throws IOException {
         FileGetterApi getter = new FileGetterApi();
+        getter.onGameLoaded(file);
 
+        RD.FOOD_CONSUMPTION().putData(getter.get(RD.FOOD_CONSUMPTION()));
+        RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
     }
 }

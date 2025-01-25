@@ -1,5 +1,4 @@
 AI_BUILDS: false,
-SLAVERY: true,
 LEVELS: [
 	{
 		ICON: 32->LAW->1,

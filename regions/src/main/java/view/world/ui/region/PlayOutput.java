@@ -135,14 +135,7 @@ final class PlayOutput extends GuiSection{
     }
 
     private boolean hasValue(Boostable bo, Region reg) {
-
-        for (Booster b : bo.all()) {
-            double v = bo.get(reg);
-            if ((!b.isMul && v > 0)) {
-                return true;
-            }
-        }
-        return false;
+        return bo.get(reg) != 0;
     }
 
     private class Row extends GuiSection{

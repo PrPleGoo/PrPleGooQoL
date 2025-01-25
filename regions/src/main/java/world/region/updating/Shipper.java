@@ -7,6 +7,7 @@ import game.faction.trade.ITYPE;
 import game.time.TIME;
 import init.resources.Growable;
 import init.resources.RESOURCES;
+import init.type.HTYPES;
 import prplegoo.regions.api.RDSlavery;
 import world.WORLD;
 import world.entity.caravan.Shipment;
@@ -57,7 +58,7 @@ final class Shipper {
         }
 
         for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-            int a = rdSlave.getDelivery(r, days);
+            int a = rdSlave.hasDelivery(r, days);
             am += Math.abs(a);
         }
 
@@ -68,9 +69,22 @@ final class Shipper {
         if (c != null) {
             for (RDResource res : RD.OUTPUT().RES) {
                 int a = amount(res, r, seconds);
+                if (a == 0)
+                {
+                    continue;
+                }
+
                 if (a > 0) {
                     c.loadAndReserve(res.res, a);
                 }
+                else {
+                    f.seller().remove(res.res, -a, ITYPE.tax);
+                }
+            }
+
+            for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+                int a = rdSlave.getDelivery(r, days);
+                c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
             }
         }
 

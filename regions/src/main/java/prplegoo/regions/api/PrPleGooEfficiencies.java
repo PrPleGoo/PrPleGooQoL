@@ -14,18 +14,6 @@ import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
 public class PrPleGooEfficiencies {
-    public static void SLAVERY(RDBuilding bu) {
-        for (RDRace rdRace : RD.RACES().all) {
-            bu.boosters().push(new RBooster(new BSourceInfo(bu.info.name, rdRace.race.appearance().icon), 0, 1, true) {
-                @Override
-                public double get(Region t) {
-                    return 1;
-                }
-
-            }, RD.SLAVERY().boostable(rdRace));
-        }
-    }
-
     public static void FOOD_CONSUMER(RDBuilding bu) {
         for (RESOURCE food : RESOURCES.EDI().res()) {
             bu.boosters().push(new RBooster(new BSourceInfo(Dic.¤¤Food, food.icon()), 0, 1, false) {

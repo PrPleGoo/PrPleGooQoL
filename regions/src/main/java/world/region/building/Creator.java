@@ -105,10 +105,6 @@ final class Creator {
 			l.cost = j.i("CREDITS", 0, 1000000, 0);
 		}
 
-		if (json.bool("SLAVERY", false)) {
-			BOOSTING.connecter(() -> PrPleGooEfficiencies.SLAVERY(b));
-		}
-
 		if (json.bool("FOOD_CONSUMER", false)) {
 			BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
 		}

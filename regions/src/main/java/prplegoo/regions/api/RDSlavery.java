@@ -121,10 +121,15 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
     }
 
     public int pushDelivery(Region reg, RDRace rdRace, double value){
+        LOG.ln(slaveDelivery[reg.index()][rdRace.index()]);
         slaveDelivery[reg.index()][rdRace.index()] += value;
-        int result = (int) slaveDelivery[reg.index()][rdRace.index()];
+        int result = (int) Math.floor(slaveDelivery[reg.index()][rdRace.index()]);
         slaveDelivery[reg.index()][rdRace.index()] -= result;
         return result;
+    }
+
+    private double readDelivery(Region reg, RDRace rdRace) {
+        return slaveDelivery[reg.index()][rdRace.index()];
     }
 
     public static class RDSlave {
@@ -139,6 +144,10 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
         public int getDelivery(Region reg, double days) {
             return RD.SLAVERY().pushDelivery(reg, this.rdRace, boost.get(reg) * days);
+        }
+
+        public int hasDelivery(Region reg, double days) {
+            return (int) Math.floor(RD.SLAVERY().readDelivery(reg, this.rdRace) + boost.get(reg) * days);
         }
     }
 }

@@ -54,22 +54,18 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
     private void initialize() {
         selectedFoods = new boolean[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
         for (int r = 0; r <WORLD.REGIONS().all().size(); r++) {
-            for (int f = 0; f < RESOURCES.ALL().size(); f++) {
-                selectedFoods[r][f] = true;
+            for (RESOURCE food : RESOURCES.EDI().res()) {
+                selectedFoods[r][food.index()] = true;
             }
         }
     }
 
     public void toggleFood(Region region, RESOURCE resource) {
-        if (!selectedFoods[region.index()][resource.index()]) {
-            return;
-        }
-
         selectedFoods[region.index()][resource.index()] = !selectedFoods[region.index()][resource.index()];
 
         boolean anySet = false;
-        for (int f = 0; f < selectedFoods[region.index()].length; f++) {
-            anySet = anySet || selectedFoods[region.index()][f];
+        for (RESOURCE food : RESOURCES.EDI().res()) {
+            anySet = anySet || selectedFoods[region.index()][food.index()];
         }
 
         if (anySet) {

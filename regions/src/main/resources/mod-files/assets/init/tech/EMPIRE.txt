@@ -11,7 +11,7 @@ TECHS: {
 			CIVIC_INNOVATION: 5,
 		},
 		UNLOCKS_REGION: [
-			BUILDING_CIVIC_CENTRE_3,
+			BUILDING_CIVIC_GROWTH_3,
 		],
 	},
 	CENT1: {
@@ -22,7 +22,7 @@ TECHS: {
 			CENT0: 1,
 		},
 		UNLOCKS_REGION: [
-            BUILDING_CIVIC_CENTRE_4,
+            BUILDING_CIVIC_GROWTH_4,
 		],
 	},
 	CENT2: {
@@ -33,7 +33,7 @@ TECHS: {
 			CENT1: 1,
 		},
 		UNLOCKS_REGION: [
-			BUILDING_CIVIC_CENTRE_7,
+			BUILDING_CIVIC_GROWTH_7,
 		],
 	},
 

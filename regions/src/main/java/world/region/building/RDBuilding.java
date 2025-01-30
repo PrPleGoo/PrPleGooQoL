@@ -401,7 +401,11 @@ public final class RDBuilding implements MAPPED{
 		private double tos(int level) {
 			double base = isMul ? 1 : 0;
 			for(Booster b : boosters[level]){
-				base += b.to();
+				if (isMul) {
+					base *= b.to();
+				} else {
+					base += b.to();
+				}
 			}
 
 			return base;
@@ -410,7 +414,11 @@ public final class RDBuilding implements MAPPED{
 		private double froms(int level) {
 			double base = isMul ? 1 : 0;
 			for(Booster b : boosters[level]) {
-				base += b.from();
+				if (isMul) {
+					base *= b.from();
+				} else {
+					base += b.from();
+				}
 			}
 
 			return base;

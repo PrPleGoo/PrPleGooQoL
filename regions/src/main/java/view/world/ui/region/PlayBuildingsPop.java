@@ -13,6 +13,7 @@ import init.C;
 import init.resources.RESOURCE;
 import init.settings.S;
 import init.sprite.UI.Icon;
+import init.sprite.UI.Icons;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.MagicStringChecker;
@@ -300,7 +301,20 @@ class PlayBuildingsPop {
                 GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
             }
 
-            this.industry.outs().get(0).resource.icon().big.renderCY(r, body().x1()+8, body().cY());
+            int rendered = 0;
+            for (Industry.IndustryResource res : industry.ins()){
+                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
+                rendered++;
+            }
+
+            UI.icons().m.arrow_right.medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
+            rendered++;
+
+            for (Industry.IndustryResource res : industry.outs()){
+                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
+                rendered++;
+            }
+
             num.clear();
             num.color(COLOR.WHITE100);
             num.renderCY(r, body().x1()+48, body.cY());

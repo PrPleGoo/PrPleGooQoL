@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData> {
     public final Boostable booster;
-    private HashMap<Integer, HashMap<Integer, Boolean>> selectedFoods;
+    private boolean[][] selectedFoods;
 
     public RDFoodConsumption() {
         booster = BOOSTING.push("FOOD_CONSUMPTION", 0, Dic.¤¤Food, Dic.¤¤Food, UI.icons().s.sprout, BoostableCat.ALL().WORLD);
@@ -46,52 +46,51 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
         selectedFoods = data.data;
     }
 
-    private void initialize() {
-        selectedFoods = new HashMap<>();
-        for (Region region : WORLD.REGIONS().all()) {
-            HashMap<Integer, Boolean> selectedFood = new HashMap<>();
-            for (RESOURCE food : RESOURCES.EDI().res()) {
-                selectedFood.put(food.index(), true);
-            }
+    @Override
+    public Class<RDFoodConsumptionData> getDataClass() {
+        return RDFoodConsumptionData.class;
+    }
 
-            selectedFoods.put(region.index(), selectedFood);
+    private void initialize() {
+        selectedFoods = new boolean[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
+        for (int r = 0; r <WORLD.REGIONS().all().size(); r++) {
+            for (int f = 0; f < RESOURCES.ALL().size(); f++) {
+                selectedFoods[r][f] = true;
+            }
         }
     }
 
     public void toggleFood(Region region, RESOURCE resource) {
-        if (!selectedFoods.get(region.index()).containsKey(resource.index())) {
+        if (!selectedFoods[region.index()][resource.index()]) {
             return;
         }
 
-        HashMap<Integer, Boolean> selectedFood = selectedFoods.get(region.index());
-        selectedFood.replace(resource.index(), !selectedFood.get(resource.index()));
+        selectedFoods[region.index()][resource.index()] = !selectedFoods[region.index()][resource.index()];
 
         boolean anySet = false;
-        for (Integer key : selectedFood.keySet()) {
-            anySet = anySet || selectedFood.get(key);
+        for (int f = 0; f < selectedFoods[region.index()].length; f++) {
+            anySet = anySet || selectedFoods[region.index()][f];
         }
 
         if (anySet) {
             return;
         }
 
-        selectedFood.replace(resource.index(), !selectedFood.get(resource.index()));
+        selectedFoods[region.index()][resource.index()] = !selectedFoods[region.index()][resource.index()];
     }
 
     public boolean has(Region t, RESOURCE food) {
-        if (!selectedFoods.get(t.index()).containsKey(food.index())) {
+        if (!selectedFoods[t.index()][food.index()]) {
             return false;
         }
 
-        return selectedFoods.get(t.index()).get(food.index());
+        return selectedFoods[t.index()][food.index()];
     }
 
     public int getFoodTypeCount(Region t) {
-        HashMap<Integer, Boolean> selectedFood = selectedFoods.get(t.index());
-
         int foodTypeCount = 0;
-        for (Integer key : selectedFood.keySet()) {
-            foodTypeCount += selectedFood.get(key) ? 1 : 0;
+        for (RESOURCE food : RESOURCES.EDI().res()) {
+            foodTypeCount += selectedFoods[t.index()][food.index()] ? 1 : 0;
         }
 
         return foodTypeCount;

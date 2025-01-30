@@ -89,6 +89,11 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
         slaveDelivery = data.slaveDelivery;
     }
 
+    @Override
+    public Class<RDSlaveryData> getDataClass() {
+        return RDSlaveryData.class;
+    }
+
     private void initialize() {
         selectedSlaves = new HashMap<>();
         for (Region region : WORLD.REGIONS().all()) {

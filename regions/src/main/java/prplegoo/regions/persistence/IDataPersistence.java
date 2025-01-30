@@ -6,4 +6,6 @@ public interface IDataPersistence<T> {
     T getData();
 
     void putData(T data);
+
+    Class<T> getDataClass();
 }

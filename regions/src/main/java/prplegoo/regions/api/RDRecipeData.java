@@ -26,13 +26,11 @@ import world.region.pop.RDRace;
 import java.util.HashMap;
 
 @Data
-@Builder
 @EqualsAndHashCode
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
 public class RDRecipeData {
-    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
     public int[][] enabledRecipeIndex;
 
     public RDRecipeData(int[][] enabledRecipeIndex) {

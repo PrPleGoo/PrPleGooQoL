@@ -42,6 +42,11 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
         enabledRecipeIndex = data.enabledRecipeIndex;
     }
 
+    @Override
+    public Class<RDRecipeData> getDataClass() {
+        return RDRecipeData.class;
+    }
+
     private void initialize() {
         enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }

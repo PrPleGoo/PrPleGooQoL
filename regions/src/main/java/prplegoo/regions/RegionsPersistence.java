@@ -1,5 +1,6 @@
 package prplegoo.regions;
 
+import prplegoo.regions.api.RDFoodConsumptionData;
 import prplegoo.regions.persistence.FileGetterApi;
 import prplegoo.regions.persistence.FilePutterApi;
 import script.SCRIPT;
@@ -9,7 +10,7 @@ import world.region.RD;
 
 import java.io.IOException;
 
-public class RegionsPersistence implements SCRIPT.SCRIPT_INSTANCE {
+public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
     @Override
     public void update(double ds) {
         // nop
@@ -31,8 +32,29 @@ public class RegionsPersistence implements SCRIPT.SCRIPT_INSTANCE {
         FileGetterApi getter = new FileGetterApi();
         getter.onGameLoaded(file);
 
-        RD.FOOD_CONSUMPTION().putData(getter.get(RD.FOOD_CONSUMPTION()));
+        RDFoodConsumptionData gotten = getter.get(RD.FOOD_CONSUMPTION());
+        RD.FOOD_CONSUMPTION().putData(gotten);
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
         RD.RECIPES().putData(getter.get(RD.RECIPES()));
+    }
+
+    @Override
+    public CharSequence name() {
+        return "Region overhaul saving";
+    }
+
+    @Override
+    public CharSequence desc() {
+        return "No matter what you do, this will be enabled.";
+    }
+
+    @Override
+    public SCRIPT_INSTANCE createInstance() {
+        return new RegionsPersistence();
+    }
+
+    @Override
+    public boolean forceInit() {
+        return true;
     }
 }

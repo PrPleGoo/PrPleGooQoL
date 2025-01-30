@@ -9,16 +9,13 @@ import lombok.NoArgsConstructor;
 import java.util.HashMap;
 
 @Data
-@Builder
 @EqualsAndHashCode
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@SuppressWarnings("InnerClassMayBeStatic")
 public class RDFoodConsumptionData {
-    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
-    public HashMap<Integer, HashMap<Integer, Boolean>> data;
+    public boolean[][] data;
 
-    public RDFoodConsumptionData(HashMap<Integer, HashMap<Integer, Boolean>> data) {
+    public RDFoodConsumptionData(boolean[][] data) {
         this.data = data;
     }
 }

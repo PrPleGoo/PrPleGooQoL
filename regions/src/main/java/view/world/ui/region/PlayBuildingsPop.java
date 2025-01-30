@@ -4,11 +4,13 @@ import java.util.LinkedList;
 
 import game.GAME;
 import game.boosting.BHoverer;
+import game.boosting.BOOSTABLES;
 import game.boosting.BoostSpec;
 import game.boosting.Boostable;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import init.C;
+import init.resources.RESOURCE;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
@@ -313,23 +315,12 @@ class PlayBuildingsPop {
 
         @Override
         public void hoverInfoGet(GUI_BOX text) {
-
-            Region reg = g.get();
             GBox b = (GBox) text;
 
-            int level = RD.BUILDINGS().tmp().level(bu, g.get());
-            if (level == 0) {
-                level = 1;
-            }
-
-            b.title(bu.levels().get(level).name);
-            b.NL();
-
-            b.text(bu.info.desc);
-
+            b.title(bu.info.name);
             b.sep();
 
-            hoverNonCosts(reg, bu, 0, level, text);
+            hoverRecipe(industry, text);
         }
 
         @Override
@@ -339,12 +330,7 @@ class PlayBuildingsPop {
                 VIEW.inters().popup.close();
             }
         }
-
-
     }
-
-
-
 
     private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r) {
         double d = bu.baseEfficiency(g.get())-1;
@@ -413,6 +399,21 @@ class PlayBuildingsPop {
             }
             bu.boosters().hover(b, s, getB(bu, fromL, toL, s, true), 0);
             b.NL();
+        }
+    }
+
+    private void hoverRecipe(Industry industry, GUI_BOX text) {
+        GBox b = (GBox) text;
+
+        b.add(b.text().lablify().add(Dic.¤¤ProductionRate));
+        b.NL();
+
+        for (Industry.IndustryResource res : industry.outs()){
+            hoverCost(b, res.resource.icon(), res.resource.name, res.rate);
+        }
+
+        for (Industry.IndustryResource res : industry.ins()){
+            hoverCost(b, res.resource.icon(), res.resource.name, -res.rate);
         }
     }
 
@@ -497,6 +498,31 @@ class PlayBuildingsPop {
         cc.add('(');
         GFORMAT.iOrF(cc, current).add(')');
         b.add(cc);
+        b.NL();
+    }
+
+    private static void hoverCost(GUI_BOX text, SPRITE icon, CharSequence name, double value) {
+
+        if (value == 0)
+            return;
+        GBox b = (GBox) text;
+
+        b.add(icon);
+        GText nn = b.text();
+        GText vv = b.text();
+        nn.add(name);
+        GFORMAT.iOrF(vv, value);
+        if (value > 0) {
+            nn.normalify2();
+            vv.normalify2();
+        } else {
+            nn.errorify();
+            vv.errorify();
+        }
+
+        b.add(nn);
+        b.tab(7);
+        b.add(vv);
         b.NL();
     }
 

@@ -67,7 +67,11 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
 
         @Override
         public double getValue(double input){
-            return to() * input;
+            return input;
+        }
+
+        public double getIfRecipe(Region reg, int recipeIndex){
+            return RD.RECIPES().isEnabled(reg, blue, recipeIndex) ? to() : 0;
         }
 
         @Override
@@ -76,7 +80,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
                 return 0;
             }
 
-            return RD.RECIPES().isEnabled((Region) o, blue, recipeIndex) ? 1 : 0;
+            return getIfRecipe((Region) o, recipeIndex);
         }
     }
 }

@@ -48,6 +48,7 @@ public final class RDBuilding implements MAPPED{
 
 	public final ArrayListGrower<Booster> baseFactors = new ArrayListGrower<>();
 	private final BoostSpecs boosters;
+	@Getter
 	private final ArrayListGrower<BBoost> bboosts = new ArrayListGrower<>();
 	public final Boostable efficiency;
 	public final INT_OE<Region> level;
@@ -360,7 +361,7 @@ public final class RDBuilding implements MAPPED{
 		return BUtil.value(baseFactors, reg);
 	}
 
-	private static class BBoost extends Booster implements BValue {
+	public static class BBoost extends Booster implements BValue {
 		final boolean global;
 		final boolean isMul;
 		final BoostSpec b;

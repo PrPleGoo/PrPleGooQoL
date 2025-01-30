@@ -178,18 +178,7 @@ final class Creator {
 		
 		String kkk = blue.key.startsWith("_") ? blue.key.substring(1) : blue.key;
 
-		String desc = ¤¤desc + "";
-
-		if (industries.size() == 1){
-			LIST<IndustryResource> outs = industries.get(0).outs();
-			desc += ": ";
-
-			for (int ri = 0; ri < outs.size(); ri++) {
-				desc += outs.get(ri).resource.name;
-				if (ri < outs.size() - 1)
-					desc += ", ";
-			}
-		}
+		String desc = ¤¤desc + ": ";
 
 		for (int li = 0; li < levels.max(); li++) {
 			CharSequence name = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), li + 1);
@@ -211,6 +200,10 @@ final class Creator {
 					BoosterValue bo = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
 					RDOutput out = RD.OUTPUT().get(i.resource);
 					l.local.push(bo, out.boost);
+
+					if(li == 0) {
+						desc += i.resource.name + ", ";
+					}
 				}
 
 				for (int ri = 0; ri < ins.size(); ri++) {
@@ -224,9 +217,9 @@ final class Creator {
 			levels.add(l);
 		}
 		
-		INFO info = new INFO(blue.info.name, desc);
+		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
 		
-		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk);
+		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 		
 
 		

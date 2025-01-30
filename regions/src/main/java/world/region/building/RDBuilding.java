@@ -21,8 +21,10 @@ import game.values.GVALUES;
 import game.values.Lock;
 import init.sprite.UI.UI;
 import init.text.D;
+import lombok.Getter;
 import prplegoo.regions.api.MagicStringChecker;
 import settlement.army.div.Div;
+import settlement.room.main.RoomBlueprintImp;
 import settlement.stats.Induvidual;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
@@ -57,6 +59,8 @@ public final class RDBuilding implements MAPPED{
 	public final boolean AIBuild;
 	public final boolean notify;
 	final String order;
+	@Getter
+	private final RoomBlueprintImp blue;
 	private final ArrayList<INT_OE<Faction>> levelAm;
 
 	private static CharSequence ¤¤NotEnough = "Not enough";
@@ -65,12 +69,18 @@ public final class RDBuilding implements MAPPED{
 		D.ts(RDBuilding.class);
 	}
 
+
 	RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order) {
+		this(all, init, cat, key, info, levels, AIBuilds, notify, order, null);
+	}
+
+	RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, RoomBlueprintImp blue) {
 		this.info = info;
 		this.cat = cat;
 		this.AIBuild = AIBuilds;
 		this.notify = notify;
 		this.order = order;
+		this.blue = blue;
 		cat.all.add(this);
 		index = all.add(this);
 		kk = cat.key + "_" + key;

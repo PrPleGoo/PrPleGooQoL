@@ -16,6 +16,9 @@ import init.text.D;
 import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.ui.FoodSelector;
 import prplegoo.regions.ui.SlaveSelector;
+import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
+import settlement.room.main.RoomBlueprintImp;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -31,6 +34,7 @@ import snake2d.util.gui.renderable.RENDEROBJ;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListResize;
+import snake2d.util.sets.LIST;
 import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.text.Str;
 import util.colors.GCOLOR;
@@ -268,6 +272,79 @@ class PlayBuildingsPop {
 
     }
 
+    private class RecipeButt extends ClickableAbs{
+
+        private final Industry industry;
+        private final RoomBlueprintImp blue;
+        private final RDBuilding bu;
+
+        RecipeButt(RDBuilding bu, Industry industry, RoomBlueprintImp blue){
+            body.setDim(128, 40);
+            this.industry = industry;
+            this.blue = blue;
+            this.bu = bu;
+        }
+
+        @Override
+        protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
+            GCOLOR.UI().border().render(r, body,-1);
+
+            // Recipe is enabled
+            if (true) {
+                COLOR.WHITE100.render(r, body,-2);
+                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
+            }else {
+                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
+            }
+
+            this.industry.outs().get(0).resource.icon().big.renderCY(r, body().x1()+8, body().cY());
+            num.clear();
+            num.color(COLOR.WHITE100);
+            num.renderCY(r, body().x1()+48, body.cY());
+
+            // If recipe is tech-locked
+            if (!this.industry.lockable().passes(g.get().faction())) {
+                OPACITY.O50.bind();
+                COLOR.BLACK.render(r, body, -1);
+                OPACITY.unbind();
+            }
+
+        }
+
+        @Override
+        public void hoverInfoGet(GUI_BOX text) {
+
+            Region reg = g.get();
+            GBox b = (GBox) text;
+
+            int level = RD.BUILDINGS().tmp().level(bu, g.get());
+            if (level == 0) {
+                level = 1;
+            }
+
+            b.title(bu.levels().get(level).name);
+            b.NL();
+
+            b.text(bu.info.desc);
+
+            b.sep();
+
+            hoverNonCosts(reg, bu, 0, level, text);
+        }
+
+        @Override
+        protected void clickA() {
+            // Is recipe tech-unlocked?
+            if (S.get().developer || true) {
+                // Set the recipe as the active one.
+                //RD.BUILDINGS().tmp().levelSet(bu, level);
+                VIEW.inters().popup.close();
+            }
+        }
+
+
+    }
+
 
 
 
@@ -497,7 +574,16 @@ class PlayBuildingsPop {
             for (int i = b.levels().size()-1; i >= 0; i--) {
                 lPop.addDown(0, new LevelButt(b, i));
             }
-
+            RoomBlueprintImp blue = b.getBlue();
+            if(blue != null && blue instanceof INDUSTRY_HASER){
+                INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
+                LIST<Industry> industries = industryHaser.industries();
+                if(industries.size() > 1){
+                    for (int i = industries.size()-1; i >= 0; i--) {
+                        lPop.addDown(0, new RecipeButt(bu, industries.get(i), blue));
+                    }
+                }
+            }
         }
 
         @Override

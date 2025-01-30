@@ -197,18 +197,18 @@ final class Creator {
 				BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
 				for (int ri = 0; ri < outs.size(); ri++) {
 					IndustryResource i = outs.get(ri);
-					BoosterValue bo = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
+					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex);
 					RDOutput out = RD.OUTPUT().get(i.resource);
 					l.local.push(bo, out.boost);
 
-					if(li == 0) {
+					if (li == 0) {
 						desc += i.resource.name + ", ";
 					}
 				}
 
 				for (int ri = 0; ri < ins.size(); ri++) {
 					IndustryResource i = ins.get(ri);
-					BoosterValue bo = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);
+					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex);
 					RDOutput in = RD.OUTPUT().get(i.resource);
 					l.local.push(bo, in.boost);
 				}

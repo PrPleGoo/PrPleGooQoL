@@ -415,6 +415,15 @@ public final class RDBuilding implements MAPPED{
 			return base;
 		}
 
+		private double gs(int level, Region reg) {
+			double base = isMul ? 1 : 0;
+			for(Booster b : boosters[level]) {
+				base += b.get(reg);
+			}
+
+			return base;
+		}
+
 		@Override
 		public double get(BOOSTABLE_O o) {
 			return o.boostableValue(this);
@@ -493,8 +502,11 @@ public final class RDBuilding implements MAPPED{
 			if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
 				return ta;
 			int i = RD.BUILDINGS().tmp().level(bu, t);
+			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
+				return bu.efficiency.get(t) * gs(i, t);
+			}
 			double vv = tos(i);
-			if (b.booster.isMul || vv > 0 || (vv != 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key))) {
+			if (b.booster.isMul || vv > 0) {
 				return froms(i) + bu.efficiency.get(t)*(tos(i)-froms(i));
 			}
 			return vv;

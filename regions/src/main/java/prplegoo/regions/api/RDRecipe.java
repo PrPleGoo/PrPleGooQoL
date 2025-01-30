@@ -1,10 +1,13 @@
 package prplegoo.regions.api;
 
+import game.boosting.BOOSTABLE_O;
 import game.boosting.BSourceInfo;
 import game.boosting.BValue;
 import game.boosting.BoosterValue;
 import prplegoo.regions.persistence.IDataPersistence;
 import settlement.main.SETT;
+import settlement.room.industry.module.Industry;
+import settlement.room.main.RoomBlueprintImp;
 import snake2d.LOG;
 import world.WORLD;
 import world.map.regions.Region;
@@ -14,6 +17,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     private int[][] enabledRecipeIndex;
 
     public RDRecipe(){
+        initialize();
     }
 
     @Override
@@ -42,28 +46,37 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
         enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }
 
-    public boolean isEnabled(Region region, int roomIndex, int recipeIndex){
-        LOG.ln(region.index());
-        LOG.ln(roomIndex);
-        LOG.ln(recipeIndex);
-        LOG.ln(enabledRecipeIndex[region.index()][roomIndex]);
-        return enabledRecipeIndex[region.index()][roomIndex] == recipeIndex;
+    public boolean isEnabled(Region region, RoomBlueprintImp blue, int industryIndexOnBlue){
+        return enabledRecipeIndex[region.index()][blue.index()] == industryIndexOnBlue;
     }
 
-    public static class RDEnabledRecipeBooster extends BValue.BValueSome {
-        private final int roomIndex;
+    public void setRecipe(Region region, RoomBlueprintImp blue, int industryIndexOnBlue){
+        enabledRecipeIndex[region.index()][blue.index()] = industryIndexOnBlue;
+    }
+
+    public static class RDEnabledRecipeBooster extends BoosterValue {
+        private final RoomBlueprintImp blue;
         private final int recipeIndex;
 
-        public RDEnabledRecipeBooster(int roomIndex, int recipeIndex) {
-            super(1.0);
+        public RDEnabledRecipeBooster(BValue v, BSourceInfo info, double to, boolean isMul, RoomBlueprintImp blue, int recipeIndex) {
+            super(v, info, to, isMul);
 
-            this.roomIndex = roomIndex;
+            this.blue = blue;
             this.recipeIndex = recipeIndex;
         }
 
         @Override
-        public double vGet(Region reg){
-            return RD.RECIPES().isEnabled(reg, roomIndex, recipeIndex) ? 1 : 0;
+        public double getValue(double input){
+            return to() * input;
+        }
+
+        @Override
+        protected double pget(BOOSTABLE_O o) {
+            if(!(o instanceof Region)){
+                return 0;
+            }
+
+            return RD.RECIPES().isEnabled((Region) o, blue, recipeIndex) ? 1 : 0;
         }
     }
 }

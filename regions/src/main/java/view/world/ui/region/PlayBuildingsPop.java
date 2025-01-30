@@ -277,20 +277,21 @@ class PlayBuildingsPop {
         private final Industry industry;
         private final RoomBlueprintImp blue;
         private final RDBuilding bu;
+        private final int industryIndexOnBlue;
 
-        RecipeButt(RDBuilding bu, Industry industry, RoomBlueprintImp blue){
+        RecipeButt(RDBuilding bu, Industry industry, RoomBlueprintImp blue, int industryIndexOnBlue){
             body.setDim(128, 40);
             this.industry = industry;
             this.blue = blue;
             this.bu = bu;
+            this.industryIndexOnBlue = industryIndexOnBlue;
         }
 
         @Override
         protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
             GCOLOR.UI().border().render(r, body,-1);
 
-            // Recipe is enabled
-            if (true) {
+            if (RD.RECIPES().isEnabled(g.get(), blue, industryIndexOnBlue)) {
                 COLOR.WHITE100.render(r, body,-2);
                 GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
             }else {
@@ -302,7 +303,6 @@ class PlayBuildingsPop {
             num.color(COLOR.WHITE100);
             num.renderCY(r, body().x1()+48, body.cY());
 
-            // If recipe is tech-locked
             if (!this.industry.lockable().passes(g.get().faction())) {
                 OPACITY.O50.bind();
                 COLOR.BLACK.render(r, body, -1);
@@ -334,10 +334,8 @@ class PlayBuildingsPop {
 
         @Override
         protected void clickA() {
-            // Is recipe tech-unlocked?
-            if (S.get().developer || true) {
-                // Set the recipe as the active one.
-                //RD.BUILDINGS().tmp().levelSet(bu, level);
+            if (S.get().developer || this.industry.lockable().passes(g.get().faction())) {
+                RD.RECIPES().setRecipe(g.get(), blue, industryIndexOnBlue);
                 VIEW.inters().popup.close();
             }
         }
@@ -580,7 +578,7 @@ class PlayBuildingsPop {
                 LIST<Industry> industries = industryHaser.industries();
                 if(industries.size() > 1){
                     for (int i = industries.size()-1; i >= 0; i--) {
-                        lPop.addDown(0, new RecipeButt(bu, industries.get(i), blue));
+                        lPop.addDown(0, new RecipeButt(bu, industries.get(i), blue, i));
                     }
                 }
             }

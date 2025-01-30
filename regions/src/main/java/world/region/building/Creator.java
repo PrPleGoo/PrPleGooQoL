@@ -18,9 +18,12 @@ import init.text.D;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
 import prplegoo.regions.api.PrPleGooEfficiencies;
+import prplegoo.regions.api.RDRecipe;
+import prplegoo.regions.api.RecipeBoosterValue;
 import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.Industry.IndustryResource;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
@@ -30,6 +33,7 @@ import settlement.stats.Induvidual;
 import snake2d.LOG;
 import snake2d.util.file.Json;
 import snake2d.util.misc.ACTION;
+import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
@@ -146,12 +150,12 @@ final class Creator {
 			if (b instanceof RoomBlueprintImp && b  instanceof INDUSTRY_HASER) {
 				INDUSTRY_HASER h = (INDUSTRY_HASER) b;
 				RoomBlueprintImp blue = (RoomBlueprintImp) b;
-				
+
 				if (h.industries().size() == 0 || h.industries().get(0).outs().size() == 0) {
 					LOG.err(data.errorGet(b.key + "Is not a valid room to generate", "INDUSTRIES"));
 				}
 				
-				RDBuilding bu = generate(all, init, cat, h.industries().get(0).outs(), blue, data);
+				RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
 				res.add(bu);
 			}
 			
@@ -164,7 +168,7 @@ final class Creator {
 	
 
 	
-	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<IndustryResource> is, RoomBlueprintImp blue, Json data){
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex) {
 		
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
 		
@@ -174,32 +178,49 @@ final class Creator {
 		
 		String kkk = blue.key.startsWith("_") ? blue.key.substring(1) : blue.key;
 
-		String desc = ¤¤desc + ": ";
-		
-		for(int ri = 0; ri  < is.size(); ri++) {
-			desc += is.get(0).resource.name;
-			if (ri < is.size()-1)
-				desc += ", ";
+		String desc = ¤¤desc + "";
+
+		if (industries.size() == 1){
+			LIST<IndustryResource> outs = industries.get(0).outs();
+			desc += ": ";
+
+			for (int ri = 0; ri < outs.size(); ri++) {
+				desc += outs.get(ri).resource.name;
+				if (ri < outs.size() - 1)
+					desc += ", ";
+			}
 		}
-		
+
 		for (int li = 0; li < levels.max(); li++) {
-			CharSequence name = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), li+1);
+			CharSequence name = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), li + 1);
 			Icon icon = blue.iconBig();
 
-			double d = (double)(li+1) / (levels.max());
-			
-			Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + cat.key + "_" + kkk + "_"+(li+1), name, desc, icon);
+			double d = (double) (li + 1) / (levels.max());
+
+			Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + cat.key + "_" + kkk + "_" + (li + 1), name, desc, icon);
 			RDBuildingLevel l = new RDBuildingLevel(name, icon, needs);
-			l.cost = (int) (NPCStockpile.AVERAGE_PRICE*credits*d);
-			
-			BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
-			for(int ri = 0; ri  < is.size(); ri++){
-				IndustryResource i = is.get(ri);
-				BoosterValue bo = new BoosterValue(BValue.VALUE1, info, output*d*i.rate, false);
-				RDOutput out = RD.OUTPUT().get(i.resource);
-				l.local.push(bo, out.boost);
+			l.cost = (int) (NPCStockpile.AVERAGE_PRICE * credits * d);
+
+			for(int recipeIndex = 0; recipeIndex < industries.size(); recipeIndex++) {
+				LIST<IndustryResource> outs = industries.get(recipeIndex).outs();
+				LIST<IndustryResource> ins = industries.get(recipeIndex).ins();
+
+				BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
+				for (int ri = 0; ri < outs.size(); ri++) {
+					IndustryResource i = outs.get(ri);
+					BoosterValue bo = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
+					RDOutput out = RD.OUTPUT().get(i.resource);
+					l.local.push(bo, out.boost);
+				}
+
+				for (int ri = 0; ri < ins.size(); ri++) {
+					IndustryResource i = ins.get(ri);
+					BoosterValue bo = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);
+					RDOutput in = RD.OUTPUT().get(i.resource);
+					l.local.push(bo, in.boost);
+				}
 			}
-			
+
 			levels.add(l);
 		}
 		

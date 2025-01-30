@@ -21,6 +21,7 @@ public class RegionsPersistence implements SCRIPT.SCRIPT_INSTANCE {
 
         putter.put(RD.FOOD_CONSUMPTION().getKey(), RD.FOOD_CONSUMPTION().getData());
         putter.put(RD.SLAVERY().getKey(), RD.SLAVERY().getData());
+        putter.put(RD.RECIPES().getKey(), RD.RECIPES().getData());
 
         putter.onGameSaved(file);
     }
@@ -32,5 +33,6 @@ public class RegionsPersistence implements SCRIPT.SCRIPT_INSTANCE {
 
         RD.FOOD_CONSUMPTION().putData(getter.get(RD.FOOD_CONSUMPTION()));
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
+        RD.RECIPES().putData(getter.get(RD.RECIPES()));
     }
 }

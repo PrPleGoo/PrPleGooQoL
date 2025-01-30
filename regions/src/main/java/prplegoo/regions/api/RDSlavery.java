@@ -121,7 +121,6 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
     }
 
     public int pushDelivery(Region reg, RDRace rdRace, double value){
-        LOG.ln(slaveDelivery[reg.index()][rdRace.index()]);
         slaveDelivery[reg.index()][rdRace.index()] += value;
         int result = (int) Math.floor(slaveDelivery[reg.index()][rdRace.index()]);
         slaveDelivery[reg.index()][rdRace.index()] -= result;

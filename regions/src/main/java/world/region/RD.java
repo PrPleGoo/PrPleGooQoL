@@ -16,6 +16,7 @@ import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.RDFoodConsumption;
+import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.RDSlavery;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -60,6 +61,7 @@ public class RD extends WorldResource{
     private final RDDevastation deva;
     private final RDSlavery slavery;
     private final RDFoodConsumption foodConsumption;
+    private final RDRecipe recipes;
     private RDUpdater updater;
 
     private final EventData event;
@@ -96,6 +98,7 @@ public class RD extends WorldResource{
         deva = new RDDevastation(init);
         slavery = new RDSlavery();
         foodConsumption = new RDFoodConsumption();
+        recipes = new RDRecipe();
         mark = new EventData(init, "EVENT_MARK");
 
         event = new EventData(init, "EVENT_SELECTION");
@@ -369,6 +372,10 @@ public class RD extends WorldResource{
 
     public static RDFoodConsumption FOOD_CONSUMPTION(){
         return self.foodConsumption;
+    }
+
+    public static RDRecipe RECIPES(){
+        return self.recipes;
     }
 
     public static EventData event(){

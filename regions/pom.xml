@@ -132,8 +132,6 @@ Features:
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
-- There's no way to view the maximum assignable workers to a woodcutter/mine.
-- The assigned worker count is now even more obfuscated.
 
 Planned features (in order, subject to change):
 - Scale prevent max level based on deposits instead of scaling output.
@@ -153,7 +151,7 @@ Available on github.
 
 Credits:
 - Redic, thumbnail art
-- Argoon, SDK mod and technical support.
+- Argoon, technical support.
         </mod.info>
         <game.version.major>68</game.version.major>
         <game.version.minor>18</game.version.minor>

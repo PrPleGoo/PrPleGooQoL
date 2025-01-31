@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.15.0</version>
+    <version>0.68.18.0</version>
 
     <profiles>
         <profile>
@@ -120,32 +120,23 @@ Not compatible with existing saves!
 
 Features:
 - Region production reworked, basing output numbers on available population.
-- Workforce is now the percentage of available workers.
+- You get 1 workforce for every 15 people in a region.
 - You can build refineries and workshops in regions.
-- A lot of buildings have been changed to cost less or no workforce.
 - Population numbers in regions have been reduced drastically.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
-- Organization use has been completely removed, admin costs increased to compensate.
 - Negative production values are grabbed from your capital.
-- Use sliders to allocate workers to specific buildings.
-- Woodcutter worker maximum now tied to area and forest coverage.
-- Mine worker maximum now tied to deposits instead of scaling output.
 - Law gives you PoWs as tax from a region.
-- Tax buildings are now multipliers.
 - A food stall to use food instead of admin to grow cities.
 - Slaver's guild building that specializes in PoW output.
-- Fixed distance for regions, meaning you now need to build roads for regions to be effective.
 
 Known issues:
-- After a battle all your pop allocation values are reset (waiting on fix in SDK).
 - Negative production values could be ignored for a massive early game boost.
 - There's no way to view the maximum assignable workers to a woodcutter/mine.
 - The assigned worker count is now even more obfuscated.
 
 Planned features (in order, subject to change):
-- Nerf base taxe rate (denari).
-- Display available/total workforce (and resulting pop count).
+- Scale prevent max level based on deposits instead of scaling output.
 - Display 1 decimal point for wf.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Workshop/Refiner efficiency based on recipe ins/outs.
@@ -165,7 +156,7 @@ Credits:
 - Argoon, SDK mod and technical support.
         </mod.info>
         <game.version.major>68</game.version.major>
-        <game.version.minor>15</game.version.minor>
+        <game.version.minor>18</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

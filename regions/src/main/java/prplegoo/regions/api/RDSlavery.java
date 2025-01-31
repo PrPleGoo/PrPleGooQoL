@@ -9,6 +9,7 @@ import world.WORLD;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
+import world.region.building.RDBuildPoints;
 import world.region.pop.RDRace;
 
 import java.util.HashMap;
@@ -46,6 +47,27 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
             }.add(slave.boost);
         }
+
+        // Workforce is a type of slavery...
+        RDBuildPoints.RDBuildPoint workforce = null;
+        for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.all){
+            if(MagicStringChecker.isWorkforceBoostableKey(cost.bo.key)){
+                workforce = cost;
+            }
+        }
+
+        if(workforce == null){
+            throw new RuntimeException("Workforce boostable not found");
+        }
+
+        new RBooster(new BSourceInfo(Dic.¤¤Population, workforce.icon), 0, 40000, false) {
+            @Override
+            public double get(Region t) {
+                return RD.RACES().population.get(t) / 15.0 / 40000;
+            }
+
+        }.add(workforce.bo);
+
 
         initialize();
     }

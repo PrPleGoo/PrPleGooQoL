@@ -12,4 +12,6 @@ public class MagicStringChecker {
     public static boolean isSlaverBuilding(String key){
         return key.equals("NONADMIN_SLAVER");
     }
+
+    public static boolean isWorkforceBoostableKey(String key) { return key.equals("WORLD_POINT_WORKFORCE"); }
 }

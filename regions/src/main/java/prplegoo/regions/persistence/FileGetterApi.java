@@ -18,7 +18,6 @@ public class FileGetterApi implements IFileLoad {
         JsonNode json = loadedData.get(dataPersistence.getKey());
 
         try {
-            LOG.ln(json.toString());
             return ObjectMapperFactory.build().readValue(json.toString(), dataPersistence.getDataClass());
         } catch (Exception e) {
             LOG.err("Failed to deserialize json with key: " + dataPersistence.getKey() + ", value: " + json.toString());

@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.18.0</version>
+    <version>0.68.19.0</version>
 
     <profiles>
         <profile>
@@ -132,6 +132,9 @@ Features:
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
+- Health using target is really strong.
+- Slow population declines are very annoying.
+- Quarantine is a duplicate of health somehow.
 
 Planned features (in order, subject to change):
 - Scale prevent max level based on deposits instead of scaling output.
@@ -154,7 +157,7 @@ Credits:
 - Argoon, technical support.
         </mod.info>
         <game.version.major>68</game.version.major>
-        <game.version.minor>18</game.version.minor>
+        <game.version.minor>19</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

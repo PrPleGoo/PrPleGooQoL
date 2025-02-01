@@ -153,7 +153,7 @@ game.events.disaster.EventDiseaseMild: {
 	titleF: "Disease at our doorstep!",
 	descF: "There is rumour that the lands to the east have been ravaged by a deadly disease, leaving cities in ruins and emptying villages of the living. Let us hope it does not reach our lands.",
 	title: "Epidemic!",
-	desc: "It has come to us. The dreaded {0}. Nothing could have ben done, it was the will of the gods. Lets hope our hospitals are well staffed. A curfew can be issued to contain it.",
+	desc: "It has come to us. The dreaded {0}. Nothing could have been done, it was the will of the gods. Lets hope our hospitals are well staffed. A curfew can be issued to contain it.",
 },
 game.events.disaster.EventTemperature: {
 	ExtremeTemp: "Extreme Temperatures",
@@ -244,10 +244,11 @@ game.faction.diplomacy.deal.DealBools: {
 	pNoAgree: "You have no agreements to break.",
 	pDistance: "This option requires the faction to be your neighbour.",
 	pAlready: "You are already at this stance with each other.",
-	pDowngrade: "You can not downgrade your current stance with this faction. Cancel all agreements is the only option.",
 	pOpinion: "You are not liked enough by the faction for this stance to be considered. A minimum opinion of {0} is required.",
 	pVassal: "As a vassal, you can not propose this agreement to this faction.",
 	pVassalOther: "This faction is a puppet state of another faction, and is not allowed to make this agreement.",
+	opReq: "Opinion Required",
+	opTarif: "Tariff",
 },
 game.faction.diplomacy.deal.DealSave: {
 	Faction: "The faction of this agreement does no longer exist.",
@@ -301,7 +302,7 @@ game.faction.FCredits: {
 	Trade: "Trade",
 	TradeD: "Money that flow through imports and exports.",
 	Inflation: "Inflation",
-	InflationD: "Inflation is applied to positive and negative treasuries. Each year a negative treasury will have 10% of its debt removed. A positive treasury will have 10% removed.",
+	InflationD: "Over time, Inflation adds credits to a negative treasury and removes credits from a positive one.",
 	Misc: "Misc",
 	MiscD: "Special sources",
 	Tribute: "Tribute",
@@ -516,7 +517,7 @@ game.raiding.MessDemand: {
 	noslaves: "You do not have enough slaves to meet their demands. ({0})",
 },
 game.raiding.MessDemandRejected: {
-	title: "Raider Declined",
+	title: "Raider Rejected",
 	body: "This is ill news for us indeed. Perhaps we should have paid the ransom. Now we must prepare for an attack.",
 },
 game.raiding.MessDemandTY: {
@@ -1520,7 +1521,7 @@ settlement.room.law.stockade.Gui: {
 	emp: "Insufficient employees or lack of food might cause incidents. Full employment is required.",
 	cancel: "Cancel all manually assigned punishments, and let the prisoners be punished according to your law settings.",
 },
-settlement.room.main.BonusExp: {
+settlement.room.main.BonusExperience: {
 	name: "Experience",
 	mGainedTitle: "Experience Gained",
 	mGainedBody: "We now employ over {0} in our {1}, and as a result, this combined experience is boosting performance. Boosting will continue to increase up until {2} employees.",
@@ -2209,7 +2210,7 @@ util.dic.Dic: {
 	ForSale: "For Sale",
 	Formation: "Formation",
 	Fort: "Fortifications",
-	FortD: "Fortifications give a huge boost to the defence of the settlement. It can make attacks impossible until you tire out the defenders.",
+	FortD: "Fortifications give a huge boost to the defence of the settlement. It can make a direct assault impossible until the defenders are tired out and starved.",
 	Fortifications: "Fortifications",
 	Fortified: "Fortified",
 	Fortifying: "Fortifying",
@@ -2365,7 +2366,7 @@ util.dic.Dic: {
 	SuppliesD: "Campaigning armies requires supplies to function. Some are essential, while others only provide morale boosts.",
 	Target: "Target",
 	Tariff: "Tariff",
-	TariffD: "Tariff is applied to the amount of work that has been put into a resource and deducted from a faction's buy price. The tariff depends on your current stance.",
+	TariffD: "Tariff is applied to the amount of work that has been put into a resource and deducted from a faction's buy price. The tariff depends on your current stance. Overloading a faction with a particular resource also increases tariff.",
 	Taxes: "Taxes",
 	Threat: "Threat",
 	TechnologyShort: "Tech",
@@ -2937,7 +2938,7 @@ view.sett.ui.room.ModuleInstance: {
 	DEACTIVATED: "Deactivated!",
 },
 view.sett.ui.room.ModuleIrrigated: {
-	Desc: "Fresh Water access gives a boost to this room. Fresh water can be gained from natural bodies of water and canals. This room needs to be covered by {0}% Fresh Water to get a full boost. This value might take awhile to adjust to reality.",
+	Desc: "Fresh Water access gives a boost to this room. Fresh water can be gained from natural bodies of water and canals. This room needs to be covered by {0}% Fresh Water to get a full boost. Current coverage is {1}%, resulting in a {2}% value. This value might take awhile to adjust to reality.",
 },
 view.sett.ui.room.ModulePumpable: {
 	Name: "Water Supply",
@@ -3549,6 +3550,8 @@ view.world.ui.faction.Goods: {
 	priceBuy: "The base sell price is proportional to the amount of the resource a faction has stored, and the money it has available. If a faction has scant use for a resource, the buy price will be significantly lower than the sell price.",
 	penaltyD1: "Toll is the distance to this faction. This penalty can be decreased by building roads in your kingdom.",
 	penaltyD2: "The tariff penalty is based on the faction's opinion of you. Increase their opinion for better prices.",
+	tradeAmount: "Tradable",
+	tradeAmountD: "How much can be traded fairly with this faction before it increases tariffs.",
 },
 view.world.ui.faction.Hoverer: {
 	powerD: "The power of this faction compared to you. The power is a mix of military might and production capabilities. High powered factions are harder to please.",

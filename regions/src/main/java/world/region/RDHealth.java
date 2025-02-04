@@ -92,7 +92,7 @@ public class RDHealth extends RDataE {
 		super("HEALTH", init.count.new DataByte("HEALTH"), init, ¤¤name);
 		boostablee = BOOSTING.push("HEALTH", 1, ¤¤name, ¤¤desc, UI.icons().s.heart,  BoostableCat.ALL().WORLD);
 		
-		new RBooster(new BSourceInfo(Dic.¤¤Population, UI.icons().s.human), 0, -10, false) {
+		new RBooster(new BSourceInfo(Dic.¤¤Population, UI.icons().s.human), 0, -30, false) {
 
 			@Override
 			public double get(Region t) {

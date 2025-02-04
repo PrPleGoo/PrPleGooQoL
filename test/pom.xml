@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.github.prplegoo</groupId>
-    <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.68.20.0</version>
+    <artifactId>test</artifactId>
+    <version>0.68.19.0</version>
 
     <profiles>
         <profile>
@@ -99,37 +99,14 @@
 
         <!-- These settings will go into the mods _Info.txt file -->
         <mod.version>${project.version}</mod.version>
-        <mod.name>PrPleGooQoL</mod.name>
+        <mod.name>test</mod.name>
         <mod.description>
-Hold shift to max/min values. Commit war crimes with less wrist strain by holding down shift. Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
+test
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
-        <mod.info>
-Greetings despot,
-
-This mod changes a few interactions in the game:
-- Holding shift when when clicking plus or minus buttons will set their value to the maximum or minimum respectively.
-- You can no longer input text into an input field that prompts you for a number.
-- Keypad enter to work on all places where enter works.
-- Holding shift when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
-- Enter (so keypad enter too) now confirms confirmation dialogues.
-- Hold shift to not get prompted for assigning punishments in the stockades.
-- You can filter punishments by race in the stockades.
-- A little arrow over the resources to show if your consumption is outpacing your income.
-- Real life time is displayed under the season wheel.
-- Quickly replace a noble when they die.
-
-I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
-If you have any more suggestions like this, feel free to contact me on discord or steam.
-
-Enjoy!
-
-- a fellow despot
-
-Available on github.
-        </mod.info>
+        <mod.info>test</mod.info>
         <game.version.major>68</game.version.major>
-        <game.version.minor>20</game.version.minor>
+        <game.version.minor>19</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

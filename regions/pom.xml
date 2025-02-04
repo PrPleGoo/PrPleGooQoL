@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.19.0</version>
+    <version>0.68.19.1</version>
 
     <profiles>
         <profile>
@@ -129,12 +129,12 @@ Features:
 - Law gives you PoWs as tax from a region.
 - A food stall to use food instead of admin to grow cities.
 - Slaver's guild building that specializes in PoW output.
+- More negative health to account for lower population levels.
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
-- Health using target is really strong.
 - Slow population declines are very annoying.
-- Quarantine is a duplicate of health somehow.
+- More negative loyalty to account for lower population levels. There is an issue with the game file, so I can't modify it.
 
 Planned features (in order, subject to change):
 - Scale prevent max level based on deposits instead of scaling output.

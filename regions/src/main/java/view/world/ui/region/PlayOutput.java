@@ -114,7 +114,7 @@ final class PlayOutput extends GuiSection{
                 }
             });
 
-            addRelBody(2, DIR.S, builder.createHeight((height)*2, false));
+            addRelBody(2, DIR.S, builder.createHeight((height)*3, false));
         }
 
         pad(6, 6);

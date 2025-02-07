@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.19.1</version>
+    <version>0.68.19.3</version>
 
     <profiles>
         <profile>
@@ -119,9 +119,9 @@ This also has a lot of balance implications, so make sure you are ready to relea
 Not compatible with existing saves!
 
 Features:
-- Region production reworked, basing output numbers on available population.
-- You get 1 workforce for every 15 people in a region.
 - You can build refineries and workshops in regions.
+- Region production reworked, basing output numbers on available population.
+- You get 1 workforce for every 17.5 people in a region.
 - Population numbers in regions have been reduced drastically.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
@@ -138,7 +138,8 @@ Known issues:
 
 Planned features (in order, subject to change):
 - Scale prevent max level based on deposits instead of scaling output.
-- Display 1 decimal point for wf.
+- Display target work force.
+- Display 1 decimal point for work force.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Workshop/Refiner efficiency based on recipe ins/outs.
 - Supply armies directly from your regions.

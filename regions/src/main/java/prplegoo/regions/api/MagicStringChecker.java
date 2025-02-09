@@ -14,4 +14,6 @@ public class MagicStringChecker {
     }
 
     public static boolean isWorkforceBoostableKey(String key) { return key.equals("WORLD_POINT_WORKFORCE"); }
+
+    public static boolean isPivaRes(String key) { return key.equals("ALCO_BEER");}
 }

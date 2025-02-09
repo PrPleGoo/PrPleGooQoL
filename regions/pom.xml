@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.19.5</version>
+    <version>0.68.19.7</version>
 
     <profiles>
         <profile>
@@ -129,7 +129,7 @@ This mod is for you if:
 Features:
 - You can build refineries and workshops in regions.
 - Region production reworked, basing output numbers on available population.
-- You get 1 workforce for every 17.5 people in a region.
+- You get 1 workforce for every 18 people in a region.
 - Population numbers in regions have been reduced drastically.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
@@ -138,6 +138,8 @@ Features:
 - A food stall to use food instead of admin to grow cities.
 - Slaver's guild building that specializes in PoW output.
 - More negative health to account for lower population levels.
+- Max level of region building based on deposits/prospect instead of scaling output.
+- Supply armies directly from your regions.
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
@@ -145,12 +147,10 @@ Known issues:
 - More negative loyalty to account for lower population levels. There is an issue with the game file, so I can't modify it.
 
 Planned features (in order, subject to change):
-- Scale prevent max level based on deposits instead of scaling output.
 - Display target work force.
 - Display 1 decimal point for work force.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Workshop/Refiner efficiency based on recipe ins/outs.
-- Supply armies directly from your regions.
 - Take science boosts and use the school to apply them.
 - AI empires use production to do work on their stockpiles.
 - Instruct vassals to produce specific goods.

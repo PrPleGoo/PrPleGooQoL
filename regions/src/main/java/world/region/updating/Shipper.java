@@ -8,8 +8,12 @@ import game.time.TIME;
 import init.resources.Growable;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
+import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.RDSlavery;
 import world.WORLD;
+import world.army.AD;
+import world.army.ADSupply;
+import world.entity.army.WArmy;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
 import world.region.RD;
@@ -75,6 +79,30 @@ final class Shipper {
                 }
 
                 if (a > 0) {
+                    if (f == FACTIONS.player()) {
+                        for (ADSupply s : AD.supplies().get(res.res)) {
+                            for (WArmy e : FACTIONS.player().armies().all()) {
+                                if (!e.acceptsSupplies()) {
+                                    continue;
+                                }
+
+                                int needed = s.needed(e);
+                                if (needed < a) {
+                                    a -= needed;
+                                    s.current().set(e, s.current().get(e) + needed);
+                                } else {
+                                    s.current().set(e, s.current().get(e) + a);
+                                    a = 0;
+                                }
+                            }
+                        }
+                    }
+
+                    if (a == 0)
+                    {
+                        continue;
+                    }
+
                     c.loadAndReserve(res.res, a);
                 }
                 else {

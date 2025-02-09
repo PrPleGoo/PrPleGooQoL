@@ -9,9 +9,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_CLAY: [0.5,1,],
+				PROP_MINABLE_CLAY: [0.1,0.9,],
 			},
 		},
 	},
@@ -25,9 +25,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_COAL: [0.5,1,],
+				PROP_MINABLE_COAL: [0.1,0.9,],
 			},
 		},
 	},
@@ -41,9 +41,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_GEM: [0.5,1,],
+				PROP_MINABLE_GEM: [0.1,0.9,],
 			},
 		},
 	},
@@ -57,9 +57,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_ORE: [0.5,1,],
+				PROP_MINABLE_ORE: [0.1,0.9,],
 			},
 		},
 	},
@@ -73,9 +73,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_SITHILON: [0.5,1,],
+				PROP_MINABLE_SITHILON: [0.1,0.9,],
 			},
 		},
 	},
@@ -89,9 +89,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_STONE: [0.5,1,],
+				PROP_MINABLE_STONE: [0.1,0.9,],
 			},
 		},
 	},
@@ -105,9 +105,9 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
+		LEVEL_CAP: {
 			BOOST: {
-				PROP_TERRAIN_FOREST: [0.5,1,],
+				PROP_TERRAIN_FOREST: [0.1,0.9,],
 			},
 		},
 	},

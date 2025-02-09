@@ -26,6 +26,7 @@ import prplegoo.regions.api.MagicStringChecker;
 import settlement.army.div.Div;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.stats.Induvidual;
+import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
@@ -51,6 +52,7 @@ public final class RDBuilding implements MAPPED{
 	@Getter
 	private final ArrayListGrower<BBoost> bboosts = new ArrayListGrower<>();
 	public final Boostable efficiency;
+	public final Boostable levelCap;
 	public final INT_OE<Region> level;
 	public final LIST<RDBuildingLevel> levels;
 	public final INFO info;
@@ -87,6 +89,7 @@ public final class RDBuilding implements MAPPED{
 		kk = cat.key + "_" + key;
 		key = "BUILDING_" + kk;
 		this.efficiency = BOOSTING.push(key, 1, info.name, info.desc, levels.get(0).icon,  BoostableCat.ALL().WORLD);
+		this.levelCap = BOOSTING.push(key + "_LEVEL_CAP", 10, info.name, info.desc, levels.get(0).icon, BoostableCat.ALL().WORLD);
 
 
 
@@ -325,16 +328,27 @@ public final class RDBuilding implements MAPPED{
 		if (level >= levels.size())
 			return Dic.¤¤Unavailable;
 
+		if (blue != null) {
+			int levelCap = (int) Math.round(this.levelCap.get(reg));
+//			LOG.ln(info.name + " levelcap: " + levelCap);
+			if(levelCap < level) {
+				return Str.TMP.clear().add(¤¤NotEnough).add(':').s().add(Creator.get¤¤prospect());
+			}
+		}
+
 		if (reg.faction() != null) {
 			int cr = this.levels.get(level).cost - this.levels.get(RD.BUILDINGS().tmp().level(this, reg)).cost;
 			if (cr > reg.faction().credits().credits())
 				return Str.TMP.clear().add(¤¤NotEnough).add(':').s().add(Dic.¤¤Currs);
 		}
 
-
-		for (int i =lc; i <= level; i++) {
-			if (!levels.get(i).reqs.passes(reg))
-				return ¤¤Requirement;
+		if (this.blue == null) {
+			for (int i = lc; i <= level; i++) {
+				if (!levels.get(i).reqs.passes(reg))
+					return ¤¤Requirement;
+			}
+		} else if(!this.blue.reqs.passes(reg.faction())) {
+			return ¤¤Requirement;
 		}
 
 		for (BBoost b : bboosts)

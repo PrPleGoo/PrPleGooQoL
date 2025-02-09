@@ -63,7 +63,7 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
         new RBooster(new BSourceInfo(Dic.¤¤Population, workforce.icon), 0, 40000, false) {
             @Override
             public double get(Region t) {
-                return RD.RACES().population.get(t) / 17.5 / 40000;
+                return RD.RACES().population.get(t) / 18.0 / 40000;
             }
 
         }.add(workforce.bo);

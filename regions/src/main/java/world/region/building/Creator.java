@@ -17,6 +17,7 @@ import init.sprite.UI.UI;
 import init.text.D;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
+import lombok.Getter;
 import prplegoo.regions.api.PrPleGooEfficiencies;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.RecipeBoosterValue;
@@ -52,7 +53,7 @@ import world.region.pop.RDRace;
 import java.io.IOException;
 
 final class Creator {
-
+	@Getter
 	private static CharSequence ¤¤prospect = "Prospect";
 	private static CharSequence ¤¤desc = "Produces";
 	private static CharSequence ¤¤small = "(Small)";
@@ -220,8 +221,8 @@ final class Creator {
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
 		
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
-		
 
+		pushLevelCapping(b, data);
 		
 		pushEfficiency(b, data);
 		
@@ -358,15 +359,15 @@ final class Creator {
 		return b;
 		
 	}
-	
+
 	private void pushEfficiency(RDBuilding bu, Json da) {
-		
+
 		if (!da.has("EFFICIENCY"))
 			return;
-		
+
 		Json data = da.json("EFFICIENCY");
-		
-		
+
+
 		if (data.has("PROSPECT")) {
 			double[] p = data.ds("PROSPECT", 2);
 			double from = p[0];
@@ -377,15 +378,15 @@ final class Creator {
 				double get(Region reg) {
 					return from +  mul*RD.RAN().get(reg, bu.index()*4, 4)/15.0;
 				};
-				
-				
+
+
 			};
 			bo.add(bu.efficiency);
 			bu.baseFactors.add(bo);
 		}
 
 		ACTION ca = new ACTION() {
-			
+
 			@Override
 			public void exe() {
 				if (data.has("BOOST")) {
@@ -400,20 +401,71 @@ final class Creator {
 								@Override
 								double get(Region reg) {
 									return from +  mul*v.d.getD(reg);
-								};	
+								};
 							};
 							bo.add(bu.efficiency);
 							bu.baseFactors.add(bo);
 						}
 					}
 				}
-				
+
 			}
 		};
 
 		BOOSTING.connecter(ca);
 	}
-	
+
+	private void pushLevelCapping(RDBuilding bu, Json da) {
+		if (!da.has("LEVEL_CAP"))
+			return;
+
+		Json data = da.json("LEVEL_CAP");
+
+		if (data.has("PROSPECT")) {
+			double[] p = data.ds("PROSPECT", 2);
+			double from = p[0];
+			double mul = p[1];
+			Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.gift), from, from+mul, true) {
+
+				@Override
+				double get(Region reg) {
+					return from +  mul*RD.RAN().get(reg, bu.index()*4, 4)/15.0;
+				};
+
+
+			};
+			bo.add(bu.levelCap);
+		}
+
+		ACTION ca = new ACTION() {
+
+			@Override
+			public void exe() {
+				if (data.has("BOOST")) {
+					Json e = data.json("BOOST");
+					for (String k : e.keys()) {
+						double[] p = e.ds(k, 2);
+						double from = p[0];
+						double mul = p[1];
+						for (Value<Region> v : GVALUES.REGION.get(k, e)) {
+							Bo bo = new Bo(new BSourceInfo(v.name, v.icon), from, from+mul, true) {
+
+								@Override
+								double get(Region reg) {
+									return from + mul*v.d.getD(reg);
+								};
+							};
+							bo.add(bu.levelCap);
+						}
+					}
+				}
+
+			}
+		};
+
+		BOOSTING.connecter(ca);
+	}
+
 	static abstract class Bo extends BoosterImp {
 
 		public Bo(BSourceInfo info, double from, double to, boolean isMul) {

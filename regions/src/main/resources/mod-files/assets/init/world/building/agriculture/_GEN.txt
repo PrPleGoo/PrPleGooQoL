@@ -19,6 +19,9 @@ GENS: [
 				PROP_FERTILTIY: [0, 1.2,],
 			},
 		},
+		LEVEL_CAP: {
+			PROSPECT: [0.6,0.4,],
+		},
 	},
 	{
 		INDUSTRIES: [
@@ -35,6 +38,9 @@ GENS: [
 				PROP_FERTILTIY: [0.5, 0.7,],
 			},
 		},
+		LEVEL_CAP: {
+			PROSPECT: [0.6,0.4,],
+		},
 	},
 	{
 		INDUSTRIES: [
@@ -46,8 +52,8 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		EFFICIENCY: {
-			PROSPECT: [0.8, 0.6,],
+		LEVEL_CAP: {
+			PROSPECT: [0.4, 0.6, ],
 		},		
 	},
 ],

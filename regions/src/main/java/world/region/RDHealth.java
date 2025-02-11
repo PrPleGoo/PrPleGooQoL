@@ -159,8 +159,8 @@ public class RDHealth extends RDataE {
 			}
 			
 			public double increase(Region reg) {
-				if (reg.faction() == null || reg.faction() instanceof FactionNPC)
-					return 255;
+//				if (reg.faction() == null || reg.faction() instanceof FactionNPC)
+//					return 255;
 				
 				
 				//btoggle = true;

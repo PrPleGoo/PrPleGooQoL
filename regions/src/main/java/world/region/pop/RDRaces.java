@@ -205,31 +205,31 @@ public class RDRaces {
 	}
 	
 	double capacity(Region reg) {
-		
-		if (reg.faction() instanceof FactionNPC) {
-			
-			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
-			double min = fa*0.1;
-			double max = fa;
-
-			FactionNPC f = (FactionNPC) reg.faction();
-			
-			
-			double empireSize = f.realm().ferArea()/(10*maxFerArea);
-			empireSize = CLAMP.d(empireSize, 0, 1);
-			
-			double competence = (0.25 + 0.75*f.court().king().size());
-
-			if (reg.capitol()) {
-				return min +(ENTETIES.MAX-min)*competence*empireSize;
-			}
-			
-			return min +(max-min)*competence*Math.pow(empireSize, 0.5);
-		}else if (reg.faction() == null) {
-			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
-			return fa*0.1;
-		}
-		return capacity.get(reg);
+		// Fuck you, play the damn game.
+//		if (reg.faction() instanceof FactionNPC) {
+//
+//			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
+//			double min = fa*0.1;
+//			double max = fa;
+//
+//			FactionNPC f = (FactionNPC) reg.faction();
+//
+//
+//			double empireSize = f.realm().ferArea()/(10*maxFerArea);
+//			empireSize = CLAMP.d(empireSize, 0, 1);
+//
+//			double competence = (0.25 + 0.75*f.court().king().size());
+//
+//			if (reg.capitol()) {
+//				return min +(ENTETIES.MAX-min)*competence*empireSize;
+//			}
+//
+//			return min +(max-min)*competence*Math.pow(empireSize, 0.5);
+//		}else if (reg.faction() == null) {
+//			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
+//			return fa*0.1;
+//		}
+		return capacity.get(reg) * (reg.faction() instanceof FactionNPC && reg.capitol() ? 10 : 1);
 		
 		
 	}

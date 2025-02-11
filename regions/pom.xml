@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.19.7</version>
+    <version>0.68.19.8</version>
 
     <profiles>
         <profile>
@@ -129,7 +129,7 @@ This mod is for you if:
 Features:
 - You can build refineries and workshops in regions.
 - Region production reworked, basing output numbers on available population.
-- You get 1 workforce for every 18 people in a region.
+- You get 1 workforce for every 18.5 people in a region.
 - Population numbers in regions have been reduced drastically.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.

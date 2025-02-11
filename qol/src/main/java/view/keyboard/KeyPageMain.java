@@ -46,7 +46,7 @@ public class KeyPageMain extends KeyPage{
 	public final Key DEBUGGER = new Key("STATS", D.g("Stats"),D.g("StatsD", "Toggles stats."),this,  KEYCODES.KEY_F11);
 
 	public final Key ENTER = new Key("ENTER", D.g("Enter"),D.g("EnterD", "The enter key."),this, -1, KEYCODES.KEY_ENTER, false);
-	public final Key KP_ENTER = new Key("KP_ENTER", D.g("Keypad enter"),D.g("EnterKP", "The other enter key that some people forget exists but should do exactly the same as the main enter key."),this, -1, KEYCODES.KEY_KP_ENTER, false);
+	public final Key KP_ENTER = new Key("KP_ENTER", "Enter","The enter key.",this, -1, KEYCODES.KEY_KP_ENTER, false);
 	public final Key BACKSPACE = new Key("BACKSPACE", D.g("Backspace"),D.g("BackspaceD", "The backspace key."),this, -1, KEYCODES.KEY_BACKSPACE, false);
 	public final Key ESCAPE = new Key("ESCAPE", D.g("Escape"),D.g("EscapeD", "Toggles the menu, or closes panels."),this, -1, KEYCODES.KEY_ESCAPE, false);
 

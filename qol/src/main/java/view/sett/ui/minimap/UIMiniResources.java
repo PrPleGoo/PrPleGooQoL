@@ -8,18 +8,13 @@ import init.C;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.sprite.SPRITES;
-import init.sprite.UI.Icon;
-import init.sprite.UI.Icons;
 import init.sprite.UI.UI;
 import init.text.D;
 import settlement.main.SETT;
-import settlement.room.industry.module.IndustryUtil;
 import settlement.room.main.RoomInstance;
 import snake2d.MButt;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
-import snake2d.util.color.ColorImp;
-import snake2d.util.color.ColorShifting;
 import snake2d.util.color.OPACITY;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.file.FileGetter;
@@ -83,7 +78,9 @@ final class UIMiniResources extends Expansion {
         full.add(c, full.body().x2() - c.body().width() - 4, full.body().y1() + 4);
 
 
+
     }
+
 
 
     private static class Mini extends GuiSection {
@@ -130,7 +127,6 @@ final class UIMiniResources extends Expansion {
                 protected void renAction() {
                     activeSet(t.get() > 0);
                 }
-
                 @Override
                 protected void clickA() {
                     t.inc(-1);
@@ -151,7 +147,6 @@ final class UIMiniResources extends Expansion {
                 protected void renAction() {
                     activeSet(t.get() != t.max());
                 }
-
                 @Override
                 protected void clickA() {
                     t.inc(1);
@@ -207,6 +202,11 @@ final class UIMiniResources extends Expansion {
             }
 
 
+
+
+
+
+
             RENDEROBJ c;
             y1 = y1 + 4;
 
@@ -215,7 +215,6 @@ final class UIMiniResources extends Expansion {
                 protected void renAction() {
                     activeSet(t.get() > 0);
                 }
-
                 @Override
                 protected void clickA() {
                     t.inc(-1);
@@ -237,7 +236,6 @@ final class UIMiniResources extends Expansion {
                 protected void renAction() {
                     activeSet(t.get() != t.max());
                 }
-
                 @Override
                 protected void clickA() {
                     t.inc(1);
@@ -254,6 +252,7 @@ final class UIMiniResources extends Expansion {
     private static GuiSection resBody(RESOURCE res) {
         return new GuiSection() {
             private final SPRITE decr = SPRITES.icons().s.arrowDown.createColored(COLOR.YELLOW100).scaled(0.7);
+
             int wI = 0;
             int lastDayChecked = 0;
             int productionLastYear = 0;
@@ -295,6 +294,7 @@ final class UIMiniResources extends Expansion {
                         COLOR.WHITE85.render(r, x1, x1 + 1, body().y1(), body().y2());
                     }
                 }
+
 
 
                 if (!hoveredIs()) {
@@ -345,7 +345,6 @@ final class UIMiniResources extends Expansion {
             @Override
             public void update(GText text) {
                 text.setFont(UI.FONT().S);
-
                 int a = SETT.ROOMS().STOCKPILE.tally().amountTotal(res);
                 GFORMAT.i(text, a);
 
@@ -355,16 +354,18 @@ final class UIMiniResources extends Expansion {
                     else
                         text.errorify();
             }
-
             @Override
             public void render(SPRITE_RENDERER r, int X1, int X2, int Y1, int Y2) {
                 OPACITY.O018.bind();
                 COLOR.BLACK.render(r, X1 - 1, X2 + 1, Y1 - 1, Y2 + 1);
                 OPACITY.unbind();
                 super.render(r, X1, X2, Y1, Y2);
-            }
+
+			};
         }.r(DIR.NW);
     }
+
+
 
 
     @Override
@@ -375,6 +376,7 @@ final class UIMiniResources extends Expansion {
             super.render(r, ds);
         }
     }
+
 
 
     private static RENDEROBJ mini(RESOURCE res) {
@@ -389,6 +391,7 @@ final class UIMiniResources extends Expansion {
         s.body().incrW(40);
 
 
+
         s.pad(2, 4);
         return s;
 
@@ -400,15 +403,15 @@ final class UIMiniResources extends Expansion {
         GuiSection s = resBody(res);
 
         s.add(res.icon(), 0, 0);
-
         RENDEROBJ r = stat(res);
+
 
         s.addRightC(1, r);
         s.body().incrW(42);
 
 
-        s.pad(2, 4);
 
+        s.pad(2, 4);
         return s;
 
 

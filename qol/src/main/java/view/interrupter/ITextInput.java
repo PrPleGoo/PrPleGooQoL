@@ -131,18 +131,15 @@ public final class ITextInput extends Interrupter {
 	@Override
 	protected boolean update(float ds) {
 
-		if (KEYS.MAIN().ESCAPE.consumeClick())
-		{
+		if (KEYS.MAIN().ESCAPE.consumeClick()){
 			client.acceptString(null);
 			hide();
-		}
-		else if (KEYS.MAIN().ENTER.consumeClick()
+		} else if (KEYS.MAIN().ENTER.consumeClick()
 			|| KEYS.MAIN().KP_ENTER.consumeClick())
 		{
 			client.acceptString(in.text());
 			hide();
 		}
-
 		KEYS.clear();
 
 		return false;

@@ -152,6 +152,10 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                         makePrisoners(g.get());
                         for (Humanoid h : list) {
                             if (AIModule_Prisoner.DATA().punishmentSet.get(h.ai()) != null) {
+                                if(!raceFilter[h.race().index]){
+                                    continue;
+                                }
+
                                 a = true;
                                 break;
                             }
@@ -181,6 +185,10 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                         public void exe() {
                             makePrisoners(g.get());
                             for (Humanoid h : list) {
+                                if(!raceFilter[h.race().index]){
+                                    continue;
+                                }
+
                                 AIModule_Prisoner.DATA().punishmentSet.set(h.ai(), p);
                                 h.interrupt();
                             }

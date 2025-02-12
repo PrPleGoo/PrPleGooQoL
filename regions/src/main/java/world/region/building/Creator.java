@@ -1,6 +1,14 @@
 package world.region.building;
 
-import game.boosting.*;
+import java.io.IOException;
+
+import game.boosting.BOOSTING;
+import game.boosting.BSourceInfo;
+import game.boosting.BValue;
+import game.boosting.BoostSpec;
+import game.boosting.BoostSpecs;
+import game.boosting.BoosterImp;
+import game.boosting.BoosterValue;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -20,7 +28,6 @@ import init.type.CLIMATES;
 import lombok.Getter;
 import prplegoo.regions.api.PrPleGooEfficiencies;
 import prplegoo.regions.api.RDRecipe;
-import prplegoo.regions.api.RecipeBoosterValue;
 import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
@@ -34,7 +41,6 @@ import settlement.stats.Induvidual;
 import snake2d.LOG;
 import snake2d.util.file.Json;
 import snake2d.util.misc.ACTION;
-import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
@@ -49,8 +55,6 @@ import world.region.RD.RDInit;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDReligions.RDReligion;
 import world.region.pop.RDRace;
-
-import java.io.IOException;
 
 final class Creator {
 	@Getter
@@ -354,7 +358,9 @@ final class Creator {
 		};
 		BOOSTING.connecter(a);
 
+
 		pushEfficiency(b, data);
+
 
 		return b;
 		

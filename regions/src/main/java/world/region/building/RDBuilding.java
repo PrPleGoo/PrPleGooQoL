@@ -26,7 +26,6 @@ import prplegoo.regions.api.MagicStringChecker;
 import settlement.army.div.Div;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.stats.Induvidual;
-import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
@@ -244,7 +243,7 @@ public final class RDBuilding implements MAPPED{
 
 		KeyMap<BBoost> map = new KeyMap<>();
 
-		boolean[] costs = new boolean[RD.BUILDINGS().costs.all.size()];
+		boolean[] costs = new boolean[RD.BUILDINGS().costs.ALL.size()];
 
 		for (RDBuildingLevel l : levels) {
 
@@ -343,10 +342,8 @@ public final class RDBuilding implements MAPPED{
 		}
 
 		if (this.blue == null) {
-			for (int i = lc; i <= level; i++) {
-				if (!levels.get(i).reqs.passes(reg))
-					return ¤¤Requirement;
-			}
+			if (!levels.get(level).reqs.passes(reg))
+				return ¤¤Requirement;
 		} else if(!this.blue.reqs.passes(reg.faction())) {
 			return ¤¤Requirement;
 		}
@@ -553,13 +550,18 @@ public final class RDBuilding implements MAPPED{
 					return true;
 				return am <= b.boostable.get(reg);
 			}
-
 			return true;
 		}
+
+
+
+
+
 	}
 
 	@Override
 	public String key() {
 		return kk;
 	}
+
 }

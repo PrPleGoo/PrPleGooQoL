@@ -189,6 +189,9 @@ final class PlayOutput extends GuiSection{
             GFORMAT.i(tt, (long) bu.boost.get(g.get()));
 
             tt.renderC(r, body.x1()+32, body.cY());
+
+
+
         }
 
         @Override

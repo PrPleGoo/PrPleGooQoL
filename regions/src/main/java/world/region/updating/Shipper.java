@@ -8,7 +8,6 @@ import game.time.TIME;
 import init.resources.Growable;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
-import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.RDSlavery;
 import world.WORLD;
 import world.army.AD;

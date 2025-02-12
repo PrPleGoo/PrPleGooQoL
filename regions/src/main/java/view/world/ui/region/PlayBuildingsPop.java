@@ -4,16 +4,13 @@ import java.util.LinkedList;
 
 import game.GAME;
 import game.boosting.BHoverer;
-import game.boosting.BOOSTABLES;
 import game.boosting.BoostSpec;
 import game.boosting.Boostable;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import init.C;
-import init.resources.RESOURCE;
 import init.settings.S;
 import init.sprite.UI.Icon;
-import init.sprite.UI.Icons;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.MagicStringChecker;
@@ -869,7 +866,7 @@ class PlayBuildingsPop {
                 }
             }.hh(UI.icons().s.money));
 
-            for (RDBuildPoint c : RD.BUILDINGS().costs.all) {
+            for (RDBuildPoint c : RD.BUILDINGS().costs.ALL) {
                 butts.addRightC(64, boost(c.bo, c.icon));
             }
 

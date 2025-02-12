@@ -25,8 +25,8 @@ import world.region.RData.RDataE;
 
 public class RDHealth extends RDataE {
 
-	private static CharSequence ¤¤name = "¤Health";
-	private static CharSequence ¤¤desc = "¤Health must be maintained at over 50% in a region, else there is a risk of disease.";
+	public static CharSequence ¤¤name = "¤Health";
+	public static CharSequence ¤¤desc = "¤Health must be maintained at over 50% in a region, else there is a risk of disease.";
 	
 	private static CharSequence ¤¤pos = "¤You have health moving towards more than 50% and need not fear an outbreak of disease.";
 	private static CharSequence ¤¤neg = "¤You have health plummeting  below 50%, and an outbreak of disease is to be expected.";
@@ -92,7 +92,7 @@ public class RDHealth extends RDataE {
 		super("HEALTH", init.count.new DataByte("HEALTH"), init, ¤¤name);
 		boostablee = BOOSTING.push("HEALTH", 1, ¤¤name, ¤¤desc, UI.icons().s.heart,  BoostableCat.ALL().WORLD);
 		
-		new RBooster(new BSourceInfo(Dic.¤¤Population, UI.icons().s.human), 0, -30, false) {
+		new RBooster(new BSourceInfo(Dic.¤¤Population, UI.icons().s.human), 0, -10, false) {
 
 			@Override
 			public double get(Region t) {
@@ -140,15 +140,13 @@ public class RDHealth extends RDataE {
 
 				double d = increase(reg)*dTime*time;
 				moveTo(reg, Math.abs(d), d < 0 ? 0 : 255);
-
-				
-				
+				int target = (int) (255*(boostablee.get(reg)));
 				
 				if (reg.faction() == FACTIONS.player() && !reg.capitol()) {
-					if (get(reg)  < 120 && outbreak.get(reg) == 0) {
+					if (get(reg)  < 120 && outbreak.get(reg) == 0 && target < 120) {
 						outbreak.set(reg, 1);
 						new MessageText(¤¤epidemic).paragraph(eDesc(reg)).send();
-					}else if (outbreak.get(reg) == 1 && (get(reg) > 128)) {
+					}else if (outbreak.get(reg) == 1 && (get(reg) > 128) && target > 128) {
 						outbreak.set(reg, 0);
 					}
 					

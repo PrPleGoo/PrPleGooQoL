@@ -50,7 +50,7 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
         // Workforce is a type of slavery...
         RDBuildPoints.RDBuildPoint workforce = null;
-        for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.all){
+        for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.ALL){
             if(MagicStringChecker.isWorkforceBoostableKey(cost.bo.key)){
                 workforce = cost;
             }

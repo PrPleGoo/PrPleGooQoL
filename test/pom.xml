@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>test</artifactId>
-    <version>0.68.19.0</version>
+    <version>0.68.24.0</version>
 
     <profiles>
         <profile>
@@ -106,7 +106,7 @@ test
         <mod.author>PrPleGoo</mod.author>
         <mod.info>test</mod.info>
         <game.version.major>68</game.version.major>
-        <game.version.minor>19</game.version.minor>
+        <game.version.minor>24</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

@@ -15,7 +15,9 @@ public class KingLevel {
     private final double capitalPopulationCapacityMul;
     @Getter
     private final double income;
+    @Getter
     private final double[] consumption;
+    @Getter
     private final double[] consumptionCapitalPop;
     // TODO: ConsumptionPreferredFood
     // TODO: ConsumptionFurniture

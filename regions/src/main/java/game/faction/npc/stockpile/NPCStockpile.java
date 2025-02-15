@@ -12,6 +12,7 @@ import game.faction.npc.stockpile.UpdaterTree.ResIns;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -234,6 +235,7 @@ public class NPCStockpile extends NPCResource{
 		}
 
 		updater.update(this, seconds*TIME.secondsPerDayI);
+		KingLevels.getInstance().consumeResources(faction, this, seconds*TIME.secondsPerDayI);
 
 		for (RESOURCE res : RESOURCES.ALL()) {
 			price.set(res, (int) Math.round(res(res.index()).price()));

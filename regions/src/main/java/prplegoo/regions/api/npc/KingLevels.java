@@ -3,12 +3,13 @@ package prplegoo.regions.api.npc;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
+import game.faction.npc.stockpile.NPCStockpile;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
-import init.resources.ResGEat;
 import lombok.Getter;
 import snake2d.util.file.Json;
+import world.region.RD;
 
 public class KingLevels {
     @Getter
@@ -60,5 +61,25 @@ public class KingLevels {
 
     public KingLevel getKingLevel(FactionNPC faction) {
         return kingLevels[getLevel(faction)];
+    }
+
+    public void consumeResources(FactionNPC faction, NPCStockpile npcStockpile, double deltaDays) {
+        if (!isActive()) {
+            return;
+        }
+
+        KingLevel kingLevel = getKingLevel(faction);
+
+        for(RESOURCE resource : RESOURCES.ALL()) {
+            double amount = kingLevel.getConsumption()[resource.index()] * deltaDays;
+            amount += kingLevel.getConsumptionCapitalPop()[resource.index()] * deltaDays * RD.RACES().population.get(faction.realm().capitol());
+            // TODO: ConsumptionPreferredFood
+            // TODO: ConsumptionFurniture
+            // TODO: ConsumptionPreferredDrink
+            // TODO: Consumption from military
+            // TODO: Apply spoilage
+
+            npcStockpile.inc(resource, -amount);
+        }
     }
 }

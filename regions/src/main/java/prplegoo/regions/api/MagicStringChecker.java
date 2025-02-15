@@ -15,13 +15,7 @@ public class MagicStringChecker {
 
     public static boolean isWorkforceBoostableKey(String key) { return key.equals("WORLD_POINT_WORKFORCE"); }
 
-    public static boolean isPivaRes(String key) { return key.equals("ALCO_BEER");}
-
     public static boolean isGrowthBuilding(String key) {
-        return key.equals("BUILDING_GLOBAL_GROWTH");
-    }
-
-    public static boolean isHygieneBuilding(String key) {
-        return key.equals("BUILDING_GLOBAL_HYGINE_1");
+        return key.equals("CIVIC_GROWTH");
     }
 }

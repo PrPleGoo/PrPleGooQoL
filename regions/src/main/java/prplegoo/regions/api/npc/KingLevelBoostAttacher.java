@@ -30,15 +30,19 @@ public class KingLevelBoostAttacher {
             }
         }.add(RD.BUILDINGS().costs.GOV.bo);
 
-        new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 0, 10, true) {
+        new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 1, 10, true) {
             @Override
             public double get(Region t) {
                 if (!KingLevels.isActive()) {
-                    return 1;
+                    return 0;
                 }
 
                 if (!(t.faction() instanceof FactionNPC)) {
-                    return 1;
+                    return 0;
+                }
+
+                if (!t.capitol()) {
+                    return 0;
                 }
 
                 FactionNPC faction = (FactionNPC) t.faction();

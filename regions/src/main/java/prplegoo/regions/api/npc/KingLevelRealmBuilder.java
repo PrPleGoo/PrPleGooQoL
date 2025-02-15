@@ -54,10 +54,10 @@ public class KingLevelRealmBuilder {
 
         for(int i = 0; i < GeneticVariables.mutationAttemptsPerTick + extraMutations; i ++) {
             FactionGenetic mutant = new FactionGenetic(faction);
-            mutant.mutate(faction);
+            mutant.mutate();
             mutant.calculateFitness(faction, buyPrice, sellPrice);
 
-            if(!mutant.shouldKill(original)) {
+            if(!original.shouldKill(faction, mutant)) {
                 original = mutant;
                 lastUpdateByFactionIndex[faction.index()] = TIME.currentSecond();
             }

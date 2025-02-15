@@ -15,6 +15,7 @@ import snake2d.util.file.Json;
 import world.army.AD;
 import world.army.ADSupply;
 import world.entity.army.WArmy;
+import world.map.regions.Region;
 import world.region.RD;
 
 public class KingLevels {
@@ -127,6 +128,10 @@ public class KingLevels {
             for (WArmy army : faction.armies().all()) {
                 amount += supply.usedPerDay * supply.used().get(army);
             }
+        }
+
+        for (Region region : faction.realm().all()) {
+            amount -= RD.OUTPUT().get(resource).boost.get(region);
         }
 
         return amount;

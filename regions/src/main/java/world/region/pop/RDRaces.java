@@ -10,6 +10,7 @@ import init.race.RACES;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
@@ -206,7 +207,7 @@ public class RDRaces {
 	
 	double capacity(Region reg) {
 		
-		if (reg.faction() instanceof FactionNPC) {
+		if (!KingLevels.isActive() && reg.faction() instanceof FactionNPC) {
 			
 			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
 			double min = fa*0.1;

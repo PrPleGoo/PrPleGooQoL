@@ -120,7 +120,6 @@ public class KingLevels {
         return getDailyConsumptionRate(faction, getKingLevel(faction), resource);
     }
 
-
     private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource);
 
@@ -130,8 +129,14 @@ public class KingLevels {
             }
         }
 
+        return amount;
+    }
+
+    public double getDailyProductionRate(FactionNPC faction, RESOURCE resource) {
+        double amount = 0;
+
         for (Region region : faction.realm().all()) {
-            amount -= RD.OUTPUT().get(resource).boost.get(region);
+            amount += RD.OUTPUT().get(resource).boost.get(region);
         }
 
         return amount;

@@ -6,7 +6,6 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
-import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
 
@@ -48,31 +47,34 @@ public class FactionGenetic {
             }
         };
         // Work force;
-        fitnessRecords[2] = new FitnessRecord(faction,2) {
+        fitnessRecords[2] = new FitnessRecord(faction, 2) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
                 return RD.SLAVERY().getWorkforce().bo.get(region);
             }
         };
         // Raiders;
-        fitnessRecords[3] = new FitnessRecord(faction,3) {
+        fitnessRecords[3] = new FitnessRecord(faction, 3) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
                 return -GAME.raiders().entry.get(region).probabilityRaw();
             }
         };
         // Money;
-        fitnessRecords[4] = new FitnessRecord(faction,4) {
+        fitnessRecords[4] = new FitnessRecord(faction, 4) {
             @Override
             public double determineValue(FactionNPC faction) {
                 double totalMoney = RD.OUTPUT().MONEY.boost.get(faction);
 
                 for (RESOURCE resource : RESOURCES.ALL()) {
-                    double amount = KingLevels.getInstance().getDailyConsumptionRate(faction, resource);
-                    if (amount > 0) {
-                        totalMoney -= amount * buyPrice[resource.index()];
-                    } else if (amount < 0) {
-                        totalMoney += amount * sellPrice[resource.index()];
+                    double consumptionRate = KingLevels.getInstance().getDailyConsumptionRate(faction, resource);
+                    if (consumptionRate > 0) {
+                        totalMoney -= consumptionRate * buyPrice[resource.index()];
+                    }
+
+                    double productionRate = KingLevels.getInstance().getDailyProductionRate(faction, resource);
+                    if (productionRate > 0) {
+                        totalMoney += productionRate * sellPrice[resource.index()];
                     }
                 }
 
@@ -80,10 +82,16 @@ public class FactionGenetic {
             }
         };
         // Loyalty;
-        fitnessRecords[5] = new FitnessRecord(faction,5) {
+        fitnessRecords[5] = new FitnessRecord(faction, 5) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
-                return RD.RACES().loyaltyAll.getD(region);
+                double amount = 0;
+
+                for (int i = 0; i < RD.RACES().all.size(); i++) {
+                    amount += RD.RACES().all.get(i).loyalty.target.get(region);
+                }
+
+                return amount;
             }
         };
         // TODO: add slaves to money

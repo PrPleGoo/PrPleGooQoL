@@ -3,6 +3,7 @@ package world.region.updating;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
+import game.faction.npc.FactionNPC;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
 import init.resources.Growable;
@@ -103,15 +104,24 @@ final class Shipper {
                     }
 
                     c.loadAndReserve(res.res, a);
+                    if (f instanceof FactionNPC) {
+                        ((FactionNPC) f).stockpile.inc(res.res, a);
+                    }
                 }
                 else {
                     f.seller().remove(res.res, -a, ITYPE.tax);
+                    if (f instanceof FactionNPC) {
+                        ((FactionNPC) f).stockpile.inc(res.res, -a);
+                    }
                 }
             }
 
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
                 int a = rdSlave.getDelivery(r, days);
                 c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
+                if (f instanceof FactionNPC) {
+                    ((FactionNPC) f).slaves().trade(rdSlave.rdRace.race, a, 0);
+                }
             }
         }
 

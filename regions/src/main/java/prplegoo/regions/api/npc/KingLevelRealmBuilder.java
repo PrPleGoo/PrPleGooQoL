@@ -34,8 +34,8 @@ public class KingLevelRealmBuilder {
         double[] sellPrice = new double[RESOURCES.ALL().size()];
 
         for (RESOURCE resource : RESOURCES.ALL()) {
-            buyPrice[resource.index()] = faction.stockpile.priceBuy(resource.index(), 1);
-            sellPrice[resource.index()] = faction.stockpile.priceSell(resource.index(), 1);
+            buyPrice[resource.index()] = faction.stockpile.priceBuy(resource.index(), 100) / 100.0;
+            sellPrice[resource.index()] = faction.stockpile.priceSell(resource.index(), 100) / 100.0;
         }
 
         FactionGenetic original = new FactionGenetic(faction);

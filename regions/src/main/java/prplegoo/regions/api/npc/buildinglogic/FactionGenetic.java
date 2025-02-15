@@ -32,7 +32,7 @@ public class FactionGenetic {
     }
 
     public void calculateFitness(FactionNPC faction, double[] buyPrice, double[] sellPrice) {
-        fitnessRecords = new FitnessRecord[5];
+        fitnessRecords = new FitnessRecord[6];
         // GovPoints, needs to be index 0;
         fitnessRecords[0] = new FitnessRecord(faction, 0) {
             @Override
@@ -79,7 +79,13 @@ public class FactionGenetic {
                 return totalMoney;
             }
         };
-        // TODO: add loyalty and pop target count
+        // Loyalty;
+        fitnessRecords[5] = new FitnessRecord(faction,5) {
+            @Override
+            public double determineValue(FactionNPC faction, Region region) {
+                return RD.RACES().loyaltyAll.getD(region);
+            }
+        };
         // TODO: add slaves to money
 
 

@@ -68,6 +68,7 @@ public class NPCStockpile extends NPCResource{
 					f.stockpile.saver().clear();
 					f.stockpile.update(f, 0);
 					f.credits().set(0);
+					KingLevels.getInstance().pickMaxLevel(f, true);
 				}
 				GAME.factions().prime();
 			}
@@ -209,6 +210,7 @@ public class NPCStockpile extends NPCResource{
 	}
 
 	public void update(FactionNPC faction, double seconds, double wf) {
+		KingLevels.getInstance().pickMaxLevel(faction);
 		updater.tree.update(faction);
 
 		//int wf =  RD.RACES().population.get(faction.capitolRegion());
@@ -286,7 +288,7 @@ public class NPCStockpile extends NPCResource{
 		}
 
 		public double tradeAm() {
-			return Math.max(totRate*workforce+offset, 0);
+			return Math.max(offset, 0);
 		}
 
 		public double amMul(double amount) {

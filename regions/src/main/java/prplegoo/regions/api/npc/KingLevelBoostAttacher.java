@@ -1,5 +1,6 @@
 package prplegoo.regions.api.npc;
 
+import game.boosting.BOOSTABLES;
 import game.boosting.BSourceInfo;
 import game.faction.npc.FactionNPC;
 import init.sprite.SPRITES;
@@ -22,8 +23,9 @@ public class KingLevelBoostAttacher {
 
                 FactionNPC faction = (FactionNPC) t.faction();
 
-                return (KingLevels.getInstance().getKingLevel(faction).getGovPoints()
-                        + KingLevels.getInstance().getKingLevel(faction).getGovPointsPerRegion() * faction.realm().regions())
+                return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) *
+                        (KingLevels.getInstance().getKingLevel(faction).getGovPoints()
+                        + KingLevels.getInstance().getKingLevel(faction).getGovPointsPerRegion() * (faction.realm().regions() - 1))
                         / 40000;
             }
         }.add(RD.BUILDINGS().costs.GOV.bo);
@@ -41,7 +43,7 @@ public class KingLevelBoostAttacher {
 
                 FactionNPC faction = (FactionNPC) t.faction();
 
-                return KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / 10.0;
+                return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) * KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / 10.0;
             }
         }.add(RD.RACES().capacity);
 
@@ -58,7 +60,7 @@ public class KingLevelBoostAttacher {
 
                 FactionNPC faction = (FactionNPC) t.faction();
 
-                return KingLevels.getInstance().getKingLevel(faction).getIncome() / 1000000;
+                return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) * KingLevels.getInstance().getKingLevel(faction).getIncome() / 1000000;
             }
         }.add(RD.OUTPUT().MONEY.boost);
     }

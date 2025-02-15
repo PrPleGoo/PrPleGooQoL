@@ -143,16 +143,12 @@ Features:
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
-- Slow population declines are very annoying.
 - More negative loyalty to account for lower population levels. There is an issue with the game file, so I can't modify it.
 
 Planned features (in order, subject to change):
-- Display target work force.
-- Display 1 decimal point for work force.
-- Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
-- Workshop/Refiner efficiency based on recipe ins/outs.
 - Take science boosts and use the school to apply them.
 - AI empires use production to do work on their stockpiles.
+- Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Instruct vassals to produce specific goods.
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:

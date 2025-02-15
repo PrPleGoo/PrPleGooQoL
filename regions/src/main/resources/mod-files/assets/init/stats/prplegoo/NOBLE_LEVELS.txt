@@ -1,0 +1,25 @@
+LEVELS: [
+    {
+        GOV_POINTS: 45,
+        GOV_POINTS_PER_REGION: 5,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1,
+        INCOME: 15000,
+
+        CONSUMPTION: {
+        },
+        CONSUMPTION_CAPITAL_POP: {
+        },
+    },
+    {
+        GOV_POINTS: 70,
+        GOV_POINTS_PER_REGION: 10,
+        CAPITAL_POPULATION_CAPACITY_MUL: 2,
+        INCOME: 30000,
+
+        CONSUMPTION: {
+        },
+        CONSUMPTION_CAPITAL_POP: {
+            EDIBLE: 0.25,
+        },
+    },
+],

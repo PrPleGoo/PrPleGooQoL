@@ -18,6 +18,8 @@ import init.text.D;
 import prplegoo.regions.api.RDFoodConsumption;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.npc.KingLevelBoostAttacher;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -62,6 +64,7 @@ public class RD extends WorldResource{
     private final RDSlavery slavery;
     private final RDFoodConsumption foodConsumption;
     private final RDRecipe recipes;
+    private final KingLevels kingLevels;
     private RDUpdater updater;
 
     private final EventData event;
@@ -99,6 +102,8 @@ public class RD extends WorldResource{
         slavery = new RDSlavery();
         foodConsumption = new RDFoodConsumption();
         recipes = new RDRecipe();
+        kingLevels = new KingLevels();
+        KingLevelBoostAttacher.attachKingLevelBoosts();
         mark = new EventData(init, "EVENT_MARK");
 
         event = new EventData(init, "EVENT_SELECTION");
@@ -117,7 +122,6 @@ public class RD extends WorldResource{
                 buildings.init(init);
                 races.init();
                 updater = new RDUpdater(init);
-
             }
         });
 
@@ -376,6 +380,10 @@ public class RD extends WorldResource{
 
     public static RDRecipe RECIPES(){
         return self.recipes;
+    }
+
+    public static KingLevels KINGLEVELS(){
+        return self.kingLevels;
     }
 
     public static EventData event(){

@@ -6,11 +6,15 @@ import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
 import game.time.TIME;
+import init.RES;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import snake2d.util.file.Json;
+import world.army.AD;
+import world.army.ADSupply;
+import world.entity.army.WArmy;
 import world.region.RD;
 
 public class KingLevels {
@@ -70,22 +74,37 @@ public class KingLevels {
         KingLevel kingLevel = getKingLevel(faction);
 
         for (RESOURCE resource : RESOURCES.ALL()) {
-            double amountConsumed = getDailyConsumptionRate(faction, kingLevel, resource) * deltaDays;
+            double amountConsumed = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * deltaDays;
 
             npcStockpile.inc(resource, -amountConsumed);
         }
     }
 
-    private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+    // For getting amounts that KingLevels actually needs to handle consuming;
+    private double getDailyConsumptionRateNotHandledElseWhere(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = 0;
 
         amount += kingLevel.getConsumption()[resource.index()];
         amount += kingLevel.getConsumptionCapitalPop()[resource.index()] * RD.RACES().population.get(faction.realm().capitol());
+
         // TODO: ConsumptionPreferredFood
         // TODO: ConsumptionFurniture
         // TODO: ConsumptionPreferredDrink
-        // TODO: Consumption from military
         // TODO: Apply spoilage
+
+        return amount;
+    }
+
+    // For getting amounts that the empire will consume;
+    private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource);
+
+        // TODO: Move this to the actual army code to just use resources.
+        for (ADSupply supply : AD.supplies().get(resource)) {
+            for (WArmy army : faction.armies().all()) {
+                amount += supply.usedPerDay * supply.used().get(army);
+            }
+        }
 
         return amount;
     }
@@ -94,7 +113,7 @@ public class KingLevels {
         return getDailyConsumptionRate(faction, kingLevel, resource) * FACTIONS.MAX;
     }
 
-    private double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
+    public double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
         return getDesiredStockpileAtLevel(faction, getKingLevel(faction), resource);
     }
 

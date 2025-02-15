@@ -5,6 +5,7 @@ import java.io.IOException;
 import game.GAME;
 import game.GameDisposable;
 import game.VERSION;
+import game.boosting.BOOSTABLES;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.NPCResource;
@@ -81,7 +82,7 @@ public class NPCStockpile extends NPCResource{
 
 		this.credits = credits;
 		for (RESOURCE res : RESOURCES.ALL()) {
-			resses[res.index()] = new SRes();
+			resses[res.index()] = KingLevels.isActive() ? new KingLevelSRes(res.index()) : new SRes();
 		}
 	}
 
@@ -142,7 +143,7 @@ public class NPCStockpile extends NPCResource{
 		double mul = f.race().pref().priceMul(RESOURCES.ALL().get(ri));
 		SRes r = resses[ri];
 		double before = r.price();
-		double after = r.priceAt(r.amTarget()+r.offset()+amount);
+		double after = r.priceAt(amount);
 		double price = before + (after-before)*0.5;
 		price *= creditScore();
 		return mul*price;
@@ -259,15 +260,73 @@ public class NPCStockpile extends NPCResource{
 		return resses[index];
 	}
 
+	class KingLevelSRes extends SRes {
+		private final int resourceIndex;
+
+		public KingLevelSRes(int resourceIndex){
+			this.resourceIndex = resourceIndex;
+		}
+
+		@Override
+		public double amTarget() {
+			return KingLevels.getInstance().getDesiredStockpile(f, RESOURCES.ALL().get(resourceIndex));
+		}
+
+		@Override
+		public double tradeAm() {
+			return offset();
+		}
+
+		@Override
+		public double offset() {
+			return Math.max(offset, 0);
+		}
+
+		@Override
+		public double price() {
+			return super.priceAt(getNonZeroAmTarget() + offset);
+		}
+
+		@Override
+		public double priceAt(double amount) {
+			return super.priceAt(amount - amTarget() - offset + getNonZeroAmTarget() + offset);
+		}
+
+		private double getNonZeroAmTarget(){
+			double amTarget = amTarget();
+			if (amTarget == 0) {
+				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
+				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
+			}
+
+			return amTarget;
+		}
+
+		@Override
+		public double amMul(double amount) {
+			if (amount <= 0)
+				return PRICE_MAX;
+			double tar = getNonZeroAmTarget();
+			tar /= amount;
+			tar = CLAMP.d(tar, PRICE_MIN, PRICE_MAX);
+			return tar;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			offset = getNonZeroAmTarget();
+		}
+	}
 
 
-	final class SRes implements SAVABLE{
+	class SRes implements SAVABLE{
 
-		private double totRate = 1;
-		private double rate = 1;
-		private double rateSpeed = 1;
-		private double offset = 0;
-		private double playerOffset;
+		protected double totRate = 1;
+		protected double rate = 1;
+		protected double rateSpeed = 1;
+		protected double offset = 0;
+		protected double playerOffset;
 
 		public double rate() {
 			return rate;
@@ -288,7 +347,7 @@ public class NPCStockpile extends NPCResource{
 		}
 
 		public double tradeAm() {
-			return Math.max(offset, 0);
+			return Math.max(totRate*workforce+offset, 0);
 		}
 
 		public double amMul(double amount) {
@@ -298,12 +357,6 @@ public class NPCStockpile extends NPCResource{
 			tar /= amount;
 			tar = CLAMP.d(tar, PRICE_MIN, PRICE_MAX);
 			return tar;
-
-		}
-
-		public double amMul() {
-			return amMul(amTarget()+offset());
-
 
 		}
 

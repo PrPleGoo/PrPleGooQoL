@@ -35,6 +35,9 @@ public class FactionGenetic {
     }
 
     public void calculateFitness(FactionNPC faction, double[] buyPrice, double[] sellPrice) {
+        // TODO: make record class
+        // TODO: add loyalty and pop target count
+        // TODO: add slaves to money
         totalGovPoints = 0;
         totalHealth = 0;
         totalWorkforce = 0;

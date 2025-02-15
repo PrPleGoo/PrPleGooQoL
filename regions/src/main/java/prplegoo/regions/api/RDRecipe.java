@@ -59,6 +59,10 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
         enabledRecipeIndex[region.index()][blue.index()] = industryIndexOnBlue;
     }
 
+    public int getRecipeIndex(Region region, RoomBlueprintImp blue) {
+        return enabledRecipeIndex[region.index()][blue.index()];
+    }
+
     public static class RDEnabledRecipeBooster extends BoosterValue {
         private final RoomBlueprintImp blue;
         private final int recipeIndex;

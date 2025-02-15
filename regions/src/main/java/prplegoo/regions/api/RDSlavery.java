@@ -1,6 +1,7 @@
 package prplegoo.regions.api;
 
 import game.boosting.*;
+import lombok.Getter;
 import prplegoo.regions.persistence.IDataPersistence;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
@@ -15,7 +16,9 @@ import world.region.pop.RDRace;
 import java.util.HashMap;
 
 public class RDSlavery implements IDataPersistence<RDSlaveryData> {
-    private ArrayList<RDSlave> all;
+    @Getter
+    private RDBuildPoints.RDBuildPoint workforce = null;
+    private final ArrayList<RDSlave> all;
     private HashMap<Integer, HashMap<Integer, Boolean>> selectedSlaves;
     private double[][] slaveDelivery;
 
@@ -49,7 +52,6 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
         }
 
         // Workforce is a type of slavery...
-        RDBuildPoints.RDBuildPoint workforce = null;
         for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.ALL){
             if(MagicStringChecker.isWorkforceBoostableKey(cost.bo.key)){
                 workforce = cost;

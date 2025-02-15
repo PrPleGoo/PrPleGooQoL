@@ -25,9 +25,12 @@ public class KingLevels {
 
     private final KingLevel[] kingLevels;
     private final int[] npcLevels;
+    @Getter
+    private final KingLevelRealmBuilder builder;
 
     public KingLevels() {
         instance = this;
+        builder = new KingLevelRealmBuilder();
 
         PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
         Json json = new Json(prplegooResFolder.init.get("NOBLE_LEVELS"));
@@ -112,10 +115,14 @@ public class KingLevels {
     }
 
     // For getting amounts that the empire will consume;
+    public double getDailyConsumptionRate(FactionNPC faction, RESOURCE resource) {
+        return getDailyConsumptionRate(faction, getKingLevel(faction), resource);
+    }
+
+
     private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource);
 
-        // TODO: Move this to the actual army code to just use resources.
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
                 amount += supply.usedPerDay * supply.used().get(army);

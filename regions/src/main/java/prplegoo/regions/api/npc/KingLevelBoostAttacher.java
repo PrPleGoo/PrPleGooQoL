@@ -58,6 +58,10 @@ public class KingLevelBoostAttacher {
                     return 0;
                 }
 
+                if (t.faction().capitolRegion().index() != t.index()) {
+                    return 0;
+                }
+
                 FactionNPC faction = (FactionNPC) t.faction();
 
                 return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) * KingLevels.getInstance().getKingLevel(faction).getIncome() / 1000000;

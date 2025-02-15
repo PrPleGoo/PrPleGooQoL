@@ -122,6 +122,7 @@ public class RD extends WorldResource{
                 buildings.init(init);
                 races.init();
                 updater = new RDUpdater(init);
+
             }
         });
 

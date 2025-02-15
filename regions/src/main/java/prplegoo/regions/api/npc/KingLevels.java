@@ -10,7 +10,6 @@ import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
-import lombok.Setter;
 import snake2d.util.file.Json;
 import world.region.RD;
 
@@ -91,6 +90,14 @@ public class KingLevels {
         return amount;
     }
 
+    private double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+        return getDailyConsumptionRate(faction, kingLevel, resource) * FACTIONS.MAX;
+    }
+
+    private double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
+        return getDesiredStockpileAtLevel(faction, getKingLevel(faction), resource);
+    }
+
     public void pickMaxLevel(FactionNPC faction) {
         pickMaxLevel(faction, false);
     }
@@ -106,12 +113,10 @@ public class KingLevels {
 
         for (int i = kingLevels.length - 1; i >= 0; i--) {
             for (RESOURCE resource : RESOURCES.ALL()) {
-                double amountConsumedBeforeNextCycle = getDailyConsumptionRate(faction, kingLevels[i], resource) * FACTIONS.MAX;
-
-
+                double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
                 if (amountConsumedBeforeNextCycle > 0
-                        // Prideful kings will want to show off more at the expense of security
+                        // Prideful kings will be riskier with their ambition.
                         && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual)) {
                     continue;
                 }

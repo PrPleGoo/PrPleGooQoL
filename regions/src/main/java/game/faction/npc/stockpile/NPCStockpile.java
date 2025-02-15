@@ -292,9 +292,9 @@ public class NPCStockpile extends NPCResource{
 		}
 
 		public double amMul(double amount) {
-			double tar = amTarget();
 			if (amount <= 0)
 				return PRICE_MAX;
+			double tar = amTarget();
 			tar /= amount;
 			tar = CLAMP.d(tar, PRICE_MIN, PRICE_MAX);
 			return tar;

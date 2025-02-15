@@ -10,18 +10,15 @@ import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
+import lombok.Setter;
 import snake2d.util.file.Json;
 import world.region.RD;
 
 public class KingLevels {
     @Getter
     private static KingLevels instance;
-
-    public static boolean isActive() {
-        return true;
-    }
-
-    private final PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
+    @Getter
+    private static final boolean isActive = true;
 
     private final KingLevel[] kingLevels;
     private final int[] npcLevels;
@@ -29,6 +26,7 @@ public class KingLevels {
     public KingLevels() {
         instance = this;
 
+        PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
         Json json = new Json(prplegooResFolder.init.get("NOBLE_LEVELS"));
 
         Json[] kingLevelJsons = json.jsons("LEVELS");
@@ -66,7 +64,7 @@ public class KingLevels {
     }
 
     public void consumeResources(FactionNPC faction, NPCStockpile npcStockpile, double deltaDays) {
-        if (!isActive()) {
+        if (!isActive) {
             return;
         }
 
@@ -98,7 +96,7 @@ public class KingLevels {
     }
 
     public void pickMaxLevel(FactionNPC faction, boolean force) {
-        if (!isActive()) {
+        if (!isActive) {
             return;
         }
 

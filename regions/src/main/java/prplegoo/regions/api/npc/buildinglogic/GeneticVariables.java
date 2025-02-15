@@ -11,6 +11,8 @@ public class GeneticVariables {
     public static final double govpointValue = 5;
     public static final int recipeMutationChance = 5;
     public static final int mutationAttemptsPerTick = 3;
+    public static final double maxGovPointDeficit = -10;
+    public static final int extraMutationsAfterReset = 3;
 
     public static double clamp(double value) {
         return CLAMP.d(value, -1, 1);

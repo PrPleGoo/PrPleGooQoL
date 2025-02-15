@@ -63,6 +63,14 @@ public class FactionGenetic {
         }
     }
 
+    public boolean hasGovPointDeficitGreaterThan(double target) {
+        if (totalGovPoints >= 0) {
+            return false;
+        }
+
+        return target > totalGovPoints;
+    }
+
     public boolean shouldKill(FactionGenetic mutant) {
         if (totalGovPoints < 0) {
             if(totalGovPoints > mutant.totalGovPoints) {

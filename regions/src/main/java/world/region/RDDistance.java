@@ -14,6 +14,7 @@ import game.faction.diplomacy.DipStance;
 import game.faction.npc.FactionNPC;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.PathTile;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -87,7 +88,8 @@ public class RDDistance {
 					@Override
 					public double get(Region t) {
 						if (t.faction() != FACTIONS.player())
-							return 0;
+							// TODO: fix distance for Npcs
+							return KingLevels.isActive() ? 1 : 0;
 						return CLAMP.d(boostable.get(t), 0, 1);
 					}
 

@@ -10,18 +10,14 @@ import init.resources.RESOURCES;
 import init.resources.ResSupply;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import settlement.room.military.artillery.ROOM_ARTILLERY;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
-import snake2d.util.sets.ArrayList;
-import snake2d.util.sets.ArrayListGrower;
-import snake2d.util.sets.Bitmap1D;
-import snake2d.util.sets.INDEXED;
-import snake2d.util.sets.LIST;
-import snake2d.util.sets.LISTE;
+import snake2d.util.sets.*;
 import snake2d.util.sprite.text.Str;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
@@ -161,7 +157,7 @@ public final class ADSupplies {
 			@Override
 			public void update(WArmy a, double timeSinceLast) {
 
-				if (a.faction() == FACTIONS.player()) {
+				if (KingLevels.isActive() || a.faction() == FACTIONS.player()) {
 					double he = health(a);
 					for (ADSupply s : all) {
 						double am = s.usedPerDay*s.needed.get(a);
@@ -171,7 +167,7 @@ public final class ADSupplies {
 						s.current.inc(a, -tot);
 					}
 
-					if (he >= 1 && AD.supplies().health(a) < 1) {
+					if (a.faction() == FACTIONS.player() && he >= 1 && AD.supplies().health(a) < 1) {
 						Str.TMP.clear();
 						Str.TMP.add(¤¤StarvingD).insert(0, a.name);
 						new MessageText(¤¤Starving, Str.TMP).send();

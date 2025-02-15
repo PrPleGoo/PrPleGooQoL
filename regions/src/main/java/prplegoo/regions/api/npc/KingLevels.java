@@ -77,6 +77,22 @@ public class KingLevels {
             double amountConsumed = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * deltaDays;
 
             npcStockpile.inc(resource, -amountConsumed);
+
+            for (ADSupply supply : AD.supplies().get(resource)) {
+                if (npcStockpile.amount(resource) <= 0) {
+                    continue;
+                }
+
+                for (WArmy army : faction.armies().all()) {
+                    if (!army.acceptsSupplies()
+                        || npcStockpile.amount(resource) <= 0) {
+                        continue;
+                    }
+
+                    double amount = Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    npcStockpile.inc(resource, -amount);
+                }
+            }
         }
     }
 

@@ -7,6 +7,9 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
+import world.map.regions.Region;
+import world.region.RD;
+import world.region.building.RDBuilding;
 
 public class KingLevelRealmBuilder {
     private final double[] lastUpdateByFactionIndex;
@@ -37,8 +40,19 @@ public class KingLevelRealmBuilder {
 
         FactionGenetic original = new FactionGenetic(faction);
         original.calculateFitness(faction, buyPrice, sellPrice);
+        int extraMutations = 0;
 
-        for(int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i ++) {
+        if (original.hasGovPointDeficitGreaterThan(GeneticVariables.maxGovPointDeficit)) {
+            for (Region region : faction.realm().all()) {
+                for (RDBuilding building : RD.BUILDINGS().all) {
+                    building.level.set(region, 0);
+                }
+            }
+
+            extraMutations += GeneticVariables.extraMutationsAfterReset;
+        }
+
+        for(int i = 0; i < GeneticVariables.mutationAttemptsPerTick + extraMutations; i ++) {
             FactionGenetic mutant = new FactionGenetic(faction);
             mutant.mutate(faction);
             mutant.calculateFitness(faction, buyPrice, sellPrice);

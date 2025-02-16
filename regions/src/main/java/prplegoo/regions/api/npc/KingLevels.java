@@ -33,6 +33,7 @@ public class KingLevels {
 
     private final int[][] productionCacheTick;
     private final double[][] productionCache;
+    private final int[] lastYearPicked;
 
     public KingLevels() {
         instance = this;
@@ -51,26 +52,7 @@ public class KingLevels {
         npcLevels = new int[FACTIONS.MAX];
         productionCacheTick = new int[FACTIONS.MAX][RESOURCES.ALL().size()];
         productionCache = new double[FACTIONS.MAX][RESOURCES.ALL().size()];
-    }
-
-    public int getLevel(Faction faction) {
-        if (!(faction instanceof FactionNPC)) {
-            return -1;
-        }
-
-        return npcLevels[faction.index()];
-    }
-
-    public int getLevel(FactionNPC faction) {
-        return npcLevels[faction.index()];
-    }
-
-    public KingLevel getKingLevel(Faction faction) {
-        if (!(faction instanceof FactionNPC)) {
-            return null;
-        }
-
-        return kingLevels[getLevel(faction)];
+        lastYearPicked = new int[FACTIONS.MAX];
     }
 
     public KingLevel getKingLevel(FactionNPC faction) {
@@ -176,20 +158,27 @@ public class KingLevels {
         return getDesiredStockpileAtLevel(faction, getDesiredKingLevel(faction), resource);
     }
 
+    public int getLevel(FactionNPC faction) {
+        return npcLevels[faction.index()];
+    }
+
     public void pickMaxLevel(FactionNPC faction) {
         pickMaxLevel(faction, false);
     }
-
+ 
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;
         }
 
-        if (force || getCurrentYear() % FACTIONS.MAX != faction.index()){
+        int currentYear = getCurrentYear();
+        if (force || (currentYear % 4 != faction.index() % 4 || lastYearPicked[faction.index()] == currentYear) ) {
             return;
         }
 
-        for (int i = kingLevels.length - 1; i >= 0; i--) {
+        lastYearPicked[faction.index()] = currentYear;
+
+        for (int i = kingLevels.length - 1; i > 0; i--) {
             for (RESOURCE resource : RESOURCES.ALL()) {
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
@@ -209,6 +198,6 @@ public class KingLevels {
 
     private static int getCurrentYear() {
         // FROM: public class DicTime
-        return ((int) TIME.currentSecond() % (int)TIME.years().cycleSeconds())  / (int)TIME.years().bitSeconds();
+        return ((int) TIME.currentSecond()) / (int)TIME.years().bitSeconds();
     }
 }

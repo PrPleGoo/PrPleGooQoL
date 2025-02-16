@@ -42,7 +42,7 @@ public class RDHealth extends RDataE {
 	
 	public final Boostable boostablee;
 	public final RDataE outbreak;
-	private boolean btoggle = true;
+	private boolean btoggle = false;
 	
 	private static double dTime = 1.0/(TIME.secondsPerDay*2);
 	

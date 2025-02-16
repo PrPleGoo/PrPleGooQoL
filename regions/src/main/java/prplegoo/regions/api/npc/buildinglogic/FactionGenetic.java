@@ -47,10 +47,10 @@ public class FactionGenetic {
         fitnessRecords[1] = new FitnessRecord(faction, 1) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
-                return RD.HEALTH().get(region) - 0.5;
+                return RD.HEALTH().boostablee.get(region) - 1;
             }
             @Override
-            public double getRegionDeficitMax(FactionNPC faction) { return 0; }
+            public double getRegionDeficitMax(FactionNPC faction) { return -0.5; }
         };
         // Work force;
         fitnessRecords[2] = new FitnessRecord(faction, 2) {

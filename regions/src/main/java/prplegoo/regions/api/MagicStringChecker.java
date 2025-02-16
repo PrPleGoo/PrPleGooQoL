@@ -18,4 +18,7 @@ public class MagicStringChecker {
     public static boolean isGrowthBuilding(String key) {
         return key.equals("CIVIC_GROWTH");
     }
+    public static boolean isQuarantineBuilding(String key) {
+        return key.equals("INFRA_HYGINE");
+    }
 }

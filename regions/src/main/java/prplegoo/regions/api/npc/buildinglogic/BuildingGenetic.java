@@ -36,7 +36,8 @@ public class BuildingGenetic {
     }
 
     public void mutate(Region region) {
-        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild
+            || GeneticVariables.isQuarantineBuilding(buildingIndex)) {
             return;
         }
 

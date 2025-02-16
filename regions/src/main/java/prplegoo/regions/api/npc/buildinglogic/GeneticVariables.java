@@ -37,4 +37,17 @@ public class GeneticVariables {
 
         return false;
     }
+
+    private static int quarantineBuildingIndex = -1;
+    public static boolean isQuarantineBuilding(int buildingIndex) {
+        if(quarantineBuildingIndex != -1) {
+            return quarantineBuildingIndex == buildingIndex;
+        }
+
+        if (MagicStringChecker.isQuarantineBuilding(RD.BUILDINGS().all.get(buildingIndex).key())) {
+            quarantineBuildingIndex = buildingIndex;
+        }
+
+        return false;
+    }
 }

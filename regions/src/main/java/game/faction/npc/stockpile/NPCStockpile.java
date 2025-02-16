@@ -212,32 +212,35 @@ public class NPCStockpile extends NPCResource{
 
 	public void update(FactionNPC faction, double seconds, double wf) {
 		KingLevels.getInstance().pickMaxLevel(faction);
-		updater.tree.update(faction);
+		if (!KingLevels.isActive()) {
+			updater.tree.update(faction);
 
-		//int wf =  RD.RACES().population.get(faction.capitolRegion());
-		//wf *= 0.75 + 0.25*(BOOSTABLES.NOBLE().COMPETANCE.get(faction.court().king().roy().induvidual));
+			//int wf =  RD.RACES().population.get(faction.capitolRegion());
+			//wf *= 0.75 + 0.25*(BOOSTABLES.NOBLE().COMPETANCE.get(faction.court().king().roy().induvidual));
 
 
-		workforce = wf*PILE_SIZE/RESOURCES.ALL().size();
-		for (RESOURCE res : RESOURCES.ALL()) {
-			game.faction.npc.stockpile.UpdaterTree.TreeRes o = updater.tree.o(res);
-			double prod = 0;
-			double prodTot = 0;
-			double sp = 1;
-			for (ResIns r : o.producers) {
-				prod = Math.max(prod, 1.0/r.prodSpeedBonus);
-				double t = 1.0/r.prodSpeedTot;
-				if (t > prodTot) {
-					sp = r.rateSpeed;
-					prodTot = t;
+			workforce = wf * PILE_SIZE / RESOURCES.ALL().size();
+			for (RESOURCE res : RESOURCES.ALL()) {
+				game.faction.npc.stockpile.UpdaterTree.TreeRes o = updater.tree.o(res);
+				double prod = 0;
+				double prodTot = 0;
+				double sp = 1;
+				for (ResIns r : o.producers) {
+					prod = Math.max(prod, 1.0 / r.prodSpeedBonus);
+					double t = 1.0 / r.prodSpeedTot;
+					if (t > prodTot) {
+						sp = r.rateSpeed;
+						prodTot = t;
+					}
 				}
+				resses[res.index()].rateSpeed = sp;
+				resses[res.index()].rate = prod;
+				resses[res.index()].totRate = prodTot;
 			}
-			resses[res.index()].rateSpeed = sp;
-			resses[res.index()].rate = prod;
-			resses[res.index()].totRate = prodTot;
+
+			updater.update(this, seconds * TIME.secondsPerDayI);
 		}
 
-		updater.update(this, seconds*TIME.secondsPerDayI);
 		KingLevels.getInstance().consumeResources(faction, this, seconds*TIME.secondsPerDayI);
 
 		for (RESOURCE res : RESOURCES.ALL()) {

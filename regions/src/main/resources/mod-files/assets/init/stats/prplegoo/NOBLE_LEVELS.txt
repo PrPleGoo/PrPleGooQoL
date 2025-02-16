@@ -19,7 +19,7 @@ LEVELS: [
         CONSUMPTION: {
         },
         CONSUMPTION_CAPITAL_POP: {
-            EDIBLE: 0.25,
+            EDIBLE: 0.025,
         },
     },
 ],

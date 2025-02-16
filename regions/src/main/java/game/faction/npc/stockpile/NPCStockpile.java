@@ -128,14 +128,28 @@ public class NPCStockpile extends NPCResource{
 	}
 
 	public double creditScore() {
-		double aa = workforce*AVERAGE_PRICE*RESOURCES.ALL().size();
+		double aa = valueOfStockpile();
 		aa = (aa + credits.getD())/(aa+1);
 		aa = CLAMP.d(aa, PRICE_MIN, PRICE_MAX);
 		return aa;
 	}
 
 	public double credit() {
-		return (workforce*AVERAGE_PRICE*RESOURCES.ALL().size() + credits.getD());
+		return (valueOfStockpile() + credits.getD());
+	}
+
+	public double valueOfStockpile() {
+		if (!KingLevels.isActive()) {
+			return workforce * AVERAGE_PRICE * RESOURCES.ALL().size();
+		}
+
+		double amount = 0;
+
+		for (int i = 0; i < resses.length; i++) {
+			amount += resses[i].offset * resses[i].price();
+		}
+
+		return amount;
 	}
 
 	public double price(int ri, double amount) {
@@ -143,9 +157,11 @@ public class NPCStockpile extends NPCResource{
 		double mul = f.race().pref().priceMul(RESOURCES.ALL().get(ri));
 		SRes r = resses[ri];
 		double before = r.price();
-		double after = r.priceAt(amount);
+		double after = r.priceAt(amount + (KingLevels.isActive() ? r.offset : 0));
 		double price = before + (after-before)*0.5;
+
 		price *= creditScore();
+
 		return mul*price;
 	}
 
@@ -287,22 +303,12 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double price() {
-			return super.priceAt(getNonZeroAmTarget() + offset);
+			return super.priceAt(offset);
 		}
 
 		@Override
 		public double priceAt(double amount) {
-			return super.priceAt(amount - amTarget() - offset + getNonZeroAmTarget() + offset);
-		}
-
-		private double getNonZeroAmTarget(){
-			double amTarget = amTarget();
-			if (amTarget == 0) {
-				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
-				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
-			}
-
-			return amTarget;
+			return super.priceAt(amount);
 		}
 
 		@Override
@@ -319,6 +325,16 @@ public class NPCStockpile extends NPCResource{
 		public void clear() {
 			super.clear();
 			offset = getNonZeroAmTarget();
+		}
+
+		private double getNonZeroAmTarget(){
+			double amTarget = amTarget();
+			if (amTarget == 0) {
+				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
+				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
+			}
+
+			return amTarget;
 		}
 	}
 

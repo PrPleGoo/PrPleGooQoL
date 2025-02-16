@@ -18,6 +18,8 @@ import world.entity.army.WArmy;
 import world.map.regions.Region;
 import world.region.RD;
 
+import java.util.Arrays;
+
 public class KingLevels {
     @Getter
     private static KingLevels instance;
@@ -28,6 +30,9 @@ public class KingLevels {
     private final int[] npcLevels;
     @Getter
     private final KingLevelRealmBuilder builder;
+
+    private final int[][] productionCacheTick;
+    private final double[][] productionCache;
 
     public KingLevels() {
         instance = this;
@@ -44,6 +49,8 @@ public class KingLevels {
         }
 
         npcLevels = new int[FACTIONS.MAX];
+        productionCacheTick = new int[FACTIONS.MAX][RESOURCES.ALL().size()];
+        productionCache = new double[FACTIONS.MAX][RESOURCES.ALL().size()];
     }
 
     public int getLevel(Faction faction) {
@@ -68,6 +75,10 @@ public class KingLevels {
 
     public KingLevel getKingLevel(FactionNPC faction) {
         return kingLevels[getLevel(faction)];
+    }
+
+    public KingLevel getDesiredKingLevel(FactionNPC faction) {
+        return kingLevels[Math.min(getLevel(faction) + 1, kingLevels.length - 1)];
     }
 
     public void consumeResources(FactionNPC faction, NPCStockpile npcStockpile, double deltaDays) {
@@ -133,22 +144,36 @@ public class KingLevels {
         return amount;
     }
 
+    public void resetDailyProductionRateCache(FactionNPC faction) {
+        Arrays.fill(productionCacheTick[faction.index()], -1);
+    }
+
     public double getDailyProductionRate(FactionNPC faction, RESOURCE resource) {
+        int currentSecond = (int) TIME.currentSecond();
+        if (productionCacheTick[faction.index()][resource.index()] == currentSecond) {
+            return productionCache[faction.index()][resource.index()];
+        }
+
         double amount = 0;
 
         for (Region region : faction.realm().all()) {
             amount += RD.OUTPUT().get(resource).boost.get(region);
         }
 
+        productionCacheTick[faction.index()][resource.index()] = currentSecond;
+        productionCache[faction.index()][resource.index()] = amount;
+
         return amount;
     }
 
     private double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        return getDailyConsumptionRate(faction, kingLevel, resource) * FACTIONS.MAX;
+        return (getDailyConsumptionRate(faction, kingLevel, resource)
+                + -1 * Math.min(0, getDailyProductionRate(faction, resource)))
+                * FACTIONS.MAX;
     }
 
     public double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
-        return getDesiredStockpileAtLevel(faction, getKingLevel(faction), resource);
+        return getDesiredStockpileAtLevel(faction, getDesiredKingLevel(faction), resource);
     }
 
     public void pickMaxLevel(FactionNPC faction) {

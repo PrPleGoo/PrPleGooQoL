@@ -7,6 +7,7 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
+import snake2d.LOG;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
@@ -30,32 +31,35 @@ public class KingLevelRealmBuilder {
         // do genocide aggression, tolerance, mercy, rng on king name?
             // don't genocide own species, ever
 
-        double[] buyPrice = new double[RESOURCES.ALL().size()];
-        double[] sellPrice = new double[RESOURCES.ALL().size()];
-
-        for (RESOURCE resource : RESOURCES.ALL()) {
-            buyPrice[resource.index()] = faction.stockpile.priceBuy(resource.index(), 1);
-            sellPrice[resource.index()] = faction.stockpile.priceSell(resource.index(), 1);
-        }
-
         FactionGenetic original = new FactionGenetic(faction);
-        original.calculateFitness(faction, buyPrice, sellPrice);
-        int extraMutations = 0;
+        original.calculateFitness(faction, buyPrices(faction), sellPrices(faction));
+        int totalMutations = GeneticVariables.mutationAttemptsPerTick;
 
-        if (original.hasGovPointDeficitGreaterThan(GeneticVariables.maxGovPointDeficit)) {
+//        LOG.ln("CHECKING original.anyFitnessExceedsDeficit IN KingLevelRealmBuilder;");
+        if (original.anyFitnessExceedsDeficit(faction)) {
+//            LOG.ln("DONE original.anyFitnessExceedsDeficit IN KingLevelRealmBuilder;");
             for (Region region : faction.realm().all()) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
                     building.level.set(region, 0);
                 }
             }
 
-            extraMutations += GeneticVariables.extraMutationsAfterReset;
+            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            original.calculateFitness(faction, buyPrices(faction), sellPrices(faction));
+
+            totalMutations += GeneticVariables.extraMutationsAfterReset;
         }
 
-        for(int i = 0; i < GeneticVariables.mutationAttemptsPerTick + extraMutations; i ++) {
+        totalMutations = Math.max(1, totalMutations * GeneticVariables.regionMutationsPerMutation / faction.realm().regions());
+        totalMutations = Math.min(GeneticVariables.maxMutations, totalMutations);
+
+        for(int i = 0; i < totalMutations; i ++) {
             FactionGenetic mutant = new FactionGenetic(faction);
+
             mutant.mutate();
-            mutant.calculateFitness(faction, buyPrice, sellPrice);
+            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+
+            mutant.calculateFitness(faction, buyPrices(faction), sellPrices(faction));
 
             if(!original.shouldKill(faction, mutant)) {
                 original = mutant;
@@ -65,8 +69,24 @@ public class KingLevelRealmBuilder {
 
         if(!original.isMutant()) {
             original.commit();
+            KingLevels.getInstance().resetDailyProductionRateCache(faction);
         }
 
         return true;
+    }
+
+    private double[] buyPrices(FactionNPC faction) {
+        double[] prices = new double[RESOURCES.ALL().size()];
+        for (RESOURCE resource : RESOURCES.ALL()) {
+            prices[resource.index()] = faction.stockpile.priceBuy(resource.index(), 1);
+        }
+        return prices;
+    }
+    private double[] sellPrices(FactionNPC faction) {
+        double[] prices = new double[RESOURCES.ALL().size()];
+        for (RESOURCE resource : RESOURCES.ALL()) {
+            prices[resource.index()] = faction.stockpile.priceSell(resource.index(), 1);
+        }
+        return prices;
     }
 }

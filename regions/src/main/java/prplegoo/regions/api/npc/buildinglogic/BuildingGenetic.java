@@ -18,6 +18,9 @@ public class BuildingGenetic {
 
     public BuildingGenetic(int regionIndex, int buildingIndex) {
         this.buildingIndex = buildingIndex;
+        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+            return;
+        }
 
         RDBuilding building = RD.BUILDINGS().all.get(this.buildingIndex);
         Region region = WORLD.REGIONS().all().get(regionIndex);
@@ -33,8 +36,12 @@ public class BuildingGenetic {
     }
 
     public void mutate(Region region) {
+        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+            return;
+        }
+
         if (!RND.oneIn(GeneticVariables.buildingMutationChance)) {
-            if (level > 0 && recipe != -1
+            if (recipe != -1
                     && RND.oneIn(GeneticVariables.recipeMutationChance)) {
                 INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
 
@@ -49,7 +56,7 @@ public class BuildingGenetic {
         double currentWorkforce = RD.SLAVERY().getWorkforce().bo.get(region);
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingIndex).level;
 
-        boolean isGrowthBuilding = GeneticVariables.isGrowthBuilding(region, buildingIndex);
+        boolean isGrowthBuilding = GeneticVariables.isGrowthBuilding(buildingIndex);
 
         if (!isGrowthBuilding && currentWorkforce < 0 && level > 0) {
             levelInt.set(region, levelInt.get(region) - 1);
@@ -64,23 +71,22 @@ public class BuildingGenetic {
 
         double random = GeneticVariables.random();
 
-        if (!isGrowthBuilding && level > 0
-            && random < -0.7) {
-            // downgrade the building
-            levelInt.set(region, levelInt.get(region) - 1);
-            level = levelInt.get(region);
-
-            return;
-        }
-
         if (level < RD.BUILDINGS().all.get(buildingIndex).levels().size() - 1
-                && random > 0.3) {
+                && (random > 0.3 || (region.capitol() && isGrowthBuilding))) {
             // upgrade the building
-            if (RD.BUILDINGS().all.get(buildingIndex).canAfford(region, level, level + 1) != null) {
+            if (RD.BUILDINGS().all.get(buildingIndex).canAfford(region, level, level + 1) == null) {
+                levelInt.set(region, levelInt.get(region) + 1);
+                level = levelInt.get(region);
+
                 return;
             }
+        }
 
-            levelInt.set(region, levelInt.get(region) + 1);
+        if (!isGrowthBuilding
+                && level > 0
+                && random < -0.7) {
+            // downgrade the building
+            levelInt.set(region, levelInt.get(region) - 1);
             level = levelInt.get(region);
 
             return;
@@ -88,6 +94,10 @@ public class BuildingGenetic {
     }
 
     public void commit(Region region){
+        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+            return;
+        }
+
         if (recipe != -1) {
             RD.RECIPES().setRecipe(region, RD.BUILDINGS().all.get(this.buildingIndex).getBlue(), recipe);
         }

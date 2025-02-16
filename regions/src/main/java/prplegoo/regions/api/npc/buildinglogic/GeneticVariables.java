@@ -11,13 +11,11 @@ import world.region.building.RDBuilding;
 
 public class GeneticVariables {
     public static final int buildingMutationChance = 10;
-    public static final double workForceValue = 100;
-    public static final double healthValue = 5;
-    public static final double govpointValue = 5;
     public static final int recipeMutationChance = 5;
-    public static final int mutationAttemptsPerTick = 4;
-    public static final double maxGovPointDeficit = -10;
-    public static final int extraMutationsAfterReset = 6;
+    public static final int mutationAttemptsPerTick = 3;
+    public static final int extraMutationsAfterReset = 2;
+    public static final int regionMutationsPerMutation = 3;
+    public static final int maxMutations = mutationAttemptsPerTick + extraMutationsAfterReset;
 
     public static double clamp(double value) {
         return CLAMP.d(value, -1, 1);
@@ -28,7 +26,7 @@ public class GeneticVariables {
     }
 
     private static int growthBuildingIndex = -1;
-    public static boolean isGrowthBuilding(Region region, int buildingIndex) {
+    public static boolean isGrowthBuilding(int buildingIndex) {
         if(growthBuildingIndex != -1) {
             return growthBuildingIndex == buildingIndex;
         }

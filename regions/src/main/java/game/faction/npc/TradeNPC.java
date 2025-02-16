@@ -1,7 +1,5 @@
 package game.faction.npc;
 
-import java.io.IOException;
-
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
@@ -11,11 +9,14 @@ import game.faction.trade.FACTION_IMPORTER;
 import game.faction.trade.ITYPE;
 import game.faction.trade.TradeManager;
 import init.resources.RESOURCE;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
 import snake2d.util.misc.CLAMP;
 import world.region.RD;
+
+import java.io.IOException;
 
 public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 
@@ -71,6 +72,11 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 			s.stockpile.incPlayer(res, amount);
 			ROPINIONS.TRADE().trade(s, price);
 		}
+
+		if (KingLevels.isActive()) {
+			s.stockpile.inc(res, amount);
+			ROPINIONS.TRADE().trade(s, price);
+		}
 	}
 
 	@Override
@@ -87,12 +93,17 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	@Override
 	public void buy(RESOURCE res, int amount, int price, Faction seller) {
 		s.credits().inc(-price, CTYPE.TRADE, res, amount);
+
 		reserveSpace(res, amount, ITYPE.trade);
 		if (seller == FACTIONS.player()) {
 			s.stockpile.incPlayer(res, amount);
 			ROPINIONS.TRADE().trade(s, price);
 		}
 
+		if (KingLevels.isActive()) {
+			s.stockpile.inc(res, amount);
+			ROPINIONS.TRADE().trade(s, price);
+		}
 	}
 
 //	@Override
@@ -106,6 +117,10 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	public double buyPriority(RESOURCE res, int amount, double price) {
 		if (Integer.MAX_VALUE - s.stockpile.amount(res.index()) < amount)
 			return 0;
+		if (KingLevels.isActive() && s.credits().getD() < 0) {
+			return 0;
+		}
+
 		return s.stockpile.priceBuy(res.bIndex(), amount)/price - 1.0;
 	}
 

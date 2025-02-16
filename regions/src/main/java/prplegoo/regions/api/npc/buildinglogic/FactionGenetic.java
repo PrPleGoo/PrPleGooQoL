@@ -6,6 +6,7 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
+import snake2d.LOG;
 import world.map.regions.Region;
 import world.region.RD;
 
@@ -32,12 +33,15 @@ public class FactionGenetic {
 
     public void calculateFitness(FactionNPC faction, double[] buyPrice, double[] sellPrice) {
         fitnessRecords = new FitnessRecord[6];
-        // GovPoints, needs to be index 0;
+        // GovPoints;
         fitnessRecords[0] = new FitnessRecord(faction, 0) {
             @Override
             public double determineValue(FactionNPC faction) {
                 return RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
             }
+
+            @Override
+            public double getFactionDeficitMax(FactionNPC faction) { return -10; }
         };
         // Health;
         fitnessRecords[1] = new FitnessRecord(faction, 1) {
@@ -45,6 +49,8 @@ public class FactionGenetic {
             public double determineValue(FactionNPC faction, Region region) {
                 return RD.HEALTH().get(region) - 0.5;
             }
+            @Override
+            public double getRegionDeficitMax(FactionNPC faction) { return 0; }
         };
         // Work force;
         fitnessRecords[2] = new FitnessRecord(faction, 2) {
@@ -52,6 +58,8 @@ public class FactionGenetic {
             public double determineValue(FactionNPC faction, Region region) {
                 return RD.SLAVERY().getWorkforce().bo.get(region);
             }
+            @Override
+            public double getRegionDeficitMax(FactionNPC faction) { return -50; }
         };
         // Raiders;
         fitnessRecords[3] = new FitnessRecord(faction, 3) {
@@ -67,16 +75,24 @@ public class FactionGenetic {
                 double totalMoney = RD.OUTPUT().MONEY.boost.get(faction);
 
                 for (RESOURCE resource : RESOURCES.ALL()) {
-                    double amount = -KingLevels.getInstance().getDailyConsumptionRate(faction, resource)
-                            + KingLevels.getInstance().getDailyProductionRate(faction, resource);
-                    if (amount < 0) {
-                        totalMoney += amount * sellPrice[resource.index()];
-                    } else if (amount > 0) {
-                        totalMoney += amount * buyPrice[resource.index()];
+                    double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
+                    if (productionAmount < 0) {
+                        if (faction.stockpile.amount(resource.index()) <= 0) {
+                            return Double.NEGATIVE_INFINITY;
+                        }
+
+                        totalMoney += productionAmount * sellPrice[resource.index()];
+                    } else if (productionAmount > 0) {
+                        totalMoney += productionAmount * buyPrice[resource.index()];
                     }
                 }
 
                 return totalMoney;
+            }
+
+            @Override
+            public double getFactionDeficitMax(FactionNPC faction) {
+                return (KingLevels.getInstance().getLevel(faction) + 1) * faction.realm().regions() * -50000;
             }
         };
         // Loyalty;
@@ -104,15 +120,13 @@ public class FactionGenetic {
         }
     }
 
-    public boolean hasGovPointDeficitGreaterThan(double target) {
-        if (fitnessRecords[0].factionValue >= 0) {
-            return false;
+    public boolean shouldKill(FactionNPC faction, FactionGenetic mutant) {
+//        LOG.ln("CHECKING mutant.anyFitnessExceedsDeficit IN FactionGenetic;");
+        if (mutant.anyFitnessExceedsDeficit(faction)) {
+//            LOG.ln("CHECKING mutant.anyFitnessExceedsDeficit IN FactionGenetic;");
+            return true;
         }
 
-        return target > fitnessRecords[0].factionValue;
-    }
-
-    public boolean shouldKill(FactionNPC faction, FactionGenetic mutant) {
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             if (fitnessRecord.willIncreaseDeficit(faction, mutant)) {
                 return true;
@@ -136,6 +150,16 @@ public class FactionGenetic {
         }
     }
 
+    public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
+        for (FitnessRecord fitnessRecord : fitnessRecords) {
+            if (fitnessRecord.exceedsDeficit(faction)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private abstract class FitnessRecord {
         private final int index;
         private double factionValue = 0;
@@ -152,6 +176,26 @@ public class FactionGenetic {
 
         public double determineValue(FactionNPC faction) {
             return 0;
+        }
+
+        public double getFactionDeficitMax(FactionNPC faction) { return Double.NEGATIVE_INFINITY; }
+
+        public double getRegionDeficitMax(FactionNPC faction) { return Double.NEGATIVE_INFINITY; }
+
+        public boolean exceedsDeficit(FactionNPC faction) {
+            if (factionValue < getFactionDeficitMax(faction)) {
+//                LOG.ln("exceedsDeficit: " + index + ", factionValue: " + factionValue);
+                return true;
+            }
+
+            for (double regionValue : regionValues) {
+                if (regionValue < getRegionDeficitMax(faction)) {
+//                    LOG.ln("exceedsDeficit: " + index + ", regionValue: " + regionValue);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void addValue(FactionNPC faction, int regionIndex) {

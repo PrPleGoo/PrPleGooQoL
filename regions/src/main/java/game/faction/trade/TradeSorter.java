@@ -6,6 +6,7 @@ import game.faction.Faction;
 import game.faction.trade.TradeShipper.Partner;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.Tree;
@@ -16,9 +17,7 @@ final class TradeSorter {
 	private final Tree<ResTree> tree = new Tree<TradeSorter.ResTree>(RESOURCES.ALL().size()) {
 
 		@Override
-		protected boolean isGreaterThan(ResTree current, ResTree cmp) {
-			return current.value > cmp.value;
-		}
+		protected boolean isGreaterThan(ResTree current, ResTree cmp) { return current.value > cmp.value; }
 
 	};
 	private Holder[] holders = new Holder[FACTIONS.MAX*RESOURCES.ALL().size()];
@@ -219,6 +218,7 @@ final class TradeSorter {
 				}else {
 					h.p.faction().seller().sell(t.res, am, sellPrice, buyer);
 				}
+
 
 
 

@@ -10,6 +10,7 @@ import init.resources.Growable;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
 import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.npc.KingLevels;
 import world.WORLD;
 import world.army.AD;
 import world.army.ADSupply;
@@ -104,22 +105,20 @@ final class Shipper {
                     }
 
                     c.loadAndReserve(res.res, a);
-                    if (f instanceof FactionNPC) {
-                        ((FactionNPC) f).stockpile.inc(res.res, a);
-                    }
                 }
                 else {
                     f.seller().remove(res.res, -a, ITYPE.tax);
-                    if (f instanceof FactionNPC) {
-                        ((FactionNPC) f).stockpile.inc(res.res, -a);
-                    }
+                }
+
+                if (f instanceof FactionNPC && KingLevels.isActive()) {
+                    ((FactionNPC) f).stockpile.inc(res.res, a);
                 }
             }
 
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
                 int a = rdSlave.getDelivery(r, days);
                 c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
-                if (f instanceof FactionNPC) {
+                if (f instanceof FactionNPC && KingLevels.isActive()) {
                     ((FactionNPC) f).slaves().trade(rdSlave.rdRace.race, a, 0);
                 }
             }

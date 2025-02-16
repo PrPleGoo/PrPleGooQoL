@@ -1,5 +1,5 @@
 ORDER: 0,
-AI_BUILDS: true,
+AI_BUILDS: false,
 NOTIFY_WHEN_UPGRADABLE: false,
 EFFICIENCY: {
 	NEEDS: [

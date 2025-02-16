@@ -67,11 +67,12 @@ public class FactionGenetic {
                 double totalMoney = RD.OUTPUT().MONEY.boost.get(faction);
 
                 for (RESOURCE resource : RESOURCES.ALL()) {
-                    double amount = -KingLevels.getInstance().getDailyConsumptionRate(faction, resource) + KingLevels.getInstance().getDailyProductionRate(faction, resource);
+                    double amount = -KingLevels.getInstance().getDailyConsumptionRate(faction, resource)
+                            + KingLevels.getInstance().getDailyProductionRate(faction, resource);
                     if (amount < 0) {
-                        totalMoney += amount * buyPrice[resource.index()];
-                    } else if (amount > 0) {
                         totalMoney += amount * sellPrice[resource.index()];
+                    } else if (amount > 0) {
+                        totalMoney += amount * buyPrice[resource.index()];
                     }
                 }
 

@@ -5,6 +5,7 @@ import game.boosting.Boostable;
 import game.boosting.BoostableCat;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import init.resources.ResGEat;
 import init.sprite.UI.UI;
 import prplegoo.regions.persistence.IDataPersistence;
 import snake2d.LOG;
@@ -54,8 +55,8 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
     private void initialize() {
         selectedFoods = new boolean[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
         for (int r = 0; r <WORLD.REGIONS().all().size(); r++) {
-            for (RESOURCE food : RESOURCES.EDI().res()) {
-                selectedFoods[r][food.index()] = true;
+            for (ResGEat food : RESOURCES.EDI().all()) {
+                selectedFoods[r][food.resource.index()] = food.serve;
             }
         }
     }

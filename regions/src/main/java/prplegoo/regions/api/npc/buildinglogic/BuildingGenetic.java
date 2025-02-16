@@ -34,6 +34,15 @@ public class BuildingGenetic {
 
     public void mutate(Region region) {
         if (!RND.oneIn(GeneticVariables.buildingMutationChance)) {
+            if (level > 0 && recipe != -1
+                    && RND.oneIn(GeneticVariables.recipeMutationChance)) {
+                INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
+
+                int pick = RND.rInt(industry.industries().size());
+                RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
+                recipe = pick;
+            }
+
             return;
         }
 
@@ -73,17 +82,6 @@ public class BuildingGenetic {
 
             levelInt.set(region, levelInt.get(region) + 1);
             level = levelInt.get(region);
-
-            return;
-        }
-
-        if (level > 0 && recipe != -1
-                && RND.oneIn(GeneticVariables.recipeMutationChance)) {
-            INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
-
-            int pick = RND.rInt(industry.industries().size());
-            RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
-            recipe = pick;
 
             return;
         }

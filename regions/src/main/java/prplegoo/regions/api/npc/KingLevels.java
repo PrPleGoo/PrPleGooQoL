@@ -93,8 +93,9 @@ public class KingLevels {
                         continue;
                     }
 
-                    double amount = Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    int amount = Math.min(supply.needed(army), npcStockpile.amount(resource));
                     npcStockpile.inc(resource, -amount);
+                    supply.current().inc(army, amount);
                 }
             }
         }

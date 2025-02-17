@@ -19,12 +19,10 @@ public class RegionGenetic {
         }
     }
 
-    public void mutate() {
+    public boolean mutate() {
         Region region = WORLD.REGIONS().all().get(regionIndex);
 
-        for(BuildingGenetic buildingGenetic : buildingGenetics) {
-            buildingGenetic.mutate(region);
-        }
+        return buildingGenetics[RND.rInt(buildingGenetics.length)].mutate(region);
     }
 
     public void commit() {

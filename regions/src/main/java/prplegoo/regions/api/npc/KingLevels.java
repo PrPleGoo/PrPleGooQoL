@@ -91,6 +91,8 @@ public class KingLevels {
                     supply.current().inc(army, amount);
                 }
             }
+
+            npcStockpile.inc(resource, npcStockpile.amount(resource.index()) * -resource.degradeSpeed() / 16);
         }
     }
 
@@ -101,8 +103,10 @@ public class KingLevels {
         amount += kingLevel.getConsumption()[resource.index()];
         amount += kingLevel.getConsumptionCapitalPop()[resource.index()] * RD.RACES().population.get(faction.realm().capitol());
 
-        // TODO: ConsumptionPreferredFood
-        // TODO: ConsumptionFurniture
+        for (int i = 0; i < RD.RACES().all.size(); i ++) {
+            amount += kingLevel.getConsumptionPreferredCapitalPop()[i][resource.index()] * RD.RACES().all.get(i).pop.get(faction.realm().capitol());
+        }
+
         // TODO: ConsumptionPreferredDrink
         // TODO: Apply spoilage
 
@@ -172,22 +176,27 @@ public class KingLevels {
         }
 
         int currentYear = getCurrentYear();
-        if (force || (currentYear % 4 != faction.index() % 4 || lastYearPicked[faction.index()] == currentYear) ) {
+        if (!force && (currentYear % 4 != faction.index() % 4 || lastYearPicked[faction.index()] == currentYear) ) {
             return;
         }
 
         lastYearPicked[faction.index()] = currentYear;
+        double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
 
         for (int i = kingLevels.length - 1; i > 0; i--) {
+            boolean skipped = false;
             for (RESOURCE resource : RESOURCES.ALL()) {
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
                 if (amountConsumedBeforeNextCycle > 0
                         // Prideful kings will be riskier with their ambition.
-                        && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual)) {
-                    continue;
+                        && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
+                    skipped = true;
+                    break;
                 }
+            }
 
+            if (!skipped) {
                 this.npcLevels[faction.index()] = i;
                 return;
             }

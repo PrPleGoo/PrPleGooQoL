@@ -321,11 +321,11 @@ public class NPCStockpile extends NPCResource{
 			return tar;
 		}
 
-		@Override
-		public void clear() {
-			super.clear();
-			offset = getNonZeroAmTarget();
-		}
+//		@Override
+//		public void clear() {
+//			super.clear();
+//			offset = getNonZeroAmTarget();
+//		}
 
 		private double getNonZeroAmTarget(){
 			double amTarget = amTarget();

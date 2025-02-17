@@ -7,6 +7,7 @@ import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.LOG;
+import snake2d.util.rnd.RND;
 import world.map.regions.Region;
 import world.region.RD;
 
@@ -25,9 +26,10 @@ public class FactionGenetic {
     }
 
     public void mutate() {
-        isMutant = true;
-        for (RegionGenetic regionGenetic : regionGenetics) {
-            regionGenetic.mutate();
+        int max = GeneticVariables.maxMutations;
+        while (max > 0 && !isMutant) {
+            isMutant = regionGenetics[RND.rInt(regionGenetics.length)].mutate();
+            max --;
         }
     }
 
@@ -47,7 +49,7 @@ public class FactionGenetic {
         fitnessRecords[1] = new FitnessRecord(faction, 1) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
-                return RD.HEALTH().boostablee.get(region) - 1;
+                return Math.min(RD.HEALTH().boostablee.get(region) - 1, 1);
             }
             @Override
             public double getRegionDeficitMax(FactionNPC faction) { return -0.5; }
@@ -77,7 +79,7 @@ public class FactionGenetic {
                 for (RESOURCE resource : RESOURCES.ALL()) {
                     double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
                     if (productionAmount < 0) {
-                        if (faction.stockpile.amount(resource.index()) <= 0) {
+                        if (faction.stockpile.amount(resource.index()) <= Math.abs(productionAmount) * 5) {
                             return Double.NEGATIVE_INFINITY;
                         }
 
@@ -102,7 +104,7 @@ public class FactionGenetic {
                 double amount = 0;
 
                 for (int i = 0; i < RD.RACES().all.size(); i++) {
-                    amount += RD.RACES().all.get(i).loyalty.target.get(region);
+                    amount += Math.min(RD.RACES().all.get(i).loyalty.target.get(region), 1);
                 }
 
                 return amount;
@@ -183,13 +185,14 @@ public class FactionGenetic {
         public double getRegionDeficitMax(FactionNPC faction) { return Double.NEGATIVE_INFINITY; }
 
         public boolean exceedsDeficit(FactionNPC faction) {
-            if (factionValue < getFactionDeficitMax(faction)) {
+            // Both can be negative infinity, what do
+            if (factionValue <= getFactionDeficitMax(faction)) {
 //                LOG.ln("exceedsDeficit: " + index + ", factionValue: " + factionValue);
                 return true;
             }
 
-            for (double regionValue : regionValues) {
-                if (regionValue < getRegionDeficitMax(faction)) {
+            for (int i = 0; i < regionValues.length; i++) {
+                if (regionValues[i] <= getRegionDeficitMax(faction)) {
 //                    LOG.ln("exceedsDeficit: " + index + ", regionValue: " + regionValue);
                     return true;
                 }

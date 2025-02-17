@@ -57,6 +57,10 @@ public class KingLevelRealmBuilder {
             FactionGenetic mutant = new FactionGenetic(faction);
 
             mutant.mutate();
+            if (!mutant.isMutant()) {
+                continue;
+            }
+
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
 
             mutant.calculateFitness(faction, buyPrices(faction), sellPrices(faction));

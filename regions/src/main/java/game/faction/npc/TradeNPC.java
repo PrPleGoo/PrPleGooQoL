@@ -72,11 +72,6 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 			s.stockpile.incPlayer(res, amount);
 			ROPINIONS.TRADE().trade(s, price);
 		}
-
-		if (KingLevels.isActive()) {
-			s.stockpile.inc(res, amount);
-			ROPINIONS.TRADE().trade(s, price);
-		}
 	}
 
 	@Override
@@ -93,15 +88,10 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	@Override
 	public void buy(RESOURCE res, int amount, int price, Faction seller) {
 		s.credits().inc(-price, CTYPE.TRADE, res, amount);
-
 		reserveSpace(res, amount, ITYPE.trade);
+
 		if (seller == FACTIONS.player()) {
 			s.stockpile.incPlayer(res, amount);
-			ROPINIONS.TRADE().trade(s, price);
-		}
-
-		if (KingLevels.isActive()) {
-			s.stockpile.inc(res, amount);
 			ROPINIONS.TRADE().trade(s, price);
 		}
 	}
@@ -117,7 +107,7 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	public double buyPriority(RESOURCE res, int amount, double price) {
 		if (Integer.MAX_VALUE - s.stockpile.amount(res.index()) < amount)
 			return 0;
-		if (KingLevels.isActive() && s.credits().getD() < 0) {
+		if (KingLevels.isActive() && s.credits().getD() < 100000) {
 			return 0;
 		}
 

@@ -35,23 +35,25 @@ public class BuildingGenetic {
         }
     }
 
-    public void mutate(Region region) {
+    public boolean mutate(Region region) {
         if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild
             || GeneticVariables.isQuarantineBuilding(buildingIndex)) {
-            return;
+            return false;
         }
 
         if (!RND.oneIn(GeneticVariables.buildingMutationChance)) {
-            if (recipe != -1
+            if (level > 0 && recipe != -1
                     && RND.oneIn(GeneticVariables.recipeMutationChance)) {
                 INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
 
                 int pick = RND.rInt(industry.industries().size());
                 RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
                 recipe = pick;
+
+                return true;
             }
 
-            return;
+            return false;
         }
 
         double currentWorkforce = RD.SLAVERY().getWorkforce().bo.get(region);
@@ -64,10 +66,10 @@ public class BuildingGenetic {
             double newWorkforce = RD.SLAVERY().getWorkforce().bo.get(region);
             if (newWorkforce > currentWorkforce) {
                 level--;
-                return;
             }
 
             levelInt.set(region, level);
+            return true;
         }
 
         double random = GeneticVariables.random();
@@ -77,9 +79,17 @@ public class BuildingGenetic {
             // upgrade the building
             if (RD.BUILDINGS().all.get(buildingIndex).canAfford(region, level, level + 1) == null) {
                 levelInt.set(region, levelInt.get(region) + 1);
-                level = levelInt.get(region);
 
-                return;
+                if(level == 0 && recipe != -1) {
+                    INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
+
+                    int pick = RND.rInt(industry.industries().size());
+                    RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
+                    recipe = pick;
+                }
+
+                level = levelInt.get(region);
+                return true;
             }
         }
 
@@ -90,8 +100,10 @@ public class BuildingGenetic {
             levelInt.set(region, levelInt.get(region) - 1);
             level = levelInt.get(region);
 
-            return;
+            return true;
         }
+
+        return false;
     }
 
     public void commit(Region region){

@@ -60,7 +60,9 @@ final class Builder {
 	public void build(Region reg) {
 		RealmBuilder builder = rebBuilder;
 		if (reg.faction() instanceof FactionNPC) {
-			if (KingLevels.getInstance().getBuilder().build((FactionNPC) reg.faction())) {
+			if (KingLevels.isActive()) {
+				KingLevels.getInstance().getBuilder().build((FactionNPC) reg.faction());
+
 				return;
 			}
 			builder = ((FactionNPC)reg.faction()).court().king().builder;

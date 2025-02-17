@@ -19,13 +19,9 @@ public class KingLevelRealmBuilder {
         lastUpdateByFactionIndex = new double[FACTIONS.MAX];
     }
 
-    public boolean build(FactionNPC faction) {
-        if (!KingLevels.isActive()) {
-            return false;
-        }
-
+    public void build(FactionNPC faction) {
         if (lastUpdateByFactionIndex[faction.index()] == TIME.currentSecond()) {
-            return true;
+            return;
         }
 
         // do genocide aggression, tolerance, mercy, rng on king name?
@@ -75,8 +71,6 @@ public class KingLevelRealmBuilder {
             original.commit();
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
         }
-
-        return true;
     }
 
     private double[] buyPrices(FactionNPC faction) {

@@ -1,8 +1,17 @@
 package game.nobility;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import game.GAME.GameResource;
-import game.Profiler;
-import game.boosting.*;
+import game.boosting.BOOSTABLES;
+import game.boosting.BOOSTING;
+import game.boosting.BSourceInfo;
+import game.boosting.BValue;
+import game.boosting.BoostSpecs;
+import game.boosting.Boostable;
+import game.boosting.BoosterValue;
+import game.debug.Profiler;
 import game.faction.npc.FactionNPC;
 import game.faction.player.BoostCompound;
 import init.sprite.UI.UI;

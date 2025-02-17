@@ -10,6 +10,7 @@ import game.faction.npc.FactionNPC;
 import game.time.TIME;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sprite.text.Str;
@@ -157,8 +158,8 @@ public class RDHealth extends RDataE {
 			}
 			
 			public double increase(Region reg) {
-//				if (reg.faction() == null || reg.faction() instanceof FactionNPC)
-//					return 255;
+				if (!KingLevels.isActive() && (reg.faction() == null || reg.faction() instanceof FactionNPC))
+					return 255;
 				
 				
 				//btoggle = true;

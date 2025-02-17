@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import game.GAME;
 import game.GameDisposable;
-import game.Profiler;
+import game.debug.Profiler;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -381,10 +381,6 @@ public class RD extends WorldResource{
 
     public static RDRecipe RECIPES(){
         return self.recipes;
-    }
-
-    public static KingLevels KINGLEVELS(){
-        return self.kingLevels;
     }
 
     public static EventData event(){

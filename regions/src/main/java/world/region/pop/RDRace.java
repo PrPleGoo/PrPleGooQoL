@@ -379,6 +379,19 @@ public class RDRace implements INDEXED{
 		};
 
 
+		private static INT_OE<Region> count(RDInit init, Race race){
+			return init.count.new DataShortE("RACEPOP" + race.key) {
+
+				@Override
+				public void set(Region t, int s) {
+					RD.RACES().pop.set(t, RD.RACES().population.get(t)-get(t));
+					super.set(t, s);
+					RD.RACES().pop.set(t, RD.RACES().population.get(t)+get(t));
+				}
+
+			};
+		}
+
 	}
 
 

@@ -2,11 +2,9 @@ package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
 import game.faction.FACTIONS;
-import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
 import game.time.TIME;
-import init.RES;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -24,7 +22,7 @@ public class KingLevels {
     @Getter
     private static KingLevels instance;
     @Getter
-    private static final boolean isActive = true;
+    private static final boolean isActive = false;
 
     private final KingLevel[] kingLevels;
     private final int[] npcLevels;

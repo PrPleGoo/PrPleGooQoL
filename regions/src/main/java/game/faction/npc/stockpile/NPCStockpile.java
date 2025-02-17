@@ -20,10 +20,12 @@ import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
+import snake2d.util.sets.LIST;
 import snake2d.util.sets.LISTE;
 import util.data.DOUBLE;
 import util.statistics.HistoryResource;
 import view.interrupter.IDebugPanel;
+import world.map.pathing.WRegFinder;
 import world.region.RD;
 import world.region.pop.RDRace;
 
@@ -68,9 +70,20 @@ public class NPCStockpile extends NPCResource{
 				for (FactionNPC f : FACTIONS.NPCs()) {
 					f.stockpile.saver().clear();
 					f.stockpile.update(f, 0);
-					f.credits().set(0);
+					f.credits().set(KingLevels.isActive() ? 100000 : 0);
 					KingLevels.getInstance().pickMaxLevel(f, true);
+
+					if (KingLevels.isActive()) {
+						f.armies().disbandAll();
+						for (int i = 0; i < 500; i ++) {
+							RD.RACES().init();
+							RD.UPDATER().BUILD(f.capitolRegion());
+							KingLevels.getInstance().resetDailyProductionRateCache(f);
+							f.stockpile.update(f, TIME.secondsPerDay);
+						}
+					}
 				}
+
 				GAME.factions().prime();
 			}
 		};
@@ -288,7 +301,13 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double amTarget() {
-			return KingLevels.getInstance().getDesiredStockpile(f, RESOURCES.ALL().get(resourceIndex));
+			double amTarget = KingLevels.getInstance().getDesiredStockpile(f, RESOURCES.ALL().get(resourceIndex));
+			if (amTarget == 0) {
+				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
+				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
+			}
+
+			return amTarget;
 		}
 
 		@Override
@@ -311,11 +330,29 @@ public class NPCStockpile extends NPCResource{
 			return super.priceAt(amount);
 		}
 
+		private int lastGet = -1;
+		private LIST<WRegFinder.RegDist> regDists;
+
 		@Override
 		public double amMul(double amount) {
 			if (amount <= 0)
 				return PRICE_MAX;
-			double tar = getNonZeroAmTarget();
+			double tar = amTarget() * (f.realm().regions() + 1);
+			amount *= (f.realm().regions() + 1);
+
+			if (lastGet != GAME.updateI()) {
+				regDists = RD.DIST().tradePartners(f);
+			}
+
+			for (WRegFinder.RegDist region : regDists) {
+				if (!(region.reg.faction() instanceof FactionNPC)) {
+					continue;
+				}
+
+				tar += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).amTarget() / region.reg.faction().realm().regions();
+				amount += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).offset() / region.reg.faction().realm().regions();
+			}
+
 			tar /= amount;
 			tar = CLAMP.d(tar, PRICE_MIN, PRICE_MAX);
 			return tar;
@@ -326,16 +363,6 @@ public class NPCStockpile extends NPCResource{
 //			super.clear();
 //			offset = getNonZeroAmTarget();
 //		}
-
-		private double getNonZeroAmTarget(){
-			double amTarget = amTarget();
-			if (amTarget == 0) {
-				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
-				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
-			}
-
-			return amTarget;
-		}
 	}
 
 

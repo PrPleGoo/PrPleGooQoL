@@ -39,7 +39,7 @@ public class FactionGenetic {
         fitnessRecords[0] = new FitnessRecord(faction, 0) {
             @Override
             public double determineValue(FactionNPC faction) {
-                return RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
+                return Math.min(1, RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion()));
             }
 
             @Override
@@ -79,8 +79,9 @@ public class FactionGenetic {
                 for (RESOURCE resource : RESOURCES.ALL()) {
                     double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
                     if (productionAmount < 0) {
-                        if (faction.stockpile.amount(resource.index()) <= Math.abs(productionAmount) * 5) {
-                            return Double.NEGATIVE_INFINITY;
+                        if (faction.stockpile.amount(resource.index()) <= Math.abs(productionAmount) * 2) {
+                            totalMoney += productionAmount * sellPrice[resource.index()] * 1000000;
+                            continue;
                         }
 
                         totalMoney += productionAmount * sellPrice[resource.index()];

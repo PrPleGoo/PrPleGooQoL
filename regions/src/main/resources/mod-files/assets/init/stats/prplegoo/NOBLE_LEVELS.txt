@@ -23,9 +23,9 @@ LEVELS: [
             _WOOD: 10,
         },
         CONSUMPTION_CAPITAL_POP: {
-            EDIBLE: 0.025,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
+            EDIBLE: 0.005,
         },
     },
     {
@@ -40,11 +40,11 @@ LEVELS: [
             JEWELRY: 1,
         },
         CONSUMPTION_CAPITAL_POP: {
-            EDIBLE: 0.025,
-            CLOTHES: 0.025,
+            EDIBLE: 0.005,
+            CLOTHES: 0.005,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.025,
+            EDIBLE: 0.005,
         },
     },
     {
@@ -59,11 +59,11 @@ LEVELS: [
             JEWELRY: 1,
         },
         CONSUMPTION_CAPITAL_POP: {
-            EDIBLE: 0.025,
-            CLOTHES: 0.025,
+            EDIBLE: 0.005,
+            CLOTHES: 0.005,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.025,
+            EDIBLE: 0.005,
             FURNITURE: 0.025,
         },
     },

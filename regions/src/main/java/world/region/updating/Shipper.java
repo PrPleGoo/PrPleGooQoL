@@ -73,7 +73,7 @@ final class Shipper {
         Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), ITYPE.tax);
         if (c != null) {
             for (RDResource res : RD.OUTPUT().RES) {
-                int a = amount(res, r, seconds);
+                int a = amount(f, res, r, seconds);
                 if (a == 0)
                 {
                     continue;
@@ -109,10 +109,6 @@ final class Shipper {
                 else {
                     f.seller().remove(res.res, -a, ITYPE.tax);
                 }
-
-                if (f instanceof FactionNPC && KingLevels.isActive()) {
-                    ((FactionNPC) f).stockpile.inc(res.res, a);
-                }
             }
 
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
@@ -126,9 +122,9 @@ final class Shipper {
 
     }
 
-    private int amount(RDResource res, Region r, double seconds) {
+    private int amount(Faction f, RDResource res, Region r, double seconds) {
         Growable g = RESOURCES.growable().get(res.res);
-        if (g != null) {
+        if (g != null && !(f instanceof FactionNPC)) {
             double year = TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
             double harvest = g.seasonalOffset*TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
             double now = TIME.currentSecond()%year;

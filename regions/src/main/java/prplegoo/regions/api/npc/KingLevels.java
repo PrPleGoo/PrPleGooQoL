@@ -69,9 +69,9 @@ public class KingLevels {
         KingLevel kingLevel = getKingLevel(faction);
 
         for (RESOURCE resource : RESOURCES.ALL()) {
-            double amountConsumed = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * deltaDays;
+            double amount = deltaDays * (getDailyProductionRate(faction, resource) - getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource));
 
-            npcStockpile.inc(resource, -amountConsumed);
+            npcStockpile.inc(resource, -amount);
 
             for (ADSupply supply : AD.supplies().get(resource)) {
                 if (npcStockpile.amount(resource) <= 0) {
@@ -84,9 +84,9 @@ public class KingLevels {
                         continue;
                     }
 
-                    int amount = Math.min(supply.needed(army), npcStockpile.amount(resource));
-                    npcStockpile.inc(resource, -amount);
-                    supply.current().inc(army, amount);
+                    int armySupplyAmount = Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    npcStockpile.inc(resource, -armySupplyAmount);
+                    supply.current().inc(army, armySupplyAmount);
                 }
             }
 
@@ -106,7 +106,6 @@ public class KingLevels {
         }
 
         // TODO: ConsumptionPreferredDrink
-        // TODO: Apply spoilage
 
         return amount;
     }

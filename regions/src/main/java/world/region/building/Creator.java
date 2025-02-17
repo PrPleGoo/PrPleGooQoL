@@ -28,6 +28,7 @@ import init.type.CLIMATES;
 import lombok.Getter;
 import prplegoo.regions.api.PrPleGooEfficiencies;
 import prplegoo.regions.api.RDRecipe;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
@@ -63,29 +64,29 @@ final class Creator {
 	private static CharSequence ¤¤small = "(Small)";
 	private static CharSequence ¤¤large = "(Large)";
 	private static CharSequence ¤¤awesome = "(Awesome)";
-	
+
 	static {
 		D.ts(Creator.class);
 	}
-	
+
 
 	Creator(RDBuildings buils) {
-		
+
 	}
-	
+
 	public RDBuilding read(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, ResFolder f) throws IOException {
-		
+
 		Json json = new Json(f.init.get(key));
 		Json text = new Json(f.text.get(key));
 		INFO info = new INFO(text);
-		
+
 		ArrayListGrower<RDBuildingLevel> levels = new ArrayListGrower<>();
-		
+
 		Json[] jsons = json.jsons("LEVELS", 1, 10);
-		
+
 		int li = 0;
 		String[] names = new String[0];
-		if (text != null && text.has("LEVELS")) 
+		if (text != null && text.has("LEVELS"))
 			names = text.texts("LEVELS");
 		boolean aibuild = json.bool("AI_BUILDS", true);
 		boolean noti = json.bool("NOTIFY_WHEN_UPGRADABLE", false);
@@ -102,10 +103,10 @@ final class Creator {
 			levels.add(l);
 			li++;
 		}
-		
+
 		RDBuilding b = new RDBuilding(all, init, cat, key, info, levels, aibuild, noti, order);
-		
-		
+
+
 		for (int i = 0; i < jsons.length; i++) {
 			RDBuildingLevel l = b.levels.get(i+1);
 			Json j = jsons[i];
@@ -119,39 +120,39 @@ final class Creator {
 		}
 
 		pushEfficiency(b, json);
-		
+
 		return b;
-		
+
 	}
-	
+
 	public LIST<RDBuilding> generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, ResFolder f){
-		
+
 		ArrayListGrower<RDBuilding> res = new ArrayListGrower<>();
 		if (!f.init.exists("_GEN"))
 			return res;
-		
+
 		Json[] data = new Json(f.init.get("_GEN")).jsons("GENS");
 		for (Json j : data)
 			res.add(generate(all, init, cat, j));
-		
+
 		return res;
-		
+
 	}
-	
+
 	private LIST<RDBuilding> generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, Json data){
-		
+
 		ArrayListGrower<RDBuilding> res = new ArrayListGrower<>();
 
 		LIST<RoomBlueprint> rooms = SETT.ROOMS().collection.readMany("INDUSTRIES", data);
-		
+
 		for (RoomBlueprint b : rooms) {
 			if (b instanceof ROOM_TEMPLE) {
 				ROOM_TEMPLE t = (ROOM_TEMPLE) b;
 				RDBuilding bu = generate(all, init, cat, t, data);
 				res.add(bu);
 			}
-			
-			
+
+
 			if (b instanceof RoomBlueprintImp && b  instanceof INDUSTRY_HASER) {
 				INDUSTRY_HASER h = (INDUSTRY_HASER) b;
 				RoomBlueprintImp blue = (RoomBlueprintImp) b;
@@ -159,28 +160,28 @@ final class Creator {
 				if (h.industries().size() == 0 || h.industries().get(0).outs().size() == 0) {
 					LOG.err(data.errorGet(b.key + "Is not a valid room to generate", "INDUSTRIES"));
 				}
-				
+
 				RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
 				res.add(bu);
 			}
-			
-		}
-		
-		
-		return res;
-		
-	}
-	
 
-	
+		}
+
+
+		return res;
+
+	}
+
+
+
 	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex) {
-		
+
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
-		
+
 		double output = data.d("OUTPUT");
 		double credits = data.i("CREDITS", 0, Integer.MAX_VALUE);
-		
-		
+
+
 		String kkk = blue.key.startsWith("_") ? blue.key.substring(1) : blue.key;
 
 		String desc = ¤¤desc + ": ";
@@ -221,15 +222,16 @@ final class Creator {
 
 			levels.add(l);
 		}
-		
+
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
-		
+
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
-		
+		pushFactionNpcBoosts(b);
+
 		pushEfficiency(b, data);
-		
+
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
 		sp.read(data, BValue.VALUE1);
 		ACTION a = new ACTION() {
@@ -253,33 +255,33 @@ final class Creator {
 						}
 					}
 				}
-				
+
 				for (RDRace c : RD.RACES().all) {
 					for (int si = 0; si < c.race.boosts.all().size(); si++) {
 						BoostSpec s = c.race.boosts.all().get(si);
 						if (s.boostable == blue.bonus()) {
-							
+
 							BoostSpec sp = RACES.boosts().pushIfDoesntExist(c.race, s.booster.to(), b.efficiency, s.booster.isMul);
 							if (sp != null && !sp.boostable.contains(sp.booster))
 								sp.booster.add(sp.boostable);
 						}
 					}
 				}
-				
+
 			}
 		};
 		BOOSTING.connecter(a);
-		
-		
+
+
 		return b;
-		
+
 	}
-	
+
 	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, ROOM_TEMPLE temple, Json data){
-		
+
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(5);
 		double credits = data.i("CREDITS", 0, Integer.MAX_VALUE);
-		
+
 		ROOM_SHRINE shrine = SETT.ROOMS().TEMPLES.SHRINES.get(temple.religion.index());
 		RDReligion reg = RD.RELIGION().get(temple.religion);
 		double[] local = new double[] {
@@ -303,7 +305,7 @@ final class Creator {
 			temple.info.name + " " + ¤¤large,
 			temple.info.name + " " + ¤¤awesome,
 		};
-		
+
 		Icon[] icons = new Icon[] {
 			shrine.icon,
 			shrine.icon,
@@ -311,15 +313,15 @@ final class Creator {
 			temple.icon,
 			temple.icon,
 		};
-		
+
 		for (int i = 0; i < local.length; i++) {
-			
+
 			double d = (double)(i+1) / (levels.max());
-			
+
 			Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + cat.key + "_" + temple.religion.key + "_"+(i+1), name[i], temple.religion.info.desc, icons[i]);
 			RDBuildingLevel l = new RDBuildingLevel(name[i], icons[i], needs);
 			l.cost = (int) (NPCStockpile.AVERAGE_PRICE*credits*Math.pow(d, 2));
-			
+
 			BSourceInfo info = new BSourceInfo(name[i], icons[i]);
 			{
 				BoosterValue bo = new BoosterValue(BValue.VALUE1, info, local[i], false);
@@ -328,19 +330,19 @@ final class Creator {
 					bo = new BoosterValue(BValue.VALUE1, info, global[i], false);
 					l.global.push(bo, reg.boost);
 				}
-				
-			}
-			
-			levels.add(l);
-			
-		}
-		
 
-		
+			}
+
+			levels.add(l);
+
+		}
+
+
+
 		INFO info = new INFO(shrine.info.name, temple.religion.info.desc);
-		
+
 		RDBuilding b = new RDBuilding(all, init, cat, temple.key, info, levels, true, false, temple.key);
-		
+
 		BoostSpecs sp = new BoostSpecs(shrine.info.name, shrine.icon, false);
 		sp.read(data, BValue.VALUE1);
 		ACTION a = new ACTION() {
@@ -353,7 +355,7 @@ final class Creator {
 						b.levels.get(i).local.push(new BoosterValue(BValue.VALUE1, info, am, s.booster.isMul), s.boostable);
 					}
 				}
-				
+
 			}
 		};
 		BOOSTING.connecter(a);
@@ -363,7 +365,28 @@ final class Creator {
 
 
 		return b;
-		
+
+	}
+
+	private void pushFactionNpcBoosts(RDBuilding bu) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+                Bo bo = new Bo(new BSourceInfo("Faction boosts", UI.icons().s.crown), 1, 15, true) {
+                    @Override
+                    double get(Region reg) {
+                        if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
+                            return 1;
+                        }
+
+                        return bu.getBlue().bonus().get(reg.faction());
+                    }
+                };
+                bo.add(bu.efficiency);
+			}
+		};
+
+        BOOSTING.connecter(ca);
 	}
 
 	private void pushEfficiency(RDBuilding bu, Json da) {
@@ -477,54 +500,54 @@ final class Creator {
 		public Bo(BSourceInfo info, double from, double to, boolean isMul) {
 			super(info, from, to, isMul);
 		}
-		
+
 		abstract double get(Region reg);
-		
+
 		@Override
 		public double vGet(FactionNPC f) {
 			return vGet((Faction)f);
 		}
-		
+
 		@Override
 		public double vGet(Player f) {
 			return vGet((Faction)f);
 		}
-		
+
 		@Override
 		public double vGet(Faction f) {
 			double d = 0;
-			
+
 			for (int ri = 0; ri < f.realm().regions(); ri++) {
 				d += vGet(f.realm().region(ri));
 			}
 			return d;
-			
+
 		};
-		
+
 		@Override
 		public double vGet(PopTime t) {
 			return vGet((Faction)FACTIONS.player());
 		}
-		
+
 		@Override
 		public double vGet(Div div) {
 			return vGet((Faction)FACTIONS.player());
 		}
-		
+
 		@Override
 		public double vGet(Induvidual indu) {
 			return  vGet(indu.faction());
 		}
-		
+
 		@Override
 		public double vGet(Region reg) {
 			return get(reg);
 		}
-		
+
 		@Override
 		public double getValue(double input) {
 			return input;
 		}
 	}
-	
+
 }

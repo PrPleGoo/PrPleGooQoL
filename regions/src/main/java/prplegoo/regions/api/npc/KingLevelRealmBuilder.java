@@ -1,29 +1,16 @@
 package prplegoo.regions.api.npc;
 
-import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
-import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
-import snake2d.LOG;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
 public class KingLevelRealmBuilder {
-    private final double[] lastUpdateByFactionIndex;
-
-    public KingLevelRealmBuilder(){
-        lastUpdateByFactionIndex = new double[FACTIONS.MAX];
-    }
-
     public void build(FactionNPC faction) {
-        if (lastUpdateByFactionIndex[faction.index()] == TIME.currentSecond()) {
-            return;
-        }
-
         // do genocide aggression, tolerance, mercy, rng on king name?
             // don't genocide own species, ever
 
@@ -36,10 +23,13 @@ public class KingLevelRealmBuilder {
 //            LOG.ln("DONE original.anyFitnessExceedsDeficit IN KingLevelRealmBuilder;");
             for (Region region : faction.realm().all()) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
-                    building.level.set(region, 0);
+                    if (building.level.get(region) > 0) {
+                        building.level.set(region, building.level.get(region) - 1);
+                    }
                 }
             }
 
+            original = new FactionGenetic(faction);
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
             original.calculateFitness(faction, buyPrices(faction), sellPrices(faction));
 
@@ -63,14 +53,11 @@ public class KingLevelRealmBuilder {
 
             if(!original.shouldKill(faction, mutant)) {
                 original = mutant;
-                lastUpdateByFactionIndex[faction.index()] = TIME.currentSecond();
             }
         }
 
-        if(!original.isMutant()) {
-            original.commit();
-            KingLevels.getInstance().resetDailyProductionRateCache(faction);
-        }
+        original.commit();
+        KingLevels.getInstance().resetDailyProductionRateCache(faction);
     }
 
     private double[] buyPrices(FactionNPC faction) {

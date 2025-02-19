@@ -22,7 +22,12 @@ public class RegionGenetic {
     public boolean mutate() {
         Region region = WORLD.REGIONS().all().get(regionIndex);
 
-        return buildingGenetics[RND.rInt(buildingGenetics.length)].mutate(region);
+        boolean didMutationOccur = false;
+        for(int i = 0; i < buildingGenetics.length; i++) {
+            didMutationOccur = didMutationOccur || buildingGenetics[RND.rInt(buildingGenetics.length)].mutate(region);
+        }
+
+        return didMutationOccur;
     }
 
     public void commit() {

@@ -10,6 +10,7 @@ import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.NPCResource;
 import game.faction.npc.stockpile.UpdaterTree.ResIns;
+import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -69,19 +70,16 @@ public class NPCStockpile extends NPCResource{
 			public void exe() {
 				for (FactionNPC f : FACTIONS.NPCs()) {
 					f.stockpile.saver().clear();
-					f.stockpile.update(f, 0);
 					f.credits().set(KingLevels.isActive() ? 100000 : 0);
 					KingLevels.getInstance().pickMaxLevel(f, true);
 
 					if (KingLevels.isActive()) {
 						f.armies().disbandAll();
-						for (int i = 0; i < 500; i ++) {
-							RD.RACES().init();
+						for (int i = 0; i < 15; i ++) {
 							RD.UPDATER().BUILD(f.capitolRegion());
-							KingLevels.getInstance().resetDailyProductionRateCache(f);
-							f.stockpile.update(f, TIME.secondsPerDay);
 						}
 					}
+					f.stockpile.update(f, 0);
 				}
 
 				GAME.factions().prime();
@@ -166,7 +164,6 @@ public class NPCStockpile extends NPCResource{
 	}
 
 	public double price(int ri, double amount) {
-
 		double mul = f.race().pref().priceMul(RESOURCES.ALL().get(ri));
 		SRes r = resses[ri];
 		double before = r.price();
@@ -301,18 +298,23 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double amTarget() {
-			double amTarget = KingLevels.getInstance().getDesiredStockpile(f, RESOURCES.ALL().get(resourceIndex));
+			double amTarget = KingLevels.getInstance().getDailyConsumptionRate(f, RESOURCES.ALL().get(resourceIndex)) * FACTIONS.MAX;
 			if (amTarget == 0) {
 				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
 				amTarget = BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5;
 			}
 
-			return amTarget;
+			return amTarget * TradeManager.MIN_LOAD;
 		}
 
 		@Override
 		public double tradeAm() {
-			return offset();
+			double productionDeficits = Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex))) * 2;
+			double kingConsumptionRate = KingLevels.getInstance().getDailyConsumptionRate(f, RESOURCES.ALL().get(resourceIndex)) * 2;
+
+			return Math.max(0, offset()
+					- kingConsumptionRate
+					+ productionDeficits);
 		}
 
 		@Override
@@ -337,20 +339,27 @@ public class NPCStockpile extends NPCResource{
 		public double amMul(double amount) {
 			if (amount <= 0)
 				return PRICE_MAX;
-			double tar = amTarget() * (f.realm().regions() + 1);
-			amount *= (f.realm().regions() + 1);
+			double tar = amTarget() * 1.5;
+			amount *= 1.5;
 
 			if (lastGet != GAME.updateI()) {
 				regDists = RD.DIST().tradePartners(f);
 			}
 
+			boolean[] factionsDone = new boolean[FACTIONS.MAX];
 			for (WRegFinder.RegDist region : regDists) {
 				if (!(region.reg.faction() instanceof FactionNPC)) {
 					continue;
 				}
 
-				tar += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).amTarget() / region.reg.faction().realm().regions();
-				amount += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).offset() / region.reg.faction().realm().regions();
+				if (factionsDone[region.reg.faction().index()]) {
+					continue;
+				}
+
+				tar += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).amTarget();
+				amount += ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).offset();
+
+				factionsDone[region.reg.faction().index()] = true;
 			}
 
 			tar /= amount;
@@ -462,7 +471,6 @@ public class NPCStockpile extends NPCResource{
 			playerOffset = 0;
 			rateSpeed = 1;
 		}
-
 	}
 
 	static double WV = 9.99;

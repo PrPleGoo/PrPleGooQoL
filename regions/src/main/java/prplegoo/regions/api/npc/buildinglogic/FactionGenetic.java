@@ -1,15 +1,19 @@
 package prplegoo.regions.api.npc.buildinglogic;
 
 import game.GAME;
+import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
+import settlement.stats.STATS;
+import settlement.stats.colls.StatsReligion;
 import snake2d.LOG;
 import snake2d.util.rnd.RND;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.RDReligions;
 
 public class FactionGenetic {
     private final RegionGenetic[] regionGenetics;
@@ -25,16 +29,17 @@ public class FactionGenetic {
         }
     }
 
-    public void mutate() {
-        int max = GeneticVariables.maxMutations;
-        while (max > 0 && !isMutant) {
-            isMutant = regionGenetics[RND.rInt(regionGenetics.length)].mutate();
-            max --;
+    public boolean mutate() {
+        boolean didMutationOccur = false;
+        for(int i = 0; i < regionGenetics.length; i++) {
+            didMutationOccur = didMutationOccur || regionGenetics[RND.rInt(regionGenetics.length)].mutate();
         }
+
+        return didMutationOccur;
     }
 
     public void calculateFitness(FactionNPC faction, double[] buyPrice, double[] sellPrice) {
-        fitnessRecords = new FitnessRecord[6];
+        fitnessRecords = new FitnessRecord[7];
         // GovPoints;
         fitnessRecords[0] = new FitnessRecord(faction, 0) {
             @Override
@@ -49,10 +54,10 @@ public class FactionGenetic {
         fitnessRecords[1] = new FitnessRecord(faction, 1) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
-                return Math.min(RD.HEALTH().boostablee.get(region) - 1, 1);
+                return Math.min(RD.HEALTH().boostablee.get(region) - 0.5, 0.5);
             }
             @Override
-            public double getRegionDeficitMax(FactionNPC faction) { return -0.5; }
+            public double getRegionDeficitMax(FactionNPC faction) { return 0; }
         };
         // Work force;
         fitnessRecords[2] = new FitnessRecord(faction, 2) {
@@ -86,6 +91,11 @@ public class FactionGenetic {
 
                         totalMoney += productionAmount * sellPrice[resource.index()];
                     } else if (productionAmount > 0) {
+                        if (faction.stockpile.amount(resource.index()) <= 1) {
+                            totalMoney += productionAmount * sellPrice[resource.index()] * 10000;
+                            continue;
+                        }
+
                         totalMoney += productionAmount * buyPrice[resource.index()];
                     }
                 }
@@ -109,6 +119,24 @@ public class FactionGenetic {
                 }
 
                 return amount;
+            }
+        };
+        // Religion;
+        fitnessRecords[6] = new FitnessRecord(faction, 6) {
+            @Override
+            public double determineValue(FactionNPC faction, Region region) {
+                double amount = 0;
+
+                double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual);
+                StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction.king().induvidual);
+
+                for (int i = 0; i < RD.RACES().all.size(); i++) {
+                    for (int j = 0; j < RD.RELIGION().all().size(); j++) {
+                         amount += religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region);
+                    }
+                }
+
+                return amount / tolerance;
             }
         };
         // TODO: add slaves to money

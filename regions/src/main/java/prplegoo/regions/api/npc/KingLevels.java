@@ -22,7 +22,7 @@ public class KingLevels {
     @Getter
     private static KingLevels instance;
     @Getter
-    private static final boolean isActive = false;
+    private static final boolean isActive = true;
 
     private final KingLevel[] kingLevels;
     private final int[] npcLevels;
@@ -71,7 +71,7 @@ public class KingLevels {
         for (RESOURCE resource : RESOURCES.ALL()) {
             double amount = deltaDays * (getDailyProductionRate(faction, resource) - getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource));
 
-            npcStockpile.inc(resource, -amount);
+            npcStockpile.inc(resource, amount);
 
             for (ADSupply supply : AD.supplies().get(resource)) {
                 if (npcStockpile.amount(resource) <= 0) {
@@ -90,7 +90,7 @@ public class KingLevels {
                 }
             }
 
-            npcStockpile.inc(resource, npcStockpile.amount(resource.index()) * -resource.degradeSpeed() / 16);
+            npcStockpile.inc(resource, npcStockpile.amount(resource.index()) * -resource.degradeSpeed() / 16 / 2 / BOOSTABLES.CIVICS().SPOILAGE.get(faction));
         }
     }
 
@@ -150,13 +150,7 @@ public class KingLevels {
     }
 
     private double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        return (getDailyConsumptionRate(faction, kingLevel, resource)
-                + -1 * Math.min(0, getDailyProductionRate(faction, resource)))
-                * FACTIONS.MAX;
-    }
-
-    public double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
-        return getDesiredStockpileAtLevel(faction, getDesiredKingLevel(faction), resource);
+        return getDailyConsumptionRate(faction, kingLevel, resource) * FACTIONS.MAX;
     }
 
     public int getLevel(FactionNPC faction) {

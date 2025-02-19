@@ -42,8 +42,7 @@ public class KingLevelRealmBuilder {
         for(int i = 0; i < totalMutations; i ++) {
             FactionGenetic mutant = new FactionGenetic(faction);
 
-            mutant.mutate();
-            if (!mutant.isMutant()) {
+            if (!mutant.mutate()) {
                 continue;
             }
 

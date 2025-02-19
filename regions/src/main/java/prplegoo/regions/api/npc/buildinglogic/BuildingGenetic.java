@@ -78,8 +78,6 @@ public class BuildingGenetic {
                 && (random > 0.3 || (region.capitol() && isGrowthBuilding))) {
             // upgrade the building
             if (RD.BUILDINGS().all.get(buildingIndex).canAfford(region, level, level + 1) == null) {
-                levelInt.set(region, levelInt.get(region) + 1);
-
                 if(level == 0 && recipe != -1) {
                     INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
 
@@ -88,6 +86,7 @@ public class BuildingGenetic {
                     recipe = pick;
                 }
 
+                levelInt.set(region, levelInt.get(region) + 1);
                 level = levelInt.get(region);
                 return true;
             }

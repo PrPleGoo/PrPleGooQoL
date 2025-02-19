@@ -1,9 +1,9 @@
 LEVELS: [
     {
         GOV_POINTS: 40,
-        GOV_POINTS_PER_REGION: 0,
+        GOV_POINTS_PER_REGION: 5,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.5,
-        INCOME: 15000,
+        INCOME: 50000,
 
         CONSUMPTION: {
         },
@@ -13,14 +13,14 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 40,
-        GOV_POINTS_PER_REGION: 5,
+        GOV_POINTS: 45,
+        GOV_POINTS_PER_REGION: 10,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.75,
-        INCOME: 30000,
+        INCOME: 60000,
 
         CONSUMPTION: {
-            _STONE: 10,
-            _WOOD: 10,
+            _STONE: 3,
+            _WOOD: 3,
         },
         CONSUMPTION_CAPITAL_POP: {
         },
@@ -29,15 +29,15 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 45,
-        GOV_POINTS_PER_REGION: 10,
+        GOV_POINTS: 50,
+        GOV_POINTS_PER_REGION: 15,
         CAPITAL_POPULATION_CAPACITY_MUL: 2,
-        INCOME: 45000,
+        INCOME: 70000,
 
         CONSUMPTION: {
-            STONE: 10,
-            WOOD: 10,
-            JEWELRY: 1,
+            _STONE: 3,
+            _WOOD: 3,
+            JEWELRY: 0.1,
         },
         CONSUMPTION_CAPITAL_POP: {
             EDIBLE: 0.005,
@@ -48,15 +48,15 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 45,
-        GOV_POINTS_PER_REGION: 10,
-        CAPITAL_POPULATION_CAPACITY_MUL: 2,
-        INCOME: 45000,
+        GOV_POINTS: 55,
+        GOV_POINTS_PER_REGION: 20,
+        CAPITAL_POPULATION_CAPACITY_MUL: 2.25,
+        INCOME: 80000,
 
         CONSUMPTION: {
-            STONE: 10,
-            WOOD: 10,
-            JEWELRY: 1,
+            _STONE: 3,
+            _WOOD: 3,
+            JEWELRY: 0.1,
         },
         CONSUMPTION_CAPITAL_POP: {
             EDIBLE: 0.005,

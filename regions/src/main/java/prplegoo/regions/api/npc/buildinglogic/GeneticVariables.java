@@ -7,7 +7,7 @@ import world.region.RD;
 
 public class GeneticVariables {
     public static final int buildingMutationChance = 4;
-    public static final int recipeMutationChance = 3 * buildingMutationChance;
+    public static final int recipeMutationChance = 3;
     public static final int mutationAttemptsPerTick = 4;
     public static final int extraMutationsAfterReset = 3;
     public static final int regionMutationsPerMutation = 3;

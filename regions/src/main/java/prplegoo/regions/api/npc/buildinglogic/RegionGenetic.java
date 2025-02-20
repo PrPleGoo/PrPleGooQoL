@@ -8,8 +8,8 @@ import world.map.regions.Region;
 import world.region.RD;
 
 public class RegionGenetic {
-    private final int regionIndex;
-    private final BuildingGenetic[] buildingGenetics;
+    public final int regionIndex;
+    public final BuildingGenetic[] buildingGenetics;
 
     public RegionGenetic(int regionIndex) {
         this.regionIndex = regionIndex;
@@ -17,17 +17,6 @@ public class RegionGenetic {
         for (int i = 0; i < buildingGenetics.length; i++) {
             buildingGenetics[i] = new BuildingGenetic(regionIndex, i);
         }
-    }
-
-    public boolean mutate() {
-        Region region = WORLD.REGIONS().all().get(regionIndex);
-
-        boolean didMutationOccur = false;
-        for(int i = 0; i < buildingGenetics.length; i++) {
-            didMutationOccur = didMutationOccur || buildingGenetics[RND.rInt(buildingGenetics.length)].mutate(region);
-        }
-
-        return didMutationOccur;
     }
 
     public void commit() {

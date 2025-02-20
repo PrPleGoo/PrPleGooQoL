@@ -9,6 +9,7 @@ import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
+import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import snake2d.util.file.Json;
 import world.army.AD;
 import world.army.ADSupply;
@@ -25,7 +26,7 @@ public class KingLevels {
     private static final boolean isActive = true;
 
     private final KingLevel[] kingLevels;
-    private final int[] npcLevels;
+    private int[] npcLevels;
     @Getter
     private final KingLevelRealmBuilder builder;
 
@@ -105,7 +106,6 @@ public class KingLevels {
             amount += kingLevel.getConsumptionPreferredCapitalPop()[i][resource.index()] * RD.RACES().all.get(i).pop.get(faction.realm().capitol());
         }
 
-        // TODO: ConsumptionPreferredDrink
 
         return amount;
     }
@@ -115,7 +115,7 @@ public class KingLevels {
         return getDailyConsumptionRate(faction, getKingLevel(faction), resource);
     }
 
-    private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+    public double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource);
 
         for (ADSupply supply : AD.supplies().get(resource)) {
@@ -157,6 +157,10 @@ public class KingLevels {
         return npcLevels[faction.index()];
     }
 
+    public void resetLevels() {
+        npcLevels = new int[FACTIONS.MAX];
+    }
+
     public void pickMaxLevel(FactionNPC faction) {
         pickMaxLevel(faction, false);
     }
@@ -175,19 +179,19 @@ public class KingLevels {
         double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
 
         for (int i = kingLevels.length - 1; i > 0; i--) {
-            boolean skipped = false;
+            boolean isMissingResource = false;
             for (RESOURCE resource : RESOURCES.ALL()) {
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
                 if (amountConsumedBeforeNextCycle > 0
                         // Prideful kings will be riskier with their ambition.
                         && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
-                    skipped = true;
+                    isMissingResource = true;
                     break;
                 }
             }
 
-            if (!skipped) {
+            if (!isMissingResource) {
                 this.npcLevels[faction.index()] = i;
                 return;
             }

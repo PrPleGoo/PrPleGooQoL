@@ -12,13 +12,13 @@ import world.region.RD;
 import world.region.building.RDBuilding;
 
 public class BuildingGenetic {
-    private final int buildingIndex;
-    private int level;
-    private int recipe;
+    public final int buildingIndex;
+    public int level;
+    public int recipe;
 
     public BuildingGenetic(int regionIndex, int buildingIndex) {
         this.buildingIndex = buildingIndex;
-        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+        if (GeneticVariables.mutationNotAllowed(buildingIndex)) {
             return;
         }
 
@@ -28,85 +28,15 @@ public class BuildingGenetic {
         this.level = building.level.get(region);
 
         RoomBlueprintImp blue = building.getBlue();
-        if(blue instanceof INDUSTRY_HASER){
+        if (blue instanceof INDUSTRY_HASER) {
             this.recipe = RD.RECIPES().getRecipeIndex(region, blue);
         } else {
             recipe = -1;
         }
     }
 
-    public boolean mutate(Region region) {
-        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild
-            || GeneticVariables.isQuarantineBuilding(buildingIndex)) {
-            return false;
-        }
-
-        if (!RND.oneIn(GeneticVariables.buildingMutationChance)) {
-            if (level > 0 && recipe != -1
-                    && RND.oneIn(GeneticVariables.recipeMutationChance)) {
-                INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
-
-                int pick = RND.rInt(industry.industries().size());
-                RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
-                recipe = pick;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        double currentWorkforce = RD.SLAVERY().getWorkforce().bo.get(region);
-        INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingIndex).level;
-
-        boolean isGrowthBuilding = GeneticVariables.isGrowthBuilding(buildingIndex);
-
-        if (!isGrowthBuilding && currentWorkforce < 0 && level > 0) {
-            levelInt.set(region, levelInt.get(region) - 1);
-            double newWorkforce = RD.SLAVERY().getWorkforce().bo.get(region);
-            if (newWorkforce > currentWorkforce) {
-                level--;
-            }
-
-            levelInt.set(region, level);
-            return true;
-        }
-
-        double random = GeneticVariables.random();
-
-        if (level < RD.BUILDINGS().all.get(buildingIndex).levels().size() - 1
-                && (random > 0.3 || (region.capitol() && isGrowthBuilding))) {
-            // upgrade the building
-            if (RD.BUILDINGS().all.get(buildingIndex).canAfford(region, level, level + 1) == null) {
-                if(level == 0 && recipe != -1) {
-                    INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(this.buildingIndex).getBlue();
-
-                    int pick = RND.rInt(industry.industries().size());
-                    RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
-                    recipe = pick;
-                }
-
-                levelInt.set(region, levelInt.get(region) + 1);
-                level = levelInt.get(region);
-                return true;
-            }
-        }
-
-        if (!isGrowthBuilding
-                && level > 0
-                && random < -0.7) {
-            // downgrade the building
-            levelInt.set(region, levelInt.get(region) - 1);
-            level = levelInt.get(region);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public void commit(Region region){
-        if (!RD.BUILDINGS().all.get(buildingIndex).AIBuild) {
+    public void commit(Region region) {
+        if (GeneticVariables.mutationNotAllowed(buildingIndex)) {
             return;
         }
 

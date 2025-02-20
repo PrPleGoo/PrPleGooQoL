@@ -1,9 +1,9 @@
 LEVELS: [
     {
-        GOV_POINTS: 40,
+        GOV_POINTS: 25,
         GOV_POINTS_PER_REGION: 5,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.5,
-        INCOME: 50000,
+        INCOME: 15000,
 
         CONSUMPTION: {
         },
@@ -15,14 +15,14 @@ LEVELS: [
     {
         GOV_POINTS: 45,
         GOV_POINTS_PER_REGION: 10,
-        CAPITAL_POPULATION_CAPACITY_MUL: 1.75,
-        INCOME: 60000,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.55,
+        INCOME: 20000,
 
         CONSUMPTION: {
-            _STONE: 3,
-            _WOOD: 3,
         },
         CONSUMPTION_CAPITAL_POP: {
+            _STONE: 0.01,
+            _WOOD: 0.02,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.005,
@@ -31,40 +31,42 @@ LEVELS: [
     {
         GOV_POINTS: 50,
         GOV_POINTS_PER_REGION: 15,
-        CAPITAL_POPULATION_CAPACITY_MUL: 2,
-        INCOME: 70000,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.55,
+        INCOME: 25000,
 
         CONSUMPTION: {
-            _STONE: 3,
-            _WOOD: 3,
             JEWELRY: 0.1,
         },
         CONSUMPTION_CAPITAL_POP: {
+            _STONE: 0.01,
+            _WOOD: 0.02,
             EDIBLE: 0.005,
             CLOTHES: 0.005,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.005,
+            FURNITURE: 0.05,
         },
     },
     {
         GOV_POINTS: 55,
         GOV_POINTS_PER_REGION: 20,
-        CAPITAL_POPULATION_CAPACITY_MUL: 2.25,
-        INCOME: 80000,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.55,
+        INCOME: 30000,
 
         CONSUMPTION: {
-            _STONE: 3,
-            _WOOD: 3,
-            JEWELRY: 0.1,
+            JEWELRY: 0.2,
         },
         CONSUMPTION_CAPITAL_POP: {
+            _STONE: 0.01,
+            _WOOD: 0.02,
             EDIBLE: 0.005,
             CLOTHES: 0.005,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.005,
-            FURNITURE: 0.025,
+            EDIBLE: 0.010,
+            FURNITURE: 0.05,
+            DRINK: 0.005,
         },
     },
 ],

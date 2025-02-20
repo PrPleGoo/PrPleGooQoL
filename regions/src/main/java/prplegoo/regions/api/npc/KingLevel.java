@@ -2,12 +2,13 @@ package prplegoo.regions.api.npc;
 
 import init.race.RACES;
 import init.race.Race;
-import init.resources.RESOURCE;
-import init.resources.RESOURCES;
-import init.resources.ResG;
-import init.resources.ResGEat;
+import init.resources.*;
+import init.type.HCLASS;
+import init.type.HCLASSES;
 import lombok.Getter;
+import settlement.stats.STATS;
 import snake2d.util.file.Json;
+import snake2d.util.sets.LIST;
 import world.region.RD;
 import world.region.pop.RDRace;
 
@@ -26,9 +27,6 @@ public class KingLevel {
     private final double[] consumptionCapitalPop;
     @Getter
     private final double[][] consumptionPreferredCapitalPop;
-    // TODO: ConsumptionPreferredFood
-    // TODO: ConsumptionFurniture
-    // TODO: ConsumptionPreferredDrink
 
     public KingLevel(Json kingLevelJson) {
         govPoints = kingLevelJson.d("GOV_POINTS");
@@ -74,10 +72,18 @@ public class KingLevel {
                     }
                     continue;
                 }
+                if (key.equals("DRINK")) {
+                    for (ResGDrink drink : race.race.pref().drink) {
+                        result[race.index()][drink.resource.index()] = consumptionValue;
+                    }
+                    continue;
+                }
                 if (key.equals("FURNITURE")) {
-//                    for(ResG edible : race.race) {
-//                        result[race.index()][edible.resource.index()] = consumptionValue;
-//                    }
+                    HCLASS clas = HCLASSES.CITIZEN();
+                    LIST<RES_AMOUNT> rr = race.race.home().clas(clas).resources();
+                    for (int ri = 0; ri < rr.size(); ri++) {
+                        result[race.index()][rr.get(ri).resource().index()] = rr.get(ri).amount() * consumptionValue;
+                    }
                     continue;
                 }
             }

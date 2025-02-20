@@ -356,31 +356,9 @@ public class NPCStockpile extends NPCResource{
 		public double amMul(double amount) {
 			if (amount <= 0)
 				return PRICE_MAX;
-			double myTarget = amTarget();
-			double totalTarget = myTarget;
-			double totalAmount = amount;
+			double totalTarget = amTarget();
 
-			if (lastGet != GAME.updateI()) {
-				regDists = RD.DIST().tradePartners(f);
-			}
-
-			boolean[] factionsDone = new boolean[FACTIONS.MAX];
-			for (WRegFinder.RegDist region : regDists) {
-				if (!(region.reg.faction() instanceof FactionNPC)) {
-					continue;
-				}
-
-				if (factionsDone[region.reg.faction().index()]) {
-					continue;
-				}
-
-				totalTarget += Math.min(amount, ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).amTarget());
-				totalAmount += Math.min(myTarget, ((FactionNPC) region.reg.faction()).stockpile.res(resourceIndex).tradeAm());
-
-				factionsDone[region.reg.faction().index()] = true;
-			}
-
-			totalTarget /= totalAmount;
+			totalTarget /= amount;
 			totalTarget = CLAMP.d(totalTarget, PRICE_MIN, PRICE_MAX);
 			return totalTarget;
 		}

@@ -74,7 +74,7 @@ public class FactionGenetic {
 
             @Override
             public double getFactionDeficitMax(FactionNPC faction) {
-                return (KingLevels.getInstance().getLevel(faction) + 1) * faction.realm().regions() * -50000;
+                return -1; //(KingLevels.getInstance().getLevel(faction) + 1) * faction.realm().regions() * -25000;
             }
         };
         // Loyalty;

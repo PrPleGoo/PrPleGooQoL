@@ -248,14 +248,19 @@ public final class NOBLES extends GameResource{
 				@Override
 				public void exe() {
 					int rank = e.rank();
-					int officeIndex = e.office().index;
+					int officeIndex = -1;
+					if (e.office() != null) {
+					    officeIndex = e.office().index;
+					}
 
 					no.exe();
 
 					finalPick.nobleSet();
 					Noble newNoble = finalPick.noble();
 
-					newNoble.setOffice(OFFICES.get(officeIndex));
+                    if (officeIndex != -1) {
+                        newNoble.setOffice(OFFICES.get(officeIndex));
+                    }
 					for (int i = 0; i < rank; i++) {
 						newNoble.rankInc();
 					}

@@ -163,7 +163,7 @@ public class RDRaces {
 	}
 
 	public void init() {
-		double m = capacity.max(Region.class)*1.5 / (KingLevels.isActive() ? 1 : 10);
+		double m = capacity.max(Region.class)*1.5 / 10;
 		setMax((int) m);
 	}
 

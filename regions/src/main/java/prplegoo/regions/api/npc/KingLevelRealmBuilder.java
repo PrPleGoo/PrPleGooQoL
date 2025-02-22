@@ -120,6 +120,11 @@ public class KingLevelRealmBuilder {
                 break;
             }
         }
+
+        if (RND.oneIn(2) && faction.stockpile.getCredits().getD() + faction.stockpile.valueOfStockpile() < 0) {
+            return new ReduceDeficitMutationStrategy();
+        }
+
         if (zeroCounts > 0 && RND.oneIn(2)) {
             return new IndustrializeMutationStrategy();
         }

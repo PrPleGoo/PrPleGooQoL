@@ -21,7 +21,7 @@ public class LoyaltyMutationStrategy extends LoopingMutationStrategy {
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
 
         if (GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)
-            && RND.oneIn(GeneticVariables.buildingMutationChance * 2)) {
+            && RND.oneIn(GeneticVariables.buildingMutationChance)) {
             return tryLevelUpgrade(levelInt, buildingGenetic, region);
         }
 

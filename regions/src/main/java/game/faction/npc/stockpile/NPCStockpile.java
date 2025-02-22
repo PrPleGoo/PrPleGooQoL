@@ -323,7 +323,7 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double amTarget() {
-			double amTarget = KingLevels.getInstance().getDailyConsumptionRate(f, KingLevels.getInstance().getDesiredKingLevel(f), RESOURCES.ALL().get(resourceIndex))  * FACTIONS.MAX
+			double amTarget = KingLevels.getInstance().getDesiredStockpileAtLevel(f, KingLevels.getInstance().getDesiredKingLevel(f), RESOURCES.ALL().get(resourceIndex))
 					- Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex))) * 2;
 			if (amTarget == 0) {
 				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;

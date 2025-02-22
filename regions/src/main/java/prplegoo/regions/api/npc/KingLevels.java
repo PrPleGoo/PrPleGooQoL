@@ -1,9 +1,11 @@
 package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
+import game.events.EVENTS;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
+import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
@@ -45,7 +47,7 @@ public class KingLevels {
         kingLevels = new KingLevel[kingLevelJsons.length];
 
         for (int i = 0; i < kingLevelJsons.length; i++) {
-            kingLevels[i] = new KingLevel(kingLevelJsons[i]);
+            kingLevels[i] = new KingLevel(kingLevelJsons[i], i);
         }
 
         npcLevels = new int[FACTIONS.MAX];
@@ -80,11 +82,6 @@ public class KingLevels {
                 }
 
                 for (WArmy army : faction.armies().all()) {
-                    if (!army.acceptsSupplies()
-                        || npcStockpile.amount(resource) <= 0) {
-                        continue;
-                    }
-
                     int armySupplyAmount = Math.min(supply.needed(army), npcStockpile.amount(resource));
                     npcStockpile.inc(resource, -armySupplyAmount);
                     supply.current().inc(army, armySupplyAmount);
@@ -93,6 +90,8 @@ public class KingLevels {
 
             npcStockpile.inc(resource, npcStockpile.amount(resource.index()) * -resource.degradeSpeed() / 16 / 2 / BOOSTABLES.CIVICS().SPOILAGE.get(faction));
         }
+
+
     }
 
     // For getting amounts that KingLevels actually needs to handle consuming;
@@ -115,7 +114,7 @@ public class KingLevels {
         return getDailyConsumptionRate(faction, getKingLevel(faction), resource);
     }
 
-    public double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+    private double getDailyConsumptionRate(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource);
 
         for (ADSupply supply : AD.supplies().get(resource)) {
@@ -149,8 +148,21 @@ public class KingLevels {
         return amount;
     }
 
-    private double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        return getDailyConsumptionRate(faction, kingLevel, resource) * FACTIONS.MAX;
+
+    public double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
+        return getDesiredStockpileAtLevel(faction, getKingLevel(faction), resource);
+    }
+
+    public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * FACTIONS.MAX;
+
+        for (ADSupply supply : AD.supplies().get(resource)) {
+            for (WArmy army : faction.armies().all()) {
+                amount += (supply.max(army) + (supply.usedPerDay * supply.max(army))) * Math.pow(kingLevel.getIndex() + 1, 1.15);
+            }
+        }
+
+        return amount;
     }
 
     public int getLevel(FactionNPC faction) {

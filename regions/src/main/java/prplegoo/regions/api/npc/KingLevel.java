@@ -1,12 +1,9 @@
 package prplegoo.regions.api.npc;
 
-import init.race.RACES;
-import init.race.Race;
 import init.resources.*;
 import init.type.HCLASS;
 import init.type.HCLASSES;
 import lombok.Getter;
-import settlement.stats.STATS;
 import snake2d.util.file.Json;
 import snake2d.util.sets.LIST;
 import world.region.RD;
@@ -20,6 +17,8 @@ public class KingLevel {
     @Getter
     private final double capitalPopulationCapacityMul;
     @Getter
+    private final double conscriptMul;
+    @Getter
     private final double income;
     @Getter
     private final double[] consumption;
@@ -28,15 +27,20 @@ public class KingLevel {
     @Getter
     private final double[][] consumptionPreferredCapitalPop;
 
-    public KingLevel(Json kingLevelJson) {
+    @Getter
+    private final int index;
+
+    public KingLevel(Json kingLevelJson, int index) {
         govPoints = kingLevelJson.d("GOV_POINTS");
         govPointsPerRegion = kingLevelJson.d("GOV_POINTS_PER_REGION");
         capitalPopulationCapacityMul = kingLevelJson.d("CAPITAL_POPULATION_CAPACITY_MUL");
+        conscriptMul = kingLevelJson.d("CAPITAL_POPULATION_CAPACITY_MUL");
         income = kingLevelJson.d("INCOME");
 
         consumption = MapConsumption(kingLevelJson.json("CONSUMPTION"));
         consumptionCapitalPop = MapConsumption(kingLevelJson.json("CONSUMPTION_CAPITAL_POP"));
         consumptionPreferredCapitalPop = MapPreferredConsumption(kingLevelJson.json("CONSUMPTION_PREFERRED_CAPITAL_POP"));
+        this.index = index;
     }
 
     private double[] MapConsumption(Json consumptionJson) {

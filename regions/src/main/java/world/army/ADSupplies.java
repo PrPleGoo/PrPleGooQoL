@@ -4,6 +4,7 @@ import game.boosting.BSourceInfo;
 import game.boosting.BoosterAbs;
 import game.faction.FACTIONS;
 import game.faction.Faction;
+import game.faction.npc.FactionNPC;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -179,7 +180,6 @@ public final class ADSupplies {
 						s.current().inc(a, (int)am);
 					}
 				}
-
 			}
 		});
 

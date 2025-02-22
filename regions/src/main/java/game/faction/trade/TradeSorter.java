@@ -3,6 +3,7 @@ package game.faction.trade;
 import game.GAME;
 import game.faction.FACTIONS;
 import game.faction.Faction;
+import game.faction.npc.FactionNPC;
 import game.faction.trade.TradeShipper.Partner;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -195,6 +196,9 @@ final class TradeSorter {
 		}
 
 		while(tree.hasMore()) {
+			if (KingLevels.isActive() && buyer instanceof FactionNPC && ((FactionNPC) buyer).stockpile.getCredits().getD() < 100000.0) {
+				break;
+			}
 
 			ResTree t = tree.pollGreatest();
 

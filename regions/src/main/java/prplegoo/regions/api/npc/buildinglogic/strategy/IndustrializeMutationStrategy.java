@@ -2,6 +2,7 @@ package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
+import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
@@ -45,12 +46,12 @@ public class IndustrializeMutationStrategy extends MutationStrategy {
         FactionNPC faction = (FactionNPC) region.faction();
 
         for (int i = 0; i < industries.size(); i++) {
-
             LIST<Industry.IndustryResource> inputs = industries.get(i).ins();
+
             boolean usesDefecit = false;
             for(int j = 0; j < inputs.size(); j++) {
                 RESOURCE resource = inputs.get(j).resource;
-                if (faction.stockpile.amount(resource) <= faction.stockpile.amTarget(resource)){
+                if (faction.stockpile.amount(resource) <= faction.stockpile.amTarget(resource) - Math.min(0, KingLevels.getInstance().getDailyProductionRate(faction, resource))){
                     if (tryLevelDowngrade(building.level, buildingGenetic, region)) {
                         return true;
                     }
@@ -59,20 +60,18 @@ public class IndustrializeMutationStrategy extends MutationStrategy {
                     break;
                 }
             }
-            if(usesDefecit) {
+            if (usesDefecit) {
                 continue;
             }
 
-            int pick = RND.rInt(industries.size());
-
             for (int j = 0; j < industries.get(i).outs().size(); j++) {
 
-                RESOURCE resource = industries.get(pick).outs().get(j).resource;
+                RESOURCE resource = industries.get(i).outs().get(j).resource;
                 if (faction.stockpile.amount(resource) <= faction.stockpile.amTarget(resource)
                         && tryLevelUpgrade(building.level, buildingGenetic, region)) {
 
-                    RD.RECIPES().setRecipe(region, building.getBlue(), pick);
-                    buildingGenetic.recipe = pick;
+                    RD.RECIPES().setRecipe(region, building.getBlue(), i);
+                    buildingGenetic.recipe = i;
 
                     return true;
                 }

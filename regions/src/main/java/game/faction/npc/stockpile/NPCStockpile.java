@@ -14,6 +14,7 @@ import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import settlement.entity.ENTETIES;
@@ -58,6 +59,7 @@ public class NPCStockpile extends NPCResource{
 
 	private final SRes[] resses = new SRes[RESOURCES.ALL().size()];
 	final FactionNPC f;
+	@Getter
 	private final DOUBLE credits;
 	private double workforce = 1;
 
@@ -95,6 +97,13 @@ public class NPCStockpile extends NPCResource{
 				}
 
 				GAME.factions().prime();
+                if(KingLevels.isActive()) {
+                    for (FactionNPC f : FACTIONS.NPCs()) {
+                        f.stockpile.saver().clear();
+						f.credits().set(100000);
+                        f.stockpile.update(f, TIME.secondsPerDay * 2);
+                    }
+                }
 			}
 		};
 
@@ -314,8 +323,8 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double amTarget() {
-			double amTarget = (KingLevels.getInstance().getDailyConsumptionRate(f, KingLevels.getInstance().getDesiredKingLevel(f), RESOURCES.ALL().get(resourceIndex))
-					- Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex)))) * FACTIONS.MAX;
+			double amTarget = KingLevels.getInstance().getDailyConsumptionRate(f, KingLevels.getInstance().getDesiredKingLevel(f), RESOURCES.ALL().get(resourceIndex))  * FACTIONS.MAX
+					- Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex))) * 2;
 			if (amTarget == 0) {
 				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
 				amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5);

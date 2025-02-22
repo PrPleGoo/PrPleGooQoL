@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.68.28.0</version>
+    <version>0.68.28.1</version>
 
     <profiles>
         <profile>

@@ -41,6 +41,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
             _STONE: 0.015,
             _WOOD: 0.03,
+            PAPER: 0.01,
             STONE_CUT: 0.01,
             FURNITURE: 0.01,
             EDIBLE: 0.010,
@@ -58,11 +59,12 @@ LEVELS: [
         INCOME: 30000,
 
         CONSUMPTION: {
-            JEWELRY: 0.2,
+            JEWELRY: 1,
         },
         CONSUMPTION_CAPITAL_POP: {
             _STONE: 0.015,
             _WOOD: 0.03,
+            PAPER: 0.02,
             STONE_CUT: 0.01,
             FURNITURE: 0.01,
             METAL: 0.003,

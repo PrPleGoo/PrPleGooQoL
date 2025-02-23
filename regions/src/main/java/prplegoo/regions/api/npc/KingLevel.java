@@ -1,13 +1,20 @@
 package prplegoo.regions.api.npc;
 
 import init.resources.*;
+import init.type.BUILDING_PREF;
+import init.type.BUILDING_PREFS;
 import init.type.HCLASS;
 import init.type.HCLASSES;
 import lombok.Getter;
+import settlement.main.SETT;
+import settlement.room.infra.monument.ROOM_MONUMENT;
+import settlement.tilemap.terrain.TBuilding;
 import snake2d.util.file.Json;
 import snake2d.util.sets.LIST;
 import world.region.RD;
 import world.region.pop.RDRace;
+
+import static settlement.main.SETT.TERRAIN;
 
 public class KingLevel {
     @Getter
@@ -16,8 +23,6 @@ public class KingLevel {
     private final double govPointsPerRegion;
     @Getter
     private final double capitalPopulationCapacityMul;
-    @Getter
-    private final double conscriptMul;
     @Getter
     private final double income;
     @Getter
@@ -34,7 +39,6 @@ public class KingLevel {
         govPoints = kingLevelJson.d("GOV_POINTS");
         govPointsPerRegion = kingLevelJson.d("GOV_POINTS_PER_REGION");
         capitalPopulationCapacityMul = kingLevelJson.d("CAPITAL_POPULATION_CAPACITY_MUL");
-        conscriptMul = kingLevelJson.d("CAPITAL_POPULATION_CAPACITY_MUL");
         income = kingLevelJson.d("INCOME");
 
         consumption = MapConsumption(kingLevelJson.json("CONSUMPTION"));
@@ -87,6 +91,16 @@ public class KingLevel {
                     LIST<RES_AMOUNT> rr = race.race.home().clas(clas).resources();
                     for (int ri = 0; ri < rr.size(); ri++) {
                         result[race.index()][rr.get(ri).resource().index()] = rr.get(ri).amount() * consumptionValue;
+                    }
+                    continue;
+                }
+                if (key.equals("STRUCTURE")) {
+                    for (TBuilding building : TERRAIN().BUILDINGS.all()) {
+                        if (building.resource == null || building.resAmount == 0) {
+                            continue;
+                        }
+
+                        result[race.index()][building.resource.index()] = race.race.pref().structure(BUILDING_PREFS.get(building)) * consumptionValue;
                     }
                     continue;
                 }

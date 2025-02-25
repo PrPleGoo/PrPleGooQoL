@@ -16,6 +16,7 @@ import init.race.Race;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import util.data.INT;
 import util.data.INT.INTE;
@@ -43,7 +44,7 @@ public final class DealParty {
 		public int max() {
 			Faction fa = f;
 			int cr = 0;
-			if (fa instanceof FactionNPC) {
+			if (fa instanceof FactionNPC && !KingLevels.isActive()) {
 				cr = (int) ((FactionNPC) fa).stockpile.credit();
 			}else
 				cr = (int) f.credits().credits();

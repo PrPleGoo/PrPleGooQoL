@@ -207,8 +207,9 @@ public final class NOBLES extends GameResource{
 		for (ENTITY ent : SETT.ENTITIES().getAllEnts()) {
 			if (ent instanceof Humanoid) {
 				Humanoid a = (Humanoid) ent;
-				if (!(a.indu().hType() == HTYPES.SUBJECT())
-					|| a.isRemoved()) {
+				if (a.indu().hType() != HTYPES.SUBJECT()
+					|| a.isRemoved()
+					|| SETT.ENTITIES().getByID(a.id()) != a) {
 					continue;
 				}
 
@@ -254,6 +255,11 @@ public final class NOBLES extends GameResource{
 					}
 
 					no.exe();
+
+					if (finalPick.isRemoved()
+							|| SETT.ENTITIES().getByID(finalPick.id()) != finalPick) {
+						return;
+					}
 
 					finalPick.nobleSet();
 					Noble newNoble = finalPick.noble();

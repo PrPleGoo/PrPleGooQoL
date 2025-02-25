@@ -58,3 +58,4 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         return true;
     }
 }
+

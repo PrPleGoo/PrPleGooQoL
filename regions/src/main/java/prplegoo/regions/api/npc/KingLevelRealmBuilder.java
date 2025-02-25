@@ -1,6 +1,8 @@
 package prplegoo.regions.api.npc;
 
+import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
+import init.race.Race;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
@@ -11,9 +13,40 @@ import snake2d.util.rnd.RND;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
+import world.region.pop.RDRace;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
+        double[] genocide = new double[RD.RACES().all.size()];
+        double proclivity = BOOSTABLES.NOBLE().AGRESSION.get(faction.king().induvidual)
+                / BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual)
+                / BOOSTABLES.NOBLE().MERCY.get(faction.king().induvidual);
+
+        for (RDRace race : RD.RACES().all) {
+            if (race.race.index == faction.king().induvidual.race().index) {
+                genocide[race.index()] = 0;
+                continue;
+            }
+
+            genocide[race.index()] = (1 - faction.king().induvidual.race().pref().race(race.race)) * proclivity;
+        }
+        // 2 = genocide
+        // 1.5 = exile
+        // 1 = persecute
+        for (Region region : faction.realm().all()) {
+            for (RDRace race : RD.RACES().all) {
+                if (genocide[race.index()] > 1.5) {
+                    RD.RACES().edicts.massacre.toggled(race).set(region, 1);
+                    RD.RACES().edicts.exile.toggled(race).set(region, 0);
+                    RD.RACES().edicts.sanction.toggled(race).set(region, 0);
+                } else {
+                    RD.RACES().edicts.massacre.toggled(race).set(region, 0);
+                    RD.RACES().edicts.exile.toggled(race).set(region, 0);
+                    RD.RACES().edicts.sanction.toggled(race).set(region, 0);
+                }
+            }
+        }
+
         // do genocide aggression, tolerance, mercy, rng on king name?
         // don't genocide own species, ever
 

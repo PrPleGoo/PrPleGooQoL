@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.28.1</version>
+    <version>0.68.28.2</version>
 
     <profiles>
         <profile>
@@ -140,6 +140,7 @@ Features:
 - More negative health to account for lower population levels.
 - Max level of region building based on deposits/prospect instead of scaling output.
 - Supply armies directly from your regions.
+- (Experimental and optional) AI empires use production to do work on their stockpiles.
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
@@ -147,7 +148,6 @@ Known issues:
 
 Planned features (in order, subject to change):
 - Take science boosts and use the school to apply them.
-- AI empires use production to do work on their stockpiles.
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Instruct vassals to produce specific goods.
 

@@ -14,6 +14,10 @@ public class Loyalty extends FitnessRecord {
         double amount = 0;
 
         for (int i = 0; i < RD.RACES().all.size(); i++) {
+            if (RD.RACES().edicts.massacre.toggled(RD.RACES().all.get(i)).get(region) == 1) {
+                continue;
+            }
+
             amount += Math.min(RD.RACES().all.get(i).loyalty.target.get(region), 1);
         }
 

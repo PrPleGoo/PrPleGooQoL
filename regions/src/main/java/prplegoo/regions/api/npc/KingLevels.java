@@ -13,6 +13,7 @@ import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import snake2d.util.file.Json;
+import util.data.GETTER;
 import world.army.AD;
 import world.army.ADSupply;
 import world.entity.army.WArmy;
@@ -25,7 +26,7 @@ public class KingLevels {
     @Getter
     private static KingLevels instance;
     @Getter
-    private static final boolean isActive = true;
+    private static boolean isActive = false;
 
     private final KingLevel[] kingLevels;
     private int[] npcLevels;
@@ -54,6 +55,10 @@ public class KingLevels {
         productionCacheTick = new int[FACTIONS.MAX][RESOURCES.ALL().size()];
         productionCache = new double[FACTIONS.MAX][RESOURCES.ALL().size()];
         lastYearPicked = new int[FACTIONS.MAX];
+    }
+
+    public static void setActive(boolean active) {
+        isActive = active;
     }
 
     public KingLevel getKingLevel(FactionNPC faction) {
@@ -183,7 +188,7 @@ public class KingLevels {
         }
 
         int currentYear = getCurrentYear();
-        if (!force && (currentYear % 4 != faction.index() % 4 || lastYearPicked[faction.index()] == currentYear) ) {
+        if (!force && lastYearPicked[faction.index()] >= currentYear - 2) {
             return;
         }
 

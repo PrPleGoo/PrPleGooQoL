@@ -5,9 +5,11 @@ import java.io.IOException;
 import game.boosting.BOOSTABLES;
 import game.faction.FACTIONS;
 import game.faction.Faction;
+import game.faction.npc.FactionNPC;
 import init.race.Race;
 import init.religion.Religion;
 import init.resources.RESOURCE;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -29,10 +31,14 @@ public class King {
 
 		@Override
 		protected void set(Faction t, Str str) {
-			double d = t.realm().regions()/20.0;
-			int i = (int) (d*FACTIONS.player().level().all().size());
-			i = CLAMP.i(i, 0, FACTIONS.player().level().all().size()-1);
-			str.add(FACTIONS.player().level().all().get(i).male);
+			if (KingLevels.isActive() && t instanceof FactionNPC) {
+				str.add(FACTIONS.player().level().all().get(KingLevels.getInstance().getLevel((FactionNPC) t)).male);
+			} else {
+				double d = t.realm().regions() / 20.0;
+				int i = (int) (d * FACTIONS.player().level().all().size());
+				i = CLAMP.i(i, 0, FACTIONS.player().level().all().size() - 1);
+				str.add(FACTIONS.player().level().all().get(i).male);
+			}
 		}
 	};
 	private final NPCCourt court;

@@ -330,7 +330,7 @@ public class NPCStockpile extends NPCResource{
 				amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5);
 			}
 
-			return amTarget;
+			return amTarget * 5;
 		}
 
 		@Override
@@ -357,9 +357,6 @@ public class NPCStockpile extends NPCResource{
 		public double priceAt(double amount) {
 			return super.priceAt(amount);
 		}
-
-		private int lastGet = -1;
-		private LIST<WRegFinder.RegDist> regDists;
 
 		@Override
 		public double amMul(double amount) {

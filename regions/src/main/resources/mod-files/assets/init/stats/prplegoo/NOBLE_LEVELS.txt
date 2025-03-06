@@ -26,7 +26,7 @@ LEVELS: [
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.025,
-            STRUCTURE: 0.001,
+            STRUCTURE: 0.0001,
         },
     },
     {
@@ -49,6 +49,7 @@ LEVELS: [
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.025,
+            STRUCTURE: 0.00025,
             FURNITURE: 0.005,
         },
     },
@@ -74,6 +75,7 @@ LEVELS: [
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.05,
+            STRUCTURE: 0.0005,
             FURNITURE: 0.005,
             DRINK: 0.025,
         },

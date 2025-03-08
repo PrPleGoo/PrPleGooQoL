@@ -2,13 +2,7 @@ package world.region.building;
 
 import java.io.IOException;
 
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BValue;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.BoosterImp;
-import game.boosting.BoosterValue;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -42,6 +36,7 @@ import settlement.stats.Induvidual;
 import snake2d.LOG;
 import snake2d.util.file.Json;
 import snake2d.util.misc.ACTION;
+import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
@@ -228,7 +223,7 @@ final class Creator {
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
-		pushFactionNpcBoosts(b);
+		pushFactionBoosts(b);
 
 		pushEfficiency(b, data);
 
@@ -368,18 +363,22 @@ final class Creator {
 
 	}
 
-	private void pushFactionNpcBoosts(RDBuilding bu) {
+	private void pushFactionBoosts(RDBuilding bu) {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-                Bo bo = new Bo(new BSourceInfo("Faction boosts", UI.icons().s.crown), 1, 15, true) {
+                Bo bo = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, true) {
                     @Override
                     double get(Region reg) {
-                        if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
+						if(reg.faction() instanceof Player) {
+							return CLAMP.d(1 + ((bu.getBlue().bonus().get(reg.faction()) - 1) * RD.SCHOOL().booster.get(reg)), 1, 15);
+						}
+
+						if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
                             return 1;
                         }
 
-                        return bu.getBlue().bonus().get(reg.faction());
+						return CLAMP.d(bu.getBlue().bonus().get(reg.faction()), 1, 15);
                     }
                 };
                 bo.add(bu.efficiency);

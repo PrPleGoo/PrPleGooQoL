@@ -17,6 +17,7 @@ import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.RDFoodConsumption;
 import prplegoo.regions.api.RDRecipe;
+import prplegoo.regions.api.RDSchoolScience;
 import prplegoo.regions.api.RDSlavery;
 import prplegoo.regions.api.npc.KingLevelBoostAttacher;
 import prplegoo.regions.api.npc.KingLevels;
@@ -63,6 +64,7 @@ public class RD extends WorldResource{
     private final RDDevastation deva;
     private final RDSlavery slavery;
     private final RDFoodConsumption foodConsumption;
+    private final RDSchoolScience schoolScience;
     private final RDRecipe recipes;
     private final KingLevels kingLevels;
     private RDUpdater updater;
@@ -101,6 +103,7 @@ public class RD extends WorldResource{
         deva = new RDDevastation(init);
         slavery = new RDSlavery();
         foodConsumption = new RDFoodConsumption();
+        schoolScience = new RDSchoolScience();
         recipes = new RDRecipe();
         kingLevels = new KingLevels();
         KingLevelBoostAttacher.attachKingLevelBoosts();
@@ -378,6 +381,8 @@ public class RD extends WorldResource{
     public static RDFoodConsumption FOOD_CONSUMPTION(){
         return self.foodConsumption;
     }
+
+    public static RDSchoolScience SCHOOL() { return self.schoolScience; }
 
     public static RDRecipe RECIPES(){
         return self.recipes;

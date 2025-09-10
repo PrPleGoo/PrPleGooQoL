@@ -21,7 +21,7 @@ final class TradeSorter {
 		protected boolean isGreaterThan(ResTree current, ResTree cmp) { return current.value > cmp.value; }
 
 	};
-	private Holder[] holders = new Holder[FACTIONS.MAX*RESOURCES.ALL().size()];
+	private Holder[] holders = new Holder[FACTIONS.MAX()*RESOURCES.ALL().size()];
 
 	public TradeSorter() {
 		for (int i = 0; i < resTrees.length; i++)
@@ -276,7 +276,7 @@ final class TradeSorter {
 			this.res = res;
 		}
 
-		final Tree<Holder> traders = new Tree<TradeSorter.Holder>(FACTIONS.MAX) {
+		final Tree<Holder> traders = new Tree<TradeSorter.Holder>(FACTIONS.MAX()) {
 
 			@Override
 			protected boolean isGreaterThan(Holder current, Holder cmp) {

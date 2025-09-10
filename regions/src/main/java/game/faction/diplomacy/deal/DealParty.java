@@ -19,7 +19,7 @@ import init.type.HTYPES;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import util.data.INT;
-import util.data.INT.INTE;
+import util.data.INT.IntImp;
 import util.data.INT_O.INT_OE;
 import world.WORLD;
 import world.entity.caravan.Shipment;
@@ -34,7 +34,7 @@ public final class DealParty {
 	private FactionNPC npc;
 	private double dist;
 
-	public final INTE credits = new INT.IntImp() {
+	public final IntImp credits = new INT.IntImp() {
 
 		@Override
 		public int min() {
@@ -130,10 +130,6 @@ public final class DealParty {
 
 		for (DealReg reg : regs.all()) {
 			if (reg.is()) {
-				if (reg.reg().faction() == FACTIONS.player()) {
-					ROPINIONS.STANCE().makeSpecialDeal(npc);
-				}
-
 				RD.setFaction(reg.reg(), other, true);
 			}
 		}

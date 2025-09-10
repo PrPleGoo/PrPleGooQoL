@@ -8,10 +8,11 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_CLAY: [0.1,0.9,],
+				PROP_TERRAIN_WET: [0.1,0.9,],
 			},
 		},
 	},
@@ -24,10 +25,11 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_COAL: [0.1,0.9,],
+				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
 			},
 		},
 	},
@@ -40,10 +42,12 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_GEM: [0.1,0.9,],
+				PROP_TERRAIN_WET: [0.0,0.1,],
+				PROP_TERRAIN_MOUNTAIN: [0.0,0.9,],
 			},
 		},
 	},
@@ -56,10 +60,11 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_ORE: [0.1,0.9,],
+				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
 			},
 		},
 	},
@@ -72,10 +77,11 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_SITHILON: [0.1,0.9,],
+				PROP_TERRAIN_MOUNTAIN: [0.0,1.0,],
 			},
 		},
 	},
@@ -88,10 +94,11 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_MINABLE_STONE: [0.1,0.9,],
+				PROP_TERRAIN_MOUNTAIN: [0.2,0.8,],
 			},
 		},
 	},
@@ -104,6 +111,7 @@ GENS: [
 		CREDITS: 1000,
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
+			WORLD_VISUAL_MINE>ADD: 1,
 		},
 		LEVEL_CAP: {
 			BOOST: {

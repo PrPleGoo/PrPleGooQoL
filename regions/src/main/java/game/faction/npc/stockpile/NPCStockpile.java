@@ -140,13 +140,19 @@ public class NPCStockpile extends NPCResource{
 		resses[res.index()].playerOffset += amount;
 	}
 
-	public double playerTarif(RESOURCE res) {
+	public double playerTarif(RESOURCE res, int amount) {
 		SRes r = resses[res.index()];
-		double a = playerTradeLimit(res);
-		double am = Math.abs(r.playerOffset);
-		if (am > a) {
-			am -= a;
-			return am/=r.amTarget();
+		double d = pPlayerTarif(res, (int) (Math.abs(r.playerOffset) + Math.abs(amount)));
+		d += pPlayerTarif(res, (int) (Math.abs(r.playerOffset)));
+		return d*0.5;
+	}
+
+	private double pPlayerTarif(RESOURCE res, int traded) {
+		double max = playerTradeLimit(res);
+		traded = Math.abs(traded);
+		if (traded > max) {
+			traded -= max;
+			return CLAMP.d(0.25*traded/max, 0, 0.8);
 		}
 		return 0;
 	}

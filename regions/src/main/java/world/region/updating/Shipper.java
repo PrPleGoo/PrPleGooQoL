@@ -83,16 +83,16 @@ final class Shipper {
                     if (f == FACTIONS.player()) {
                         for (ADSupply s : AD.supplies().get(res.res)) {
                             for (WArmy e : FACTIONS.player().armies().all()) {
-                                if (!e.acceptsSupplies()) {
+                                if (!e.recruiting()) {
                                     continue;
                                 }
 
-                                int needed = s.needed(e);
+                                int needed = (int) s.needed(e);
                                 if (needed < a) {
                                     a -= needed;
-                                    s.current().set(e, s.current().get(e) + needed);
+                                    s.current().setD(e, s.current().get(e) + needed);
                                 } else {
-                                    s.current().set(e, s.current().get(e) + a);
+                                    s.current().setD(e, s.current().get(e) + a);
                                     a = 0;
                                 }
                             }

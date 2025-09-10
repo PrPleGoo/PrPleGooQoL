@@ -12,6 +12,7 @@ import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
+import settlement.tilemap.ground.Ground;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
@@ -108,11 +109,11 @@ public class RDRaces {
 
 
 		}.add(capacity);
-		new RBooster(new BSourceInfo(Dic.¤¤Fertility, UI.icons().s.sprout), 0.2, 1, true) {
+		new RBooster(new BSourceInfo(Ground.¤¤moisture, UI.icons().s.sprout), 0.2, 1, true) {
 
 			@Override
 			public double get(Region t) {
-				return t.info.fertility();
+				return t.info.moisture();
 			}
 
 
@@ -169,7 +170,7 @@ public class RDRaces {
 
 //	public void initPopulation(Region reg) {
 //		RDRacePopulation.clearCaache();
-//		
+//
 //		for (RDRace r : all) {
 //			r.pop.set(reg, (int) Math.round(r.pop.target(reg)));
 //		}
@@ -209,7 +210,7 @@ public class RDRaces {
 
 		if (!KingLevels.isActive() && reg.faction() instanceof FactionNPC) {
 
-			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
+			double fa = maxPop*reg.info.area()*reg.info.moisture()/maxFerArea;
 			double min = fa*0.1;
 			double max = fa;
 
@@ -227,7 +228,7 @@ public class RDRaces {
 
 			return min +(max-min)*competence*Math.pow(empireSize, 0.5);
 		}else if (reg.faction() == null) {
-			double fa = maxPop*reg.info.area()*reg.info.fertility()/maxFerArea;
+			double fa = maxPop*reg.info.area()*reg.info.moisture()/maxFerArea;
 			return fa*0.1;
 		}
 		return capacity.get(reg);

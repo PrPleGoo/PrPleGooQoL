@@ -70,7 +70,7 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 
 		if (buyer == FACTIONS.player()) {
 			s.stockpile.incPlayer(res, amount);
-			ROPINIONS.TRADE().trade(s, price);
+			ROPINIONS.trade(s, price);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 
 		if (seller == FACTIONS.player()) {
 			s.stockpile.incPlayer(res, amount);
-			ROPINIONS.TRADE().trade(s, price);
+			ROPINIONS.trade(s, price);
 		}
 	}
 

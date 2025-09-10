@@ -1,5 +1,6 @@
 package game.boosting;
 
+import init.sprite.UI.UI;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.sets.ArrayListInt;
 import snake2d.util.sets.LIST;
@@ -31,7 +32,9 @@ public final class BHoverer {
             double d = l.get(f);
 
             if (!l.isMul && d != 0) {
-                l.hoverDetailed(box, d);
+                l.hover(box, d);
+                BoosterAbs.hoverSpan(box, l.from(), l.to());
+                box.NL();
 
             }
         }
@@ -41,7 +44,9 @@ public final class BHoverer {
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
             if (l.isMul && d != 1) {
-                l.hoverDetailed(box, d);
+                l.hover(box, d);
+                BoosterAbs.hoverSpan(box, l.from(), l.to());
+                box.NL();
             }
         }
 
@@ -53,13 +58,17 @@ public final class BHoverer {
             for (BoosterAbs<T> l : all) {
                 double d = l.get(f);
                 if (!l.isMul && d == 0) {
-                    l.hoverDetailed(box, d);
+                    l.hover(box, d);
+                    BoosterAbs.hoverSpan(box, l.from(), l.to());
+                    box.NL();
                 }
             }
             for (BoosterAbs<T> l : all) {
                 double d = l.get(f);
                 if (l.isMul && d == 1) {
-                    l.hoverDetailed(box, d);
+                    l.hover(box, d);
+                    BoosterAbs.hoverSpan(box, l.from(), l.to());
+                    box.NL();
                 }
             }
 

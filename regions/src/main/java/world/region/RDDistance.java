@@ -12,6 +12,7 @@ import game.faction.Faction;
 import game.faction.diplomacy.DIP;
 import game.faction.diplomacy.DipStance;
 import game.faction.npc.FactionNPC;
+import game.values.GVALUES;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.npc.KingLevels;
@@ -23,6 +24,7 @@ import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
+import util.data.BOOLEANO;
 import util.data.INT_O;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
@@ -38,23 +40,26 @@ import world.region.pop.RDRace;
 public class RDDistance {
 
 	private static CharSequence ¤¤Name = "¤Proximity";
-	private static CharSequence ¤¤NameD = "¤Proximity is the physical distance from a region to your capital. It determines the amount tribute you receive from it and the loyalty of its subjects.";
+	private static CharSequence ¤¤NameD = "¤Proximity is the physical distance from a region to your capital. It determines the amount tribute you receive from it and the loyalty of its subjects. It also determines tolls for trade.";
 
 	private static CharSequence ¤¤Distance = "¤Distance";
 	private static CharSequence ¤¤DistanceD = "¤Distance to your capital. Distance affect trade prices.";
 
+	private static CharSequence ¤¤Borders = "¤Borders";
+	private static CharSequence ¤¤Reachable = "¤Reachable";
 
 	private final INT_OE<Region> distance;
 	private final INT_OE<Faction> factionBorders;
 	private final INT_OE<Faction> factionReachable;
+	private final INT_OE<Faction> factionBorderThroughAlly;
 	private final INT_OE<Region> regionBorders;
 	private final INT_OE<Region> regionReachable;
 	public final Boostable boostable;
 
-	private final ArrayList<FactionNPC> borders = new ArrayList<>(FACTIONS.MAX);
+	private final ArrayList<FactionNPC> borders = new ArrayList<>(FACTIONS.MAX());
 	private boolean bDirty = true;
 
-	private int[] dists = new int[FACTIONS.MAX];
+	private int[] dists = new int[FACTIONS.MAX()];
 
 	static {
 		D.ts(RDDistance.class);
@@ -64,6 +69,7 @@ public class RDDistance {
 		distance = init.count.new DataShort("DISTANCE_DATA", ¤¤Distance, ¤¤DistanceD);
 		factionReachable = init.rCount.new DataBit("DISTANCE_REACHABLE");
 		factionBorders = init.rCount.new DataBit("DISTANCE_NEIGHBOURS");
+		factionBorderThroughAlly = init.rCount.new DataBit("DISTANCE_NEIGHBOURS:ALLY");
 		regionReachable = init.count.new DataBit("REGION_REACHABLE");
 		regionBorders = init.count.new DataBit("REGION_NEIGHBOURS");
 		Arrays.fill(dists, -1);
@@ -161,6 +167,7 @@ public class RDDistance {
 		for (Faction f : FACTIONS.all()) {
 			factionReachable.set(f, 0);
 			factionBorders.set(f, 0);
+			factionBorderThroughAlly.set(f, 0);
 		}
 
 		for (RegDist d : WORLD.PATH().regFinder.all(cap, Treaty.DUMMY, WRegSel.DUMMY())) {
@@ -179,6 +186,14 @@ public class RDDistance {
 				}
 			}
 		}
+		for (RegDist d : WORLD.PATH().regFinder.all(cap, Treaty.FACTION_CAN_ATTACK, WRegSel.DUMMY())) {
+			if (d.reg.faction() != null) {
+				if (d.reg.capitol()) {
+					factionBorderThroughAlly.set(d.reg.faction(), 1);
+				}
+			}
+		}
+
 		for (RegDist d : WORLD.PATH().regFinder.all(cap, Treaty.FACTION_BORDERS, WRegSel.DUMMY())) {
 
 			regionBorders.set(d.reg, 1);
@@ -217,6 +232,11 @@ public class RDDistance {
 	public boolean factionHasRegionBorderingPlayer(Faction reg) {
 		init();
 		return factionBorders.get(reg) == 1;
+	}
+
+	public boolean factionCanAttackPlayerAllies(Faction reg) {
+		init();
+		return factionBorderThroughAlly.get(reg) == 1;
 	}
 
 	public LIST<RegDist> tradePartners(Faction start) {

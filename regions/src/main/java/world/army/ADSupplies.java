@@ -18,7 +18,12 @@ import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
-import snake2d.util.sets.*;
+import snake2d.util.sets.ArrayList;
+import snake2d.util.sets.ArrayListGrower;
+import snake2d.util.sets.Bitmap1D;
+import snake2d.util.sets.INDEXED;
+import snake2d.util.sets.LIST;
+import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.text.Str;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
@@ -26,6 +31,8 @@ import view.ui.message.MessageText;
 import world.army.ADInit.Register;
 import world.army.ADInit.Updater;
 import world.army.ADInt.ADIntImp;
+import world.army.ADSupply.ADSupplyArt;
+import world.army.ADSupply.ADSupplyRes;
 import world.entity.army.WArmy;
 import world.entity.army.WArmyState;
 
@@ -45,7 +52,7 @@ public final class ADSupplies {
 	public final LIST<ADSupply> all;
 	public final LIST<ADSupply> healths;
 	public final LIST<ADSupply> morales;
-	public final LIST<ADSupply> food;
+	public final LIST<ADSupply.ADSupplyRes> food;
 	public final LIST<ADSupply> equip;
 
 	private final Bitmap1D has = new Bitmap1D(RESOURCES.ALL().size(), false);
@@ -64,9 +71,9 @@ public final class ADSupplies {
 		creditsTarget = new ADIntImp(init, "CREDITS_TARGET", Dic.¤¤Currs, "");
 		ArrayListGrower<ADSupply> all = new ArrayListGrower<>();
 
-		ArrayListGrower<ADSupply> misc = new ArrayListGrower<>();
-		for (ResSupply a : RESOURCES.SUP().ALL) {
-			ADSupply s = new ADSupply(all.size(), "SUPPLY", init, a.resource, Dic.¤¤Supplies, a.consumption_day, a.morale, a.health);
+		ArrayListGrower<ADSupplyRes> misc = new ArrayListGrower<>();
+		for (ResSupply rs : RESOURCES.SUP().ALL) {
+			ADSupplyRes s = new ADSupply.ADSupplyRes(all.size(), init, rs);
 			all.add(s);
 			misc.add(s);
 		}
@@ -74,7 +81,7 @@ public final class ADSupplies {
 
 		ArrayListGrower<ADSupply> equip = new ArrayListGrower<>();
 		for (EquipBattle a : STATS.EQUIP().BATTLE_ALL()) {
-			ADSupply s = new ADSupply(all.size(), "EQUIPMENT", init, a.resource(), Dic.¤¤Equipment, a.wearRate()/16.0, 0, 0);
+			ADSupply s = new ADSupply.ADSupplyEquip(all.size(), init, a);
 			all.add(s);
 			equip.add(s);
 		}
@@ -84,20 +91,11 @@ public final class ADSupplies {
 
 			@Override
 			public void register(ADDiv div, int d) {
-				if (div.needSupplies()) {
-					for(int i = 0; i < RESOURCES.SUP().ALL.size(); i++) {
-						ResSupply s = RESOURCES.SUP().ALL.get(i);
-
-						get(s).needed.inc(div.army(), d*s.minimum(div.race())*div.men());
-						get(s).target.inc(div.army(), d*s.minimum(div.race())*div.menTarget());
-					}
-					for (int i = 0; i < STATS.EQUIP().BATTLE_ALL().size(); i++ ) {
-						EquipBattle s = STATS.EQUIP().BATTLE_ALL().get(i);
-						get(s).needed.inc(div.army(), d*div.men()*div.equipTarget(s));
-						get(s).target.inc(div.army(), d*div.menTarget()*div.equipTarget(s));
+				if (div.army() != null) {
+					for (int si = 0; si < all.size(); si++) {
+						all.get(si).setChanged(div.army());
 					}
 				}
-
 				AD.supplies().creditsNeeded.inc(div.army(), d*div.costPerMan()*div.men());
 				AD.supplies().creditsTarget.inc(div.army(), d*div.costPerMan()*div.menTarget());
 			}
@@ -114,10 +112,10 @@ public final class ADSupplies {
 			ArrayListGrower<ADSupply> mm = new ArrayListGrower<>();
 			ArrayListGrower<ADSupply> he = new ArrayListGrower<>();
 			for (ADSupply s : all) {
-				if (s.morale > 0) {
+				if (s.baseMorale > 0) {
 					mm.add(s);
 				}
-				if (s.health > 0)
+				if (s.baseHealth > 0)
 					he.add(s);
 			}
 			this.healths = he;
@@ -161,11 +159,11 @@ public final class ADSupplies {
 				if (KingLevels.isActive() || a.faction() == FACTIONS.player()) {
 					double he = health(a);
 					for (ADSupply s : all) {
-						double am = s.usedPerDay*s.needed.get(a);
+						double am = s.consumedPerDayCurrent(a)*timeSinceLast*TIME.secondsPerDayI;
 						int tot = (int) am;
 						if (am-tot > RND.rFloat())
 							tot++;
-						s.current.inc(a, -tot);
+						s.current().inc(a, -tot);
 					}
 
 					if (a.faction() == FACTIONS.player() && he >= 1 && AD.supplies().health(a) < 1) {
@@ -173,13 +171,14 @@ public final class ADSupplies {
 						Str.TMP.add(¤¤StarvingD).insert(0, a.name);
 						new MessageText(¤¤Starving, Str.TMP).send();
 					}
-				}else if (a.acceptsSupplies()){
+				}else {
 					for (ADSupply s : AD.supplies().all) {
-						double am = Math.ceil(s.used().get(a)/16.0);
+						double am = Math.ceil(s.targetAmount(a)/16.0);
 						am = CLAMP.d(am, 0, s.needed(a));
 						s.current().inc(a, (int)am);
 					}
 				}
+
 			}
 		});
 
@@ -217,19 +216,8 @@ public final class ADSupplies {
 
 	public void fillAll(WArmy a) {
 		for (ADSupply s : all) {
-			s.current.set(a, s.max(a));
+			s.current().set(a, s.targetAmount(a));
 		}
-	}
-
-	public void update(WArmy a) {
-		for (ADSupply s : all) {
-			double am = s.usedPerDay*s.needed.get(a);
-			int tot = (int) am;
-			if (am-tot > RND.rFloat())
-				tot++;
-			s.current.inc(a, -tot);
-		}
-
 	}
 
 	public ADInt credits() {
@@ -239,9 +227,7 @@ public final class ADSupplies {
 	public double morale(WArmy a) {
 		double m = 0;
 		for (ADSupply s : morales) {
-			double u = s.used().get(a);
-			if (u > 0)
-				m += s.morale*CLAMP.d(s.current().get(a)/u, 0, 1);
+			m += s.moraleAdd(a);
 		}
 		return m;
 	}
@@ -249,10 +235,7 @@ public final class ADSupplies {
 	public double health(WArmy a) {
 		double m = 1;
 		for (ADSupply s : healths) {
-			if (s.current.get(a) < s.used().get(a)) {
-				m *= 1 - s.health * (s.used().get(a) - s.current().get(a))/s.used().get(a);
-
-			}
+			m *= s.healthMul(a);
 		}
 		return m;
 	}
@@ -260,24 +243,9 @@ public final class ADSupplies {
 	public void transfer(WDIV div, WArmy old, WArmy current) {
 		if (old == null || current == null)
 			return;
-		for(ResSupply s : RESOURCES.SUP().ALL) {
-			double tot = get(s).max(old) + get(s).max(div.menTarget()*s.minimum(div.race()));
-			if (tot > 0) {
-				double d = CLAMP.d(get(s).current().get(old)/tot, 0, 1);
-				int am = get(s).max((int)(div.menTarget()*d*s.minimum(div.race())));
-				get(s).current().inc(old, -am);
-				get(s).current().inc(current, am);
-			}
-		}
-		for (EquipBattle s : STATS.EQUIP().BATTLE_ALL()) {
-			double tot = get(s).max(old) +  get(s).max(div.menTarget()*div.equipTarget(s)) ;
-			if (tot > 0) {
-				double d = CLAMP.d(get(s).current().get(old)/tot, 0, 1);
-				int am = get(s).max((int)(div.menTarget()*d*div.equipTarget(s)));
-				get(s).current().inc(old, -am);
-				get(s).current().inc(current, am);
-			}
-		}
+		for (ADSupply s : all)
+			s.transfer(div, old, current);
+
 	}
 
 
@@ -295,13 +263,10 @@ public final class ADSupplies {
 				public void set(WArmy t, int s) {
 
 					artilleryTot.inc(t, -get(t));
-					super.set(t, s);
+					super.set(t, CLAMP.i(s, 0, max(t)));
 					artilleryTot.inc(t, get(t));
-					int k = 0;
 					for (ADSupply ss : supplies) {
-						int am = (int) Math.ceil(get(t)*art.constructor().item(1).cost2(k++, art.upgrades().max()));
-						ss.needed.set(t, am);
-						ss.target.set(t, am);
+						ss.setChanged(t);
 					}
 				}
 
@@ -314,7 +279,7 @@ public final class ADSupplies {
 
 			for (int i = 0; i < art.constructor().resources(); i++) {
 				RESOURCE res = art.constructor().resource(i);
-				ADSupply sup = new ADSupply(sups.size(), "ART_" + art.key + "_" + res.key, init, res, art.info.name + ": ", 0.2/TIME.years().bitConversion(TIME.days()), 0, 0);
+				ADSupply.ADSupplyArt sup = new ADSupplyArt(sups.size(), init, this, res, i);
 				supplies.add(sup);
 				sups.add(sup);
 			}
@@ -324,7 +289,7 @@ public final class ADSupplies {
 		public int current(WArmy a) {
 			double d = 1.0;
 			for (ADSupply ss : supplies) {
-				d = Math.min(d, ss.equipValue(a));
+				d = Math.min(d, ss.amountValue(a));
 			}
 			if (a.state() != WArmyState.fortified )
 				d *= 0.5;

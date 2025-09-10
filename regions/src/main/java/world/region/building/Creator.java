@@ -2,7 +2,13 @@ package world.region.building;
 
 import java.io.IOException;
 
-import game.boosting.*;
+import game.boosting.BOOSTING;
+import game.boosting.BSourceInfo;
+import game.boosting.BValue;
+import game.boosting.BoostSpec;
+import game.boosting.BoostSpecs;
+import game.boosting.BoosterImp;
+import game.boosting.BoosterValue;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -28,6 +34,7 @@ import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.Industry.IndustryResource;
+import settlement.room.industry.module.IndustryRegion;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
@@ -235,7 +242,7 @@ final class Creator {
 			public void exe() {
 				for (int i = 1; i < b.levels.size(); i++) {
 					for (BoostSpec s : sp.all()) {
-						int am = (int) (s.booster.to()*i/(b.levels.size()-1));
+						double am = (s.booster.to()*i/(b.levels.size()-1));
 						b.levels.get(i).local.push(new BoosterValue(BValue.VALUE1, info, am, s.booster.isMul), s.boostable);
 					}
 				}

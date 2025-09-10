@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.68.28.7</version>
+    <version>0.69.39.0</version>
 
     <profiles>
         <profile>
@@ -169,8 +169,8 @@ Credits:
 - Redic, thumbnail art
 - Argoon, technical support.
         </mod.info>
-        <game.version.major>68</game.version.major>
-        <game.version.minor>28</game.version.minor>
+        <game.version.major>69</game.version.major>
+        <game.version.minor>39</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

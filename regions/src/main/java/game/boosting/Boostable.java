@@ -28,6 +28,10 @@ public final class Boostable extends INFO implements MAPPED{
     public final SPRITE nativeIcon;
     public final BoostableCat cat;
     public final double minValue;
+
+	private final static PopTime pt1 = new PopTime();
+	private final static PopTime pt2 = new PopTime();
+
     private final boolean isResourceProductionBooster;
 
     public Boostable(int index, String key, double baseValue, CharSequence name, CharSequence desc, SPRITE icon, BoostableCat category, double minValue) {
@@ -126,13 +130,12 @@ public final class Boostable extends INFO implements MAPPED{
 
     public double get(POP_CL o, int daysBack) {
 
-        return get(PopTime.tmp(o, daysBack));
+		return get(pt1.get(o, daysBack));
 
     }
 
     public void addFactor(BoostSpec f) {
         all.add(f.booster);
-
     }
 
     public void removeFactor(BoostSpec f) {
@@ -155,7 +158,7 @@ public final class Boostable extends INFO implements MAPPED{
 
     public void hoverDetailedHistoric(GUI_BOX box, POP_CL o, CharSequence name, boolean keepNops, int daysBack) {
 
-        hoverDetailed(box, PopTime.tmp(o, daysBack), name, keepNops);
+        hoverDetailed(box, pt2.get(o, daysBack), name, keepNops);
 
     }
 

@@ -51,10 +51,10 @@ public class KingLevels {
             kingLevels[i] = new KingLevel(kingLevelJsons[i], i);
         }
 
-        npcLevels = new int[FACTIONS.MAX];
-        productionCacheTick = new int[FACTIONS.MAX][RESOURCES.ALL().size()];
-        productionCache = new double[FACTIONS.MAX][RESOURCES.ALL().size()];
-        lastYearPicked = new int[FACTIONS.MAX];
+        npcLevels = new int[FACTIONS.MAX()];
+        productionCacheTick = new int[FACTIONS.MAX()][RESOURCES.ALL().size()];
+        productionCache = new double[FACTIONS.MAX()][RESOURCES.ALL().size()];
+        lastYearPicked = new int[FACTIONS.MAX()];
     }
 
     public static void setActive(boolean active) {
@@ -87,9 +87,9 @@ public class KingLevels {
                 }
 
                 for (WArmy army : faction.armies().all()) {
-                    int armySupplyAmount = Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    double armySupplyAmount = Math.min(supply.needed(army), npcStockpile.amount(resource));
                     npcStockpile.inc(resource, -armySupplyAmount);
-                    supply.current().inc(army, armySupplyAmount);
+                    supply.current().incD(army, armySupplyAmount);
                 }
             }
 
@@ -124,7 +124,7 @@ public class KingLevels {
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
-                amount += supply.usedPerDay * supply.used().get(army);
+                amount += supply.consumedPerDayCurrent(army);
             }
         }
 
@@ -159,11 +159,11 @@ public class KingLevels {
     }
 
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * FACTIONS.MAX;
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * FACTIONS.MAX();
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
-                amount += (supply.max(army) + (supply.usedPerDay * supply.max(army))) * Math.pow(kingLevel.getIndex() + 1, 1.15);
+                amount += (supply.targetAmount(army) + (supply.consumedPerDayTarget(army))) * Math.pow(kingLevel.getIndex() + 1, 1.15);
             }
         }
 
@@ -175,7 +175,7 @@ public class KingLevels {
     }
 
     public void resetLevels() {
-        npcLevels = new int[FACTIONS.MAX];
+        npcLevels = new int[FACTIONS.MAX()];
     }
 
     public void pickMaxLevel(FactionNPC faction) {

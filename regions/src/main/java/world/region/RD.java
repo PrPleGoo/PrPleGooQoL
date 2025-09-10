@@ -47,9 +47,9 @@ import world.region.pop.RDRace;
 import world.region.pop.RDRaces;
 import world.region.updating.RDUpdater;
 
-public class RD extends WorldResource{
+public class RD extends WorldResource {
 
-    private static RD self;
+	public static RD self;
 
 
     private final RDBuildings buildings;
@@ -62,6 +62,8 @@ public class RD extends WorldResource{
     private final RDReligions religion;
     private final RDOwner owner;
     private final RDDevastation deva;
+    private final RDEvent event;
+    private final RDProspects prospects;
     private final RDSlavery slavery;
     private final RDFoodConsumption foodConsumption;
     private final RDSchoolScience schoolScience;
@@ -69,8 +71,6 @@ public class RD extends WorldResource{
     private final KingLevels kingLevels;
     private RDUpdater updater;
 
-    private final EventData event;
-    private final EventData mark;
     private final long[][] regionData;
     private final long[][] factionData;
     private final int[] factionI = new int[WREGIONS.MAX];
@@ -78,7 +78,7 @@ public class RD extends WorldResource{
 
 
     //	final RegData[] dreg = new RegData[WREGIONS.MAX];
-    final Realm[] drea = new Realm[FACTIONS.MAX];
+	final Realm[] drea = new Realm[FACTIONS.MAX()];
     private final RDInit init = new RDInit();
 
     private static CharSequence ¤¤regChange = "{0} changes master from {1} to {2}.";
@@ -101,20 +101,20 @@ public class RD extends WorldResource{
         buildings = new RDBuildings(init);
         owner = new RDOwner(init);
         deva = new RDDevastation(init);
+        event = new RDEvent(init);
+        prospects = new RDProspects(init);
+
         slavery = new RDSlavery();
         foodConsumption = new RDFoodConsumption();
         schoolScience = new RDSchoolScience();
         recipes = new RDRecipe();
         kingLevels = new KingLevels();
         KingLevelBoostAttacher.attachKingLevelBoosts();
-        mark = new EventData(init, "EVENT_MARK");
-
-        event = new EventData(init, "EVENT_SELECTION");
 
         Arrays.fill(factionI, -1);
 
         regionData = new long[WREGIONS.MAX][init.count.longCount()];
-        factionData = new long[FACTIONS.MAX][init.rCount.longCount()];
+		factionData = new long[FACTIONS.MAX()][init.rCount.longCount()];
         for (int i = 0; i < drea.length; i++)
             drea[i] = new Realm(i);
 
@@ -167,8 +167,6 @@ public class RD extends WorldResource{
 
             updater.saver.load(file);
             RD.BUILDINGS().costs.setDirty();
-            mark.load();
-            event.load();
         }
 
         @Override
@@ -187,26 +185,26 @@ public class RD extends WorldResource{
             Arrays.fill(factionI, -1);
 
             for (SAVABLE s : init.savable)
-                s.clear();;
+				s.clear();;
             updater.saver.clear();
             WORLD.MINIMAP().repaint();
-            event.am = 0;
-            mark.am = 0;
         }
 
         @Override
         public LIST<PLACABLE> makePlacers(ToolManager tm) {
             return new Placers();
-        };
+		};
 
         @Override
         public void generate(ACTION loadPrint) {
             clear();
+
             new Gen(init, loadPrint);
+
             loadPrint.exe();
             prime();
             loadPrint.exe();
-        };
+		};
 
         @Override
         public void validateInit(WorldError error) {
@@ -224,7 +222,7 @@ public class RD extends WorldResource{
                 error.warning = "No factions have been set";
 
 
-        };
+		};
     };
 
     public void prime() {
@@ -374,26 +372,28 @@ public class RD extends WorldResource{
         return self.deva;
     }
 
-    public static RDSlavery SLAVERY(){
-        return self.slavery;
+    public static RDProspects PROSPECT() {
+        return self.prospects;
     }
 
-    public static RDFoodConsumption FOOD_CONSUMPTION(){
-        return self.foodConsumption;
-    }
-
-    public static RDSchoolScience SCHOOL() { return self.schoolScience; }
-
-    public static RDRecipe RECIPES(){
-        return self.recipes;
-    }
-
-    public static EventData event(){
+    public static RDEvent event(){
         return self.event;
     }
 
-    public static EventData mark(){
-        return self.mark;
+    public static RDSlavery SLAVERY() {
+        return self.slavery;
+    }
+
+    public static RDFoodConsumption FOOD_CONSUMPTION() {
+        return self.foodConsumption;
+    }
+
+    public static RDSchoolScience SCHOOL() {
+        return self.schoolScience;
+    }
+
+    public static RDRecipe RECIPES() {
+        return self.recipes;
     }
 
     public static Realm REALM(Region reg) {
@@ -416,9 +416,9 @@ public class RD extends WorldResource{
         self.factionI[region.index()] = -1;
 
         rr.regions.removeShort((short) region.index());
-        if(rr.capitolI == region.index()) {
+        if (rr.capitolI == region.index()) {
             if (rr.regions.size() > 0)
-                rr.capitolI = (short) rr.regions.get(rr.regions.size()-1);
+                rr.capitolI = (short) rr.regions.get(rr.regions.size() - 1);
             else
                 rr.capitolI = -1;
         }
@@ -432,8 +432,7 @@ public class RD extends WorldResource{
         if (f != null && REALM(f) == oldRealm)
             return;
 
-        self.mark.ii.set(region, 0);
-        RD.OWNER().ownerI.set(region, (RD.OWNER().ownerI.get(region)+1)%RD.OWNER().ownerI.max(region));
+        RD.OWNER().ownerI.set(region, (RD.OWNER().ownerI.get(region) + 1) % RD.OWNER().ownerI.max(region));
 
         final Faction fold = region.faction();
 
@@ -444,7 +443,7 @@ public class RD extends WorldResource{
             if (rr.regions.hasRoom()) {
                 self.factionI[region.index()] = f.index();
 
-                rr.regions.add((short)region.index());
+                rr.regions.add((short) region.index());
 
                 if (rr.capitolI == -1)
                     rr.capitolI = (short) region.index();
@@ -453,7 +452,7 @@ public class RD extends WorldResource{
             f.realm().ferArea = 0;
             for (int ri = 0; ri < f.realm().regions(); ri++) {
                 Region r = WORLD.REGIONS().all().get(ri);
-                f.realm().ferArea += r.info.area()*r.info.fertility();
+				f.realm().ferArea += r.info.area()*r.info.moisture();
             }
         }
 
@@ -461,14 +460,14 @@ public class RD extends WorldResource{
             fold.realm().ferArea = 0;
             for (int ri = 0; ri < fold.realm().regions(); ri++) {
                 Region r = WORLD.REGIONS().all().get(ri);
-                fold.realm().ferArea += r.info.area()*r.info.fertility();
+				fold.realm().ferArea += r.info.area()*r.info.moisture();
             }
         }
 
         WORLD.MINIMAP().updateRegion(region);
 
 
-        RDOwnerChanger.changeI ++;
+        RDOwnerChanger.changeI++;
         for (RDOwnerChanger ch : RDOwnerChanger.ownerChanges) {
             ch.change(region, fold, f);
         }
@@ -490,7 +489,7 @@ public class RD extends WorldResource{
     }
 
     public static void clearFaction(FactionNPC faction) {
-        while(faction.realm().regions() > 0)
+        while (faction.realm().regions() > 0)
             setFaction(faction.realm().region(0), null, false);
     }
 
@@ -537,58 +536,6 @@ public class RD extends WorldResource{
         }
 
         public abstract void change(Region reg, Faction oldOwner, Faction newOwner);
-    }
-
-    public static class EventData {
-
-        private int am;
-        public final INT_OE<Region> ii;
-
-        EventData(RDInit init, String key){
-            ii = init.count.new DataBit(key) {
-                @Override
-                public void set(Region t, int s) {
-                    am -= get(t);
-                    super.set(t, s);
-                    am += get(t);
-                }
-
-                @Override
-                public int get(Region t) {
-                    if (t == null)
-                        return am;
-                    return super.get(t);
-                }
-            };
-
-            GVALUES.REGION.pushI(key, key, UI.icons().s.question, ii);
-            GVALUES.FACTION.push(key, key, UI.icons().s.question, new INT_O<Faction>() {
-
-                @Override
-                public int get(Faction t) {
-                    return am;
-                }
-
-                @Override
-                public int min(Faction t) {
-                    return 0;
-                }
-
-                @Override
-                public int max(Faction t) {
-                    return WREGIONS.MAX;
-                }
-
-
-            });
-        }
-
-        private void load() {
-            am = 0;
-            for (Region reg : WORLD.REGIONS().all())
-                am += ii.get(reg);
-        }
-
     }
 
 }

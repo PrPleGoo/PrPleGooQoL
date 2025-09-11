@@ -11,6 +11,8 @@ import init.resources.RESOURCES;
 import init.type.HTYPES;
 import prplegoo.regions.api.RDSlavery;
 import prplegoo.regions.api.npc.KingLevels;
+import snake2d.LOG;
+import snake2d.util.misc.CLAMP;
 import world.WORLD;
 import world.army.AD;
 import world.army.ADSupply;
@@ -90,9 +92,9 @@ final class Shipper {
                                 int needed = (int) s.needed(e);
                                 if (needed < a) {
                                     a -= needed;
-                                    s.current().setD(e, s.current().get(e) + needed);
+                                    s.current().inc(e, needed);
                                 } else {
-                                    s.current().setD(e, s.current().get(e) + a);
+                                    s.current().inc(e, a);
                                     a = 0;
                                 }
                             }

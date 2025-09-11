@@ -46,8 +46,7 @@ GENS: [
 		},
 		LEVEL_CAP: {
 			BOOST: {
-				PROP_TERRAIN_WET: [0.0,0.1,],
-				PROP_TERRAIN_MOUNTAIN: [0.0,0.9,],
+				PROP_TERRAIN_MOUNTAIN: [0.0,1.0,],
 			},
 		},
 	},

@@ -87,9 +87,9 @@ public class KingLevels {
                 }
 
                 for (WArmy army : faction.armies().all()) {
-                    double armySupplyAmount = Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    int armySupplyAmount = (int) Math.min(supply.needed(army), npcStockpile.amount(resource));
                     npcStockpile.inc(resource, -armySupplyAmount);
-                    supply.current().incD(army, armySupplyAmount);
+                    supply.current().inc(army, armySupplyAmount);
                 }
             }
 

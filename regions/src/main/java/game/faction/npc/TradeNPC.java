@@ -107,7 +107,7 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	public double buyPriority(RESOURCE res, int amount, double price) {
 		if (Integer.MAX_VALUE - s.stockpile.amount(res.index()) < amount)
 			return 0;
-		if (KingLevels.isActive() && s.credits().getD() < 100000) {
+		if (KingLevels.isActive() && s.credits().getD() < 200000) {
 			return 0;
 		}
 

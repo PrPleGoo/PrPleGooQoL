@@ -205,13 +205,13 @@ public class KingLevels {
                         && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
                     missingResourceCount++;
 
-                    if (missingResourceCount >= 4) {
+                    if (missingResourceCount >= 3) {
                         break;
                     }
                 }
             }
 
-            if (missingResourceCount < 4) {
+            if (missingResourceCount < 3) {
                 this.npcLevels[faction.index()] = i;
                 return;
             }

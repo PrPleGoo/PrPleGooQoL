@@ -240,12 +240,32 @@ public final class ADSupplies {
 		return m;
 	}
 
-	public double equip(WArmy a) {
-		double m = 1;
-		for (ADSupply s : equip) {
-			m *= s.current.getD(a);
+	public double supplyEquip(WArmy a) {
+		double current = 0.0;
+		double needed = 0.0;
+		for (ADSupply s : healths) {
+			current += s.current.get(a);
+			needed += s.targetAmount(a);
 		}
-		return m;
+
+		if (needed == 0) {
+			return 1;
+		}
+		return current / needed;
+	}
+
+	public double equip(WArmy a) {
+		double current = 0.0;
+		double needed = 0.0;
+		for (ADSupply s : equip) {
+			current += s.current.get(a);
+			needed += s.targetAmount(a);
+		}
+
+		if (needed == 0) {
+			return 1;
+		}
+		return current / needed;
 	}
 
 	public void transfer(WDIV div, WArmy old, WArmy current) {

@@ -78,14 +78,9 @@ final class Recruiter {
 					break;
 				}
 
-				if (AD.supplies().equip(a) < 1) {
+				if (AD.supplies().equip(a) < 0.75
+					|| AD.supplies().supplyEquip(a) < 0.75) {
 					break;
-				}
-
-				for(int divIndex = 0; divIndex < a.divs().size(); divIndex++) {
-					if (a.divs().get(divIndex).men() < a.divs().get(divIndex).menTarget()) {
-						break;
-					}
 				}
 			}
 
@@ -120,6 +115,15 @@ final class Recruiter {
 				int am = AD.conscripts().available(r).get(f);
 				
 				am = CLAMP.i(am, 0, Config.BATTLE.MEN_PER_DIVISION);
+
+				if (KingLevels.isActive()) {
+					if (am < 15) {
+						continue;
+					}
+
+					double maxDivisionSize = AD.conscripts().available(null).get(f) / 7.0;
+					am = CLAMP.i(am, 15, (int) maxDivisionSize);
+				}
 				
 				int min = (int) (Config.BATTLE.MEN_PER_DIVISION*a.divs().size()/10.0);
 				min = Math.min(min, Config.BATTLE.MEN_PER_DIVISION);

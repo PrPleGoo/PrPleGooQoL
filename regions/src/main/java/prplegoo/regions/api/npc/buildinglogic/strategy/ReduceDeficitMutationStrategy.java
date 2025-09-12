@@ -33,10 +33,8 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
 
         for(int j = 0; j < inputs.size(); j++) {
             RESOURCE resource = inputs.get(j).resource;
-            if (faction.stockpile.amount(resource) <= faction.stockpile.amTarget(resource) - Math.min(0, KingLevels.getInstance().getDailyProductionRate(faction, resource))){
-                building.level.set(region, 0);
-                buildingGenetic.level = 0;
-
+            if (faction.stockpile.amount(resource) <= 0
+                && tryLevelDowngrade(building.level, buildingGenetic, region)) {
                 return true;
             }
         }

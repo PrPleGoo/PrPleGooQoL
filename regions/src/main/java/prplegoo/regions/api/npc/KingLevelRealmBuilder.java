@@ -2,7 +2,6 @@ package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
-import init.race.Race;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
@@ -144,20 +143,22 @@ public class KingLevelRealmBuilder {
             return new LoyaltyMutationStrategy();
         }
 
-        int zeroCounts = 0;
+        boolean hasDeficits = false;
         for (RESOURCE resource : RESOURCES.ALL()) {
-            if (faction.stockpile.amount(resource) <= 1) {
-                zeroCounts++;
+            if (faction.stockpile.amount(resource) < 0) {
+                hasDeficits = true;
                 break;
             }
         }
 
-        if (RND.oneIn(2) && faction.stockpile.getCredits().getD() + faction.stockpile.valueOfStockpile() < 0) {
+        if (hasDeficits && RND.oneIn(2)) {
             return new ReduceDeficitMutationStrategy();
         }
 
-        if (zeroCounts > 0 && RND.oneIn(2)) {
-            return new IndustrializeMutationStrategy();
+        if (RND.oneIn(3)) {
+            return new PrimarySectorStrategy();
+        } else if (RND.oneIn(2)){
+            return new ReduceStorageMutationStrategy();
         }
 
         return new RandomMutationStrategy();

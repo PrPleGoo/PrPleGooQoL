@@ -13,9 +13,10 @@ import world.region.RD;
 public abstract class MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
         boolean didMutationOccur = false;
+        int randomIndex = RND.rInt(factionGenetic.regionGenetics.length);
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            int pick = RND.rInt(factionGenetic.regionGenetics.length);
-            didMutationOccur = didMutationOccur || mutateRegion(factionGenetic.regionGenetics[pick]);
+            int actualIndex = (randomIndex + i) % factionGenetic.regionGenetics.length;
+            didMutationOccur = didMutationOccur || mutateRegion(factionGenetic.regionGenetics[actualIndex]);
         }
 
         return didMutationOccur;
@@ -25,9 +26,10 @@ public abstract class MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
         boolean didMutationOccur = false;
+        int randomIndex = RND.rInt(regionGenetic.buildingGenetics.length);
         for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
-            int pick = RND.rInt(regionGenetic.buildingGenetics.length);
-            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[pick], region);
+            int actualIndex = (randomIndex + i) % regionGenetic.buildingGenetics.length;
+            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[actualIndex], region);
         }
 
         return didMutationOccur;

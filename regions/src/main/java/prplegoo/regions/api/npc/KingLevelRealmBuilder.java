@@ -65,7 +65,7 @@ public class KingLevelRealmBuilder {
                         continue;
                     }
                     if (GeneticVariables.isHealthBuilding(building.index())
-                            && health < 5) {
+                            && health < 1) {
                         continue;
                     }
 

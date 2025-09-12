@@ -38,12 +38,7 @@ public class HealthMutationStrategy extends LoopingMutationStrategy {
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
-        fitnessRecords[0] = new Health(faction, 0) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                return RD.HEALTH().boostablee.get(region) - 0.5;
-            }
-        };
+        fitnessRecords[0] = new Health(faction, 0);
 
         return fitnessRecords;
     }

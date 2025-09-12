@@ -30,23 +30,13 @@ public class KingLevelRealmBuilder {
 
             genocide[race.index()] = (1 - faction.king().induvidual.race().pref().race(race.race)) * proclivity;
         }
-        // 2 = genocide
-        // 1.5 = exile
-        // 1 = persecute
+
         for (Region region : faction.realm().all()) {
             for (RDRace race : RD.RACES().all) {
-                if (genocide[race.index()] > 2.0) {
+                if (genocide[race.index()] > 3.5) {
                     RD.RACES().edicts.massacre.toggled(race).set(region, 1);
                     RD.RACES().edicts.exile.toggled(race).set(region, 0);
                     RD.RACES().edicts.sanction.toggled(race).set(region, 0);
-                } else if (genocide[race.index()] > 1.5) {
-                    RD.RACES().edicts.massacre.toggled(race).set(region, 0);
-                    RD.RACES().edicts.exile.toggled(race).set(region, 1);
-                    RD.RACES().edicts.sanction.toggled(race).set(region, 0);
-                } else if (genocide[race.index()] > 1.0) {
-                    RD.RACES().edicts.massacre.toggled(race).set(region, 0);
-                    RD.RACES().edicts.exile.toggled(race).set(region, 0);
-                    RD.RACES().edicts.sanction.toggled(race).set(region, 1);
                 } else {
                     RD.RACES().edicts.massacre.toggled(race).set(region, 0);
                     RD.RACES().edicts.exile.toggled(race).set(region, 0);

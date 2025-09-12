@@ -196,19 +196,22 @@ public class KingLevels {
         double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
 
         for (int i = kingLevels.length - 1; i > 0; i--) {
-            boolean isMissingResource = false;
+            int missingResourceCount = 0;
             for (RESOURCE resource : RESOURCES.ALL()) {
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
                 if (amountConsumedBeforeNextCycle > 0
                         // Prideful kings will be riskier with their ambition.
                         && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
-                    isMissingResource = true;
-                    break;
+                    missingResourceCount++;
+
+                    if (missingResourceCount >= 4) {
+                        break;
+                    }
                 }
             }
 
-            if (!isMissingResource) {
+            if (missingResourceCount < 4) {
                 this.npcLevels[faction.index()] = i;
                 return;
             }

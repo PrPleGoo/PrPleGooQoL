@@ -187,7 +187,12 @@ public class RDMilitary {
             int am = 0;
             for (int i = 0; i < f.realm().regions(); i++) {
                 Region rr = f.realm().region(i);
-                if (!rr.capitol() && RD.RACES().population.get(rr) > 0) {
+
+                if (f == FACTIONS.player() && rr.capitol()) {
+                    continue;
+                }
+
+                if (RD.RACES().population.get(rr) > 0) {
                     am += conscriptTarget.get(rr)*RD.RACES().get(r).pop.get(rr)/RD.RACES().population.get(rr);
                 }
             }

@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import game.GAME;
 import game.faction.FACTIONS;
+import game.faction.FResources;
 import game.faction.Faction;
 import game.faction.diplomacy.DIP;
 import game.faction.trade.ITYPE;
 import init.C;
 import init.RES;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.PathTile;
 import snake2d.Renderer;
 import snake2d.util.datatypes.COORDINATE;
@@ -202,7 +204,7 @@ public final class WArmy extends WEntity{
     }
 
     void checkForResources() {
-        if (faction() == FACTIONS.player()) {
+        if (faction() == FACTIONS.player() || (KingLevels.isActive() && faction() != null)) {
             for (ADSupply s : AD.supplies().all) {
                 if (s.current().get(this) > s.targetAmount(this)) {
                     returnResources();
@@ -217,14 +219,19 @@ public final class WArmy extends WEntity{
     }
 
     private void returnResources() {
-        Shipment ship = WORLD.ENTITIES().caravans.create(ctx(), cty(), FACTIONS.player().capitolRegion(), ITYPE.spoils);
+        Shipment ship = WORLD.ENTITIES().caravans.create(ctx(), cty(), faction().capitolRegion(), ITYPE.spoils);
         if (ship != null) {
             for (ADSupply ss : AD.supplies().all) {
                 int am = (int) (ss.current().get(this)-ss.targetAmount(this));
                 am = CLAMP.i(am, 0, Short.MAX_VALUE);
                 if (am > 0) {
-                    if (ss.baseHealth == 0)
+                    if (ss.baseHealth == 0) {
                         ship.loadAndReserve(ss.res, am);
+
+                        if (faction() != FACTIONS.player()) {
+                            faction().res().inc(ss.res, FResources.RTYPE.ARMY_SUPPLY, am);
+                        }
+                    }
                     ss.current().inc(this, -am);
                 }
             }

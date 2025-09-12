@@ -11,6 +11,7 @@ import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GuiSection;
 import snake2d.util.misc.STRING_RECIEVER;
 import snake2d.util.sprite.SPRITE;
+import snake2d.util.sprite.text.Str;
 import snake2d.util.sprite.text.StringInputSprite;
 import util.colors.GCOLOR;
 import util.dic.Dic;
@@ -23,7 +24,7 @@ import view.keyboard.KEYS;
 public final class ITextInput extends Interrupter {
 
 	private final GuiSection s = new GuiSection();
-	private CharSequence title = "";
+	private final Str title = new Str(64);
 
 	private final GInput in;
 	private STRING_RECIEVER client;
@@ -94,16 +95,22 @@ public final class ITextInput extends Interrupter {
 
 	public void requestNumericInput(STRING_RECIEVER client, CharSequence title) {
 		input.setNumeric(true);
-		this.title = title;
+		this.title.clear().add(title);
 		this.client = client;
 		in.text().clear();
 		in.focus();
 		super.show(m);
 	}
 
+	public void requestInput(STRING_RECIEVER client, CharSequence title){
+
+		requestInput(client, title, null);
+
+	}
+
 	public void requestInput(STRING_RECIEVER client, CharSequence title, CharSequence placeholder) {
 		input.setNumeric(false);
-		this.title = title;
+		this.title.clear().add(title);
 		this.client = client;
 		in.text().clear();
 		if (placeholder != null)

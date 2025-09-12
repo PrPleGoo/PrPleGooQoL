@@ -12,6 +12,7 @@ import init.config.Config;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
 import settlement.stats.STATS;
 import snake2d.util.misc.CLAMP;
@@ -177,7 +178,7 @@ public class RDMilitary {
 
 
     public int conscripts(Race r, Faction f) {
-        if (f == FACTIONS.player()) {
+        if (f == FACTIONS.player() || KingLevels.isActive()) {
             if (RD.RACES().get(r) == null) {
                 return 0;
             }

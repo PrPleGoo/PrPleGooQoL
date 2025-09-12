@@ -62,17 +62,30 @@ final class Recruiter {
 		while(tree.hasMore()) {
 			WArmy a = tree.pollGreatest();
 
+			if (KingLevels.isActive() && a.divs().size() == 0) {
+				AD.supplies().arts().rnd().target.set(a, 0);
+			}
+
 			if (KingLevels.isActive() && a.divs().size() > 0) {
 				if (AD.supplies().health(a) < 1) {
 					int randomDivisionIndex = RND.rInt(a.divs().size());
 					ADDiv randomDivision = a.divs().get(randomDivisionIndex);
-					randomDivision.disband();
+
+					if (randomDivision.men() != 0) {
+						randomDivision.disband();
+					}
 
 					break;
 				}
 
 				if (AD.supplies().equip(a) < 1) {
 					break;
+				}
+
+				for(int divIndex = 0; divIndex < a.divs().size(); divIndex++) {
+					if (a.divs().get(divIndex).men() < a.divs().get(divIndex).menTarget()) {
+						break;
+					}
 				}
 			}
 
@@ -122,6 +135,11 @@ final class Recruiter {
 					WDivRegional d = AD.regional().create(r, (double)am/Config.BATTLE.MEN_PER_DIVISION, a);
 					d.randomize(trai, equip);
 					//d.menSet(d.menTarget());
+
+					if (KingLevels.isActive()) {
+						break main;
+					}
+
 					continue main;
 				}
 			}

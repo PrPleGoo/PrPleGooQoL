@@ -240,6 +240,14 @@ public final class ADSupplies {
 		return m;
 	}
 
+	public double equip(WArmy a) {
+		double m = 1;
+		for (ADSupply s : equip) {
+			m *= s.current.getD(a);
+		}
+		return m;
+	}
+
 	public void transfer(WDIV div, WArmy old, WArmy current) {
 		if (old == null || current == null)
 			return;

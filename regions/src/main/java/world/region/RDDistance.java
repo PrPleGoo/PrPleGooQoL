@@ -244,7 +244,9 @@ public class RDDistance {
 		selTradeF = start;
 
 		if (start instanceof FactionNPC) {
-			return WORLD.PATH().regFinder.all(start.capitolRegion(), KingLevels.isActive() ? Treaty.FACTION_BORDERS : Treaty.FACTION_REACHABLE_NPC_TRADE, selTrade);
+			return WORLD.PATH().regFinder.all(start.capitolRegion(), KingLevels.isActive()
+					? Treaty.FACTION_REACHABLE
+					: Treaty.FACTION_REACHABLE_NPC_TRADE, selTrade);
 		}
 
 		return WORLD.PATH().regFinder.all(start.capitolRegion(), Treaty.FACTION_REACHABLE, selTrade);

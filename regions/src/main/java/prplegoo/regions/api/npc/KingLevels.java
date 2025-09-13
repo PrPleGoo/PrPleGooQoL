@@ -70,7 +70,7 @@ public class KingLevels {
     }
 
     public void consumeResources(FactionNPC faction, NPCStockpile npcStockpile, double deltaDays) {
-        if (!isActive) {
+        if (!isActive || !faction.isActive()) {
             return;
         }
 

@@ -108,7 +108,7 @@ final class Shipper {
 
                     c.loadAndReserve(res.res, a);
                 }
-                else {
+                else if (f == FACTIONS.player()) {
                     f.seller().remove(res.res, -a, ITYPE.tax);
                 }
             }

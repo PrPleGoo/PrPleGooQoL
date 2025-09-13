@@ -229,6 +229,9 @@ public class RDRaces {
 			return min +(max-min)*competence*Math.pow(empireSize, 0.5);
 		}else if (reg.faction() == null) {
 			double fa = maxPop*reg.info.area()*reg.info.moisture()/maxFerArea;
+
+			fa *= KingLevels.isActive() ? 0.35 : 1;
+
 			return fa*0.1;
 		}
 		return capacity.get(reg);

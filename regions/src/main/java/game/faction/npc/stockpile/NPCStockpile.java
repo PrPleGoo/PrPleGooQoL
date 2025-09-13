@@ -436,6 +436,12 @@ public class NPCStockpile extends NPCResource{
 
 		}
 
+		public double amMul() {
+			return amMul(amTarget()+offset());
+
+
+		}
+
 		public double priceBase() {
 			if (totRate == 0)
 				return AVERAGE_PRICE*10000;

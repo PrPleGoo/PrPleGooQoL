@@ -265,6 +265,18 @@ public class NPCStockpile extends NPCResource{
 	}
 
 	public void update(FactionNPC faction, double seconds, double wf) {
+		if (KingLevels.isActive()) {
+			double stockpileValue = faction.stockpile.credit();
+			if (stockpileValue < 0) {
+				double netWorth = FACTIONS.WORTH().faction(faction);
+				if (netWorth < -stockpileValue) {
+					FACTIONS.remove(faction, true);
+
+					return;
+				}
+			}
+		}
+
 		KingLevels.getInstance().pickMaxLevel(faction);
 		if (!KingLevels.isActive()) {
 			updater.tree.update(faction);

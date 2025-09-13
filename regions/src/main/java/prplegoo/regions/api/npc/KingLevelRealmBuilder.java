@@ -133,7 +133,13 @@ public class KingLevelRealmBuilder {
         boolean canTryLoyaltyMutationStrategy = false;
         for (Region region : faction.realm().all()) {
             for (int i = 0; i < RD.RACES().all.size(); i++) {
-                if (RD.RACES().all.get(i).loyalty.target.get(region) < 0) {
+                RDRace race = RD.RACES().all.get(i);
+
+                if (RD.RACES().edicts.massacre.toggled(race).get(region) == 1){
+                    continue;
+                }
+
+                if (race.loyalty.target.get(region) < 0) {
                     canTryLoyaltyMutationStrategy = true;
                     break;
                 }

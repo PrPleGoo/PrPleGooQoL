@@ -11,7 +11,7 @@ import util.data.INT_O;
 import world.map.regions.Region;
 import world.region.RD;
 
-public class LoyaltyMutationStrategy extends LoopingMutationStrategy {
+public class LoyaltyMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
@@ -21,7 +21,7 @@ public class LoyaltyMutationStrategy extends LoopingMutationStrategy {
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
 
         if (GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)
-            && RND.oneIn(GeneticVariables.buildingMutationChance)) {
+            && RND.oneIn(2)) {
             return tryLevelUpgrade(levelInt, buildingGenetic, region);
         }
 

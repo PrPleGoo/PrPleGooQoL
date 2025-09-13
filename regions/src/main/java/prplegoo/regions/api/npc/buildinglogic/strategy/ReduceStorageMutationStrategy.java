@@ -18,8 +18,7 @@ public class ReduceStorageMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)
-                || buildingGenetic.recipe == -1
-                || !RND.oneIn(4)) {
+                || buildingGenetic.recipe == -1) {
             return false;
         }
 

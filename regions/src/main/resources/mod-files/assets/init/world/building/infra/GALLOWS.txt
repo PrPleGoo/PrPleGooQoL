@@ -1,5 +1,5 @@
 ORDER: 2,
-AI_BUILDS: true,
+AI_BUILDS: false,
 LEVELS: [
 
 	{

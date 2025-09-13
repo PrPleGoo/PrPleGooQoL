@@ -13,7 +13,7 @@ public class RandomMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
-            return false;
+            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
         if (!RND.oneIn(GeneticVariables.buildingMutationChance)) {

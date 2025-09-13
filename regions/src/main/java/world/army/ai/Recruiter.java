@@ -6,16 +6,16 @@ import init.config.Config;
 import init.race.RACES;
 import init.race.Race;
 import prplegoo.regions.api.npc.KingLevels;
+import settlement.stats.STATS;
+import settlement.stats.equip.EquipBattle;
 import snake2d.LOG;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.LIST;
 import snake2d.util.sets.Tree;
 import world.WORLD;
-import world.army.AD;
-import world.army.ADDiv;
-import world.army.ADSupplies;
-import world.army.WDivRegional;
+import world.army.*;
 import world.entity.army.WArmy;
 import world.map.regions.Region;
 
@@ -67,15 +67,18 @@ final class Recruiter {
 			}
 
 			if (KingLevels.isActive() && a.divs().size() > 0) {
-				if (AD.supplies().health(a) < 1) {
-					int randomDivisionIndex = RND.rInt(a.divs().size());
-					ADDiv randomDivision = a.divs().get(randomDivisionIndex);
+				int randomDivisionIndex = RND.rInt(a.divs().size());
+				ADDiv randomDivision = a.divs().get(randomDivisionIndex);
 
-					if (randomDivision.men() != 0) {
+				if (randomDivision.men() != 0) {
+					if (AD.supplies().health(a) < 1) {
 						randomDivision.disband();
+						break;
 					}
 
-					break;
+					if (RND.oneIn(4) && isMissingEquips(a, randomDivision)) {
+						randomDivision.disband();
+					}
 				}
 
 				if (AD.supplies().equip(a) < 0.75
@@ -102,7 +105,18 @@ final class Recruiter {
 
 		
 	}
-	
+
+	private boolean isMissingEquips(WArmy a, ADDiv div) {
+		for (EquipBattle e : STATS.EQUIP().BATTLE_ALL()) {
+			if (div.equipTarget(e) != 0
+					&& AD.supplies().get(e).amountValue(a) < 0.05) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void recruit(FactionNPC f, WArmy a, int target) {
 		
 		main:

@@ -18,6 +18,7 @@ import init.text.D;
 import init.type.CLIMATES;
 import init.type.HCLASSES;
 import init.type.TERRAINS;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -134,6 +135,10 @@ public class RDRace implements INDEXED{
 			new RBooster(new BSourceInfo(¤¤Armies, UI.icons().s.sword), 0, 20, false) {
 				@Override
 				public double get(Region t) {
+					if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
+						return 0;
+					}
+
 					double power = 0;
 					for (WArmy a : WORLD.ENTITIES().armies.fill(t))
 						if (a.faction() == t.faction())

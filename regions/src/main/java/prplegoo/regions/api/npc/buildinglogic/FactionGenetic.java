@@ -10,6 +10,7 @@ import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
 import world.map.regions.Region;
@@ -36,15 +37,7 @@ public class FactionGenetic {
         FitnessRecord[] fitnessRecords = new FitnessRecord[7];
         fitnessRecords[0] = new GovPoints(faction, 0);
         fitnessRecords[1] = new Health(faction, 1);
-        // Work force;
-        fitnessRecords[2] = new FitnessRecord(faction, 2) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                return RD.SLAVERY().getWorkforce().bo.get(region);
-            }
-            @Override
-            public double getRegionDeficitMax(FactionNPC faction) { return -50; }
-        };
+        fitnessRecords[2] = new Workforce(faction, 2);
         // Raiders;
         fitnessRecords[3] = new FitnessRecord(faction, 3) {
             @Override
@@ -70,11 +63,6 @@ public class FactionGenetic {
                 }
 
                 return totalMoney;
-            }
-
-            @Override
-            public double getFactionDeficitMax(FactionNPC faction) {
-                return -1; //(KingLevels.getInstance().getLevel(faction) + 1) * faction.realm().regions() * -25000;
             }
         };
         // Loyalty;

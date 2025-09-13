@@ -14,7 +14,7 @@ public class PopulationGrowthMutationStrategy extends LoopingMutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
-            return false;
+            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;

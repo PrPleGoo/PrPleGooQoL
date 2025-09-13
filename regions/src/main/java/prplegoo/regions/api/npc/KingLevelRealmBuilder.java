@@ -4,6 +4,7 @@ import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
@@ -106,6 +107,18 @@ public class KingLevelRealmBuilder {
             return new RandomMutationStrategy();
         }
 
+        boolean hasWorkforceDeficits = false;
+        for (Region region : faction.realm().all()) {
+            if (RD.SLAVERY().getWorkforce().bo.get(region) < 0) {
+                hasWorkforceDeficits = true;
+                break;
+            }
+        }
+
+        if (hasWorkforceDeficits && RND.oneIn(2)) {
+            return new ReduceWorkforceDeficitMutationStrategy();
+        }
+
         if (GeneticVariables.growthBuildingIndex != -1) {
             RDBuilding building = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex);
 
@@ -125,7 +138,7 @@ public class KingLevelRealmBuilder {
             if (canTryPopulationGrowthMutationStrategy && RND.oneIn(3)) {
                 return new PopulationGrowthMutationStrategy();
             }
-            if(canTryHealthMutationStrategy && RND.oneIn(3)) {
+            if (canTryHealthMutationStrategy && RND.oneIn(3)) {
                 return new HealthMutationStrategy();
             }
         }
@@ -145,13 +158,14 @@ public class KingLevelRealmBuilder {
                 }
             }
         }
+
         if(canTryLoyaltyMutationStrategy && RND.oneIn(3)) {
             return new LoyaltyMutationStrategy();
         }
 
         boolean hasDeficits = false;
         for (RESOURCE resource : RESOURCES.ALL()) {
-            if (faction.stockpile.amount(resource) < 0) {
+            if (faction.stockpile.amount(resource) < 1) {
                 hasDeficits = true;
                 break;
             }

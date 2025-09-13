@@ -5,20 +5,18 @@ import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
-import snake2d.util.rnd.RND;
-import util.data.INT_O;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
-import world.region.pop.RDRace;
 
-public class LoyaltyMutationStrategy extends MutationStrategy {
+public class ReduceWorkforceDeficitMutationStrategy extends LoopingMutationStrategy {
     @Override
     public boolean mutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
-        RD.OUTPUT().taxRate.set(region, 0);
+        if (RD.SLAVERY().getWorkforce().bo.get(region) >= 0) {
+            return false;
+        }
 
         return super.mutateRegion(regionGenetic);
     }
@@ -26,17 +24,12 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
-            return false;
+            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
-        INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-
-        if (GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)) {
-            return tryLevelUpgrade(levelInt, buildingGenetic, region);
-        } else if (!GeneticVariables.isGrowthBuilding(buildingGenetic.buildingIndex)
-                && !GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)
-                && RND.oneIn(GeneticVariables.buildingMutationChance)){
-            return tryLevelDowngrade(levelInt, buildingGenetic, region);
+        if (GeneticVariables.isWorforceConsumer(buildingGenetic.buildingIndex)
+            && tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region)) {
+            return true;
         }
 
         return false;
@@ -46,7 +39,10 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
-        fitnessRecords[0] = new Loyalty(faction, 0);
+        fitnessRecords[0] = new Workforce(faction, 0) {
+            @Override
+            public double getRegionDeficitMax(FactionNPC faction) { return Double.NEGATIVE_INFINITY; }
+        };
 
         return fitnessRecords;
     }

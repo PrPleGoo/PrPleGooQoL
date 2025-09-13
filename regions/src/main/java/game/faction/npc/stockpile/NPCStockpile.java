@@ -35,8 +35,6 @@ import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
 public class NPCStockpile extends NPCResource{
-
-	// TODO: Fix int.max stockvalues.
 	public static final int AVERAGE_PRICE = 200;
 	private static final double PRICE_MAX = 10.0;
 	private static final double PRICE_MIN = 1.0/PRICE_MAX;

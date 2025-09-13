@@ -2,10 +2,12 @@ package prplegoo.regions.api.npc.buildinglogic;
 
 import game.boosting.BoostSpec;
 import prplegoo.regions.api.MagicStringChecker;
+import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.LIST;
 import world.region.RD;
+import world.region.building.RDBuildPoints;
 
 public class GeneticVariables {
     public static final int buildingMutationChance = 4;
@@ -107,6 +109,30 @@ public class GeneticVariables {
         }
 
         return loyaltyBuildingIndeces[buildingIndex] == 2;
+    }
+
+    private static int[] workforceConsumerIndeces;
+    public static boolean isWorforceConsumer(int buildingIndex) {
+        if (workforceConsumerIndeces == null) {
+            workforceConsumerIndeces = new int[RD.BUILDINGS().all.size()];
+        }
+
+        if (workforceConsumerIndeces[buildingIndex] != 0) {
+            return workforceConsumerIndeces[buildingIndex] == 2;
+        }
+
+        for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.ALL){
+            if(MagicStringChecker.isWorkforceBoostableKey(cost.bo.key)){
+                workforceConsumerIndeces[buildingIndex] = 2;
+                break;
+            }
+        }
+
+        if (workforceConsumerIndeces[buildingIndex] == 0) {
+            workforceConsumerIndeces[buildingIndex] = 1;
+        }
+
+        return workforceConsumerIndeces[buildingIndex] == 2;
     }
 
     public static boolean mutationNotAllowed(int buildingIndex) {

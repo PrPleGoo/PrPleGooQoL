@@ -25,6 +25,4 @@ public abstract class LoopingMutationStrategy extends MutationStrategy {
 
         return didMutationOccur;
     }
-
-
 }

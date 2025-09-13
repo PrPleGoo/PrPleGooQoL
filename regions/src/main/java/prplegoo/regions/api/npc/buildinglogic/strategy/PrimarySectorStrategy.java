@@ -17,9 +17,8 @@ import world.region.building.RDBuilding;
 public class PrimarySectorStrategy extends MutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
-        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)
-            || !RND.oneIn(4)) {
-            return false;
+        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
+            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
         RDBuilding building = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex);

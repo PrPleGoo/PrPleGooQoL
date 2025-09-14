@@ -48,7 +48,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     }
 
     private void initialize() {
-        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][128][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
+        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][100][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }
 
     public boolean isEnabled(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){

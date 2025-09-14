@@ -2,14 +2,10 @@ package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
-import init.resources.RESOURCE;
-import init.resources.RESOURCES;
-import prplegoo.regions.api.MagicStringChecker;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.strategy.*;
-import snake2d.util.rnd.RND;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
@@ -79,7 +75,7 @@ public class KingLevelRealmBuilder {
         }
 
         for (int i = 0; i < totalMutations; i++) {
-            MutationStrategy strategy = PickStrategy(faction);
+            MutationStrategy strategy = PickStrategy();
             original = new FactionGeneticMutator(faction, strategy);
 
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
@@ -102,81 +98,28 @@ public class KingLevelRealmBuilder {
         KingLevels.getInstance().resetDailyProductionRateCache(faction);
     }
 
-    private MutationStrategy PickStrategy(FactionNPC faction) {
-        if (RND.oneIn(4)) {
-            return new RandomMutationStrategy();
-        }
-
-        switch(RND.rInt(7)) {
-            case 0:
-                return new ReduceWorkforceDeficitMutationStrategy();
-            case 1:
-                return new PopulationGrowthMutationStrategy();
-            case 2:
-                return new HealthMutationStrategy();
-            case 3:
-                return new LoyaltyMutationStrategy();
-            case 4:
-                return new ReduceDeficitMutationStrategy();
-            case 5:
-                return new PrimarySectorStrategy();
-            case 6:
-                return new ReduceStorageMutationStrategy();
-        }
-        boolean hasWorkforceDeficits = false;
-        for (Region region : faction.realm().all()) {
-            if (RD.SLAVERY().getWorkforce().bo.get(region) < 0) {
-                hasWorkforceDeficits = true;
-                break;
-            }
-        }
-
-        if (hasWorkforceDeficits && RND.oneIn(2)) {
-            return new ReduceWorkforceDeficitMutationStrategy();
-        }
-
-        if (GeneticVariables.growthBuildingIndex != -1) {
-            RDBuilding building = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex);
-
-            boolean canTryPopulationGrowthMutationStrategy = false;
-            boolean canTryHealthMutationStrategy = false;
-            for (Region region : faction.realm().all()) {
-                int levelCurrent = building.level.get(region);
-                if (building.canAfford(region, levelCurrent, levelCurrent + 1) == null && RND.oneIn(2)) {
-                    if (RD.HEALTH().boostablee.get(region) < 5) {
-                        canTryHealthMutationStrategy = true;
-                    }
-
-                    canTryPopulationGrowthMutationStrategy = true;
-                }
-            }
-
-            if (canTryPopulationGrowthMutationStrategy && RND.oneIn(3)) {
-                return new PopulationGrowthMutationStrategy();
-            }
-            if (canTryHealthMutationStrategy && RND.oneIn(3)) {
-                return new HealthMutationStrategy();
-            }
-        }
-
-        boolean hasDeficits = false;
-        for (RESOURCE resource : RESOURCES.ALL()) {
-            if (faction.stockpile.amount(resource) < 1) {
-                hasDeficits = true;
-                break;
-            }
-        }
-
-        if (hasDeficits && RND.oneIn(2)) {
-            return new ReduceDeficitMutationStrategy();
-        }
-
-        if (RND.oneIn(3)) {
-            return new PrimarySectorStrategy();
-        } else if (RND.oneIn(2)){
-            return new ReduceStorageMutationStrategy();
-        }
-
-        return new RandomMutationStrategy();
+    private MutationStrategy PickStrategy() {
+        return strategies.Pick();
     }
+    public KingLevelRealmBuilder() {
+        strategies.Add(1, ReduceWorkforceDeficitMutationStrategy);
+        strategies.Add(1, PopulationGrowthMutationStrategy);
+        strategies.Add(1, HealthMutationStrategy);
+        strategies.Add(1, LoyaltyMutationStrategy);
+        strategies.Add(1, ReduceDeficitMutationStrategy);
+        strategies.Add(2, PrimarySectorStrategy);
+        strategies.Add(2, ReduceStorageMutationStrategy);
+        strategies.Add(2, RandomMutationStrategy);
+    }
+
+    private static final WeightedBag<MutationStrategy> strategies = new WeightedBag<>();
+    private static final ReduceWorkforceDeficitMutationStrategy ReduceWorkforceDeficitMutationStrategy = new ReduceWorkforceDeficitMutationStrategy();
+    private static final PopulationGrowthMutationStrategy PopulationGrowthMutationStrategy = new PopulationGrowthMutationStrategy();
+    private static final HealthMutationStrategy HealthMutationStrategy = new HealthMutationStrategy();
+    private static final LoyaltyMutationStrategy LoyaltyMutationStrategy = new LoyaltyMutationStrategy();
+    private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
+    private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
+    private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();
+    private static final RandomMutationStrategy RandomMutationStrategy = new RandomMutationStrategy();
 }
+

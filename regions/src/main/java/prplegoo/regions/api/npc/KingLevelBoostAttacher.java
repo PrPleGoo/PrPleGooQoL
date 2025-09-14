@@ -47,7 +47,7 @@ public class KingLevelBoostAttacher {
 
                 FactionNPC faction = (FactionNPC) t.faction();
 
-                return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) * KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / 9.0;
+                return KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / 10.0;
             }
         }.add(RD.RACES().capacity);
 

@@ -215,7 +215,7 @@ final class Creator {
 				BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
 				for (int ri = 0; ri < outs.size(); ri++) {
 					IndustryResource i = outs.get(ri);
-					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex);
+					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
 					RDOutput out = RD.OUTPUT().get(i.resource);
 					l.local.push(bo, out.boost);
 
@@ -226,7 +226,7 @@ final class Creator {
 
 				for (int ri = 0; ri < ins.size(); ri++) {
 					IndustryResource i = ins.get(ri);
-					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex);
+					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex, all.size());
 					RDOutput in = RD.OUTPUT().get(i.resource);
 					l.local.push(bo, in.boost);
 				}

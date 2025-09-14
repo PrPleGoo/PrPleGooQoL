@@ -56,14 +56,20 @@ public class ReduceStorageMutationStrategy extends MutationStrategy {
             double outputPrice = 0.0;
             for (int j = 0; j < outputs.size(); j++) {
                 RESOURCE resource = outputs.get(j).resource;
-                outputPrice += faction.stockpile.price.get(resource) * outputs.get(j).rate;
+                double ratePrice = faction.stockpile.price.get(resource) * outputs.get(j).rate;
+
+                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0) {
+                    ratePrice *= 2;
+                }
+
+                outputPrice += ratePrice;
             }
 
             double margin = outputPrice / inputPrice;
             boolean profitableRecipe = margin > RND.rFloat(1.0) + 1.0;
 
             if (profitableRecipe) {
-                RD.RECIPES().setRecipe(region, building.getBlue(), actualIndex);
+                RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, building.getBlue(), actualIndex);
                 buildingGenetic.recipe = actualIndex;
 
                 tryLevelUpgrade(building.level, buildingGenetic, region);

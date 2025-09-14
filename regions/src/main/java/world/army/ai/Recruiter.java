@@ -62,7 +62,7 @@ final class Recruiter {
 		while(tree.hasMore()) {
 			WArmy a = tree.pollGreatest();
 
-			if (KingLevels.isActive() && a.divs().size() == 0) {
+			if (KingLevels.isActive() && a.divs().size() < 2) {
 				AD.supplies().arts().rnd().target.set(a, 0);
 			}
 
@@ -79,7 +79,7 @@ final class Recruiter {
 
 				for (int i = 0; i < a.divs().size(); i++) {
 					ADDiv div = a.divs().get(i);
-					if (RND.oneIn(4) && isMissingEquips(a, div)) {
+					if (RND.oneIn(4) && div.men() != 0 && isMissingEquips(a, div)) {
 						div.disband();
 					}
 				}

@@ -22,7 +22,7 @@ public class RandomMutationStrategy extends MutationStrategy {
                 INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).getBlue();
 
                 int pick = RND.rInt(industry.industries().size());
-                RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
+                RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, (RoomBlueprintImp) industry, pick);
                 buildingGenetic.recipe = pick;
 
                 return true;
@@ -57,7 +57,7 @@ public class RandomMutationStrategy extends MutationStrategy {
                     INDUSTRY_HASER industry = (INDUSTRY_HASER) RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).getBlue();
 
                     int pick = RND.rInt(industry.industries().size());
-                    RD.RECIPES().setRecipe(region, (RoomBlueprintImp) industry, pick);
+                    RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, (RoomBlueprintImp) industry, pick);
                     buildingGenetic.recipe = pick;
                 }
 

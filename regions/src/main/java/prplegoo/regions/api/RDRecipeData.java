@@ -31,9 +31,9 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
 public class RDRecipeData {
-    public int[][] enabledRecipeIndex;
+    public int[][][] enabledRecipeIndex;
 
-    public RDRecipeData(int[][] enabledRecipeIndex) {
+    public RDRecipeData(int[][][] enabledRecipeIndex) {
         this.enabledRecipeIndex = enabledRecipeIndex;
     }
 }

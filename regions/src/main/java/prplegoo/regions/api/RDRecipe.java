@@ -14,7 +14,7 @@ import world.map.regions.Region;
 import world.region.RD;
 
 public class RDRecipe implements IDataPersistence<RDRecipeData> {
-    private int[][] enabledRecipeIndex;
+    private int[][][] enabledRecipeIndex;
 
     public RDRecipe(){
         initialize();
@@ -48,30 +48,32 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     }
 
     private void initialize() {
-        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
+        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][128][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }
 
-    public boolean isEnabled(Region region, RoomBlueprintImp blue, int industryIndexOnBlue){
-        return enabledRecipeIndex[region.index()][blue.index()] == industryIndexOnBlue;
+    public boolean isEnabled(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){
+        return enabledRecipeIndex[region.index()][buildingIndex][blue.index()] == industryIndexOnBlue;
     }
 
-    public void setRecipe(Region region, RoomBlueprintImp blue, int industryIndexOnBlue){
-        enabledRecipeIndex[region.index()][blue.index()] = industryIndexOnBlue;
+    public void setRecipe(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){
+        enabledRecipeIndex[region.index()][buildingIndex][blue.index()] = industryIndexOnBlue;
     }
 
-    public int getRecipeIndex(Region region, RoomBlueprintImp blue) {
-        return enabledRecipeIndex[region.index()][blue.index()];
+    public int getRecipeIndex(Region region, int buildingIndex, RoomBlueprintImp blue) {
+        return enabledRecipeIndex[region.index()][buildingIndex][blue.index()];
     }
 
     public static class RDEnabledRecipeBooster extends BoosterValue {
         private final RoomBlueprintImp blue;
         private final int recipeIndex;
+        private final int buildingIndex;
 
-        public RDEnabledRecipeBooster(BValue v, BSourceInfo info, double to, boolean isMul, RoomBlueprintImp blue, int recipeIndex) {
+        public RDEnabledRecipeBooster(BValue v, BSourceInfo info, double to, boolean isMul, RoomBlueprintImp blue, int recipeIndex, int buildingIndex) {
             super(v, info, to, isMul);
 
             this.blue = blue;
             this.recipeIndex = recipeIndex;
+            this.buildingIndex = buildingIndex;
         }
 
         @Override
@@ -79,8 +81,8 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
             return input;
         }
 
-        public double getIfRecipe(Region reg, int recipeIndex){
-            return RD.RECIPES().isEnabled(reg, blue, recipeIndex) ? to() : 0;
+        public double getIfRecipe(Region reg, int buildingIndex, int recipeIndex){
+            return RD.RECIPES().isEnabled(reg, buildingIndex, blue, recipeIndex) ? to() : 0;
         }
 
         @Override
@@ -89,7 +91,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
                 return 0;
             }
 
-            return getIfRecipe((Region) o, recipeIndex);
+            return getIfRecipe((Region) o, buildingIndex, recipeIndex);
         }
     }
 }

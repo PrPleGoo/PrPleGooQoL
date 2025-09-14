@@ -29,7 +29,7 @@ public class BuildingGenetic {
 
         RoomBlueprintImp blue = building.getBlue();
         if (blue instanceof INDUSTRY_HASER) {
-            this.recipe = RD.RECIPES().getRecipeIndex(region, blue);
+            this.recipe = RD.RECIPES().getRecipeIndex(region, this.buildingIndex, blue);
         } else {
             recipe = -1;
         }
@@ -43,7 +43,7 @@ public class BuildingGenetic {
         }
 
         if (recipe != -1) {
-            RD.RECIPES().setRecipe(region, RD.BUILDINGS().all.get(this.buildingIndex).getBlue(), recipe);
+            RD.RECIPES().setRecipe(region, this.buildingIndex, RD.BUILDINGS().all.get(this.buildingIndex).getBlue(), recipe);
         }
 
         RD.BUILDINGS().all.get(buildingIndex).level.set(region, level);

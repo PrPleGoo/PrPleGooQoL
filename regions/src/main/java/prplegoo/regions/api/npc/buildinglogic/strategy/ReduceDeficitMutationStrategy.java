@@ -28,7 +28,7 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
 
         LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
         FactionNPC faction = (FactionNPC) region.faction();
-        LIST<Industry.IndustryResource> inputs = industries.get(RD.RECIPES().getRecipeIndex(region, building.getBlue())).ins();
+        LIST<Industry.IndustryResource> inputs = industries.get(RD.RECIPES().getRecipeIndex(region, buildingGenetic.buildingIndex, building.getBlue())).ins();
 
         for(int j = 0; j < inputs.size(); j++) {
             RESOURCE resource = inputs.get(j).resource;

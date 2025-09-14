@@ -291,7 +291,7 @@ class PlayBuildingsPop {
         protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
             GCOLOR.UI().border().render(r, body,-1);
 
-            if (RD.RECIPES().isEnabled(g.get(), blue, industryIndexOnBlue)) {
+            if (RD.RECIPES().isEnabled(g.get(), bu.index(), blue, industryIndexOnBlue)) {
                 COLOR.WHITE100.render(r, body,-2);
                 GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
             }else {
@@ -337,7 +337,7 @@ class PlayBuildingsPop {
         @Override
         protected void clickA() {
             if (S.get().developer || this.industry.lockable().passes(g.get().faction())) {
-                RD.RECIPES().setRecipe(g.get(), blue, industryIndexOnBlue);
+                RD.RECIPES().setRecipe(g.get(), bu.index() ,blue, industryIndexOnBlue);
                 VIEW.inters().popup.close();
             }
         }

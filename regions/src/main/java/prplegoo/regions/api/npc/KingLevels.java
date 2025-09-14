@@ -93,7 +93,10 @@ public class KingLevels {
                 }
             }
 
-            npcStockpile.inc(resource, npcStockpile.amount(resource.index()) * -resource.degradeSpeed() / 16 / 2 / BOOSTABLES.CIVICS().SPOILAGE.get(faction));
+            double amountStored = npcStockpile.amount(resource.index());
+            if (amountStored > 0) {
+                npcStockpile.inc(resource, amountStored * -resource.degradeSpeed() / 16 / 2 / BOOSTABLES.CIVICS().SPOILAGE.get(faction));
+            }
         }
 
 

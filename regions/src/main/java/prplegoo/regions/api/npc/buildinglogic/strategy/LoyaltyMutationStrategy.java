@@ -34,23 +34,30 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
             }
         }
 
-        if (!canTryLoyaltyMutationStrategy) {
+        if (!canTryLoyaltyMutationStrategy && !anyMoreThanOne) {
             return false;
         }
 
-        return super.mutateRegion(regionGenetic);
+        boolean didMutationOccur = false;
+        int randomIndex = RND.rInt(regionGenetic.buildingGenetics.length);
+        for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
+            int actualIndex = (randomIndex + i) % regionGenetic.buildingGenetics.length;
+            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[actualIndex], region, canTryLoyaltyMutationStrategy, anyMoreThanOne);
+        }
+
+        return didMutationOccur;
     }
 
-    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, boolean anyMoreThanOne) {
+    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, boolean anyLessThanZero, boolean anyMoreThanOne) {
         if (!GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)) {
             return false;
         }
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-        if (anyMoreThanOne && RND.oneIn(3)) {
-            tryLevelDowngrade(levelInt, buildingGenetic, region);
-        } else {
-            tryLevelUpgrade(levelInt, buildingGenetic, region);
+        if (anyMoreThanOne && RND.oneIn(3) && tryLevelDowngrade(levelInt, buildingGenetic, region)) {
+            return true;
+        } else if (anyLessThanZero) {
+            return tryLevelUpgrade(levelInt, buildingGenetic, region);
         }
 
         return false;

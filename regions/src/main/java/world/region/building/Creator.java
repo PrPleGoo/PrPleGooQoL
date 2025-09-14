@@ -163,8 +163,16 @@ final class Creator {
 					LOG.err(data.errorGet(b.key + "Is not a valid room to generate", "INDUSTRIES"));
 				}
 
-				RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
-				res.add(bu);
+				if (h.industries().size() > 2) {
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_A"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_B"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_C"));
+				} else if (h.industries().size() > 1) {
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_A"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_B"));
+				} else {
+					res.add(generate(all, init, cat, h.industries(), blue, data, b.index()));
+				}
 			}
 
 		}
@@ -174,9 +182,11 @@ final class Creator {
 
 	}
 
-
-
 	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex) {
+		return generate(all, init, cat, industries, blue, data, buildingIndex, "");
+	}
+
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex, String appendix) {
 
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
 
@@ -184,7 +194,7 @@ final class Creator {
 		double credits = data.i("CREDITS", 0, Integer.MAX_VALUE);
 
 
-		String kkk = blue.key.startsWith("_") ? blue.key.substring(1) : blue.key;
+		String kkk = (blue.key.startsWith("_") ? blue.key.substring(1) : blue.key) + appendix;
 
 		String desc = ¤¤desc + ": ";
 

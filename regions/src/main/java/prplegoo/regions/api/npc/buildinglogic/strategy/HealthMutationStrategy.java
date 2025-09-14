@@ -25,7 +25,7 @@ public class HealthMutationStrategy extends MutationStrategy {
         if (GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
             if (health <= 1) {
                 return tryLevelUpgrade(levelInt, buildingGenetic, region);
-            }else {
+            } else {
                 return tryLevelDowngrade(levelInt, buildingGenetic, region);
             }
         }

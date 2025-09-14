@@ -101,9 +101,7 @@ public class FactionGenetic {
     }
 
     public boolean shouldAdopt(FactionNPC faction, FactionGenetic mutant) {
-//        LOG.ln("CHECKING mutant.anyFitnessExceedsDeficit IN FactionGenetic;");
         if (anyFitnessExceedsDeficit(faction)) {
-//            LOG.ln("CHECKING mutant.anyFitnessExceedsDeficit IN FactionGenetic;");
             return false;
         }
 

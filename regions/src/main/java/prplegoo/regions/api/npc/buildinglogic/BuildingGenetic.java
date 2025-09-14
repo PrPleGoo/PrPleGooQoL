@@ -37,6 +37,8 @@ public class BuildingGenetic {
 
     public void commit(Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingIndex)) {
+            RD.BUILDINGS().all.get(buildingIndex).level.set(region, 0);
+
             return;
         }
 

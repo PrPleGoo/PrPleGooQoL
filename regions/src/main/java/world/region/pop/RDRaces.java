@@ -230,7 +230,7 @@ public class RDRaces {
 		}else if (reg.faction() == null) {
 			double fa = maxPop*reg.info.area()*reg.info.moisture()/maxFerArea;
 
-			fa *= KingLevels.isActive() ? 0.35 : 1;
+			fa *= KingLevels.isActive() ? 0.20 : 1;
 
 			return fa*0.1;
 		}

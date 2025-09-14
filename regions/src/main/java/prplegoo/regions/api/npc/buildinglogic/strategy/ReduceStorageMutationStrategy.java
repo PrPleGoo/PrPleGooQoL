@@ -4,7 +4,10 @@ import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
+import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import snake2d.util.rnd.RND;
@@ -70,5 +73,15 @@ public class ReduceStorageMutationStrategy extends MutationStrategy {
         }
 
         return false;
+    }
+
+    @Override
+    public FitnessRecord[] loadFitness(FactionNPC faction) {
+        FitnessRecord[] fitnessRecords = new FitnessRecord[2];
+
+        fitnessRecords[0] = new Workforce(faction, 0);
+        fitnessRecords[1] = new Money(faction, 1);
+
+        return fitnessRecords;
     }
 }

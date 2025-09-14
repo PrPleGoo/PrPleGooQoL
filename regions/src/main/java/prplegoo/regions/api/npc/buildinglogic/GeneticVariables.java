@@ -37,7 +37,7 @@ public class GeneticVariables {
         return false;
     }
 
-    private static int quarantineBuildingIndex = -1;
+    public static int quarantineBuildingIndex = -1;
 
     public static boolean isQuarantineBuilding(int buildingIndex) {
         if (quarantineBuildingIndex != -1) {

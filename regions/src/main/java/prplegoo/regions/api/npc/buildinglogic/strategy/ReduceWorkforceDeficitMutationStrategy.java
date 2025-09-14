@@ -27,9 +27,8 @@ public class ReduceWorkforceDeficitMutationStrategy extends LoopingMutationStrat
             return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
-        if (GeneticVariables.isWorforceConsumer(buildingGenetic.buildingIndex)
-            && tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region)) {
-            return true;
+        if (GeneticVariables.isWorforceConsumer(buildingGenetic.buildingIndex)) {
+            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
         }
 
         return false;
@@ -39,10 +38,7 @@ public class ReduceWorkforceDeficitMutationStrategy extends LoopingMutationStrat
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
-        fitnessRecords[0] = new Workforce(faction, 0) {
-            @Override
-            public double getRegionDeficitMax(FactionNPC faction) { return Double.NEGATIVE_INFINITY; }
-        };
+        fitnessRecords[0] = new Workforce(faction, 0);
 
         return fitnessRecords;
     }

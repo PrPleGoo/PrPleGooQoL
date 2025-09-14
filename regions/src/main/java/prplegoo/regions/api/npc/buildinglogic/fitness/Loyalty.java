@@ -18,7 +18,7 @@ public class Loyalty extends FitnessRecord {
                 continue;
             }
 
-            amount += Math.min(RD.RACES().all.get(i).loyalty.target.get(region), 1);
+            amount += Math.min(RD.RACES().all.get(i).loyalty.target.get(region), 0);
         }
 
         return amount;

@@ -61,6 +61,17 @@ public abstract class MutationStrategy {
         return false;
     }
 
+    protected boolean tryDestroyBuilding(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
+        if (buildingGenetic.level > 0) {
+            buildingGenetic.level = 0;
+            levelInt.set(region, buildingGenetic.level);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         return FactionGenetic.loadDefault(faction);
     }

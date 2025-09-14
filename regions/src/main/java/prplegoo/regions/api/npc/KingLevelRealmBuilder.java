@@ -33,7 +33,7 @@ public class KingLevelRealmBuilder {
 
         for (Region region : faction.realm().all()) {
             for (RDRace race : RD.RACES().all) {
-                if (genocide[race.index()] > 3.5) {
+                if (genocide[race.index()] > 3.0) {
                     RD.RACES().edicts.massacre.toggled(race).set(region, 1);
                     RD.RACES().edicts.exile.toggled(race).set(region, 0);
                     RD.RACES().edicts.sanction.toggled(race).set(region, 0);
@@ -107,6 +107,22 @@ public class KingLevelRealmBuilder {
             return new RandomMutationStrategy();
         }
 
+        switch(RND.rInt(7)) {
+            case 0:
+                return new ReduceWorkforceDeficitMutationStrategy();
+            case 1:
+                return new PopulationGrowthMutationStrategy();
+            case 2:
+                return new HealthMutationStrategy();
+            case 3:
+                return new LoyaltyMutationStrategy();
+            case 4:
+                return new ReduceDeficitMutationStrategy();
+            case 5:
+                return new PrimarySectorStrategy();
+            case 6:
+                return new ReduceStorageMutationStrategy();
+        }
         boolean hasWorkforceDeficits = false;
         for (Region region : faction.realm().all()) {
             if (RD.SLAVERY().getWorkforce().bo.get(region) < 0) {
@@ -141,26 +157,6 @@ public class KingLevelRealmBuilder {
             if (canTryHealthMutationStrategy && RND.oneIn(3)) {
                 return new HealthMutationStrategy();
             }
-        }
-
-        boolean canTryLoyaltyMutationStrategy = false;
-        for (Region region : faction.realm().all()) {
-            for (int i = 0; i < RD.RACES().all.size(); i++) {
-                RDRace race = RD.RACES().all.get(i);
-
-                if (RD.RACES().edicts.massacre.toggled(race).get(region) == 1){
-                    continue;
-                }
-
-                if (race.loyalty.target.get(region) < 0) {
-                    canTryLoyaltyMutationStrategy = true;
-                    break;
-                }
-            }
-        }
-
-        if(canTryLoyaltyMutationStrategy && RND.oneIn(3)) {
-            return new LoyaltyMutationStrategy();
         }
 
         boolean hasDeficits = false;

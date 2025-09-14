@@ -1,48 +1,70 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
+import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.ArrayListGrower;
+import snake2d.util.sets.LIST;
 import util.data.INT_O;
+import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
 
-public class PopulationGrowthMutationStrategy extends LoopingMutationStrategy {
+import java.util.*;
+
+public class PopulationGrowthMutationStrategy extends MutationStrategy {
     @Override
-    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
-        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
-            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
-        }
-
-        INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-
-        if (GeneticVariables.isGrowthBuilding(buildingGenetic.buildingIndex)
-                || GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)
-                || GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
-            return tryLevelChange(levelInt, buildingGenetic, region);
-        }
-
-        if (RND.oneIn(5)) {
-            return tryLevelDowngrade(levelInt, buildingGenetic, region);
-        }
-
-        return false;
-    }
-
-    private boolean tryLevelChange(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
-        int rand = RND.rInt(5);
-
-        if (rand == 0 && tryLevelDowngrade(levelInt, buildingGenetic, region)) {
-            return true;
-        }
-        if (rand == 1) {
+    public boolean tryMutate(FactionGenetic factionGenetic) {
+        if (GeneticVariables.growthBuildingIndex == -1) {
             return false;
         }
-        if ((rand > 1) && tryLevelUpgrade(levelInt, buildingGenetic, region)) {
-            return true;
+
+        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
+            Region region = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[i].regionIndex);
+            INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
+
+            tryDestroyBuilding(levelInt, factionGenetic.regionGenetics[i].buildingGenetics[GeneticVariables.growthBuildingIndex], region);
+        }
+
+        List<RegionSizeTuple> regionsWithSize = new ArrayList<>();
+        for (int i = 0; i < factionGenetic.regionGenetics.length; i++){
+            Region region = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[i].regionIndex);
+            double size = RD.RACES().capacity.get(region);
+
+            if (region.capitol()) {
+                size = Double.POSITIVE_INFINITY;
+            }
+
+            regionsWithSize.add(new RegionSizeTuple(i, size));
+        }
+
+        Collections.sort(regionsWithSize);
+        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
+            while (mutateRegion(factionGenetic.regionGenetics[regionsWithSize.get(i).RegionIndex])){
+                // NOP;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean mutateRegion(RegionGenetic regionGenetic) {
+        Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
+
+        return tryMutateBuilding(regionGenetic.buildingGenetics[GeneticVariables.growthBuildingIndex], region);
+    }
+
+    @Override
+    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
+        INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
+
+        if (region.capitol()) {
+            return tryLevelUpgrade(levelInt, buildingGenetic, region);
         }
 
         return false;
@@ -50,12 +72,10 @@ public class PopulationGrowthMutationStrategy extends LoopingMutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[4];
+        FitnessRecord[] fitnessRecords = new FitnessRecord[2];
         fitnessRecords[0] = new GovPoints(faction, 0);
-        fitnessRecords[1] = new Health(faction, 1);
-        fitnessRecords[2] = new Loyalty(faction, 2);
         // PopTarget;
-        fitnessRecords[3] = new FitnessRecord(faction, 3) {
+        fitnessRecords[1] = new FitnessRecord(faction, 1) {
             @Override
             public boolean willIncreaseDeficit(FactionNPC faction, FactionGenetic mutant) {
                 return factionValue > mutant.fitnessRecords[index].factionValue;
@@ -79,5 +99,21 @@ public class PopulationGrowthMutationStrategy extends LoopingMutationStrategy {
         };
 
         return fitnessRecords;
+    }
+
+    private static class RegionSizeTuple implements Comparable<RegionSizeTuple> {
+        public int RegionIndex;
+
+        public double Size;
+
+        public RegionSizeTuple(int regionIndex, double size) {
+            this.RegionIndex = regionIndex;
+            this.Size = size;
+        }
+
+        @Override
+        public int compareTo(RegionSizeTuple o) {
+            return Double.compare(this.Size, o.Size);
+        }
     }
 }

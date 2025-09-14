@@ -347,7 +347,9 @@ public class NPCStockpile extends NPCResource{
 				amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5);
 			}
 
-			return amTarget * 5;
+
+			int tradeSets = (int) (amTarget * 5 / TradeManager.MIN_LOAD);
+			return (tradeSets + 1) * TradeManager.MIN_LOAD;
 		}
 
 		@Override

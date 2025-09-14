@@ -3,10 +3,9 @@ package prplegoo.regions.api.npc.buildinglogic.strategy;
 import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
 import prplegoo.regions.api.npc.KingLevels;
-import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
-import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
-import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
-import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
+import prplegoo.regions.api.npc.buildinglogic.*;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
+import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import snake2d.util.sets.LIST;
@@ -40,5 +39,14 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
         }
 
         return false;
+    }
+
+    @Override
+    public FitnessRecord[] loadFitness(FactionNPC faction) {
+        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
+
+        fitnessRecords[0] = new Workforce(faction, 0);
+
+        return fitnessRecords;
     }
 }

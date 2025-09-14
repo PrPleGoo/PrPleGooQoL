@@ -66,7 +66,7 @@ final class Recruiter {
 				AD.supplies().arts().rnd().target.set(a, 0);
 			}
 
-			if (KingLevels.isActive() && a.divs().size() > 0) {
+			if (KingLevels.isActive() && a.divs().size() > 1) {
 				int randomDivisionIndex = RND.rInt(a.divs().size());
 				ADDiv randomDivision = a.divs().get(randomDivisionIndex);
 
@@ -75,9 +75,12 @@ final class Recruiter {
 						randomDivision.disband();
 						break;
 					}
+				}
 
-					if (RND.oneIn(4) && isMissingEquips(a, randomDivision)) {
-						randomDivision.disband();
+				for (int i = 0; i < a.divs().size(); i++) {
+					ADDiv div = a.divs().get(i);
+					if (RND.oneIn(4) && isMissingEquips(a, div)) {
+						div.disband();
 					}
 				}
 
@@ -109,7 +112,7 @@ final class Recruiter {
 	private boolean isMissingEquips(WArmy a, ADDiv div) {
 		for (EquipBattle e : STATS.EQUIP().BATTLE_ALL()) {
 			if (div.equipTarget(e) != 0
-					&& AD.supplies().get(e).amountValue(a) < 0.05) {
+					&& AD.supplies().get(e).amountValue(a) < 0.25) {
 				return true;
 			}
 		}

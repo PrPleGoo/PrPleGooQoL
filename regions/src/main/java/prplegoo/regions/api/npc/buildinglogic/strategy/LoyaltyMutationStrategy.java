@@ -1,10 +1,7 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
-import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
-import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
-import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
-import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
+import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import snake2d.util.rnd.RND;
@@ -20,23 +17,40 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
         RD.OUTPUT().taxRate.set(region, 0);
 
+        boolean canTryLoyaltyMutationStrategy = false;
+        boolean anyMoreThanOne = false;
+        for (int i = 0; i < RD.RACES().all.size(); i++) {
+            RDRace race = RD.RACES().all.get(i);
+
+            if (RD.RACES().edicts.massacre.toggled(race).get(region) == 1){
+                continue;
+            }
+
+            if (race.loyalty.target.get(region) < 0) {
+                canTryLoyaltyMutationStrategy = true;
+            }
+            if (race.loyalty.target.get(region) > 1) {
+                anyMoreThanOne = true;
+            }
+        }
+
+        if (!canTryLoyaltyMutationStrategy) {
+            return false;
+        }
+
         return super.mutateRegion(regionGenetic);
     }
 
-    @Override
-    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
-        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
+    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, boolean anyMoreThanOne) {
+        if (!GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)) {
             return false;
         }
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-
-        if (GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)) {
-            return tryLevelUpgrade(levelInt, buildingGenetic, region);
-        } else if (!GeneticVariables.isGrowthBuilding(buildingGenetic.buildingIndex)
-                && !GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)
-                && RND.oneIn(GeneticVariables.buildingMutationChance)){
-            return tryLevelDowngrade(levelInt, buildingGenetic, region);
+        if (anyMoreThanOne && RND.oneIn(3)) {
+            tryLevelDowngrade(levelInt, buildingGenetic, region);
+        } else {
+            tryLevelUpgrade(levelInt, buildingGenetic, region);
         }
 
         return false;

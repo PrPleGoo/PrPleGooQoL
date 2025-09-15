@@ -39,9 +39,11 @@ public class HealthMutationStrategy extends LoopingMutationStrategy {
                 while(tryLevelUpgrade(levelInt, buildingGenetic, region)) {
                     // NOP
                 }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         return tryLevelDowngrade(levelInt, buildingGenetic, region);

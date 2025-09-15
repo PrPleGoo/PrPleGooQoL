@@ -32,12 +32,7 @@ public class Loyalty extends FitnessRecord {
     }
 
     @Override
-    public double getRegionDeficitMax(FactionNPC faction) { return -0.5; }
-
-    @Override
-    public boolean exceedsDeficit(FactionNPC faction) {
-        return false;
-    }
+    public double getRegionDeficitMax(FactionNPC faction) { return -0.1; }
 
     @Override
     public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {

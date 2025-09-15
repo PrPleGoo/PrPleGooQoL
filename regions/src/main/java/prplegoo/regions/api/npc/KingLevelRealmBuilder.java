@@ -46,7 +46,6 @@ public class KingLevelRealmBuilder {
 
         FactionGenetic original = new FactionGenetic(faction);
         original.loadFitness(faction).calculateFitness(faction);
-        int totalMutations = GeneticVariables.mutationAttemptsPerTick;
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) {
@@ -59,7 +58,7 @@ public class KingLevelRealmBuilder {
             }
         }
 
-        for (int i = 0; i < totalMutations; i++) {
+        for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
             MutationStrategy strategy = alertMode
                     ? PickAlertStrategy()
                     : PickStrategy();

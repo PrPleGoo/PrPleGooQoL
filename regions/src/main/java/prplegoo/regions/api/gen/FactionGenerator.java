@@ -92,7 +92,8 @@ public class FactionGenerator {
             }
 
             for (WRegFinder.RegDist regDist : neighbors) {
-                if (regDist.reg.index() == forbiddenIndex) {
+                if (regDist.reg.index() == forbiddenIndex
+                        || regDist.reg.faction() == FACTIONS.player()) {
                     continue;
                 }
 

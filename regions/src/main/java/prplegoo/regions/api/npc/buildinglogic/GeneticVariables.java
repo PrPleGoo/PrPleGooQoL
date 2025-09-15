@@ -12,7 +12,6 @@ import world.region.building.RDBuildPoints;
 
 public class GeneticVariables {
     public static final int mutationAttemptsPerTick = 10;
-    public static final int extraMutationsAfterReset = 10;
 
     public static double clamp(double value) {
         return CLAMP.d(value, -1, 1);

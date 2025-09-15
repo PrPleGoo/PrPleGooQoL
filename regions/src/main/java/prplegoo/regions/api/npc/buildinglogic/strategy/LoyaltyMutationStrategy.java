@@ -76,7 +76,12 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
-        fitnessRecords[0] = new Loyalty(faction, 0);
+        fitnessRecords[0] = new Loyalty(faction, 0){
+            @Override
+            public boolean exceedsDeficit(FactionNPC faction) {
+                return false;
+            }
+        };
 
         return fitnessRecords;
     }

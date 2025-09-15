@@ -1,6 +1,7 @@
 package prplegoo.regions.api.npc.buildinglogic.fitness;
 
 import game.faction.npc.FactionNPC;
+import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import snake2d.LOG;
 import world.map.regions.Region;
@@ -18,5 +19,10 @@ public class Health extends FitnessRecord {
 
     @Override
     public double getRegionDeficitMax(FactionNPC faction) { return 0.5; }
+
+    @Override
+    public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {
+        return true;
+    }
 }
 

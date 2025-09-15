@@ -54,17 +54,6 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         Collections.sort(regionsWithSize);
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
             int regionIndex = regionsWithSize.get(factionGenetic.regionGenetics.length - i - 1).RegionIndex;
-
-            Region region = WORLD.REGIONS().all().get(regionIndex);
-
-            double current = RD.RACES().population.get(region);
-            double target = RD.RACES().capacity.get(region);
-
-            double fillRate = target / current;
-            if (fillRate > 2.0 || fillRate < 0.7) {
-                continue;
-            }
-
             while (mutateRegion(factionGenetic.regionGenetics[regionIndex])) {
                 if (RD.BUILDINGS().costs.GOV.bo.get(faction) < govPointsBefore) {
                     break;

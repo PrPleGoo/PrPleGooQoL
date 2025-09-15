@@ -54,6 +54,9 @@ public class EventFactionExpand extends EventResource{
     }
 
     public boolean trigger(FactionNPC f) {
+        if (KingLevels.isActive() && KingLevels.getInstance().getKingLevel(f).getMaxRegions() < f.realm().regions()) {
+            return false;
+        }
 
 
         if (DIP.WAR().all(f).size() > 0)

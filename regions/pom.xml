@@ -109,16 +109,6 @@ Completely reworks regions
         <mod.info>
 Greetings despot,
 
-This mod completely reworks regions.
-As per my idea listed in the suggestion forum on discord.
-A lot of that idea is either not implemented, WIP or deemed too difficult to mod.
-Basically the idea is that regions are just abstracted cities that work on pretty much the same rules as your capital does.
-I never really liked that they seemed to operate on a completely separate set of rules.
-
-This also has a lot of balance implications, so make sure you are ready to relearn region management!
-Not compatible with existing saves!
-I would also not advise you combine this mod with any of the mods that are not confirmed to be compatible (list later on).
-
 This mod is for you if:
 - You want more than just raw resources from regions;
 - You like to develop regions;
@@ -142,6 +132,7 @@ Features:
 - Supply armies directly from your regions.
 - (Experimental and optional) AI empires use production to do work on their stockpiles.
 - Take science boosts and use the school to apply them.
+- Custom NPC behavior to interact with the world map and simulate a real economy.
 
 Known issues:
 - Negative production values could be ignored for a massive early game boost.
@@ -150,13 +141,19 @@ Planned features (in order, subject to change):
 - Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
 - Instruct vassals to produce specific goods.
 
+This mod completely reworks regions.
+As per my idea listed in the suggestion forum on discord.
+A lot of that idea is either not implemented, WIP or deemed too difficult to mod.
+Basically the idea is that regions are just abstracted cities that work on pretty much the same rules as your capital does.
+I never really liked that they seemed to operate on a completely separate set of rules.
+
+This also has a lot of balance implications, so make sure you are ready to relearn region management!
+Not compatible with existing saves!
+I would also not advise you combine this mod with any of the mods that are not confirmed to be compatible (list later on).
+
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
 - PrPleGoo's Quality of Life Mod, https://steamcommunity.com/sharedfiles/filedetails/?id=3260671025
-- Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
-- Trade-Sorter (v68), https://steamcommunity.com/sharedfiles/filedetails/?id=3419268878
-- Cute Race!, https://steamcommunity.com/workshop/filedetails/?id=3418470482
-- Vargen Race (V68), https://steamcommunity.com/sharedfiles/filedetails/?id=2918830792
-- Draken Race (V68), https://steamcommunity.com/sharedfiles/filedetails/?id=3160170506
+
 If you use a different mod than any of the above and notice no game breaking issues, please let me and other users know!
 
 Enjoy!

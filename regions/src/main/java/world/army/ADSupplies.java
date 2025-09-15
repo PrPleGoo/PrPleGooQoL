@@ -254,6 +254,22 @@ public final class ADSupplies {
 		return current / needed;
 	}
 
+	public boolean isMissingArtsEquip(ADArtillery arts, WArmy a) {
+		for (ADSupply s : arts.supplies) {
+			double needed = s.targetAmount(a);
+			if (needed == 0) {
+				continue;
+			}
+
+			double current = s.current.get(a);
+			if (current / needed < 0.5) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public double equip(WArmy a) {
 		double current = 0.0;
 		double needed = 0.0;

@@ -9,6 +9,7 @@ import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
 public class LoyaltyMutationStrategy extends MutationStrategy {
@@ -17,8 +18,8 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
         RD.OUTPUT().taxRate.set(region, 0);
 
-        boolean canTryLoyaltyMutationStrategy = false;
-        boolean anyMoreThanOne = false;
+        boolean anyLessThanZero = false;
+        boolean anyMoreThanZero = false;
         for (int i = 0; i < RD.RACES().all.size(); i++) {
             RDRace race = RD.RACES().all.get(i);
 
@@ -26,38 +27,46 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
                 continue;
             }
 
-            if (race.loyalty.target.get(region) < 0) {
-                canTryLoyaltyMutationStrategy = true;
+            double targetLoyalty = race.loyalty.target.get(region);
+            if (targetLoyalty <= -0.1) {
+                anyLessThanZero = true;
+                break;
             }
-            if (race.loyalty.target.get(region) > 1) {
-                anyMoreThanOne = true;
+            if (targetLoyalty > 0.1) {
+                anyMoreThanZero = true;
             }
         }
 
-        if (!canTryLoyaltyMutationStrategy && !anyMoreThanOne) {
+        if (!anyLessThanZero && !anyMoreThanZero) {
             return false;
         }
 
+        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) {
+            for (RDBuilding building : RD.BUILDINGS().all) {
+                GeneticVariables.isLoyaltyBuilding(building.index());
+            }
+        }
+
         boolean didMutationOccur = false;
-        int randomIndex = RND.rInt(regionGenetic.buildingGenetics.length);
-        for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
-            int actualIndex = (randomIndex + i) % regionGenetic.buildingGenetics.length;
-            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[actualIndex], region, canTryLoyaltyMutationStrategy, anyMoreThanOne);
+        int randomIndex = RND.rInt(GeneticVariables.actualLoyaltyBuildingIndeces.size());
+        for(int i = 0; i < GeneticVariables.actualLoyaltyBuildingIndeces.size(); i++) {
+            int actualIndex = (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size();
+
+            int buildingIndex = GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex);
+            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region, anyLessThanZero, anyMoreThanZero);
         }
 
         return didMutationOccur;
     }
 
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, boolean anyLessThanZero, boolean anyMoreThanOne) {
-        if (!GeneticVariables.isLoyaltyBuilding(buildingGenetic.buildingIndex)) {
-            return false;
-        }
-
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-        if (anyMoreThanOne && RND.oneIn(3) && tryLevelDowngrade(levelInt, buildingGenetic, region)) {
-            return true;
-        } else if (anyLessThanZero) {
-            return tryLevelUpgrade(levelInt, buildingGenetic, region);
+        if (anyLessThanZero){
+            return tryLevelUpgrade(levelInt, buildingGenetic, region)
+                    | tryLevelUpgrade(levelInt, buildingGenetic, region)
+                    | tryLevelUpgrade(levelInt, buildingGenetic, region);
+        } else if (anyMoreThanOne && RND.oneIn(3)) {
+            return tryLevelDowngrade(levelInt, buildingGenetic, region);
         }
 
         return false;

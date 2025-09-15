@@ -3,6 +3,9 @@ package world.region;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import init.RES;
+import lombok.Getter;
+import prplegoo.regions.api.gen.FactionGenerator;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.misc.ACTION;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.ArrayList;
@@ -17,11 +20,11 @@ import world.map.regions.Region;
 import world.map.regions.WREGIONS;
 import world.region.RD.RDInit;
 
-class Gen {
-
+public class Gen {
     private final WRegFinder rr = new WRegFinder();
     private static final int aveSize = 8;
     private Bitmap1D handsOff = new Bitmap1D(WREGIONS.MAX, false);
+    private final FactionGenerator factionGenerator = FactionGenerator.getInstance();
 
     Gen(RDInit init, ACTION loadprint){
         loadprint.exe();
@@ -48,7 +51,9 @@ class Gen {
         r.setCapitol();
         r.info.name().clear().add(FACTIONS.player().name);
 
-
+        if (KingLevels.isActive()) {
+            return;
+        }
 
         {
             LIST<RegDist> dd  = rr.all(r, treaty, WRegSel.DUMMY(r));
@@ -93,8 +98,15 @@ class Gen {
     }
 
 
-    private void generateKingdoms() {
+    public void generateKingdoms() {
         RES.loader().init();
+
+        if (KingLevels.isActive()) {
+            factionGenerator.generateKingdoms();
+
+            return;
+        }
+
         ArrayList<Region> regs = new ArrayList<>(WORLD.REGIONS().active());
         regs.shuffle();
 

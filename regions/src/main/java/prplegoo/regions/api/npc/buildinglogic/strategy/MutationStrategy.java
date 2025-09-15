@@ -16,7 +16,7 @@ public abstract class MutationStrategy {
         int randomIndex = RND.rInt(factionGenetic.regionGenetics.length);
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
             int actualIndex = (randomIndex + i) % factionGenetic.regionGenetics.length;
-            didMutationOccur = didMutationOccur || mutateRegion(factionGenetic.regionGenetics[actualIndex]);
+            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.regionGenetics[actualIndex]);
         }
 
         return didMutationOccur;
@@ -29,7 +29,7 @@ public abstract class MutationStrategy {
         int randomIndex = RND.rInt(regionGenetic.buildingGenetics.length);
         for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
             int actualIndex = (randomIndex + i) % regionGenetic.buildingGenetics.length;
-            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[actualIndex], region);
+            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[actualIndex], region);
         }
 
         return didMutationOccur;
@@ -40,7 +40,6 @@ public abstract class MutationStrategy {
     protected boolean tryLevelUpgrade(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
         if (buildingGenetic.level < RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).levels().size() - 1
                 && RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).canAfford(region, buildingGenetic.level, buildingGenetic.level + 1) == null) {
-
             buildingGenetic.level += 1;
             levelInt.set(region, buildingGenetic.level);
 

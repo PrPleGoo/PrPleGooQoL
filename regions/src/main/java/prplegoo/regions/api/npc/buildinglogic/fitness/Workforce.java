@@ -16,6 +16,9 @@ public class Workforce extends FitnessRecord {
 
     @Override
     public double determineValue(FactionNPC faction, Region region) {
-        return Math.max(0, RD.SLAVERY().getWorkforce().bo.get(region));
+        return Math.min(10, RD.SLAVERY().getWorkforce().bo.get(region));
     }
+
+    @Override
+    public double getRegionDeficitMax(FactionNPC faction) { return -10; }
 }

@@ -12,25 +12,39 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.pop.RDRace;
 
-public class HealthMutationStrategy extends MutationStrategy {
+public class HealthMutationStrategy extends LoopingMutationStrategy {
     @Override
-    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
-        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
-            return tryLevelDowngrade(RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level, buildingGenetic, region);
+    public boolean mutateRegion(RegionGenetic regionGenetic) {
+        Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
+
+        double health = RD.HEALTH().boostablee.get(region);
+
+        boolean didMutationOccur = false;
+        for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
+            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[i], region, health);
+        }
+
+        return didMutationOccur;
+    }
+
+    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, Double health) {
+        if (!GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
+            return false;
         }
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
-        double health = RD.HEALTH().boostablee.get(region);
 
-        if (GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
-            if (health <= 1) {
-                return tryLevelUpgrade(levelInt, buildingGenetic, region);
-            } else {
-                return tryLevelDowngrade(levelInt, buildingGenetic, region);
+        if (health <= 1) {
+            if (tryLevelUpgrade(levelInt, buildingGenetic, region)){
+                while(tryLevelUpgrade(levelInt, buildingGenetic, region)) {
+                    // NOP
+                }
             }
+
+            return true;
         }
-        
-        return false;
+
+        return tryLevelDowngrade(levelInt, buildingGenetic, region);
     }
 
     @Override

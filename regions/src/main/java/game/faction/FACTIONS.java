@@ -7,6 +7,7 @@ import game.debug.Profiler;
 import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.UpdaterNPC;
+import game.faction.npc.stockpile.NPCStockpile;
 import game.faction.player.Player;
 import game.faction.royalty.opinion.ROPINIONS;
 import game.faction.trade.ResourcePrices;
@@ -15,6 +16,8 @@ import game.time.TIME;
 import init.RES;
 import init.sprite.UI.UI;
 import init.text.D;
+import prplegoo.regions.api.gen.FactionGenerator;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -104,9 +107,19 @@ public class FACTIONS extends GameResource {
             }
         });
 
+        IDebugPanel.add("KingLevel Faction reset", new ACTION() {
+            @Override
+            public void exe() {
+                while(FACTIONS.NPCs().size() > 0) {
+                    FactionNPC faction = FACTIONS.NPCs().get(0);
+                    FACTIONS.remove(faction, false);
+                }
+
+                FactionGenerator.getInstance().generateKingdoms();
+            }
+        });
+
         prices = new ResourcePrices();
-
-
     }
 
     private void activate(Faction f) {
@@ -250,6 +263,18 @@ public class FACTIONS extends GameResource {
             Str.TMP.clear().add(¤¤newFaction);
             Str.TMP.insert(0, ff.name);
             WORLD.LOG().log(null, ff, UI.icons().s.crown, Str.TMP, ff.cx(), ff.cy());
+        }
+
+        if (KingLevels.isActive()) {
+            ff.credits().set(100000);
+
+            for (int i = 0; i < 15; i++) {
+                for (RDRace rr : RD.RACES().all) {
+                    rr.pop.init(capitol);
+                }
+
+                KingLevels.getInstance().getBuilder().build((FactionNPC) capitol.faction());
+            }
         }
 
         return ff;

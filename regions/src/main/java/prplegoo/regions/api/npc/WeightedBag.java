@@ -15,7 +15,7 @@ public class WeightedBag<T> {
     }
 
     public T Pick() {
-        int random = RND.rInt(sum + 1);
+        int random = RND.rInt(sum) + 1;
         for (int i = 0; i < weights.size(); i++) {
             random -= weights.get(i);
             if (random <= 0) {

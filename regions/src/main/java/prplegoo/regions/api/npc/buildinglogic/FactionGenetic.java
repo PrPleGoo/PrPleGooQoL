@@ -90,7 +90,7 @@ public class FactionGenetic {
         return fitnessRecords;
     }
 
-    public void calculateFitness(FactionNPC faction) {
+    public FactionGenetic calculateFitness(FactionNPC faction) {
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             fitnessRecord.addValue(faction);
 
@@ -98,6 +98,8 @@ public class FactionGenetic {
                 fitnessRecord.addValue(faction, i);
             }
         }
+
+        return this;
     }
 
     public boolean shouldAdopt(FactionNPC faction, FactionGenetic mutant) {

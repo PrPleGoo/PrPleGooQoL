@@ -9,7 +9,7 @@ public abstract class LoopingMutationStrategy extends MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
         boolean didMutationOccur = false;
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            didMutationOccur = didMutationOccur || mutateRegion(factionGenetic.regionGenetics[i]);
+            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.regionGenetics[i]);
         }
 
         return didMutationOccur;
@@ -20,7 +20,7 @@ public abstract class LoopingMutationStrategy extends MutationStrategy {
 
         boolean didMutationOccur = false;
         for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
-            didMutationOccur = didMutationOccur || tryMutateBuilding(regionGenetic.buildingGenetics[i], region);
+            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[i], region);
         }
 
         return didMutationOccur;

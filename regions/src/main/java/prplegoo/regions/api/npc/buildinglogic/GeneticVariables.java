@@ -5,13 +5,12 @@ import prplegoo.regions.api.MagicStringChecker;
 import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
 import world.region.RD;
 import world.region.building.RDBuildPoints;
 
 public class GeneticVariables {
-    public static final int buildingMutationChance = 4;
-    public static final int recipeMutationChance = 3;
     public static final int mutationAttemptsPerTick = 10;
     public static final int extraMutationsAfterReset = 10;
 
@@ -61,12 +60,12 @@ public class GeneticVariables {
             return healthBuildingIndeces[buildingIndex] == 2;
         }
 
+        healthBuildingIndeces[buildingIndex] = 1;
         LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
         for (int i = 0; i < boosts.size(); i++) {
             BoostSpec boost = boosts.get(i);
             if (boost.boostable.key.equals("WORLD_HEALTH") && (!boost.booster.isMul && boost.booster.to() > 0 || boost.booster.isMul && boost.booster.to() > 1)) {
                 healthBuildingIndeces[buildingIndex] = 2;
-                continue;
             }
             if (boost.boostable.key.startsWith("WORLD_POPULATION_CAPACITY") && (!boost.booster.isMul && boost.booster.to() < 0 || boost.booster.isMul && boost.booster.to() < 1)) {
                 healthBuildingIndeces[buildingIndex] = 1;
@@ -74,21 +73,25 @@ public class GeneticVariables {
             }
         }
 
-        if (healthBuildingIndeces[buildingIndex] == 0) {
-            healthBuildingIndeces[buildingIndex] = 1;
-        }
-
         return healthBuildingIndeces[buildingIndex] == 2;
     }
 
     private static int[] loyaltyBuildingIndeces;
+    public static ArrayListGrower<Integer> actualLoyaltyBuildingIndeces;
     public static boolean isLoyaltyBuilding(int buildingIndex) {
         if (loyaltyBuildingIndeces == null) {
             loyaltyBuildingIndeces = new int[RD.BUILDINGS().all.size()];
+            actualLoyaltyBuildingIndeces = new ArrayListGrower<>();
         }
 
         if (loyaltyBuildingIndeces[buildingIndex] != 0) {
             return loyaltyBuildingIndeces[buildingIndex] == 2;
+        }
+
+        if (mutationNotAllowed(buildingIndex)) {
+            loyaltyBuildingIndeces[buildingIndex] = 1;
+
+            return false;
         }
 
         LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
@@ -108,7 +111,13 @@ public class GeneticVariables {
             loyaltyBuildingIndeces[buildingIndex] = 1;
         }
 
-        return loyaltyBuildingIndeces[buildingIndex] == 2;
+        if (loyaltyBuildingIndeces[buildingIndex] == 2) {
+            actualLoyaltyBuildingIndeces.add(buildingIndex);
+
+            return true;
+        }
+
+        return false;
     }
 
     private static int[] workforceConsumerIndeces;
@@ -121,15 +130,12 @@ public class GeneticVariables {
             return workforceConsumerIndeces[buildingIndex] == 2;
         }
 
+        workforceConsumerIndeces[buildingIndex] = 1;
         for (RDBuildPoints.RDBuildPoint cost : RD.BUILDINGS().costs.ALL){
             if(MagicStringChecker.isWorkforceBoostableKey(cost.bo.key)){
                 workforceConsumerIndeces[buildingIndex] = 2;
                 break;
             }
-        }
-
-        if (workforceConsumerIndeces[buildingIndex] == 0) {
-            workforceConsumerIndeces[buildingIndex] = 1;
         }
 
         return workforceConsumerIndeces[buildingIndex] == 2;

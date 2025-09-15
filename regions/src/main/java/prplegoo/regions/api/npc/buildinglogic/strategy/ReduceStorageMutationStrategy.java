@@ -17,7 +17,7 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
-public class ReduceStorageMutationStrategy extends MutationStrategy {
+public class ReduceStorageMutationStrategy extends BigMutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)

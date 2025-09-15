@@ -20,7 +20,7 @@ public class KingLevelsActivator implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
                 "\nThere will be no such thing as a stable price and the AI will have to develop their economies at the start of the game." +
                 "\n" +
                 "\nThis is an experimental feature and can not be turned off once you start a game. You can expect weird behavior from the AI and trade will be chaotic." +
-                "\nPlease use this only if you are sure you want to risk wacky bugs." +
+                "\nPlease use this only if you are sure you want to risk wacky bugs although I am confident in the system's ability to provide content." +
                 "\nAlso comes at a significant cost to performance.";
     }
 

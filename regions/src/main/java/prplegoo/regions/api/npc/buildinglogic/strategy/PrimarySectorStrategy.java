@@ -17,7 +17,7 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
-public class PrimarySectorStrategy extends MutationStrategy {
+public class PrimarySectorStrategy extends BigMutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)) {
@@ -32,7 +32,7 @@ public class PrimarySectorStrategy extends MutationStrategy {
         LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
         FactionNPC faction = (FactionNPC) region.faction();
 
-        if (industries.size() == 1) {
+        if (industries.size() == 1 && industries.get(0).ins().isEmpty()) {
             LIST<Industry.IndustryResource> outputs = industries.get(0).outs();
 
             double outputCount = 0.0;
@@ -52,10 +52,10 @@ public class PrimarySectorStrategy extends MutationStrategy {
 
             double randomLow = RND.rFloat(0.5);
             double randomHigh = RND.rFloat(2.0) + 0.5;
-            if (factoredPrice < randomLow && tryLevelDowngrade(building.level, buildingGenetic, region)) {
-                return true;
-            } else if (factoredPrice > randomHigh && tryLevelUpgrade(building.level, buildingGenetic, region)) {
-                return true;
+            if (factoredPrice < randomLow) {
+                return tryLevelDowngrade(building.level, buildingGenetic, region);
+            } else if (factoredPrice > randomHigh) {
+                return tryLevelUpgrade(building.level, buildingGenetic, region);
             }
         }
 

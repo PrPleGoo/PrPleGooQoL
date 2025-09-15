@@ -48,34 +48,21 @@ public class KingLevelRealmBuilder {
         original.loadFitness(faction).calculateFitness(faction);
         int totalMutations = GeneticVariables.mutationAttemptsPerTick;
 
-//        LOG.ln("CHECKING original.anyFitnessExceedsDeficit IN KingLevelRealmBuilder;");
-        if (original.anyFitnessExceedsDeficit(faction)) {
-//            LOG.ln("DONE original.anyFitnessExceedsDeficit IN KingLevelRealmBuilder;");
-            double govPoints = RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
+        boolean alertMode = original.anyFitnessExceedsDeficit(faction);
+        if (alertMode) {
             for (Region region : faction.realm().all()) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
-                    double health = RD.HEALTH().boostablee.get(region);
-                    if (GeneticVariables.isGrowthBuilding(building.index())
-                            && govPoints >= 0
-                            && health > 0.5) {
-                        continue;
-                    }
-                    if (GeneticVariables.isHealthBuilding(building.index())
-                            && health < 1) {
-                        continue;
-                    }
-
                     if (building.level.get(region) > 0) {
                         building.level.set(region, building.level.get(region) - 1);
                     }
                 }
             }
-
-            totalMutations += GeneticVariables.extraMutationsAfterReset;
         }
 
         for (int i = 0; i < totalMutations; i++) {
-            MutationStrategy strategy = PickStrategy();
+            MutationStrategy strategy = alertMode
+                    ? PickAlertStrategy()
+                    : PickStrategy();
             original = new FactionGeneticMutator(faction, strategy);
 
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
@@ -101,18 +88,28 @@ public class KingLevelRealmBuilder {
     private MutationStrategy PickStrategy() {
         return strategies.Pick();
     }
+
+    private MutationStrategy PickAlertStrategy() {
+        return alertStrategies.Pick();
+    }
+
     public KingLevelRealmBuilder() {
         strategies.Add(1, ReduceWorkforceDeficitMutationStrategy);
         strategies.Add(1, PopulationGrowthMutationStrategy);
         strategies.Add(1, HealthMutationStrategy);
         strategies.Add(1, LoyaltyMutationStrategy);
         strategies.Add(1, ReduceDeficitMutationStrategy);
-        strategies.Add(2, PrimarySectorStrategy);
-        strategies.Add(2, ReduceStorageMutationStrategy);
-        strategies.Add(2, RandomMutationStrategy);
+        strategies.Add(3, PrimarySectorStrategy);
+        strategies.Add(4, ReduceStorageMutationStrategy);
+
+        alertStrategies.Add(1, PopulationGrowthMutationStrategy);
+        alertStrategies.Add(4, HealthMutationStrategy);
+        alertStrategies.Add(4, LoyaltyMutationStrategy);
+        alertStrategies.Add(2, ReduceWorkforceDeficitMutationStrategy);
     }
 
     private static final WeightedBag<MutationStrategy> strategies = new WeightedBag<>();
+    private static final WeightedBag<MutationStrategy> alertStrategies = new WeightedBag<>();
     private static final ReduceWorkforceDeficitMutationStrategy ReduceWorkforceDeficitMutationStrategy = new ReduceWorkforceDeficitMutationStrategy();
     private static final PopulationGrowthMutationStrategy PopulationGrowthMutationStrategy = new PopulationGrowthMutationStrategy();
     private static final HealthMutationStrategy HealthMutationStrategy = new HealthMutationStrategy();
@@ -120,6 +117,5 @@ public class KingLevelRealmBuilder {
     private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
     private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();
-    private static final RandomMutationStrategy RandomMutationStrategy = new RandomMutationStrategy();
 }
 

@@ -2,6 +2,7 @@ package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
 import game.faction.npc.FactionNPC;
+import game.faction.royalty.Royalty;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
@@ -9,67 +10,83 @@ import prplegoo.regions.api.npc.buildinglogic.strategy.*;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
+import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
+import world.region.pop.RDRaces;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
-        var races = RD.RACES();
-        double[] genocide = new double[races.all.size()];
-        var noble = BOOSTABLES.NOBLE();
-        var king = faction.king();
+        RDRaces races = RD.RACES();
+
+        BOOSTABLES.Noble noble = BOOSTABLES.NOBLE();
+        Royalty king = faction.king();
         double proclivity = noble.AGRESSION.get(king.induvidual)
                 / noble.TOLERANCE.get(king.induvidual)
                 / noble.MERCY.get(king.induvidual);
-        
+
+        double[] genocide = new double[races.all.size()];
+
         for (RDRace race : races.all) {
             genocide[race.index()] = (race.race.index == king.induvidual.race().index)
-                ? 0
-                : (1 - king.induvidual.race().pref().race(race.race)) * proclivity;
+                    ? 0
+                    : (1 - king.induvidual.race().pref().race(race.race)) * proclivity;
         }
 
+        RDEdicts edicts = races.edicts;
         for (Region region : faction.realm().all())
             for (RDRace race : races.all) {
-                var edicts = races.edicts;
-                edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
+                if (genocide[race.index()] > 3.0) {
+                    edicts.massacre.toggled(race).set(region, 1);
+                } else {
+                    edicts.massacre.toggled(race).set(region, 0);
+                }
+
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);
             }
 
-        // do genocide aggression, tolerance, mercy, rng on king name?
-        // don't genocide own species, ever
         FactionGenetic original = new FactionGenetic(faction);
-        calculateMutatorFitness(original, faction);
+        original.loadFitness(faction).calculateFitness(faction);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
-        if (alertMode)
-            for (Region region : faction.realm().all())
+        if (alertMode) {
+            for (Region region : faction.realm().all()) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
                     int buildingLevel = building.level.get(region);
-                    if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
+                    if (buildingLevel > 0) {
+                        building.level.set(region, buildingLevel - 1);
+                    }
                 }
+            }
+        }
 
-        KingLevel kingLevelsInstance = KingLevels.getInstance();
+        KingLevels kingLevels = KingLevels.getInstance();
 
         for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
             MutationStrategy strategy = (alertMode
                     ? alertStrategies
                     : strategies).Pick();
-            
-            FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
-            if (!mutator.tryMutate()) continue;
-            calculateMutatorFitness(mutator, faction, kingLevelsInstance);
+
+            if (i > 0 || alertMode) {
+                kingLevels.resetDailyProductionRateCache(faction);
+            }
 
             original = new FactionGeneticMutator(faction, strategy);
-            calculateMutatorFitness(original, faction, kingLevelsInstance);
-            if (!original.shouldAdopt(faction, mutator)) original.commit();
+            original.loadFitness(faction).calculateFitness(faction);
+
+            FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
+
+            if (!mutator.tryMutate()) {
+                continue;
+            }
+
+            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            mutator.loadFitness(faction).calculateFitness(faction);
+
+            if (!original.shouldAdopt(faction, mutator)) {
+                original.commit();
+            }
         }
-
-        kingLevelsInstance.resetDailyProductionRateCache(faction);
-    }
-
-    private void calculateMutatorFitness(FactionGeneticMutator mutant, FactionNPC faction, KingLevel KingLevelsInstance) {
-        if (KingLevelsInstance != null) KingLevelsInstance.resetDailyProductionRateCache(faction);
-        mutant.loadFitness(faction).calculateFitness(faction);
     }
 
     public KingLevelRealmBuilder() {

@@ -64,15 +64,14 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
     public void toggleFood(Region region, RESOURCE resource) {
         selectedFoods[region.index()][resource.index()] = !selectedFoods[region.index()][resource.index()];
 
-        boolean anySet = false;
+        // Check if at least something is selected
         for (RESOURCE food : RESOURCES.EDI().res()) {
-            anySet = anySet || selectedFoods[region.index()][food.index()];
+            if (selectedFoods[region.index()][food.index()]) {
+                return;
+            }
         }
 
-        if (anySet) {
-            return;
-        }
-
+        // If not, then undo the change
         selectedFoods[region.index()][resource.index()] = !selectedFoods[region.index()][resource.index()];
     }
 

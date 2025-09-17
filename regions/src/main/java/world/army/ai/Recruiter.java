@@ -85,10 +85,20 @@ final class Recruiter {
 					}
 				}
 
+				int nonEmptyDivCount = 0;
 				for (int i = 0; i < a.divs().size(); i++) {
 					ADDiv div = a.divs().get(i);
-					if (RND.oneIn(4) && div.men() != 0  && isMissingEquips(a, div)) {
-						div.disband();
+					if (div.men() != 0) {
+						nonEmptyDivCount++;
+					}
+				}
+
+				if (nonEmptyDivCount > 1) {
+					for (int i = 0; i < a.divs().size(); i++) {
+						ADDiv div = a.divs().get(i);
+						if (RND.oneIn(4) && div.men() != 0 && isMissingEquips(a, div)) {
+							div.disband();
+						}
 					}
 				}
 

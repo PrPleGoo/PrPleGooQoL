@@ -43,9 +43,9 @@ public class KingLevelRealmBuilder {
 
         // do genocide aggression, tolerance, mercy, rng on king name?
         FactionGenetic original = new FactionGenetic(faction);
-        calculateGeneticFitness(original, faction);
+        calculateGeneticFitness(original);
 
-        boolean alertMode = original.anyFitnessExceedsDeficit(faction);
+        boolean alertMode = original.anyFitnessExceedsDeficit();
         if (alertMode)
             for (Region region : regions)
                 for (RDBuilding building : RD.BUILDINGS().all) {
@@ -62,11 +62,11 @@ public class KingLevelRealmBuilder {
             
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
             if (!mutator.tryMutate()) continue;
-            calculateGeneticFitness(mutator, faction, kingLevelsInstance);
+            calculateGeneticFitness(mutator, kingLevelsInstance);
 
             original = new FactionGeneticMutator(faction, strategy);
-            calculateGeneticFitness(original, faction, kingLevelsInstance);
-            if (!original.shouldAdopt(faction, mutator)) original.commit();
+            calculateGeneticFitness(original, kingLevelsInstance);
+            if (!original.shouldAdopt(mutator)) original.commit();
         }
 
         kingLevelsInstance.resetDailyProductionRateCache(faction);
@@ -78,9 +78,9 @@ public class KingLevelRealmBuilder {
      * @param faction
      * @param KingLevelsInstance
      */
-    private void calculateGeneticFitness(FactionGenetic genetic, FactionNPC faction, KingLevels KingLevelsInstance) {
-        KingLevelsInstance.resetDailyProductionRateCache(faction);
-        calculateGeneticFitness(genetic, faction);
+    private void calculateGeneticFitness(FactionGenetic genetic, KingLevels KingLevelsInstance) {
+        KingLevelsInstance.resetDailyProductionRateCache(genetic.faction);
+        calculateGeneticFitness(genetic);
     }
     
     /**
@@ -88,8 +88,8 @@ public class KingLevelRealmBuilder {
      * @param genetic
      * @param faction
      */
-    private void calculateGeneticFitness(FactionGenetic genetic, FactionNPC faction) {
-        genetic.loadFitness(faction).calculateFitness(faction);
+    private void calculateGeneticFitness(FactionGenetic genetic) {
+        genetic.loadFitness().calculateFitness();
     }
 
     public KingLevelRealmBuilder() {

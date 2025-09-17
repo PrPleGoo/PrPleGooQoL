@@ -19,15 +19,17 @@ import world.region.RD;
 public class FactionGenetic {
     public final RegionGenetic[] regionGenetics;
     public FitnessRecord[] fitnessRecords;
+    public final FactionNPC faction;
 
     public FactionGenetic(FactionNPC faction) {
+        this.faction = faction;
         regionGenetics = new RegionGenetic[faction.realm().regions()];
         for (int i = 0; i < regionGenetics.length; i++) {
             regionGenetics[i] = new RegionGenetic(faction.realm().all().get(i).index());
         }
     }
 
-    public FactionGenetic loadFitness(FactionNPC faction) {
+    public FactionGenetic loadFitness() {
         fitnessRecords = loadDefault(faction);
 
         return this;
@@ -90,7 +92,7 @@ public class FactionGenetic {
         return fitnessRecords;
     }
 
-    public FactionGenetic calculateFitness(FactionNPC faction) {
+    public FactionGenetic calculateFitness() {
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             fitnessRecord.addValue(faction);
 
@@ -102,8 +104,8 @@ public class FactionGenetic {
         return this;
     }
 
-    public boolean shouldAdopt(FactionNPC faction, FactionGenetic mutant) {
-        if (mutant.anyFitnessExceedsDeficit(faction)) {
+    public boolean shouldAdopt(FactionGenetic mutant) {
+        if (mutant.anyFitnessExceedsDeficit()) {
             return false;
         }
 
@@ -130,7 +132,7 @@ public class FactionGenetic {
         }
     }
 
-    public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
+    public boolean anyFitnessExceedsDeficit() {
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             if (fitnessRecord.exceedsDeficit(faction)) {
                 return true;

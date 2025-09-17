@@ -102,9 +102,19 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
     @Override
     public void putData(RDSlaveryData data) {
+        initialize();
         if (data == null) {
             LOG.ln("RDSlavery.onGameSaveLoaded: data null, initializing");
-            initialize();
+            return;
+        }
+
+        LOG.ln("RDSlavery.onGameSaveLoaded: data found");
+        if (selectedSlaves.size() != data.data.size()
+                || selectedSlaves.get(0).size() != data.data.get(0).size()
+                || slaveDelivery.length != data.slaveDelivery.length
+                || slaveDelivery[0].length != data.slaveDelivery[0].length)
+        {
+            LOG.ln("RDSlavery.onGameSaveLoaded: data found, length difference detected, not writing");
             return;
         }
 

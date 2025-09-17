@@ -25,10 +25,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
             _STONE: 0.015,
             _WOOD: 0.03,
-            TOOL: 0.0025,
-            COAL: 0.0025,
-            ORE: 0.0025,
-            METAL: 0.0025,
+            TOOL: 0.001,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.025,
@@ -48,15 +45,12 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
             _STONE: 0.015,
             _WOOD: 0.03,
-            TOOL: 0.0050,
+            TOOL: 0.002,
             PAPER: 0.01,
             STONE_CUT: 0.01,
             FURNITURE: 0.01,
             EDIBLE: 0.010,
             CLOTHES: 0.005,
-            COAL: 0.0025,
-            ORE: 0.0025,
-            METAL: 0.0025,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.025,
@@ -77,16 +71,14 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
             _STONE: 0.015,
             _WOOD: 0.03,
-            TOOL: 0.01,
+            TOOL: 0.005,
             PAPER: 0.02,
             STONE_CUT: 0.01,
             FURNITURE: 0.01,
-            METAL: 0.0055,
+            METAL: 0.003,
             POTTERY: 0.003,
             EDIBLE: 0.010,
             CLOTHES: 0.005,
-            COAL: 0.0025,
-            ORE: 0.0025,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
             EDIBLE: 0.05,

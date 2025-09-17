@@ -9,6 +9,7 @@ import snake2d.util.rnd.RND;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
+import world.region.Gen;
 import world.region.RD;
 import world.region.pop.RDRace;
 
@@ -28,7 +29,8 @@ public class HealthMutationStrategy extends LoopingMutationStrategy {
     }
 
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, Double health) {
-        if (!GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
+        if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)
+                || !GeneticVariables.isHealthBuilding(buildingGenetic.buildingIndex)) {
             return false;
         }
 

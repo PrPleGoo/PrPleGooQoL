@@ -37,8 +37,12 @@ public class KingLevels {
     private final double[][] productionCache;
     private final int[] lastYearPicked;
 
+    public StockpileSmoothing stockpileSmoothing;
+
     public KingLevels() {
         instance = this;
+
+        stockpileSmoothing = new StockpileSmoothing();
         builder = new KingLevelRealmBuilder();
 
         PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
@@ -99,7 +103,7 @@ public class KingLevels {
             }
         }
 
-
+        stockpileSmoothing.Update(faction, deltaDays);
     }
 
     // For getting amounts that KingLevels actually needs to handle consuming;

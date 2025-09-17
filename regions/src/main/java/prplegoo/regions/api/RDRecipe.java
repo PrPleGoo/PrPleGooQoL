@@ -32,22 +32,22 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
 
     @Override
     public void putData(RDRecipeData data) {
+        initialize();
         if (data == null) {
-            LOG.ln("RDSlavery.onGameSaveLoaded: data null, initializing");
-            initialize();
+            LOG.ln("RDRecipe.onGameSaveLoaded: data null, initializing");
             return;
         }
 
-        LOG.ln("RDSlavery.onGameSaveLoaded: data found");
+        LOG.ln("RDRecipe.onGameSaveLoaded: data found");
         if (enabledRecipeIndex.length != data.enabledRecipeIndex.length
                 || enabledRecipeIndex[0].length != data.enabledRecipeIndex[0].length
                 || enabledRecipeIndex[0][0].length != data.enabledRecipeIndex[0][0].length)
         {
-            LOG.ln("RDSlavery.onGameSaveLoaded: data found, length difference detected, not writing");
+            LOG.ln("RDRecipe.onGameSaveLoaded: data found, length difference detected, not writing");
             return;
         }
 
-        LOG.ln("RDSlavery.onGameSaveLoaded: data found, writing");
+        LOG.ln("RDRecipe.onGameSaveLoaded: data found, writing");
         enabledRecipeIndex = data.enabledRecipeIndex;
     }
 

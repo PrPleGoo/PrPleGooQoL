@@ -1,6 +1,13 @@
 package prplegoo.regions.api.gen;
 
 import game.faction.FACTIONS;
+import game.faction.npc.FactionNPC;
+import game.faction.trade.TradeManager;
+import game.time.TIME;
+import init.RES;
+import init.resources.RESOURCE;
+import init.resources.RESOURCES;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
@@ -8,6 +15,7 @@ import world.WORLD;
 import world.map.pathing.WRegFinder;
 import world.map.pathing.WRegSel;
 import world.map.regions.Region;
+import world.region.RD;
 
 public class FactionGenerator {
     private final WRegFinder finder = new WRegFinder();

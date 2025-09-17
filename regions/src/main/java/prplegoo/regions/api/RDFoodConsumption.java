@@ -37,9 +37,17 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
 
     @Override
     public void putData(RDFoodConsumptionData data) {
+        initialize();
         if (data == null) {
             LOG.ln("RDFoodConsumption.onGameSaveLoaded: data null, initializing");
-            initialize();
+            return;
+        }
+
+        LOG.ln("RDFoodConsumption.onGameSaveLoaded: data found");
+        if (selectedFoods.length != data.data.length
+                || selectedFoods[0].length != data.data[0].length)
+        {
+            LOG.ln("RDFoodConsumption.onGameSaveLoaded: data found, length difference detected, not writing");
             return;
         }
 

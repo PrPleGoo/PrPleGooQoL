@@ -17,10 +17,12 @@ public class FileGetterApi implements IFileLoad {
     public <T> T get(IDataPersistence<T> dataPersistence) {
         JsonNode json = loadedData.get(dataPersistence.getKey());
 
+        String jsonString = json != null ? json.toString() : "";
+
         try {
-            return ObjectMapperFactory.build().readValue(json.toString(), dataPersistence.getDataClass());
+            return ObjectMapperFactory.build().readValue(jsonString, dataPersistence.getDataClass());
         } catch (Exception e) {
-            LOG.err("Failed to deserialize json with key: " + dataPersistence.getKey() + ", value: " + json.toString());
+            LOG.err("Failed to deserialize json with key: " + dataPersistence.getKey() + ", value: " + jsonString);
             return null;
         }
     }

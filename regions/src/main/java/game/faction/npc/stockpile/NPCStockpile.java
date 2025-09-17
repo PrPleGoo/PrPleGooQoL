@@ -340,16 +340,7 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double amTarget() {
-			double amTarget = KingLevels.getInstance().getDesiredStockpileAtLevel(f, KingLevels.getInstance().getDesiredKingLevel(f), RESOURCES.ALL().get(resourceIndex))
-					- Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex))) * 2;
-			if (amTarget == 0) {
-				// TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
-				amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(f.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(f))) + 5);
-			}
-
-
-			int tradeSets = (int) (amTarget * 5 / TradeManager.MIN_LOAD);
-			return (tradeSets + 1) * TradeManager.MIN_LOAD;
+			return KingLevels.getInstance().stockpileSmoothing.getCurrentTarget(f, resourceIndex);
 		}
 
 		@Override

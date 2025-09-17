@@ -45,6 +45,7 @@ public class KingLevelRealmBuilder {
                 edicts.sanction.toggled(race).set(region, 0);
             }
 
+        // When we come into this function any values in the boosts are active so the cache is up-to-date
         FactionGenetic original = new FactionGenetic(faction);
         original.loadFitness(faction).calculateFitness(faction);
 
@@ -61,13 +62,15 @@ public class KingLevelRealmBuilder {
         }
 
         KingLevels kingLevels = KingLevels.getInstance();
+        WeightedBag<MutationStrategy> activeStrategies = alertMode
+                ? alertStrategies
+                : strategies;
 
-        for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
-            MutationStrategy strategy = (alertMode
-                    ? alertStrategies
-                    : strategies).Pick();
+        for (int i = 1; i <= GeneticVariables.mutationAttemptsPerTick; i++) {
+            MutationStrategy strategy = activeStrategies.Pick();
 
-            if (i > 0 || alertMode) {
+            // The cached values are still valid on the first run, unless we're in alertMode
+            if (i > 1 || alertMode) {
                 kingLevels.resetDailyProductionRateCache(faction);
             }
 
@@ -80,11 +83,18 @@ public class KingLevelRealmBuilder {
                 continue;
             }
 
-            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
+            kingLevels.resetDailyProductionRateCache(faction);
+
             mutator.loadFitness(faction).calculateFitness(faction);
 
             if (!original.shouldAdopt(faction, mutator)) {
                 original.commit();
+
+                // If we exit the loop we don't want the cache to contain values from a failed mutation
+                if (i == GeneticVariables.mutationAttemptsPerTick) {
+                    kingLevels.resetDailyProductionRateCache(faction);
+                }
             }
         }
     }

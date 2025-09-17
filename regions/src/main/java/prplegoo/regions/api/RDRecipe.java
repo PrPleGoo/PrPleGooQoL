@@ -38,6 +38,15 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
             return;
         }
 
+        LOG.ln("RDSlavery.onGameSaveLoaded: data found");
+        if (enabledRecipeIndex.length != data.enabledRecipeIndex.length
+                || enabledRecipeIndex[0].length != data.enabledRecipeIndex[0].length
+                || enabledRecipeIndex[0][0].length != data.enabledRecipeIndex[0][0].length)
+        {
+            LOG.ln("RDSlavery.onGameSaveLoaded: data found, length difference detected, not writing");
+            return;
+        }
+
         LOG.ln("RDSlavery.onGameSaveLoaded: data found, writing");
         enabledRecipeIndex = data.enabledRecipeIndex;
     }
@@ -48,7 +57,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     }
 
     private void initialize() {
-        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][100][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
+        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS*2][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }
 
     public boolean isEnabled(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){

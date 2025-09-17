@@ -26,6 +26,8 @@ TECHS: {
 		},
 		UNLOCKS_REGION: [
             BUILDING_CIVIC_GROWTH_4,
+            BUILDING_CIVIC_GROWTH_5,
+            BUILDING_CIVIC_GROWTH_6,
 		],
 	},
 	CENT2: {

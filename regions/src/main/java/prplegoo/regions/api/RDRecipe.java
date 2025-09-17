@@ -14,7 +14,7 @@ import world.map.regions.Region;
 import world.region.RD;
 
 public class RDRecipe implements IDataPersistence<RDRecipeData> {
-    private int[][][] enabledRecipeIndex;
+    private byte[][][] enabledRecipeIndex;
 
     public RDRecipe(){
         initialize();
@@ -57,7 +57,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     }
 
     private void initialize() {
-        enabledRecipeIndex = new int[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS*2][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
+        enabledRecipeIndex = new byte[WORLD.REGIONS().all().size()][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS*2][SETT.ROOMS().AMOUNT_OF_BLUEPRINTS];
     }
 
     public boolean isEnabled(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){
@@ -65,7 +65,7 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
     }
 
     public void setRecipe(Region region, int buildingIndex, RoomBlueprintImp blue, int industryIndexOnBlue){
-        enabledRecipeIndex[region.index()][buildingIndex][blue.index()] = industryIndexOnBlue;
+        enabledRecipeIndex[region.index()][buildingIndex][blue.index()] = (byte) industryIndexOnBlue;
     }
 
     public int getRecipeIndex(Region region, int buildingIndex, RoomBlueprintImp blue) {

@@ -44,7 +44,7 @@ public class KingLevelRealmBuilder {
         if (alertMode)
             for (Region region : faction.realm().all())
                 for (RDBuilding building : RD.BUILDINGS().all) {
-                    int buildingLevel = building.level.get(region)
+                    int buildingLevel = building.level.get(region);
                     if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
                 }
 

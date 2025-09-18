@@ -32,9 +32,9 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
 
     @Override
     public void putData(RDRecipeData data) {
-        initialize();
         if (data == null) {
             LOG.ln("RDRecipe.onGameSaveLoaded: data null, initializing");
+            initialize();
             return;
         }
 

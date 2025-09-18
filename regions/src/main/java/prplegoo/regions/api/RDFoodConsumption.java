@@ -37,9 +37,9 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
 
     @Override
     public void putData(RDFoodConsumptionData data) {
-        initialize();
         if (data == null) {
             LOG.ln("RDFoodConsumption.onGameSaveLoaded: data null, initializing");
+            initialize();
             return;
         }
 

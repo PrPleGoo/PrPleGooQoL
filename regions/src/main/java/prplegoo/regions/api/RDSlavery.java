@@ -102,9 +102,9 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
     @Override
     public void putData(RDSlaveryData data) {
-        initialize();
         if (data == null) {
             LOG.ln("RDSlavery.onGameSaveLoaded: data null, initializing");
+            initialize();
             return;
         }
 

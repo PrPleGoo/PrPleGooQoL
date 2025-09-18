@@ -13,6 +13,10 @@ import snake2d.util.misc.CLAMP;
 public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingData> {
     private int[][] currentTarget;
 
+    public StockpileSmoothing() {
+        initialize();
+    }
+
     private void initialize() {
         currentTarget = new int[FACTIONS.MAX()][RESOURCES.ALL().size()];
     }
@@ -29,9 +33,9 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
 
     @Override
     public void putData(StockpileSmoothingData data) {
-        initialize();
         if (data == null) {
             LOG.ln("StockpileSmoothing.onGameSaveLoaded: data null, initializing");
+            initialize();
             return;
         }
 

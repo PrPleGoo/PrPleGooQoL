@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
-public class StockpileSmoothingData {
-    public double[][] currentTarget;
+public class SellingData {
+    public double[][] sold;
 
-    public StockpileSmoothingData(double[][] currentTarget) {
-        this.currentTarget = currentTarget;
+    public SellingData(double[][] sold) {
+        this.sold = sold;
     }
 }
-

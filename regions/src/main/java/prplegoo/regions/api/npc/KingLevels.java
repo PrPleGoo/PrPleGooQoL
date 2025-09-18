@@ -38,11 +38,13 @@ public class KingLevels {
     private final int[] lastYearPicked;
 
     public StockpileSmoothing stockpileSmoothing;
+    public SoldGoodsTracker soldGoodsTracker;
 
     public KingLevels() {
         instance = this;
 
         stockpileSmoothing = new StockpileSmoothing();
+        soldGoodsTracker = new SoldGoodsTracker();
         builder = new KingLevelRealmBuilder();
 
         PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
@@ -104,6 +106,7 @@ public class KingLevels {
         }
 
         stockpileSmoothing.Update(faction, deltaDays);
+        soldGoodsTracker.Update(faction, deltaDays);
     }
 
     // For getting amounts that KingLevels actually needs to handle consuming;
@@ -166,11 +169,11 @@ public class KingLevels {
     }
 
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * FACTIONS.MAX();
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * 16;
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
-                amount += (supply.targetAmount(army) + (supply.consumedPerDayTarget(army))) * Math.pow(kingLevel.getIndex() + 1, 1.15);
+                amount += supply.targetAmount(army) + supply.consumedPerDayTarget(army) * 16;
             }
         }
 

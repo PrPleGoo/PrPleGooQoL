@@ -1,5 +1,4 @@
-AI_BUILDS: false,
-
+AI_BUILDS: true,
 LEVELS: [
 	{
 		ICON: 32->HEALTH->1, 

@@ -72,6 +72,10 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 			s.stockpile.incPlayer(res, amount);
 			ROPINIONS.trade(s, price);
 		}
+
+		if (KingLevels.isActive()) {
+			KingLevels.getInstance().soldGoodsTracker.processTraded(s, res.index(), amount);
+		}
 	}
 
 	@Override

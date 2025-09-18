@@ -102,8 +102,8 @@ public class KingLevelRealmBuilder {
         strategies.Add(4, ReduceStorageMutationStrategy);
 
         alertStrategies.Add(1, PopulationGrowthMutationStrategy);
-        alertStrategies.Add(4, HealthMutationStrategy);
-        alertStrategies.Add(4, LoyaltyMutationStrategy);
+        alertStrategies.Add(2, HealthMutationStrategy);
+        alertStrategies.Add(2, LoyaltyMutationStrategy);
         alertStrategies.Add(2, ReduceWorkforceDeficitMutationStrategy);
     }
 

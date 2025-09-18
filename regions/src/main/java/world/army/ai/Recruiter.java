@@ -156,7 +156,7 @@ final class Recruiter {
 						continue;
 					}
 
-					double maxDivisionSize = AD.conscripts().available(null).get(f) / 7.0;
+					double maxDivisionSize = AD.conscripts().total(null).get(f) / 7.0;
 					am = CLAMP.i(am, 15, (int) maxDivisionSize);
 				}
 				

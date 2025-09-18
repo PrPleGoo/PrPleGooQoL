@@ -11,14 +11,14 @@ import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 
 public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingData> {
-    private int[][] currentTarget;
+    private double[][] currentTarget;
 
     public StockpileSmoothing() {
         initialize();
     }
 
     private void initialize() {
-        currentTarget = new int[FACTIONS.MAX()][RESOURCES.ALL().size()];
+        currentTarget = new double[FACTIONS.MAX()][RESOURCES.ALL().size()];
     }
 
     @Override
@@ -73,11 +73,11 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
 
             double toAdd = delta * deltaDays;
 
-            int toSet = (int) (currentTarget[faction.index()][resourceIndex] + toAdd);
+            double toSet = currentTarget[faction.index()][resourceIndex] + toAdd;
             if (toSet > actualTarget && toAdd > 0) {
                 toSet = actualTarget;
-            } else if (toSet < TradeManager.MIN_LOAD) {
-                toSet = TradeManager.MIN_LOAD;
+            } else if (toSet < TradeManager.MIN_LOAD*4) {
+                toSet = TradeManager.MIN_LOAD*4;
             }
 
             currentTarget[faction.index()][resourceIndex] = toSet;
@@ -96,8 +96,12 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
             amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(faction))) + 5);
         }
 
-        int tradeSets = (int) (amTarget * 10 / TradeManager.MIN_LOAD);
+        amTarget *= 15;
+        amTarget += KingLevels.getInstance().soldGoodsTracker.getSold(faction, resourceIndex);
+
+        int tradeSets = (int) (amTarget / TradeManager.MIN_LOAD);
         return (tradeSets + 1) * TradeManager.MIN_LOAD;
     }
 }
+
 

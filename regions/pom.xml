@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.69.39.12</version>
+    <version>0.69.39.13</version>
 
     <profiles>
         <profile>

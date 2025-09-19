@@ -10,6 +10,8 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.main.RoomBlueprintImp;
+import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.LIST;
 import util.data.INT_O;
@@ -26,14 +28,16 @@ public class ReduceStorageMutationStrategy extends BigMutationStrategy {
         }
 
         RDBuilding building = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex);
-        if (building.getBlue() == null) {
+        RoomBlueprintImp blue = building.getBlue();
+        if (blue == null) {
             return false;
         }
 
-        LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
+        LIST<Industry> industries = ((INDUSTRY_HASER) blue).industries();
         FactionNPC faction = (FactionNPC) region.faction();
 
         int randomIndex = RND.rInt(industries.size());
+        double multiplier = CLAMP.d(blue.bonus().get(region.faction()), 1, 15);
         main:
         for(int recipeIndex = 0; recipeIndex < industries.size(); recipeIndex++) {
             int actualIndex = (recipeIndex + randomIndex) % industries.size();
@@ -65,8 +69,8 @@ public class ReduceStorageMutationStrategy extends BigMutationStrategy {
                 outputPrice += ratePrice;
             }
 
-            double margin = outputPrice / inputPrice;
-            boolean profitableRecipe = margin > RND.rFloat(1.0) + 1.0;
+            double margin = (outputPrice / inputPrice) - 1;
+            boolean profitableRecipe = margin * multiplier > RND.rFloat(1.0);
 
             if (profitableRecipe) {
                 RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, building.getBlue(), actualIndex);

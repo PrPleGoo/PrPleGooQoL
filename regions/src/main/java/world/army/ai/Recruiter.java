@@ -106,8 +106,8 @@ final class Recruiter {
 					}
 				}
 
-				if (AD.supplies().equip(a) < 0.75
-					|| AD.supplies().supplyEquip(a) < 0.75) {
+				if (AD.supplies().equip(a) < 0.6
+					|| AD.supplies().supplyEquip(a) < 0.6) {
 					break;
 				}
 			}

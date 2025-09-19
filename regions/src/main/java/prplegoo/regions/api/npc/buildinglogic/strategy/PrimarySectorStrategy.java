@@ -11,6 +11,8 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.main.RoomBlueprintImp;
+import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.LIST;
 import world.map.regions.Region;
@@ -25,11 +27,12 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
         }
 
         RDBuilding building = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex);
-        if (building.getBlue() == null) {
+        RoomBlueprintImp blue = building.getBlue();
+        if (blue == null) {
             return false;
         }
 
-        LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
+        LIST<Industry> industries = ((INDUSTRY_HASER) blue).industries();
         FactionNPC faction = (FactionNPC) region.faction();
 
         if (industries.size() == 1 && industries.get(0).ins().isEmpty()) {
@@ -50,10 +53,10 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
                 priceSum += outputs.get(j).rate * price / NPCStockpile.AVERAGE_PRICE;
             }
 
-            double factoredPrice = priceSum / outputCount;
+            double factoredPrice = priceSum / outputCount * CLAMP.d(blue.bonus().get(region.faction()), 1, 15);
 
-            double randomLow = RND.rFloat(1.0);
-            double randomHigh = RND.rFloat(4.0) + 1.0;
+            double randomLow = RND.rFloat(2.0);
+            double randomHigh = RND.rFloat(4.0) + 2.0;
             if (factoredPrice < randomLow) {
                 return tryLevelDowngrade(building.level, buildingGenetic, region);
             } else if (factoredPrice > randomHigh) {

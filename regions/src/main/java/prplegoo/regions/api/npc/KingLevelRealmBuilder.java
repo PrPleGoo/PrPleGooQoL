@@ -13,12 +13,13 @@ import world.region.building.RDBuilding;
 import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
 import world.region.pop.RDRaces;
+import game.boosting.BOOSTABLES.Noble;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
         RDRaces races = RD.RACES();
 
-        BOOSTABLES.Noble noble = BOOSTABLES.NOBLE();
+        Noble noble = BOOSTABLES.NOBLE();
         Royalty king = faction.king();
         double proclivity = noble.AGRESSION.get(king.induvidual)
                 / noble.TOLERANCE.get(king.induvidual)

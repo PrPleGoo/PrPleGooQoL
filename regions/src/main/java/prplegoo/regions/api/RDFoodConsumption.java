@@ -8,13 +8,11 @@ import init.resources.RESOURCES;
 import init.resources.ResGEat;
 import init.sprite.UI.UI;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.RDFoodConsumptionData;
 import snake2d.LOG;
 import util.dic.Dic;
 import world.WORLD;
 import world.map.regions.Region;
-
-import java.nio.file.Path;
-import java.util.HashMap;
 
 public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData> {
     public final Boostable booster;
@@ -40,6 +38,14 @@ public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData
         if (data == null) {
             LOG.ln("RDFoodConsumption.onGameSaveLoaded: data null, initializing");
             initialize();
+            return;
+        }
+
+        LOG.ln("RDFoodConsumption.onGameSaveLoaded: data found");
+        if (selectedFoods.length != data.data.length
+                || selectedFoods[0].length != data.data[0].length)
+        {
+            LOG.ln("RDFoodConsumption.onGameSaveLoaded: data found, length difference detected, not writing");
             return;
         }
 

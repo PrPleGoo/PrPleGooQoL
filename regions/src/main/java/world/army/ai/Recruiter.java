@@ -85,6 +85,10 @@ final class Recruiter {
 					}
 				}
 
+				if (!a.recruiting()) {
+					break;
+				}
+
 				int nonEmptyDivCount = 0;
 				for (int i = 0; i < a.divs().size(); i++) {
 					ADDiv div = a.divs().get(i);
@@ -156,7 +160,7 @@ final class Recruiter {
 						continue;
 					}
 
-					double maxDivisionSize = AD.conscripts().available(null).get(f) / 7.0;
+					double maxDivisionSize = AD.conscripts().total(null).get(f) / 7.0;
 					am = CLAMP.i(am, 15, (int) maxDivisionSize);
 				}
 				

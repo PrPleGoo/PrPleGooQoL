@@ -1,26 +1,20 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
-import prplegoo.regions.api.npc.buildinglogic.*;
-import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
+import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
+import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
+import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
+import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
-import snake2d.util.rnd.RND;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
-import world.region.Gen;
 import world.region.RD;
-import world.region.pop.RDRace;
 
-public class HealthMutationStrategy extends LoopingMutationStrategy {
+public class HealthImprovementStrategy extends MutationStrategy {
     @Override
     public boolean mutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
-
-        if (RD.HEALTH().boostablee.get(region) <= 0.5) {
-            return false;
-        }
 
         boolean didMutationOccur = false;
         for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
@@ -50,16 +44,13 @@ public class HealthMutationStrategy extends LoopingMutationStrategy {
             }
         }
 
-        if (RND.oneIn(4)) {
-            return tryLevelDowngrade(levelInt, buildingGenetic, region);
-        }
-
         return false;
     }
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
+
         fitnessRecords[0] = new Health(faction, 0);
 
         return fitnessRecords;

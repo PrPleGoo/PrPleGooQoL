@@ -41,7 +41,7 @@ public class EventFactionExpand extends EventResource{
         if (timer > 0)
             return;
 
-        int expansions = KingLevels.isActive() ? 10 : 1;
+        int expansions = KingLevels.isActive() ? 20 : 1;
 
         for (int i = 0; i < expansions; i ++) {
             Faction f = FACTIONS.getByIndex(nextFaction);
@@ -54,7 +54,8 @@ public class EventFactionExpand extends EventResource{
     }
 
     public boolean trigger(FactionNPC f) {
-        if (KingLevels.isActive() && KingLevels.getInstance().getKingLevel(f).getMaxRegions() < f.realm().regions()) {
+        if (KingLevels.isActive()
+                && KingLevels.getInstance().getKingLevel(f).getMaxRegions() < f.realm().regions()) {
             return false;
         }
 

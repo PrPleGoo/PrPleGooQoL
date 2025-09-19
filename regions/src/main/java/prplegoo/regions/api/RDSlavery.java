@@ -3,6 +3,7 @@ package prplegoo.regions.api;
 import game.boosting.*;
 import lombok.Getter;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.RDSlaveryData;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import util.dic.Dic;
@@ -105,6 +106,16 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
         if (data == null) {
             LOG.ln("RDSlavery.onGameSaveLoaded: data null, initializing");
             initialize();
+            return;
+        }
+
+        LOG.ln("RDSlavery.onGameSaveLoaded: data found");
+        if (selectedSlaves.size() != data.data.size()
+                || selectedSlaves.get(0).size() != data.data.get(0).size()
+                || slaveDelivery.length != data.slaveDelivery.length
+                || slaveDelivery[0].length != data.slaveDelivery[0].length)
+        {
+            LOG.ln("RDSlavery.onGameSaveLoaded: data found, length difference detected, not writing");
             return;
         }
 

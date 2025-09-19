@@ -14,14 +14,18 @@ import game.faction.trade.ResourcePrices;
 import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.RES;
+import init.resources.RESOURCE;
+import init.resources.RESOURCES;
 import init.sprite.UI.UI;
 import init.text.D;
 import prplegoo.regions.api.gen.FactionGenerator;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
+import settlement.tilemap.terrain.TAmount;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.misc.ACTION;
+import snake2d.util.rnd.RND;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
 import snake2d.util.sprite.text.Str;
@@ -31,6 +35,7 @@ import view.interrupter.IDebugPanel;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.RDOutputs;
 import world.region.pop.RDRace;
 
 public class FACTIONS extends GameResource {
@@ -267,13 +272,24 @@ public class FACTIONS extends GameResource {
 
         if (KingLevels.isActive()) {
             ff.credits().set(100000);
+            KingLevels.getInstance().reset(ff.index());
 
-            for (int i = 0; i < 15; i++) {
+            for (int day = 0; day < 25; day++) {
                 for (RDRace rr : RD.RACES().all) {
                     rr.pop.init(capitol);
                 }
 
                 KingLevels.getInstance().getBuilder().build((FactionNPC) capitol.faction());
+
+                KingLevels.getInstance().resetDailyProductionRateCache(ff);
+                for (int resourceIndex = 0; resourceIndex < RESOURCES.ALL().size(); resourceIndex++) {
+                    RESOURCE res = RESOURCES.ALL().get(resourceIndex);
+
+                    double amount = KingLevels.getInstance().getDailyConsumptionRate(ff, res);
+                    amount += KingLevels.getInstance().getDailyProductionRate(ff, res);
+
+                    ff.stockpile.inc(res, amount);
+                }
             }
         }
 

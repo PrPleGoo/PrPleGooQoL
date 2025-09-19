@@ -52,8 +52,8 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
 
             double factoredPrice = priceSum / outputCount;
 
-            double randomLow = RND.rFloat(0.5);
-            double randomHigh = RND.rFloat(4.0) + 0.5;
+            double randomLow = RND.rFloat(1.0);
+            double randomHigh = RND.rFloat(4.0) + 1.0;
             if (factoredPrice < randomLow) {
                 return tryLevelDowngrade(building.level, buildingGenetic, region);
             } else if (factoredPrice > randomHigh) {

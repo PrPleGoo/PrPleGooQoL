@@ -373,6 +373,7 @@ public final class RDBuilding implements MAPPED{
 	}
 
 	public static class BBoost extends Booster implements BValue {
+		@Getter
 		final boolean global;
 		final boolean isMul;
 		final BoostSpec b;

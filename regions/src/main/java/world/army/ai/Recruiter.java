@@ -134,7 +134,7 @@ final class Recruiter {
 	private boolean isMissingEquips(WArmy a, ADDiv div) {
 		for (EquipBattle e : STATS.EQUIP().BATTLE_ALL()) {
 			if (div.equipTarget(e) != 0
-					&& AD.supplies().get(e).amountValue(a) < 0.25) {
+					&& AD.supplies().get(e).amountValue(a) < 0.6) {
 				return true;
 			}
 		}

@@ -9,6 +9,7 @@ import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
 import world.region.RD;
 import world.region.building.RDBuildPoints;
+import world.region.building.RDBuilding;
 
 public class GeneticVariables {
     public static final int mutationAttemptsPerTick = 10;
@@ -60,6 +61,11 @@ public class GeneticVariables {
         }
 
         healthBuildingIndeces[buildingIndex] = 1;
+        if (mutationNotAllowed(buildingIndex)
+                || isGlobalBuilding(buildingIndex)) {
+            return false;
+        }
+
         LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
         for (int i = 0; i < boosts.size(); i++) {
             BoostSpec boost = boosts.get(i);
@@ -87,9 +93,9 @@ public class GeneticVariables {
             return loyaltyBuildingIndeces[buildingIndex] == 2;
         }
 
-        if (mutationNotAllowed(buildingIndex)) {
-            loyaltyBuildingIndeces[buildingIndex] = 1;
-
+        loyaltyBuildingIndeces[buildingIndex] = 1;
+        if (mutationNotAllowed(buildingIndex)
+            || isGlobalBuilding(buildingIndex)) {
             return false;
         }
 
@@ -143,5 +149,34 @@ public class GeneticVariables {
     public static boolean mutationNotAllowed(int buildingIndex) {
         return !RD.BUILDINGS().all.get(buildingIndex).AIBuild
                 || GeneticVariables.isQuarantineBuilding(buildingIndex);
+    }
+
+    private static int[] globalBuildingIndeces;
+    public static boolean isGlobalBuilding(int buildingIndex) {
+        if (globalBuildingIndeces == null) {
+            globalBuildingIndeces = new int[RD.BUILDINGS().all.size()];
+        }
+
+        if (globalBuildingIndeces[buildingIndex] != 0) {
+            return globalBuildingIndeces[buildingIndex] == 2;
+        }
+
+        globalBuildingIndeces[buildingIndex] = 1;
+        if (isGrowthBuilding(buildingIndex)
+                || mutationNotAllowed(buildingIndex)
+                || RD.BUILDINGS().all.get(buildingIndex).key().startsWith("RELIGION")) {
+            return false;
+        }
+
+        ArrayListGrower<RDBuilding.BBoost> boosts = RD.BUILDINGS().all.get(buildingIndex).getBboosts();
+        for (int i = 0; i < boosts.size(); i++) {
+            RDBuilding.BBoost boost = boosts.get(i);
+            if (boost.isGlobal()) {
+                globalBuildingIndeces[buildingIndex] = 2;
+                break;
+            }
+        }
+
+        return globalBuildingIndeces[buildingIndex] == 2;
     }
 }

@@ -1,7 +1,7 @@
 LEVELS: [
     {
-        GOV_POINTS: 45,
-        GOV_POINTS_PER_REGION: 10,
+        GOV_POINTS: 35,
+        GOV_POINTS_PER_REGION: 15,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.50,
         INCOME: 15000,
         MAX_REGIONS: 3,
@@ -14,8 +14,8 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 55,
-        GOV_POINTS_PER_REGION: 15,
+        GOV_POINTS: 45,
+        GOV_POINTS_PER_REGION: 20,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.40,
         INCOME: 20000,
         MAX_REGIONS: 10,
@@ -33,8 +33,8 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 65,
-        GOV_POINTS_PER_REGION: 20,
+        GOV_POINTS: 55,
+        GOV_POINTS_PER_REGION: 25,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.30,
         INCOME: 25000,
         MAX_REGIONS: 25,
@@ -59,8 +59,8 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 75,
-        GOV_POINTS_PER_REGION: 25,
+        GOV_POINTS: 65,
+        GOV_POINTS_PER_REGION: 30,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.20,
         INCOME: 30000,
         MAX_REGIONS: 64,

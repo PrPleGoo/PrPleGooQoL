@@ -85,6 +85,10 @@ final class Recruiter {
 					}
 				}
 
+				if (!a.recruiting()) {
+					break;
+				}
+
 				int nonEmptyDivCount = 0;
 				for (int i = 0; i < a.divs().size(); i++) {
 					ADDiv div = a.divs().get(i);

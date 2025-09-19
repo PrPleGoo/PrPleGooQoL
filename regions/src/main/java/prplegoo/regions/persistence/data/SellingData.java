@@ -1,4 +1,4 @@
-package prplegoo.regions.api.npc;
+package prplegoo.regions.persistence.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -17,3 +17,4 @@ public class SellingData {
         this.sold = sold;
     }
 }
+

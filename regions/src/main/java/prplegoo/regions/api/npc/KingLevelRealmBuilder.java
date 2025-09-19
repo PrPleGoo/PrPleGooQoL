@@ -51,6 +51,15 @@ public class KingLevelRealmBuilder {
         if (alertMode) {
             for (Region region : faction.realm().all()) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
+                    if (GeneticVariables.isGrowthBuilding(building.index())) {
+                        continue;
+                    }
+
+                    if (GeneticVariables.isHealthBuilding(building.index())
+                            && RD.SLAVERY().getWorkforce().bo.get(region) >= 0) {
+                        continue;
+                    }
+
                     if (building.level.get(region) > 0) {
                         building.level.set(region, building.level.get(region) - 1);
                     }
@@ -97,14 +106,15 @@ public class KingLevelRealmBuilder {
         strategies.Add(1, PopulationGrowthMutationStrategy);
         strategies.Add(1, HealthMutationStrategy);
         strategies.Add(1, LoyaltyMutationStrategy);
+        strategies.Add(1, LoyaltyPruningMutationStrategy);
         strategies.Add(1, ReduceDeficitMutationStrategy);
         strategies.Add(3, PrimarySectorStrategy);
         strategies.Add(4, ReduceStorageMutationStrategy);
 
         alertStrategies.Add(1, PopulationGrowthMutationStrategy);
-        alertStrategies.Add(2, HealthMutationStrategy);
-        alertStrategies.Add(2, LoyaltyMutationStrategy);
-        alertStrategies.Add(2, ReduceWorkforceDeficitMutationStrategy);
+        alertStrategies.Add(1, HealthImprovementStrategy);
+        alertStrategies.Add(1, LoyaltyMutationStrategy);
+        alertStrategies.Add(1, ReduceWorkforceDeficitMutationStrategy);
     }
 
     private static final WeightedBag<MutationStrategy> strategies = new WeightedBag<>();
@@ -112,7 +122,9 @@ public class KingLevelRealmBuilder {
     private static final ReduceWorkforceDeficitMutationStrategy ReduceWorkforceDeficitMutationStrategy = new ReduceWorkforceDeficitMutationStrategy();
     private static final PopulationGrowthMutationStrategy PopulationGrowthMutationStrategy = new PopulationGrowthMutationStrategy();
     private static final HealthMutationStrategy HealthMutationStrategy = new HealthMutationStrategy();
+    private static final HealthImprovementStrategy HealthImprovementStrategy = new HealthImprovementStrategy();
     private static final LoyaltyMutationStrategy LoyaltyMutationStrategy = new LoyaltyMutationStrategy();
+    private static final LoyaltyPruningMutationStrategy LoyaltyPruningMutationStrategy = new LoyaltyPruningMutationStrategy();
     private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
     private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();

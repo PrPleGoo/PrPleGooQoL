@@ -1,4 +1,4 @@
-package prplegoo.regions.api;
+package prplegoo.regions.persistence.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;

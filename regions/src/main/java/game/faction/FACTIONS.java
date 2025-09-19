@@ -272,6 +272,7 @@ public class FACTIONS extends GameResource {
 
         if (KingLevels.isActive()) {
             ff.credits().set(100000);
+            KingLevels.getInstance().reset(ff.index());
 
             for (int day = 0; day < 25; day++) {
                 for (RDRace rr : RD.RACES().all) {

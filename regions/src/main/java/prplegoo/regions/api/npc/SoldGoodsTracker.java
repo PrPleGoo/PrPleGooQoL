@@ -4,6 +4,8 @@ import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import init.resources.RESOURCES;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.KingLevelIndexData;
+import prplegoo.regions.persistence.data.SellingData;
 import snake2d.LOG;
 
 public class SoldGoodsTracker implements IDataPersistence<SellingData> {
@@ -52,6 +54,12 @@ public class SoldGoodsTracker implements IDataPersistence<SellingData> {
         return SellingData.class;
     }
 
+    public void reset(int index) {
+        for (int resourceIndex = 0; resourceIndex < RESOURCES.ALL().size(); resourceIndex++) {
+            sold[index][resourceIndex] = 0;
+        }
+    }
+
     public void Update(FactionNPC faction, double deltaDays) {
         for (int resourceIndex = 0; resourceIndex < RESOURCES.ALL().size(); resourceIndex++) {
             double delta = sold[faction.index()][resourceIndex] / 16;
@@ -72,3 +80,4 @@ public class SoldGoodsTracker implements IDataPersistence<SellingData> {
         return sold[faction.index()][resourceIndex];
     }
 }
+

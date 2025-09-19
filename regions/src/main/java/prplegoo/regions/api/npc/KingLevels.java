@@ -1,19 +1,16 @@
 package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
-import game.events.EVENTS;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
-import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
-import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import snake2d.util.file.Json;
-import util.data.GETTER;
+import snake2d.util.rnd.RND;
 import world.army.AD;
 import world.army.ADSupply;
 import world.entity.army.WArmy;
@@ -29,22 +26,22 @@ public class KingLevels {
     private static boolean isActive = false;
 
     private final KingLevel[] kingLevels;
-    private int[] npcLevels;
     @Getter
     private final KingLevelRealmBuilder builder;
 
     private final int[][] productionCacheTick;
     private final double[][] productionCache;
-    private final int[] lastYearPicked;
 
     public StockpileSmoothing stockpileSmoothing;
     public SoldGoodsTracker soldGoodsTracker;
+    public KingLevelIndexes kingLevelIndexes;
 
     public KingLevels() {
         instance = this;
 
         stockpileSmoothing = new StockpileSmoothing();
         soldGoodsTracker = new SoldGoodsTracker();
+        kingLevelIndexes = new KingLevelIndexes();
         builder = new KingLevelRealmBuilder();
 
         PATHS.ResFolder prplegooResFolder = PATHS.STATS().folder("prplegoo");
@@ -57,14 +54,18 @@ public class KingLevels {
             kingLevels[i] = new KingLevel(kingLevelJsons[i], i);
         }
 
-        npcLevels = new int[FACTIONS.MAX()];
         productionCacheTick = new int[FACTIONS.MAX()][RESOURCES.ALL().size()];
         productionCache = new double[FACTIONS.MAX()][RESOURCES.ALL().size()];
-        lastYearPicked = new int[FACTIONS.MAX()];
     }
 
     public static void setActive(boolean active) {
         isActive = active;
+    }
+
+    public void reset(int index) {
+        stockpileSmoothing.reset(index);
+        soldGoodsTracker.reset(index);
+        kingLevelIndexes.reset(index);
     }
 
     public KingLevel getKingLevel(FactionNPC faction) {
@@ -116,7 +117,7 @@ public class KingLevels {
         amount += kingLevel.getConsumption()[resource.index()];
         amount += kingLevel.getConsumptionCapitalPop()[resource.index()] * RD.RACES().population.get(faction.realm().capitol());
 
-        for (int i = 0; i < RD.RACES().all.size(); i ++) {
+        for (int i = 0; i < RD.RACES().all.size(); i++) {
             amount += kingLevel.getConsumptionPreferredCapitalPop()[i][resource.index()] * RD.RACES().all.get(i).pop.get(faction.realm().capitol());
         }
 
@@ -169,7 +170,7 @@ public class KingLevels {
     }
 
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * 16;
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * 16 * (kingLevel.getIndex() + 1) / 2;
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
@@ -181,31 +182,34 @@ public class KingLevels {
     }
 
     public int getLevel(FactionNPC faction) {
-        return npcLevels[faction.index()];
+        return kingLevelIndexes.getLevel(faction);
     }
 
     public void resetLevels() {
-        npcLevels = new int[FACTIONS.MAX()];
+        kingLevelIndexes.initialize();
     }
 
     public void pickMaxLevel(FactionNPC faction) {
         pickMaxLevel(faction, false);
     }
- 
+
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;
         }
 
         int currentYear = getCurrentYear();
-        if (!force && lastYearPicked[faction.index()] >= currentYear - 2) {
+        if (!force && kingLevelIndexes.getNextPickYear(faction) > currentYear) {
             return;
         }
 
-        lastYearPicked[faction.index()] = currentYear;
+        kingLevelIndexes.setNextPickYear(faction, currentYear + 1 + RND.rInt(4));
+
+        int desiredLevel = getDesiredKingLevel(faction).getIndex();
+
         double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
 
-        for (int i = kingLevels.length - 1; i > 0; i--) {
+        for (int i = desiredLevel; i > 0; i--) {
             int missingResourceCount = 0;
             for (RESOURCE resource : RESOURCES.ALL()) {
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
@@ -222,16 +226,17 @@ public class KingLevels {
             }
 
             if (missingResourceCount < 3) {
-                this.npcLevels[faction.index()] = i;
+                kingLevelIndexes.setLevel(faction, i);
+
                 return;
             }
         }
 
-        this.npcLevels[faction.index()] = 0;
+        kingLevelIndexes.setLevel(faction, 0);
     }
 
     private static int getCurrentYear() {
         // FROM: public class DicTime
-        return ((int) TIME.currentSecond()) / (int)TIME.years().bitSeconds();
+        return ((int) TIME.currentSecond()) / (int) TIME.years().bitSeconds();
     }
 }

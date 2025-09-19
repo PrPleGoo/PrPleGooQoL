@@ -1,22 +1,21 @@
 package prplegoo.regions.persistence.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.HashMap;
 
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RDFoodConsumptionData {
-    public boolean[][] data;
+@SuppressWarnings("InnerClassMayBeStatic")
+public class KingLevelIndexData {
+    public byte[] npcLevels;
+    public int[] nextPickYear;
 
-    public RDFoodConsumptionData(boolean[][] data) {
-        this.data = data;
+    public KingLevelIndexData(byte[] npcLevels, int[] nextPickYear) {
+        this.npcLevels = npcLevels;
+        this.nextPickYear = nextPickYear;
     }
 }
-

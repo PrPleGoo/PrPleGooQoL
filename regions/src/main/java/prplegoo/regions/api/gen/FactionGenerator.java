@@ -59,7 +59,7 @@ public class FactionGenerator {
                 attempt = AddNpcCluster(reg, attempt);
             }
 
-            if (attempt >= 10) {
+            if (attempt >= 50) {
                 break;
             }
         }

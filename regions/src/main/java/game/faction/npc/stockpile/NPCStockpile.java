@@ -268,7 +268,10 @@ public class NPCStockpile extends NPCResource{
 			if (stockpileValue < 0) {
 				double netWorth = FACTIONS.WORTH().faction(faction);
 				if (netWorth < -stockpileValue) {
+					Region region = faction.capitolRegion();
+
 					FACTIONS.remove(faction, true);
+					FACTIONS.activateNext(region, null, true);
 
 					return;
 				}

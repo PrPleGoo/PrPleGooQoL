@@ -3,6 +3,7 @@ package prplegoo.regions.api;
 import game.boosting.*;
 import lombok.Getter;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.RDSlaveryData;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import util.dic.Dic;

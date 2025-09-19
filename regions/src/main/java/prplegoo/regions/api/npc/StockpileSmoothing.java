@@ -4,11 +4,10 @@ import game.boosting.BOOSTABLES;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.trade.TradeManager;
-import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.StockpileSmoothingData;
 import snake2d.LOG;
-import snake2d.util.misc.CLAMP;
 
 public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingData> {
     private double[][] currentTarget;
@@ -54,6 +53,12 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
     @Override
     public Class<StockpileSmoothingData> getDataClass() {
         return StockpileSmoothingData.class;
+    }
+
+    public void reset(int index) {
+        for (int resourceIndex = 0; resourceIndex < RESOURCES.ALL().size(); resourceIndex++) {
+            currentTarget[index][resourceIndex] = 0;
+        }
     }
 
     public void Update(FactionNPC faction, double deltaDays) {

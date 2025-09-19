@@ -1,6 +1,6 @@
 package prplegoo.regions;
 
-import prplegoo.regions.api.RDFoodConsumptionData;
+import prplegoo.regions.persistence.data.RDFoodConsumptionData;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.persistence.FileGetterApi;
 import prplegoo.regions.persistence.FilePutterApi;
@@ -25,6 +25,8 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         putter.put(RD.SLAVERY().getKey(), RD.SLAVERY().getData());
         putter.put(RD.RECIPES().getKey(), RD.RECIPES().getData());
         putter.put(KingLevels.getInstance().stockpileSmoothing.getKey(), KingLevels.getInstance().stockpileSmoothing.getData());
+        putter.put(KingLevels.getInstance().soldGoodsTracker.getKey(), KingLevels.getInstance().soldGoodsTracker.getData());
+        putter.put(KingLevels.getInstance().kingLevelIndexes.getKey(), KingLevels.getInstance().kingLevelIndexes.getData());
 
         putter.onGameSaved(file);
     }
@@ -39,6 +41,8 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
         RD.RECIPES().putData(getter.get(RD.RECIPES()));
         KingLevels.getInstance().stockpileSmoothing.putData(getter.get(KingLevels.getInstance().stockpileSmoothing));
+        KingLevels.getInstance().soldGoodsTracker.putData(getter.get(KingLevels.getInstance().soldGoodsTracker));
+        KingLevels.getInstance().kingLevelIndexes.putData(getter.get(KingLevels.getInstance().kingLevelIndexes));
     }
 
     @Override

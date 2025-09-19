@@ -8,13 +8,11 @@ import init.resources.RESOURCES;
 import init.resources.ResGEat;
 import init.sprite.UI.UI;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.RDFoodConsumptionData;
 import snake2d.LOG;
 import util.dic.Dic;
 import world.WORLD;
 import world.map.regions.Region;
-
-import java.nio.file.Path;
-import java.util.HashMap;
 
 public class RDFoodConsumption implements IDataPersistence<RDFoodConsumptionData> {
     public final Boostable booster;

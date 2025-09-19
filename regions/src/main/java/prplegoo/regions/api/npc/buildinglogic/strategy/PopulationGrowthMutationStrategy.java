@@ -31,7 +31,6 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
 
         Faction faction = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[0].regionIndex).faction();
         double govPointsBefore = RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
-        double govPointsTotal = RD.BUILDINGS().costs.GOV.bo.added(faction.capitolRegion());
 
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
             Region region = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[i].regionIndex);
@@ -54,36 +53,39 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
 
         Collections.sort(regionsWithSize);
 
+        double capForRegion = RD.BUILDINGS().costs.GOV.bo.added(faction.capitolRegion()) / 2;
+
         for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
             int regionIndex = regionsWithSize.get(factionGenetic.regionGenetics.length - i - 1).RegionIndex;
-            while (mutateRegion(factionGenetic.regionGenetics[regionIndex], govPointsTotal)) {
+            while (mutateRegion(factionGenetic.regionGenetics[regionIndex], capForRegion)) {
                 if (RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion()) < govPointsBefore) {
                     break;
                 }
             }
+
+            capForRegion = Math.max(5, capForRegion / 2);
         }
 
         return true;
     }
 
-    public boolean mutateRegion(RegionGenetic regionGenetic, double govPointsTotal) {
+    public boolean mutateRegion(RegionGenetic regionGenetic, double capForRegion) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
-        return tryMutateBuilding(regionGenetic.buildingGenetics[GeneticVariables.growthBuildingIndex], region, govPointsTotal);
+        return tryMutateBuilding(regionGenetic.buildingGenetics[GeneticVariables.growthBuildingIndex], region, capForRegion);
     }
 
-    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, double govPointsTotal) {
+    public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, double capForRegion) {
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
+
+        if (region.faction().realm().regions() > 2
+                && capForRegion > RD.BUILDINGS().costs.GOV.bo.get(region.faction().capitolRegion())){
+            return false;
+        }
 
         double currentPop = RD.RACES().population.get(region);
         double regionCapacity = RD.RACES().popTarget.getValue(region);
         if (regionCapacity * 0.75 > currentPop) {
-            return false;
-        }
-
-        if (region.capitol()
-                && region.faction().realm().regions() > 2
-                && govPointsTotal / 2 > RD.BUILDINGS().costs.GOV.bo.get(region.faction().capitolRegion())){
             return false;
         }
 
@@ -92,31 +94,9 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[2];
+        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
+
         fitnessRecords[0] = new GovPoints(faction, 0);
-        // PopTarget;
-        fitnessRecords[1] = new FitnessRecord(faction, 1) {
-            @Override
-            public boolean willIncreaseDeficit(FactionNPC faction, FactionGenetic mutant) {
-                return factionValue > mutant.fitnessRecords[index].factionValue;
-            }
-
-            @Override
-            public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {
-                return factionValue < mutant.fitnessRecords[index].factionValue;
-            }
-
-            @Override
-            public double determineValue(FactionNPC faction) {
-                double popTarget = 0;
-
-                for (Region region : faction.realm().all()) {
-                    popTarget += RD.RACES().popTarget.getValue(region);
-                }
-
-                return popTarget;
-            }
-        };
 
         return fitnessRecords;
     }

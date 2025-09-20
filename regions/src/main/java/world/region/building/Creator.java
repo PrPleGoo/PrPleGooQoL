@@ -34,7 +34,6 @@ import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.Industry.IndustryResource;
-import settlement.room.industry.module.IndustryRegion;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
@@ -384,25 +383,42 @@ final class Creator {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-                Bo bo = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, true) {
+                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, true) {
                     @Override
                     double get(Region reg) {
-						if(reg.faction() instanceof Player) {
-							return CLAMP.d(1 + ((bu.getBlue().bonus().get(reg.faction()) - 1) * RD.SCHOOL().booster.get(reg)), 1, 15);
+						if (reg.faction() instanceof Player) {
+							double scienceValue = Math.max(1, bu.getBlue().bonus().get(reg.faction())) - 1;
+							return min() + scienceValue * RD.SCHOOL().booster.get(reg);
 						}
 
 						if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
                             return 1;
                         }
 
-						return CLAMP.d(bu.getBlue().bonus().get(reg.faction()), 1, 15);
+						return bu.getBlue().bonus().get(reg.faction());
                     }
                 };
-                bo.add(bu.efficiency);
+                appliedScience.add(bu.efficiency);
+
+				Bo playingScaling = new Bo(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
+					@Override
+					public double get(Region reg) {
+						if (!KingLevels.isActive()) {
+							return 1;
+						}
+
+						if (!(reg.faction() instanceof FactionNPC)) {
+							return 1;
+						}
+
+						return min() + KingLevels.getInstance().getPlayerScalingD();
+					}
+				};
+				playingScaling.add(bu.efficiency);
 			}
 		};
 
-        BOOSTING.connecter(ca);
+		BOOSTING.connecter(ca);
 	}
 
 	private void pushEfficiency(RDBuilding bu, Json da) {

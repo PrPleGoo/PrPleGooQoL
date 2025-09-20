@@ -53,13 +53,13 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
                 priceSum += outputs.get(j).rate * price / NPCStockpile.AVERAGE_PRICE;
             }
 
-            double factoredPrice = priceSum / outputCount * CLAMP.d(blue.bonus().get(region.faction()), 1, 15);
+            double valueRate = priceSum / outputCount;
 
-            double randomLow = RND.rFloat(2.0);
+            double randomLow = 0.2 + RND.rFloat(1.8);
             double randomHigh = RND.rFloat(4.0) + 2.0;
-            if (factoredPrice < randomLow) {
-                return tryLevelDowngrade(building.level, buildingGenetic, region);
-            } else if (factoredPrice > randomHigh) {
+            if (valueRate < randomLow) {
+                return tryDestroyBuilding(building.level, buildingGenetic, region);
+            } else if (valueRate * blue.bonus().get(region.faction()) > randomHigh) {
                 return tryLevelUpgrade(building.level, buildingGenetic, region);
             }
         }

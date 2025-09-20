@@ -58,7 +58,7 @@ final class Recruiter {
 			WArmy a = f.armies().all().get(ai);
 			tree.add(a);
 		}
-		
+
 		while(tree.hasMore()) {
 			WArmy a = tree.pollGreatest();
 
@@ -75,40 +75,40 @@ final class Recruiter {
 			}
 
 			if (KingLevels.isActive() && a.divs().size() > 1) {
-				int randomDivisionIndex = RND.rInt(a.divs().size());
-				ADDiv randomDivision = a.divs().get(randomDivisionIndex);
+				if (AD.supplies().health(a) < 1) {
+					int divisionsToDisband = Math.max(1, a.divs().size() / 5);
 
-				if (randomDivision.men() != 0) {
-					if (AD.supplies().health(a) < 1) {
-						randomDivision.disband();
-						break;
+					for (int i = 0; i < divisionsToDisband; i++) {
+						int randomDivisionIndex = RND.rInt(a.divs().size());
+						ADDiv randomDivision = a.divs().get(randomDivisionIndex);
+
+						if (randomDivision.men() != 0) {
+							randomDivision.disband();
+						}
 					}
+
+					continue;
 				}
 
 				if (!a.recruiting()) {
-					break;
-				}
-
-				int nonEmptyDivCount = 0;
-				for (int i = 0; i < a.divs().size(); i++) {
-					ADDiv div = a.divs().get(i);
-					if (div.men() != 0) {
-						nonEmptyDivCount++;
-					}
-				}
-
-				if (nonEmptyDivCount > 1) {
-					for (int i = 0; i < a.divs().size(); i++) {
-						ADDiv div = a.divs().get(i);
-						if (RND.oneIn(4) && div.men() != 0 && isMissingEquips(a, div)) {
-							div.disband();
-						}
-					}
+					continue;
 				}
 
 				if (AD.supplies().equip(a) < 0.6
 					|| AD.supplies().supplyEquip(a) < 0.6) {
-					break;
+					for (int i = 0; i < a.divs().size(); i++) {
+						WDivRegional div = (WDivRegional) a.divs().get(i);
+
+						if (div.men() != 0 
+								&& isMissingEquips(a, div)) {
+							double trai = 0.1 + 0.9*0.25*BOOSTABLES.NOBLE().AGRESSION.get(f.court().king().roy().induvidual);
+							double equip = 0.1 + 0.9*0.5*BOOSTABLES.NOBLE().COMPETANCE.get(f.court().king().roy().induvidual);
+
+							div.randomize(trai, equip);
+						}
+					}
+
+					continue;
 				}
 			}
 
@@ -143,7 +143,8 @@ final class Recruiter {
 	}
 
 	private void recruit(FactionNPC f, WArmy a, int target) {
-		
+		int divisionCountAtStart = a.divs().size();
+		int divisionsAdded = 0;
 		main:
 		while(AD.menTarget(null).get(a) < target && a.divs().canAdd()) {
 			int ri = RND.rInt(RACES.all().size());
@@ -179,7 +180,8 @@ final class Recruiter {
 					d.randomize(trai, equip);
 					//d.menSet(d.menTarget());
 
-					if (KingLevels.isActive()) {
+					divisionsAdded++;
+					if (divisionsAdded >= divisionCountAtStart) {
 						break main;
 					}
 

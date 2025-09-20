@@ -90,7 +90,7 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
     }
 
     public double getCurrentTarget(FactionNPC faction, int resourceIndex) {
-        return currentTarget[faction.index()][resourceIndex];
+        return currentTarget[faction.index()][resourceIndex] + KingLevels.getInstance().soldGoodsTracker.getSold(faction, resourceIndex);
     }
 
     public double actualTarget(FactionNPC faction, int resourceIndex) {
@@ -102,7 +102,6 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
         }
 
         amTarget *= 15;
-        amTarget += KingLevels.getInstance().soldGoodsTracker.getSold(faction, resourceIndex);
 
         int tradeSets = (int) (amTarget / TradeManager.MIN_LOAD);
         return (tradeSets + 1) * TradeManager.MIN_LOAD;

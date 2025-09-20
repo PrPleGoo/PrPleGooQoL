@@ -117,7 +117,8 @@ public class KingLevelRealmBuilder {
         strategies.Add(1, ReduceDeficitMutationStrategy);
         strategies.Add(1, GlobalBuildingStrategy);
         strategies.Add(4, PrimarySectorStrategy);
-        strategies.Add(5, ReduceStorageMutationStrategy);
+        strategies.Add(5, IndustrializeMutationStrategy);
+        strategies.Add(1, RemoveBadRecipeMutationStrategy);
 
         alertStrategies.Add(1, PopulationGrowthMutationStrategy);
         alertStrategies.Add(1, HealthImprovementStrategy);
@@ -135,7 +136,8 @@ public class KingLevelRealmBuilder {
     private static final LoyaltyPruningMutationStrategy LoyaltyPruningMutationStrategy = new LoyaltyPruningMutationStrategy();
     private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
-    private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();
+    private static final IndustrializeMutationStrategy IndustrializeMutationStrategy = new IndustrializeMutationStrategy();
+    private static final RemoveBadRecipeMutationStrategy RemoveBadRecipeMutationStrategy = new RemoveBadRecipeMutationStrategy();
     private static final GlobalBuildingStrategy GlobalBuildingStrategy = new GlobalBuildingStrategy();
 }
 

@@ -33,7 +33,7 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
         for(int j = 0; j < inputs.size(); j++) {
             RESOURCE resource = inputs.get(j).resource;
             if (faction.stockpile.amount(resource) < 1
-                && tryLevelDowngrade(building.level, buildingGenetic, region)) {
+                && tryDestroyBuilding(building.level, buildingGenetic, region)) {
                 return true;
             }
         }

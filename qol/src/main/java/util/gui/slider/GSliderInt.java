@@ -24,7 +24,7 @@ import view.main.VIEW;
 
 public class GSliderInt extends GuiSection{
 
-    private final INTE in;
+    protected final INTE in;
     private static final int midWidth = 8;
     private static CharSequence ¤¤setAmount = "¤Set amount";
     private static CharSequence ¤¤setAmountD = "¤Set amount {0}-{1}";

@@ -59,7 +59,7 @@ public class KingLevelRealmBuilder {
                 for (RDBuilding building : RD.BUILDINGS().all)
                     if (!GeneticVariables.isGrowthBuilding(building.index())
                             && !(GeneticVariables.isHealthBuilding(building.index())
-                            && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0))) {
+                                && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0))) {
                         int buildingLevel = building.level.get(region);
                         if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
                     }
@@ -76,20 +76,22 @@ public class KingLevelRealmBuilder {
             if (i > 1 || alertMode) kingLevelsInstance.resetDailyProductionRateCache(faction);
 
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
-
-            kingLevelsInstance.resetDailyProductionRateCache(faction);
             originalWithStrategy.calculateFitness(true);
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
             // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
             kingLevelsInstance.resetDailyProductionRateCache(faction);
+
             mutator.calculateFitness(true);
 
-            if (mutator.tryMutate() && originalWithStrategy.shouldAdopt(mutator)) original.adopt(mutator).commit();
-            else
-                // If we exit the loop we don't want the cache to contain values from a failed mutation
-                if (i == GeneticVariables.mutationAttemptsPerTick) kingLevelsInstance.resetDailyProductionRateCache(faction);
+            if (mutator.tryMutate()) {
+                if (originalWithStrategy.shouldAdopt(mutator)) originalWithStrategy.adopt(mutator);
+                originalWithStrategy.commit();
+            }
+
+            // If we exit the loop we don't want the cache to contain values from a failed mutation
+            else if (i == GeneticVariables.mutationAttemptsPerTick) kingLevelsInstance.resetDailyProductionRateCache(faction);
         }
     }
 

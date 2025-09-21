@@ -13,6 +13,7 @@ import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
+import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
 
 import java.util.Arrays;
@@ -34,11 +35,12 @@ public class KingLevelRealmBuilder {
                 ? 0 // don't genocide own species, ever
                 : ((1 - kingRace.pref().race(races.get(i).race) * proclivity)));
 
+        RDEdicts edicts = RD.RACES().edicts;
         for (Region region : faction.realm().all())
             for (RDRace race : races) {
-                RD.RACES().edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
-                RD.RACES().edicts.exile.toggled(race).set(region, 0);
-                RD.RACES().edicts.sanction.toggled(race).set(region, 0);
+                edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
+                edicts.exile.toggled(race).set(region, 0);
+                edicts.sanction.toggled(race).set(region, 0);
             }
 
         FactionGenetic original = new FactionGenetic(faction);

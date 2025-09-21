@@ -15,8 +15,10 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.stats.Induvidual;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
+import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.RDReligions;
 import world.region.Realm;
 
 import java.util.Arrays;
@@ -81,8 +83,9 @@ public class FactionGenetic {
                         StatsReligion.StatReligion religiousLikings = religionStats.getter.get(king);
 
                         double amount = IntStream.range(0, RD.RACES().all.size())
-                                .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions
-                                        .mapToDouble(j -> religiousLikings.opposition(religionStats.ALL.get(j)) * RD.RELIGION().all().get(j).target(region)) // collect religion's data
+                                .mapToObj(i -> RD.RELIGION().all()) // collect religion list as "religions"
+                                .mapToDouble(religions -> IntStream.range(0, religions.size()) // lookup all the religions
+                                        .mapToDouble(j -> religiousLikings.opposition(religionStats.ALL.get(j)) * religions.get(j).target(region)) // collect religion's data
                                         .sum())
                                 .sum();
 

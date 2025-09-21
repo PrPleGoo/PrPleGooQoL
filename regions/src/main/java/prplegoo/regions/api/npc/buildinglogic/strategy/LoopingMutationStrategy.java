@@ -1,28 +1,25 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
+import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
 import world.WORLD;
 import world.map.regions.Region;
 
+import java.util.Arrays;
+
 public abstract class LoopingMutationStrategy extends MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        boolean didMutationOccur = false;
-        for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
-            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.getRegionGenetics()[i]);
-        }
-
-        return didMutationOccur;
+        return Arrays.stream(factionGenetic.getRegionGenetics())
+                .map(this::mutateRegion)
+                .reduce(false, (a, b) -> a | b); // didMutationOccur = false, |= mutateRegion
     }
 
     public boolean mutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
-        boolean didMutationOccur = false;
-        for(int i = 0; i < regionGenetic.buildingGenetics.length; i++) {
-            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[i], region);
-        }
-
-        return didMutationOccur;
+        return Arrays.stream(regionGenetic.buildingGenetics)
+                .map(building -> tryMutateBuilding(building, region))
+                .reduce(false, (a, b) -> a | b); // didMutationOccur = false, |= tryMutateBuilding
     }
 }

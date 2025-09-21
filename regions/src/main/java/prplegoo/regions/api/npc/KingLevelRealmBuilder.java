@@ -1,6 +1,7 @@
 package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
+import game.boosting.BOOSTABLES.Noble;
 import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
@@ -16,9 +17,10 @@ public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
         LIST<RDRace> races = RD.RACES().all;
         double[] genocide = new double[races.size()];
-        double proclivity = BOOSTABLES.NOBLE().AGRESSION.get(faction.king().induvidual)
-                / BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual)
-                / BOOSTABLES.NOBLE().MERCY.get(faction.king().induvidual);
+        Noble noble = BOOSTABLES.NOBLE();
+        double proclivity = noble.AGRESSION.get(faction.king().induvidual)
+                / noble.TOLERANCE.get(faction.king().induvidual)
+                / noble.MERCY.get(faction.king().induvidual);
 
         for (RDRace race : races) {
             if (race.race.index == faction.king().induvidual.race().index) {

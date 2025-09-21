@@ -32,7 +32,7 @@ public class FactionGenetic {
         }
     }
 
-    public FactionGenetic loadFitness(FactionNPC faction) {
+    public FactionGenetic loadFitness() {
         fitnessRecords = loadDefault(faction);
 
         return this;

@@ -2,8 +2,6 @@ package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
-import settlement.room.industry.module.INDUSTRY_HASER;
-import settlement.room.main.RoomBlueprintImp;
 import snake2d.util.rnd.RND;
 import util.data.INT_O;
 import world.WORLD;
@@ -13,10 +11,10 @@ import world.region.RD;
 public abstract class MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
         boolean didMutationOccur = false;
-        int randomIndex = RND.rInt(factionGenetic.regionGenetics.length);
-        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            int actualIndex = (randomIndex + i) % factionGenetic.regionGenetics.length;
-            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.regionGenetics[actualIndex]);
+        int randomIndex = RND.rInt(factionGenetic.getRegionGenetics().length);
+        for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
+            int actualIndex = (randomIndex + i) % factionGenetic.getRegionGenetics().length;
+            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.getRegionGenetics()[actualIndex]);
         }
 
         return didMutationOccur;

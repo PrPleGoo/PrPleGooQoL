@@ -1,15 +1,9 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
-import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
-import snake2d.util.rnd.RND;
-import snake2d.util.sets.ArrayListGrower;
-import snake2d.util.sets.LIST;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
@@ -29,19 +23,19 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
             }
         }
 
-        Faction faction = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[0].regionIndex).faction();
+        Faction faction = WORLD.REGIONS().all().get(factionGenetic.getRegionGenetics()[0].regionIndex).faction();
         double govPointsBefore = RD.BUILDINGS().costs.GOV.bo.get(faction);
 
-        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            Region region = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[i].regionIndex);
+        for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
+            Region region = WORLD.REGIONS().all().get(factionGenetic.getRegionGenetics()[i].regionIndex);
             INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
 
-            tryDestroyBuilding(levelInt, factionGenetic.regionGenetics[i].buildingGenetics[GeneticVariables.growthBuildingIndex], region);
+            tryDestroyBuilding(levelInt, factionGenetic.getRegionGenetics()[i].buildingGenetics[GeneticVariables.growthBuildingIndex], region);
         }
 
         List<RegionSizeTuple> regionsWithSize = new ArrayList<>();
-        for (int i = 0; i < factionGenetic.regionGenetics.length; i++){
-            Region region = WORLD.REGIONS().all().get(factionGenetic.regionGenetics[i].regionIndex);
+        for (int i = 0; i < factionGenetic.getRegionGenetics().length; i++){
+            Region region = WORLD.REGIONS().all().get(factionGenetic.getRegionGenetics()[i].regionIndex);
             double size = RD.RACES().capacity.get(region);
 
             if (region.capitol()) {
@@ -52,9 +46,9 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         }
 
         Collections.sort(regionsWithSize);
-        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            int regionIndex = regionsWithSize.get(factionGenetic.regionGenetics.length - i - 1).RegionIndex;
-            while (mutateRegion(factionGenetic.regionGenetics[regionIndex])) {
+        for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
+            int regionIndex = regionsWithSize.get(factionGenetic.getRegionGenetics().length - i - 1).RegionIndex;
+            while (mutateRegion(factionGenetic.getRegionGenetics()[regionIndex])) {
                 if (RD.BUILDINGS().costs.GOV.bo.get(faction) < govPointsBefore) {
                     break;
                 }
@@ -86,12 +80,12 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         fitnessRecords[1] = new FitnessRecord(faction, 1) {
             @Override
             public boolean willIncreaseDeficit(FactionNPC faction, FactionGenetic mutant) {
-                return factionValue > mutant.fitnessRecords[index].factionValue;
+                return factionValue > mutant.getFitnessRecords()[index].factionValue;
             }
 
             @Override
             public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {
-                return factionValue < mutant.fitnessRecords[index].factionValue;
+                return factionValue < mutant.getFitnessRecords()[index].factionValue;
             }
 
             @Override

@@ -18,8 +18,10 @@ import world.map.regions.Region;
 import world.region.RD;
 
 public class FactionGenetic {
-    public final RegionGenetic[] regionGenetics;
-    public FitnessRecord[] fitnessRecords;
+    @Getter
+    private final RegionGenetic[] regionGenetics;
+    @Getter
+    protected FitnessRecord[] fitnessRecords;
     @Getter
     protected FactionNPC faction;
 

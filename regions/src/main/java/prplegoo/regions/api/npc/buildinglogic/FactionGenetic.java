@@ -12,6 +12,7 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
+import settlement.stats.Induvidual;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
 import world.map.regions.Region;
@@ -75,8 +76,9 @@ public class FactionGenetic {
                     public double determineValue(FactionNPC faction1, Region region) {
                         double amount;
 
-                        double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction1.king().induvidual);
-                        StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction1.king().induvidual);
+                        Induvidual king = faction1.king().induvidual;
+                        double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(king);
+                        StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(king);
 
                         amount = IntStream.range(0, RD.RACES().all.size())
                                 .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions

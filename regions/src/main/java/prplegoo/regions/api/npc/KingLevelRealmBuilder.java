@@ -29,26 +29,17 @@ public class KingLevelRealmBuilder {
 
         Race kingRace = king.race();
         for (RDRace race : races) {
-            if (race.race.index == kingRace.index) {
-                // don't genocide own species, ever
-                genocide[race.index()] = 0;
-                continue;
-            }
+            genocide[race.index()] = race.race.index == kingRace.index
+                    ? 0 // don't genocide own species, ever
+                    : ((1 - kingRace.pref().race(race.race)) * proclivity);
 
-            genocide[race.index()] = (1 - kingRace.pref().race(race.race)) * proclivity;
         }
 
         for (Region region : faction.realm().all()) {
             for (RDRace race : races) {
-                if (genocide[race.index()] > 3.0) {
-                    RD.RACES().edicts.massacre.toggled(race).set(region, 1);
-                    RD.RACES().edicts.exile.toggled(race).set(region, 0);
-                    RD.RACES().edicts.sanction.toggled(race).set(region, 0);
-                } else {
-                    RD.RACES().edicts.massacre.toggled(race).set(region, 0);
-                    RD.RACES().edicts.exile.toggled(race).set(region, 0);
-                    RD.RACES().edicts.sanction.toggled(race).set(region, 0);
-                }
+                RD.RACES().edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
+                RD.RACES().edicts.exile.toggled(race).set(region, 0);
+                RD.RACES().edicts.sanction.toggled(race).set(region, 0);
             }
         }
 

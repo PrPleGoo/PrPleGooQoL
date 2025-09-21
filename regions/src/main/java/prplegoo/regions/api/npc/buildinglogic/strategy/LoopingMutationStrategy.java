@@ -8,8 +8,8 @@ import world.map.regions.Region;
 public abstract class LoopingMutationStrategy extends MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
         boolean didMutationOccur = false;
-        for(int i = 0; i < factionGenetic.regionGenetics.length; i++) {
-            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.regionGenetics[i]);
+        for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
+            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.getRegionGenetics()[i]);
         }
 
         return didMutationOccur;

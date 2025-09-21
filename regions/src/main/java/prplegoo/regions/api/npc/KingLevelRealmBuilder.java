@@ -3,6 +3,7 @@ package prplegoo.regions.api.npc;
 import game.boosting.BOOSTABLES;
 import game.boosting.BOOSTABLES.Noble;
 import game.faction.npc.FactionNPC;
+import init.race.Race;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
@@ -26,14 +27,15 @@ public class KingLevelRealmBuilder {
                 / noble.TOLERANCE.get(king)
                 / noble.MERCY.get(king);
 
+        Race kingRace = king.race();
         for (RDRace race : races) {
-            if (race.race.index == king.race().index) {
+            if (race.race.index == kingRace.index) {
                 // don't genocide own species, ever
                 genocide[race.index()] = 0;
                 continue;
             }
 
-            genocide[race.index()] = (1 - king.race().pref().race(race.race)) * proclivity;
+            genocide[race.index()] = (1 - kingRace.pref().race(race.race)) * proclivity;
         }
 
         for (Region region : faction.realm().all()) {

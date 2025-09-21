@@ -74,14 +74,13 @@ public class FactionGenetic {
                 new FitnessRecord(faction, 6) {
                     @Override
                     public double determineValue(FactionNPC faction1, Region region) {
-                        double amount;
 
                         Induvidual king = faction1.king().induvidual;
                         double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(king);
                         StatsReligion religionStats = STATS.RELIGION();
                         StatsReligion.StatReligion religiousLikings = religionStats.getter.get(king);
 
-                        amount = IntStream.range(0, RD.RACES().all.size())
+                        double amount = IntStream.range(0, RD.RACES().all.size())
                                 .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions
                                         .mapToDouble(j -> religiousLikings.opposition(religionStats.ALL.get(j)) * RD.RELIGION().all().get(j).target(region)) // collect religion's data
                                         .sum())

@@ -16,6 +16,7 @@ import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.Realm;
 
 public class FactionGenetic {
     @Getter
@@ -28,9 +29,10 @@ public class FactionGenetic {
     public FactionGenetic(FactionNPC faction) {
         this.faction = faction;
 
-        regionGenetics = new RegionGenetic[faction.realm().regions()];
+        Realm realm = faction.realm();
+        regionGenetics = new RegionGenetic[realm.regions()];
         for (int i = 0; i < regionGenetics.length; i++)
-            regionGenetics[i] = new RegionGenetic(faction.realm().all().get(i).index());
+            regionGenetics[i] = new RegionGenetic(realm.all().get(i).index());
     }
 
     public void loadFitness() {

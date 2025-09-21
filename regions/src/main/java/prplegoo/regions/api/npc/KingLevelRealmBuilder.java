@@ -45,7 +45,7 @@ public class KingLevelRealmBuilder {
             }
 
         FactionGenetic original = new FactionGenetic(faction);
-        original.loadFitness().calculateFitness();
+        original.calculateFitness(true);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) for (Region region : regions)
@@ -61,12 +61,12 @@ public class KingLevelRealmBuilder {
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
 
             kingLevelsInstance.resetDailyProductionRateCache(faction);
-            originalWithStrategy.loadFitness().calculateFitness();
+            originalWithStrategy.calculateFitness(true);
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
             kingLevelsInstance.resetDailyProductionRateCache(faction);
-            mutator.loadFitness().calculateFitness();
+            mutator.calculateFitness(true);
 
             if (mutator.tryMutate() && originalWithStrategy.shouldAdopt(mutator)) mutator.commit();
         }

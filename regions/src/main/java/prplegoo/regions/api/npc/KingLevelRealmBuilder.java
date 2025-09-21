@@ -34,10 +34,10 @@ public class KingLevelRealmBuilder {
 
         Race kingRace = king.race();
         Arrays.setAll(genocide, i -> {
-            Race race_race = racesAll.get(i).race;
-            return (race_race.index == kingRace.index)
+            Race race = racesAll.get(i).race;
+            return (race.index == kingRace.index)
                     ? 0 // don't genocide own species, ever
-                    : ((1 - kingRace.pref().race(race_race) * proclivity));
+                    : ((1 - kingRace.pref().race(race) * proclivity));
         });
 
         RDEdicts edicts = races.edicts;

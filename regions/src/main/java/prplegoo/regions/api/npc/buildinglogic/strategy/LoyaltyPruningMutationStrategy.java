@@ -14,9 +14,9 @@ import world.region.pop.RDRace;
 public class LoyaltyPruningMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        int randomIndex = RND.rInt(factionGenetic.regionGenetics.length);
+        int randomIndex = RND.rInt(factionGenetic.getRegionGenetics().length);
 
-        return mutateRegion(factionGenetic.regionGenetics[randomIndex]);
+        return mutateRegion(factionGenetic.getRegionGenetics()[randomIndex]);
     }
 
     @Override

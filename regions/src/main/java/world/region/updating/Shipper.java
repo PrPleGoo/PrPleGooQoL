@@ -59,6 +59,10 @@ final class Shipper {
 
         f.credits().inc(RD.OUTPUT().MONEY.boost.get(r)*days, CTYPE.TAX);
 
+        if (f != FACTIONS.player()) {
+            return;
+        }
+
         for (RDResource res : RD.OUTPUT().RES) {
             int a = (int) Math.ceil(res.boost.get(r)*days);
             am += Math.abs(a);
@@ -82,21 +86,19 @@ final class Shipper {
                 }
 
                 if (a > 0) {
-                    if (f == FACTIONS.player()) {
-                        for (ADSupply s : AD.supplies().get(res.res)) {
-                            for (WArmy e : FACTIONS.player().armies().all()) {
-                                if (!e.recruiting()) {
-                                    continue;
-                                }
+                    for (ADSupply s : AD.supplies().get(res.res)) {
+                        for (WArmy e : FACTIONS.player().armies().all()) {
+                            if (!e.recruiting()) {
+                                continue;
+                            }
 
-                                int needed = (int) s.needed(e);
-                                if (needed < a) {
-                                    a -= needed;
-                                    s.current().inc(e, needed);
-                                } else {
-                                    s.current().inc(e, a);
-                                    a = 0;
-                                }
+                            int needed = (int) s.needed(e);
+                            if (needed < a) {
+                                a -= needed;
+                                s.current().inc(e, needed);
+                            } else {
+                                s.current().inc(e, a);
+                                a = 0;
                             }
                         }
                     }
@@ -108,7 +110,7 @@ final class Shipper {
 
                     c.loadAndReserve(res.res, a);
                 }
-                else if (f == FACTIONS.player()) {
+                else {
                     f.seller().remove(res.res, -a, ITYPE.tax);
                 }
             }
@@ -116,9 +118,6 @@ final class Shipper {
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
                 int a = rdSlave.getDelivery(r, days);
                 c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
-                if (f instanceof FactionNPC && KingLevels.isActive()) {
-                    ((FactionNPC) f).slaves().trade(rdSlave.rdRace.race, a, 0);
-                }
             }
         }
 

@@ -2,8 +2,11 @@ package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
 import game.boosting.BSourceInfo;
+import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import init.sprite.SPRITES;
+import world.army.AD;
+import world.army.ADConscripts;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
@@ -30,7 +33,28 @@ public class KingLevelBoostAttacher {
             }
         }.add(RD.BUILDINGS().costs.GOV.bo);
 
-        new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 1, 10, true) {
+        new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 0, 10, true) {
+            @Override
+            public double get(Region t) {
+                if (!KingLevels.isActive()) {
+                    return 1 / max();
+                }
+
+                if (!(t.faction() instanceof FactionNPC)) {
+                    return 1 / max();
+                }
+
+                if (!t.capitol()) {
+                    return 1 / max();
+                }
+
+                FactionNPC faction = (FactionNPC) t.faction();
+
+                return KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / max();
+            }
+        }.add(RD.RACES().capacity);
+
+        new RBooster(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
             @Override
             public double get(Region t) {
                 if (!KingLevels.isActive()) {
@@ -41,15 +65,24 @@ public class KingLevelBoostAttacher {
                     return 0;
                 }
 
-                if (!t.capitol()) {
+                return KingLevels.getInstance().getPlayerScalingD() / max();
+            }
+        }.add(RD.MILITARY().conscriptTarget);
+
+        new RBooster(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
+            @Override
+            public double get(Region t) {
+                if (!KingLevels.isActive()) {
                     return 0;
                 }
 
-                FactionNPC faction = (FactionNPC) t.faction();
+                if (!(t.faction() instanceof FactionNPC)) {
+                    return 0;
+                }
 
-                return KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / 10.0;
+                return KingLevels.getInstance().getPlayerScalingD() / max();
             }
-        }.add(RD.RACES().capacity);
+        }.add(RD.OUTPUT().MONEY.boost);
 
         new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 0, 1000000, false) {
             @Override

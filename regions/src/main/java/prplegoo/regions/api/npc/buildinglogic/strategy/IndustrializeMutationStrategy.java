@@ -14,16 +14,16 @@ import settlement.room.main.RoomBlueprintImp;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.LIST;
-import util.data.INT_O;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
-public class ReduceStorageMutationStrategy extends BigMutationStrategy {
+public class IndustrializeMutationStrategy extends BigMutationStrategy {
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)
-                || buildingGenetic.recipe == -1) {
+                || buildingGenetic.recipe == -1
+                || buildingGenetic.level > 0) {
             return false;
         }
 
@@ -76,9 +76,7 @@ public class ReduceStorageMutationStrategy extends BigMutationStrategy {
                 RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, building.getBlue(), actualIndex);
                 buildingGenetic.recipe = actualIndex;
 
-                tryLevelUpgrade(building.level, buildingGenetic, region);
-
-                return true;
+                return tryLevelUpgrade(building.level, buildingGenetic, region);
             }
         }
 

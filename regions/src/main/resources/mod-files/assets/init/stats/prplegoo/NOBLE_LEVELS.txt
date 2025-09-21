@@ -4,7 +4,7 @@ LEVELS: [
         GOV_POINTS_PER_REGION: 15,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.50,
         INCOME: 15000,
-        MAX_REGIONS: 3,
+        MAX_REGIONS: 2,
 
         CONSUMPTION: {
         },
@@ -18,7 +18,7 @@ LEVELS: [
         GOV_POINTS_PER_REGION: 20,
         CAPITAL_POPULATION_CAPACITY_MUL: 1.75,
         INCOME: 20000,
-        MAX_REGIONS: 10,
+        MAX_REGIONS: 8,
 
         CONSUMPTION: {
         },
@@ -37,7 +37,7 @@ LEVELS: [
         GOV_POINTS_PER_REGION: 25,
         CAPITAL_POPULATION_CAPACITY_MUL: 2.00,
         INCOME: 25000,
-        MAX_REGIONS: 25,
+        MAX_REGIONS: 20,
 
         CONSUMPTION: {
             JEWELRY: 5,

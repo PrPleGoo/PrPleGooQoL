@@ -8,7 +8,9 @@ import game.time.TIME;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import init.type.HTYPES;
 import lombok.Getter;
+import prplegoo.regions.api.RDSlavery;
 import snake2d.util.file.Json;
 import snake2d.util.rnd.RND;
 import world.army.AD;
@@ -31,6 +33,7 @@ public class KingLevels {
 
     private final int[][] productionCacheTick;
     private final double[][] productionCache;
+    private double playerScaling = 1;
 
     public StockpileSmoothing stockpileSmoothing;
     public SoldGoodsTracker soldGoodsTracker;
@@ -81,6 +84,9 @@ public class KingLevels {
             return;
         }
 
+        // Can't do this on the ctor, and there's not really an update method besides this one.
+        playerScaling = calculatePlayerScaling();
+
         KingLevel kingLevel = getKingLevel(faction);
 
         for (RESOURCE resource : RESOURCES.ALL()) {
@@ -105,8 +111,22 @@ public class KingLevels {
 
             double amountStored = npcStockpile.amount(resource.index());
             if (amountStored > 0) {
-                npcStockpile.inc(resource, amountStored * -resource.degradeSpeed() / 16 / 2 / BOOSTABLES.CIVICS().SPOILAGE.get(faction));
+                double spoilageAmount = amountStored
+                        // Compensated for year
+                        * -resource.degradeSpeed() / 16
+                        / 2 // Compensated for warehouse
+                        // Compensated for tech
+                        / BOOSTABLES.CIVICS().SPOILAGE.get(faction)
+                        // Compensated for needing extra resources
+                        / getPlayerScalingMul();
+
+                npcStockpile.inc(resource, spoilageAmount);
             }
+        }
+
+        for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+            int a = rdSlave.getDelivery(faction, deltaDays);
+            faction.slaves().trade(rdSlave.rdRace.race, a, 0);
         }
 
         stockpileSmoothing.Update(faction, deltaDays);
@@ -173,7 +193,13 @@ public class KingLevels {
     }
 
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
-        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource) * 16 * (kingLevel.getIndex() + 1) / 2;
+        double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource)
+                // Stock a year's worth.
+                * 16
+                // Higher levels want bigger stocks.
+                * (kingLevel.getIndex() + 1) / 2
+                // Scale for the player's performance, military equipment desire scales off fielded conscripts.
+                * Math.min(KingLevels.getInstance().getPlayerScalingMul(), 40);
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
@@ -241,5 +267,24 @@ public class KingLevels {
     private static int getCurrentYear() {
         // FROM: public class DicTime
         return ((int) TIME.currentSecond()) / (int) TIME.years().bitSeconds();
+    }
+
+    public double getPlayerScalingD() {
+        return playerScaling;
+    }
+
+    public double getPlayerScalingMul() {
+        return playerScaling + 1.0;
+    }
+
+    private double calculatePlayerScaling() {
+        int scalePercentage = 0;
+        int playerRegionCount = FACTIONS.player().realm().regions() - 1;
+        while (playerRegionCount > 0) {
+            scalePercentage += playerRegionCount;
+            playerRegionCount -= 5;
+        }
+
+        return (double) scalePercentage / 100.0;
     }
 }

@@ -1,6 +1,7 @@
 package prplegoo.regions.api;
 
 import game.boosting.*;
+import game.faction.npc.FactionNPC;
 import lombok.Getter;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDSlaveryData;
@@ -183,6 +184,16 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
         public int getDelivery(Region reg, double days) {
             return RD.SLAVERY().pushDelivery(reg, this.rdRace, boost.get(reg) * days);
+        }
+
+        public int getDelivery(FactionNPC faction, double days) {
+            int count = 0;
+            for (int i = 0; i < faction.realm().regions(); i++) {
+                Region region = faction.realm().region(i);
+                count += RD.SLAVERY().pushDelivery(region, this.rdRace, boost.get(region) * days);
+            }
+
+            return count;
         }
 
         public int hasDelivery(Region reg, double days) {

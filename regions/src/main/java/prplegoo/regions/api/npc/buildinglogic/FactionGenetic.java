@@ -110,9 +110,7 @@ public class FactionGenetic {
         if (mutant.anyFitnessExceedsDeficit(faction) || anyFitnessWillIncreaseDeficit(mutant)) return false;
 
         // we don't have a deficit and neither does the mutant
-        double random = GeneticVariables.random();
-
-        return anyFitnessIsMutationCandidate(mutant, random);
+        return anyFitnessIsMutationCandidate(mutant, GeneticVariables.random());
     }
 
     private boolean anyFitnessIsMutationCandidate(FactionGenetic mutant, double random) {

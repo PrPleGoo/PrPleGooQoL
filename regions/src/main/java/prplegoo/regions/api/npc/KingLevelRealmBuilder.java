@@ -67,10 +67,7 @@ public class KingLevelRealmBuilder {
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
             mutator.loadFitness(faction).calculateFitness(faction);
 
-            if (mutator.tryMutate()) {
-                if (originalWithStrategy.shouldAdopt(faction, mutator)) mutator.commit();
-                else originalWithStrategy.commit();
-            }
+            if (mutator.tryMutate() && originalWithStrategy.shouldAdopt(faction, mutator)) mutator.commit();
         }
 
         KingLevels.getInstance().resetDailyProductionRateCache(faction);

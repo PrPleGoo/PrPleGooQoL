@@ -25,7 +25,6 @@ public class KingLevelRealmBuilder {
         LIST<RDRace> racesAll = races.all;
         Noble noble = BOOSTABLES.NOBLE();
         Induvidual king = faction.king().induvidual;
-
         // do genocide aggression, tolerance, mercy, rng on king name?
         double proclivity = noble.AGRESSION.get(king)
                 / noble.TOLERANCE.get(king)
@@ -34,9 +33,12 @@ public class KingLevelRealmBuilder {
         double[] genocide = new double[racesAll.size()];
 
         Race kingRace = king.race();
-        Arrays.setAll(genocide, i -> (racesAll.get(i).race.index == kingRace.index)
-                ? 0 // don't genocide own species, ever
-                : ((1 - kingRace.pref().race(racesAll.get(i).race) * proclivity)));
+        Arrays.setAll(genocide, i -> {
+            Race race_race = racesAll.get(i).race;
+            return (race_race.index == kingRace.index)
+                    ? 0 // don't genocide own species, ever
+                    : ((1 - kingRace.pref().race(race_race) * proclivity));
+        });
 
         RDEdicts edicts = races.edicts;
         LIST<Region> regions = faction.realm().all();

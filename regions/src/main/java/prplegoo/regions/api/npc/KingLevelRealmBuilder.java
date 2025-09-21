@@ -7,6 +7,7 @@ import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.strategy.*;
+import settlement.stats.Induvidual;
 import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
@@ -18,17 +19,18 @@ public class KingLevelRealmBuilder {
         LIST<RDRace> races = RD.RACES().all;
         double[] genocide = new double[races.size()];
         Noble noble = BOOSTABLES.NOBLE();
-        double proclivity = noble.AGRESSION.get(faction.king().induvidual)
-                / noble.TOLERANCE.get(faction.king().induvidual)
-                / noble.MERCY.get(faction.king().induvidual);
+        Induvidual king = faction.king().induvidual;
+        double proclivity = noble.AGRESSION.get(king)
+                / noble.TOLERANCE.get(king)
+                / noble.MERCY.get(king);
 
         for (RDRace race : races) {
-            if (race.race.index == faction.king().induvidual.race().index) {
+            if (race.race.index == king.race().index) {
                 genocide[race.index()] = 0;
                 continue;
             }
 
-            genocide[race.index()] = (1 - faction.king().induvidual.race().pref().race(race.race)) * proclivity;
+            genocide[race.index()] = (1 - king.race().pref().race(race.race)) * proclivity;
         }
 
         for (Region region : faction.realm().all()) {

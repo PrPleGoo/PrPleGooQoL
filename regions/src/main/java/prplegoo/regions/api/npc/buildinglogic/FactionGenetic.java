@@ -126,12 +126,10 @@ public class FactionGenetic {
                 .anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
     }
 
-    public FactionGenetic adopt(FactionGenetic genetic){
+    public void adopt(FactionGenetic genetic){
         regionGenetics = genetic.regionGenetics;
         fitnessRecords = genetic.fitnessRecords;
         faction = genetic.faction;
-
-        return this;
     }
 
     public void commit() {

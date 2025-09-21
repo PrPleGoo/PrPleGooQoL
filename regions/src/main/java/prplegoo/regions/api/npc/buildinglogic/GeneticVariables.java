@@ -82,11 +82,11 @@ public class GeneticVariables {
     }
 
     private static int[] loyaltyBuildingIndeces;
-    public static ArrayListGrower<Integer> actualLoyaltyBuildingIndeces;
+    public static ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = new ArrayListGrower<>();
     public static boolean isLoyaltyBuilding(int buildingIndex) {
         if (loyaltyBuildingIndeces == null) {
             loyaltyBuildingIndeces = new int[RD.BUILDINGS().all.size()];
-            actualLoyaltyBuildingIndeces = new ArrayListGrower<>();
+            actualLoyaltyBuildingIndeces.clear();
         }
 
         if (loyaltyBuildingIndeces[buildingIndex] != 0) {

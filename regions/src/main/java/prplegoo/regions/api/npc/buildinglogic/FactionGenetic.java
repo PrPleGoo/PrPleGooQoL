@@ -63,8 +63,7 @@ public class FactionGenetic {
                             double price = faction1.stockpile.price.get(resource);
 
                             double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction1, resource);
-                            if (productionAmount < 0) totalMoney += productionAmount * price;
-                            else if (productionAmount > 0) totalMoney += productionAmount * price;
+                            if (productionAmount != 0) totalMoney += productionAmount * price;
                         }
 
                         return totalMoney;

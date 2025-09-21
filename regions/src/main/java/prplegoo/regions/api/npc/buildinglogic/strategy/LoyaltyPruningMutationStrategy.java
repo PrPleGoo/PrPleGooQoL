@@ -15,9 +15,10 @@ import java.util.stream.IntStream;
 public class LoyaltyPruningMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        int randomIndex = RND.rInt(factionGenetic.getRegionGenetics().length);
+        RegionGenetic[] regionGenetics = factionGenetic.getRegionGenetics();
+        int randomIndex = RND.rInt(regionGenetics.length);
 
-        return mutateRegion(factionGenetic.getRegionGenetics()[randomIndex]);
+        return mutateRegion(regionGenetics[randomIndex]);
     }
 
     @Override

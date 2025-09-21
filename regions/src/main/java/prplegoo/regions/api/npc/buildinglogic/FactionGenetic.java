@@ -18,6 +18,8 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.Realm;
 
+import java.util.Arrays;
+
 public class FactionGenetic {
     @Getter
     private final RegionGenetic[] regionGenetics;
@@ -31,8 +33,7 @@ public class FactionGenetic {
 
         Realm realm = faction.realm();
         regionGenetics = new RegionGenetic[realm.regions()];
-        for (int i = 0; i < regionGenetics.length; i++)
-            regionGenetics[i] = new RegionGenetic(realm.all().get(i).index());
+        Arrays.setAll(regionGenetics, i -> new RegionGenetic(realm.all().get(i).index()));
     }
 
     public void loadFitness() {

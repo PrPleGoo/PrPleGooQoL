@@ -52,7 +52,7 @@ public class KingLevelRealmBuilder {
 
         // When we come into this function any values in the boosts are active so the cache is up-to-date
         FactionGenetic original = new FactionGenetic(faction);
-        original.calculateFitness(true);
+        original.calculateFitness();
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) {
@@ -89,7 +89,7 @@ public class KingLevelRealmBuilder {
             }
 
             original = new FactionGeneticMutator(faction, strategy);
-            original.calculateFitness(true);
+            original.calculateFitness();
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
@@ -100,7 +100,7 @@ public class KingLevelRealmBuilder {
             // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
             kingLevels.resetDailyProductionRateCache(faction);
 
-            mutator.calculateFitness(true);
+            mutator.calculateFitness();
 
             if (!original.shouldAdopt(mutator)) {
                 original.commit();

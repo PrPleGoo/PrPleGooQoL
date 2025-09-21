@@ -62,7 +62,9 @@ public class FactionGenetic {
 
                         for (RESOURCE resource : RESOURCES.ALL()) {
                             double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction1, resource);
-                            if (productionAmount != 0) totalMoney += productionAmount * faction1.stockpile.price.get(resource);
+                            if (productionAmount != 0) {
+                                totalMoney += productionAmount * faction1.stockpile.price.get(resource);
+                            }
                         }
 
                         return totalMoney;
@@ -95,7 +97,9 @@ public class FactionGenetic {
     }
 
     public void calculateFitness(Boolean shouldLoadFitness) {
-        if (shouldLoadFitness) loadFitness();
+        if (shouldLoadFitness) {
+            loadFitness();
+        }
 
         Arrays.stream(fitnessRecords).forEach(fitnessRecord -> {
             fitnessRecord.addValue(faction);

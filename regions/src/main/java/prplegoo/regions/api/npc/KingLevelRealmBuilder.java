@@ -42,27 +42,33 @@ public class KingLevelRealmBuilder {
 
         RDEdicts edicts = races.edicts;
         LIST<Region> regions = faction.realm().all();
-        for (Region region : regions)
+        for (Region region : regions) {
             for (RDRace race : racesAll) {
                 edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);
             }
+        }
 
         // When we come into this function any values in the boosts are active so the cache is up-to-date
         FactionGenetic original = new FactionGenetic(faction);
         original.calculateFitness(true);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
-        if (alertMode)
-            for (Region region : regions)
-                for (RDBuilding building : RD.BUILDINGS().all)
+        if (alertMode) {
+            for (Region region : regions) {
+                for (RDBuilding building : RD.BUILDINGS().all) {
                     if (!GeneticVariables.isGrowthBuilding(building.index())
                             && !(GeneticVariables.isHealthBuilding(building.index())
                                 && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0))) {
                         int buildingLevel = building.level.get(region);
-                        if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
+                        if (buildingLevel > 0) {
+                            building.level.set(region, buildingLevel - 1);
+                        }
                     }
+                }
+            }
+        }
 
         KingLevels kingLevelsInstance = KingLevels.getInstance();
         WeightedBag<MutationStrategy> activeStrategies = alertMode
@@ -73,7 +79,9 @@ public class KingLevelRealmBuilder {
             MutationStrategy strategy = activeStrategies.Pick();
 
             // The cached values are still valid on the first run, unless we're in alertMode
-            if (i > 1 || alertMode) kingLevelsInstance.resetDailyProductionRateCache(faction);
+            if (i > 1 || alertMode) {
+                kingLevelsInstance.resetDailyProductionRateCache(faction);
+            }
 
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
             originalWithStrategy.calculateFitness(true);
@@ -86,12 +94,16 @@ public class KingLevelRealmBuilder {
             mutator.calculateFitness(true);
 
             if (mutator.tryMutate()) {
-                if (originalWithStrategy.shouldAdopt(mutator)) originalWithStrategy.adopt(mutator);
+                if (originalWithStrategy.shouldAdopt(mutator)) {
+                    originalWithStrategy.adopt(mutator);
+                }
                 originalWithStrategy.commit();
             }
 
             // If we exit the loop we don't want the cache to contain values from a failed mutation
-            else if (i == GeneticVariables.mutationAttemptsPerTick) kingLevelsInstance.resetDailyProductionRateCache(faction);
+            else if (i == GeneticVariables.mutationAttemptsPerTick) {
+                kingLevelsInstance.resetDailyProductionRateCache(faction);
+            }
         }
     }
 

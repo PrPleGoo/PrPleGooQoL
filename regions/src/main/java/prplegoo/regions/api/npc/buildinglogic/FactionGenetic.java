@@ -15,10 +15,8 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.stats.Induvidual;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
-import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
-import world.region.RDReligions;
 import world.region.Realm;
 
 import java.util.Arrays;

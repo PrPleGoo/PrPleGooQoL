@@ -27,11 +27,11 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         Faction faction = WORLD.REGIONS().all().get(regionGenetics[0].regionIndex).faction();
         double govPointsBefore = RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
 
-        for(int i = 0; i < regionGenetics.length; i++) {
-            Region region = WORLD.REGIONS().all().get(regionGenetics[i].regionIndex);
+        for (RegionGenetic regionGenetic : regionGenetics) {
+            Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
             INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
 
-            tryDestroyBuilding(levelInt, regionGenetics[i].buildingGenetics[GeneticVariables.growthBuildingIndex], region);
+            tryDestroyBuilding(levelInt, regionGenetic.buildingGenetics[GeneticVariables.growthBuildingIndex], region);
         }
 
         List<RegionSizeTuple> regionsWithSize = new ArrayList<>();

@@ -29,9 +29,8 @@ public class FactionGenetic {
         this.faction = faction;
 
         regionGenetics = new RegionGenetic[faction.realm().regions()];
-        for (int i = 0; i < regionGenetics.length; i++) {
+        for (int i = 0; i < regionGenetics.length; i++)
             regionGenetics[i] = new RegionGenetic(faction.realm().all().get(i).index());
-        }
     }
 
     public void loadFitness() {
@@ -60,11 +59,8 @@ public class FactionGenetic {
                     double price = faction.stockpile.price.get(resource);
 
                     double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
-                    if (productionAmount < 0) {
-                        totalMoney += productionAmount * price;
-                    } else if (productionAmount > 0) {
-                        totalMoney += productionAmount * price;
-                    }
+                    if (productionAmount < 0) totalMoney += productionAmount * price;
+                    else if (productionAmount > 0) totalMoney += productionAmount * price;
                 }
 
                 return totalMoney;
@@ -81,11 +77,9 @@ public class FactionGenetic {
                 double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual);
                 StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction.king().induvidual);
 
-                for (int i = 0; i < RD.RACES().all.size(); i++) {
-                    for (int j = 0; j < RD.RELIGION().all().size(); j++) {
+                for (int i = 0; i < RD.RACES().all.size(); i++)
+                    for (int j = 0; j < RD.RELIGION().all().size(); j++)
                         amount += religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region);
-                    }
-                }
 
                 return amount / tolerance;
             }
@@ -101,48 +95,32 @@ public class FactionGenetic {
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             fitnessRecord.addValue(faction);
 
-            for (int i = 0; i < faction.realm().all().size(); i++) {
-                fitnessRecord.addValue(faction, i);
-            }
+            for (int i = 0; i < faction.realm().all().size(); i++) fitnessRecord.addValue(faction, i);
         }
 
         return this;
     }
 
     public boolean shouldAdopt(FactionGenetic mutant) {
-        if (mutant.anyFitnessExceedsDeficit(faction)) {
-            return false;
-        }
+        if (mutant.anyFitnessExceedsDeficit(faction)) return false;
 
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.willIncreaseDeficit(faction, mutant)) {
-                return false;
-            }
-        }
+        for (FitnessRecord fitnessRecord : fitnessRecords)
+            if (fitnessRecord.willIncreaseDeficit(faction, mutant)) return false;
 
         // we don't have a deficit and neither does the mutant
         double random = GeneticVariables.random();
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.tryMutation(faction, mutant, random)) {
-                return true;
-            }
-        }
+        for (FitnessRecord fitnessRecord : fitnessRecords)
+            if (fitnessRecord.tryMutation(faction, mutant, random)) return true;
 
         return false;
     }
 
     public void commit() {
-        for (int i = 0; i < regionGenetics.length; i++) {
-            regionGenetics[i].commit();
-        }
+        for (int i = 0; i < regionGenetics.length; i++) regionGenetics[i].commit();
     }
 
     public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.exceedsDeficit(faction)) {
-                return true;
-            }
-        }
+        for (FitnessRecord fitnessRecord : fitnessRecords) if (fitnessRecord.exceedsDeficit(faction)) return true;
 
         return false;
     }

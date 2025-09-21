@@ -63,7 +63,7 @@ public class KingLevelRealmBuilder {
                     }
 
                     if (GeneticVariables.isHealthBuilding(building.index())
-                            && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0)) {
+                            && RD.SLAVERY().getWorkforce().bo.get(region) >= 0) {
                         continue;
                     }
 

@@ -6,6 +6,7 @@ import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.strategy.*;
+import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
@@ -13,12 +14,13 @@ import world.region.pop.RDRace;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
-        double[] genocide = new double[RD.RACES().all.size()];
+        LIST<RDRace> races = RD.RACES().all;
+        double[] genocide = new double[races.size()];
         double proclivity = BOOSTABLES.NOBLE().AGRESSION.get(faction.king().induvidual)
                 / BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual)
                 / BOOSTABLES.NOBLE().MERCY.get(faction.king().induvidual);
 
-        for (RDRace race : RD.RACES().all) {
+        for (RDRace race : races) {
             if (race.race.index == faction.king().induvidual.race().index) {
                 genocide[race.index()] = 0;
                 continue;
@@ -28,7 +30,7 @@ public class KingLevelRealmBuilder {
         }
 
         for (Region region : faction.realm().all()) {
-            for (RDRace race : RD.RACES().all) {
+            for (RDRace race : races) {
                 if (genocide[race.index()] > 3.0) {
                     RD.RACES().edicts.massacre.toggled(race).set(region, 1);
                     RD.RACES().edicts.exile.toggled(race).set(region, 0);

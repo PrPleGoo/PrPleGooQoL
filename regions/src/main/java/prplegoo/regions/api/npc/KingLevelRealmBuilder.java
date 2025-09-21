@@ -58,13 +58,18 @@ public class KingLevelRealmBuilder {
         if (alertMode) {
             for (Region region : regions) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
-                    if (!GeneticVariables.isGrowthBuilding(building.index())
-                            && !(GeneticVariables.isHealthBuilding(building.index())
-                                && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0))) {
-                        int buildingLevel = building.level.get(region);
-                        if (buildingLevel > 0) {
-                            building.level.set(region, buildingLevel - 1);
-                        }
+                    if (GeneticVariables.isGrowthBuilding(building.index())) {
+                        continue;
+                    }
+
+                    if (GeneticVariables.isHealthBuilding(building.index())
+                            && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0)) {
+                        continue;
+                    }
+
+                    int buildingLevel = building.level.get(region);
+                    if (buildingLevel > 0) {
+                        building.level.set(region, buildingLevel - 1);
                     }
                 }
             }

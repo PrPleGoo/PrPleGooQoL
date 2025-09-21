@@ -75,7 +75,7 @@ public class KingLevelRealmBuilder {
             }
         }
 
-        KingLevels kingLevelsInstance = KingLevels.getInstance();
+        KingLevels kingLevels = KingLevels.getInstance();
         WeightedBag<MutationStrategy> activeStrategies = alertMode
                 ? alertStrategies
                 : strategies;
@@ -85,7 +85,7 @@ public class KingLevelRealmBuilder {
 
             // The cached values are still valid on the first run, unless we're in alertMode
             if (i > 1 || alertMode) {
-                kingLevelsInstance.resetDailyProductionRateCache(faction);
+                kingLevels.resetDailyProductionRateCache(faction);
             }
 
             original = new FactionGeneticMutator(faction, strategy);
@@ -98,7 +98,7 @@ public class KingLevelRealmBuilder {
             }
 
             // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
-            kingLevelsInstance.resetDailyProductionRateCache(faction);
+            kingLevels.resetDailyProductionRateCache(faction);
 
             mutator.calculateFitness(true);
 
@@ -107,7 +107,7 @@ public class KingLevelRealmBuilder {
 
                 // If we exit the loop we don't want the cache to contain values from a failed mutation
                 if (i == GeneticVariables.mutationAttemptsPerTick) {
-                    kingLevelsInstance.resetDailyProductionRateCache(faction);
+                    kingLevels.resetDailyProductionRateCache(faction);
                 }
             }
         }

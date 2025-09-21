@@ -48,11 +48,12 @@ public class KingLevelRealmBuilder {
         original.calculateFitness(true);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
-        if (alertMode) for (Region region : regions)
-            for (RDBuilding building : RD.BUILDINGS().all) {
-                int buildingLevel = building.level.get(region);
-                if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
-            }
+        if (alertMode)
+            for (Region region : regions)
+                for (RDBuilding building : RD.BUILDINGS().all) {
+                    int buildingLevel = building.level.get(region);
+                    if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
+                }
 
         int i = 0;
         KingLevels kingLevelsInstance = KingLevels.getInstance();
@@ -99,4 +100,3 @@ public class KingLevelRealmBuilder {
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
     private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();
 }
-

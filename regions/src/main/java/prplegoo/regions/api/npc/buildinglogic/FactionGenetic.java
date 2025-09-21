@@ -92,7 +92,7 @@ public class FactionGenetic {
         return fitnessRecords;
     }
 
-    public FactionGenetic calculateFitness(Boolean shouldLoadFitness) {
+    public void calculateFitness(Boolean shouldLoadFitness) {
         if (shouldLoadFitness) loadFitness();
 
         for (FitnessRecord fitnessRecord : fitnessRecords) {
@@ -100,8 +100,6 @@ public class FactionGenetic {
 
             for (int i = 0; i < faction.realm().all().size(); i++) fitnessRecord.addValue(faction, i);
         }
-
-        return this;
     }
 
     public boolean shouldAdopt(FactionGenetic mutant) {

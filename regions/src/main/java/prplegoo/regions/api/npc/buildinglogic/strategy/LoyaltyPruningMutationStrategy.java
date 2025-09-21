@@ -8,8 +8,8 @@ import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
-import world.region.building.RDBuilding;
-import world.region.pop.RDRace;
+
+import java.util.stream.IntStream;
 
 public class LoyaltyPruningMutationStrategy extends MutationStrategy {
     @Override
@@ -24,21 +24,14 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
         RD.OUTPUT().taxRate.set(region, 0);
 
-        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) {
-            return false;
-        }
+        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) return false;
 
         int randomIndex = RND.rInt(GeneticVariables.actualLoyaltyBuildingIndeces.size());
-        for(int i = 0; i < GeneticVariables.actualLoyaltyBuildingIndeces.size(); i++) {
-            int actualIndex = (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size();
 
-            int buildingIndex = GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex);
-            if (tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region)) {
-                return true;
-            }
-        }
-
-        return false;
+        return IntStream.range(0, GeneticVariables.actualLoyaltyBuildingIndeces.size())
+                .map(i -> (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size())
+                .map(actualIndex -> GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex))
+                .anyMatch(buildingIndex -> tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region));
     }
 
     @Override
@@ -50,10 +43,8 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
-
-        fitnessRecords[0] = new Loyalty(faction, 0);
-
-        return fitnessRecords;
+        return new FitnessRecord[]{
+                new Loyalty(faction, 0)
+        };
     }
 }

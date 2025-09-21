@@ -15,13 +15,9 @@ import java.util.*;
 public class PopulationGrowthMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        if (GeneticVariables.growthBuildingIndex == -1) {
-            for (RDBuilding building : RD.BUILDINGS().all) {
-                if (GeneticVariables.isGrowthBuilding(building.index())) {
-                    break;
-                }
-            }
-        }
+        if (GeneticVariables.growthBuildingIndex == -1)
+            for (RDBuilding building : RD.BUILDINGS().all)
+                if (GeneticVariables.isGrowthBuilding(building.index())) break;
 
         Faction faction = WORLD.REGIONS().all().get(factionGenetic.getRegionGenetics()[0].regionIndex).faction();
         double govPointsBefore = RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
@@ -38,9 +34,7 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
             Region region = WORLD.REGIONS().all().get(factionGenetic.getRegionGenetics()[i].regionIndex);
             double potentialSize = RD.RACES().popTarget.getValue(region);
 
-            if (region.capitol()) {
-                potentialSize = Double.POSITIVE_INFINITY;
-            }
+            if (region.capitol()) potentialSize = Double.POSITIVE_INFINITY;
 
             regionsWithSize.add(new RegionSizeTuple(i, potentialSize));
         }
@@ -51,11 +45,8 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
 
         for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
             int regionIndex = regionsWithSize.get(factionGenetic.getRegionGenetics().length - i - 1).RegionIndex;
-            while (mutateRegion(factionGenetic.getRegionGenetics()[regionIndex], capForRegion)) {
-                if (RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion()) < govPointsBefore) {
-                    break;
-                }
-            }
+            while (mutateRegion(factionGenetic.getRegionGenetics()[regionIndex], capForRegion))
+                if (RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion()) < govPointsBefore) break;
 
             capForRegion = Math.max(5, capForRegion / 2);
         }
@@ -73,17 +64,12 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
 
         if (region.faction().realm().regions() > 2
-                && capForRegion > RD.BUILDINGS().costs.GOV.bo.get(region.faction().capitolRegion())){
-            return false;
-        }
+                && capForRegion > RD.BUILDINGS().costs.GOV.bo.get(region.faction().capitolRegion())) return false;
 
         double currentPop = RD.RACES().population.get(region);
         double regionCapacity = RD.RACES().popTarget.getValue(region);
-        if (regionCapacity * 0.75 > currentPop) {
-            return false;
-        }
+        return !(regionCapacity * 0.75 > currentPop) && tryLevelUpgrade(levelInt, buildingGenetic, region);
 
-        return tryLevelUpgrade(levelInt, buildingGenetic, region);
     }
 
     @Override

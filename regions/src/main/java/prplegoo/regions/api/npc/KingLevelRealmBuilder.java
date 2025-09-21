@@ -15,12 +15,14 @@ import world.region.RD;
 import world.region.building.RDBuilding;
 import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
+import world.region.pop.RDRaces;
 
 import java.util.Arrays;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
-        LIST<RDRace> races = RD.RACES().all;
+        RDRaces races = RD.RACES();
+        LIST<RDRace> racesAll = races.all;
         Noble noble = BOOSTABLES.NOBLE();
         Induvidual king = faction.king().induvidual;
 
@@ -29,17 +31,17 @@ public class KingLevelRealmBuilder {
                 / noble.TOLERANCE.get(king)
                 / noble.MERCY.get(king);
 
-        double[] genocide = new double[races.size()];
+        double[] genocide = new double[racesAll.size()];
 
         Race kingRace = king.race();
-        Arrays.setAll(genocide, i -> (races.get(i).race.index == kingRace.index)
+        Arrays.setAll(genocide, i -> (racesAll.get(i).race.index == kingRace.index)
                 ? 0 // don't genocide own species, ever
-                : ((1 - kingRace.pref().race(races.get(i).race) * proclivity)));
+                : ((1 - kingRace.pref().race(racesAll.get(i).race) * proclivity)));
 
-        RDEdicts edicts = RD.RACES().edicts;
+        RDEdicts edicts = races.edicts;
         LIST<Region> regions = faction.realm().all();
         for (Region region : regions)
-            for (RDRace race : races) {
+            for (RDRace race : racesAll) {
                 edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);

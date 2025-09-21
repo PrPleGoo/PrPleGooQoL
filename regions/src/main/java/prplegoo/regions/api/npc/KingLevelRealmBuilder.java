@@ -21,7 +21,6 @@ import java.util.Arrays;
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
         LIST<RDRace> races = RD.RACES().all;
-        double[] genocide = new double[races.size()];
         Noble noble = BOOSTABLES.NOBLE();
         Induvidual king = faction.king().induvidual;
 
@@ -29,6 +28,8 @@ public class KingLevelRealmBuilder {
         double proclivity = noble.AGRESSION.get(king)
                 / noble.TOLERANCE.get(king)
                 / noble.MERCY.get(king);
+
+        double[] genocide = new double[races.size()];
 
         Race kingRace = king.race();
         Arrays.setAll(genocide, i -> (races.get(i).race.index == kingRace.index)

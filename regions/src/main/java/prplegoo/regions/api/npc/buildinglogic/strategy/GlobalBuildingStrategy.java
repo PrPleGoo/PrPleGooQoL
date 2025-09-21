@@ -15,6 +15,7 @@ public class GlobalBuildingStrategy extends MutationStrategy {
         if (factionGenetic.getRegionGenetics().length < 8) {
             return false;
         }
+
         return super.tryMutate(factionGenetic);
     }
 

@@ -36,7 +36,8 @@ public class KingLevelRealmBuilder {
                 : ((1 - kingRace.pref().race(races.get(i).race) * proclivity)));
 
         RDEdicts edicts = RD.RACES().edicts;
-        for (Region region : faction.realm().all())
+        LIST<Region> regions = faction.realm().all();
+        for (Region region : regions)
             for (RDRace race : races) {
                 edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
                 edicts.exile.toggled(race).set(region, 0);
@@ -47,7 +48,7 @@ public class KingLevelRealmBuilder {
         original.loadFitness(faction).calculateFitness(faction);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
-        if (alertMode) for (Region region : faction.realm().all())
+        if (alertMode) for (Region region : regions)
             for (RDBuilding building : RD.BUILDINGS().all)
                 if (building.level.get(region) > 0) building.level.set(region, building.level.get(region) - 1);
 

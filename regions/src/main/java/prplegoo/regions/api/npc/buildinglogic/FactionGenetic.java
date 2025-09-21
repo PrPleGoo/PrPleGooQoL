@@ -19,6 +19,7 @@ import world.region.RD;
 import world.region.Realm;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class FactionGenetic {
     @Getter
@@ -75,14 +76,16 @@ public class FactionGenetic {
         fitnessRecords[6] = new FitnessRecord(faction, 6) {
             @Override
             public double determineValue(FactionNPC faction, Region region) {
-                double amount = 0;
+                double amount;
 
                 double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual);
                 StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction.king().induvidual);
 
-                for (int i = 0; i < RD.RACES().all.size(); i++)
-                    for (int j = 0; j < RD.RELIGION().all().size(); j++)
-                        amount += religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region);
+                amount = IntStream.range(0, RD.RACES().all.size())
+                        .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions
+                                .mapToDouble(j -> religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region)) // collect religion's data
+                                .sum())
+                        .sum();
 
                 return amount / tolerance;
             }
@@ -95,11 +98,12 @@ public class FactionGenetic {
     public void calculateFitness(Boolean shouldLoadFitness) {
         if (shouldLoadFitness) loadFitness();
 
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
+        Arrays.stream(fitnessRecords).forEach(fitnessRecord -> {
             fitnessRecord.addValue(faction);
 
-            for (int i = 0; i < faction.realm().all().size(); i++) fitnessRecord.addValue(faction, i);
-        }
+            IntStream.range(0, faction.realm().all().size())
+                    .forEach(i -> fitnessRecord.addValue(faction, i));
+        });
     }
 
     public boolean shouldAdopt(FactionGenetic mutant) {
@@ -110,20 +114,17 @@ public class FactionGenetic {
 
         // we don't have a deficit and neither does the mutant
         double random = GeneticVariables.random();
-        for (FitnessRecord fitnessRecord : fitnessRecords)
-            if (fitnessRecord.tryMutation(faction, mutant, random)) return true;
 
-        return false;
+        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
     }
 
     public void commit() {
-        for (int i = 0; i < regionGenetics.length; i++) regionGenetics[i].commit();
+        Arrays.stream(regionGenetics).forEach(RegionGenetic::commit);
     }
 
     public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
-        for (FitnessRecord fitnessRecord : fitnessRecords) if (fitnessRecord.exceedsDeficit(faction)) return true;
 
-        return false;
+        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.exceedsDeficit(faction));
     }
 }
 

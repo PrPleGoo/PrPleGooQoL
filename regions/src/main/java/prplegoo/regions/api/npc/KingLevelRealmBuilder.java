@@ -59,10 +59,10 @@ public class KingLevelRealmBuilder {
             MutationStrategy strategy = alertMode
                     ? PickAlertStrategy()
                     : PickStrategy();
-            original = new FactionGeneticMutator(faction, strategy);
+            FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
 
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
-            original.loadFitness(faction).calculateFitness(faction);
+            originalWithStrategy.loadFitness(faction).calculateFitness(faction);
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
@@ -71,7 +71,7 @@ public class KingLevelRealmBuilder {
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
             mutator.loadFitness(faction).calculateFitness(faction);
 
-            if (!original.shouldAdopt(faction, mutator)) original.commit();
+            if (!originalWithStrategy.shouldAdopt(faction, mutator)) originalWithStrategy.commit();
         }
 
         KingLevels.getInstance().resetDailyProductionRateCache(faction);

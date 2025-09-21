@@ -95,7 +95,9 @@ public class FactionGenetic {
         return fitnessRecords;
     }
 
-    public FactionGenetic calculateFitness() {
+    public FactionGenetic calculateFitness(Boolean shouldLoadFitness) {
+        if (shouldLoadFitness) loadFitness();
+
         for (FitnessRecord fitnessRecord : fitnessRecords) {
             fitnessRecord.addValue(faction);
 

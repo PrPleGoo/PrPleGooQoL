@@ -107,15 +107,16 @@ public class FactionGenetic {
     }
 
     public boolean shouldAdopt(FactionGenetic mutant) {
-        if (mutant.anyFitnessExceedsDeficit(faction)) return false;
-
-        for (FitnessRecord fitnessRecord : fitnessRecords)
-            if (fitnessRecord.willIncreaseDeficit(faction, mutant)) return false;
+        if (mutant.anyFitnessExceedsDeficit(faction) || anyFitnessWillIncreaseDeficit(mutant)) return false;
 
         // we don't have a deficit and neither does the mutant
         double random = GeneticVariables.random();
 
         return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
+    }
+
+    private boolean anyFitnessWillIncreaseDeficit(FactionGenetic mutant) {
+        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
     }
 
     public void commit() {

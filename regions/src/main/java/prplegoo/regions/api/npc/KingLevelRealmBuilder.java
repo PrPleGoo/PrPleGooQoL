@@ -44,7 +44,11 @@ public class KingLevelRealmBuilder {
         LIST<Region> regions = faction.realm().all();
         for (Region region : regions) {
             for (RDRace race : racesAll) {
-                edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
+                if (genocide[race.index()] > 3.0) {
+                    edicts.massacre.toggled(race).set(region, 1);
+                } else {
+                    edicts.massacre.toggled(race).set(region, 0);
+                }
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);
             }

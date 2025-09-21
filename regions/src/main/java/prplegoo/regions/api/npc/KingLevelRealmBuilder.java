@@ -54,7 +54,8 @@ public class KingLevelRealmBuilder {
                 if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
             }
 
-        for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
+        int i = 0;
+        while (i++ < GeneticVariables.mutationAttemptsPerTick) {
             MutationStrategy strategy = alertMode
                     ? PickAlertStrategy()
                     : PickStrategy();

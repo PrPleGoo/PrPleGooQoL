@@ -112,6 +112,10 @@ public class FactionGenetic {
         // we don't have a deficit and neither does the mutant
         double random = GeneticVariables.random();
 
+        return anyFitnessIsMutationCandidate(mutant, random);
+    }
+
+    private boolean anyFitnessIsMutationCandidate(FactionGenetic mutant, double random) {
         return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
     }
 

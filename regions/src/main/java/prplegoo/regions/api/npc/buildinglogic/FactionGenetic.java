@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 
 public class FactionGenetic {
     @Getter
-    private final RegionGenetic[] regionGenetics;
+    private RegionGenetic[] regionGenetics;
     @Getter
     protected FitnessRecord[] fitnessRecords;
     @Getter
@@ -119,6 +119,14 @@ public class FactionGenetic {
     private boolean anyFitnessWillIncreaseDeficit(FactionGenetic mutant) {
         return Arrays.stream(fitnessRecords)
                 .anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
+    }
+
+    public FactionGenetic adopt(FactionGenetic genetic){
+        regionGenetics = genetic.regionGenetics;
+        fitnessRecords = genetic.fitnessRecords;
+        faction = genetic.faction;
+
+        return this;
     }
 
     public void commit() {

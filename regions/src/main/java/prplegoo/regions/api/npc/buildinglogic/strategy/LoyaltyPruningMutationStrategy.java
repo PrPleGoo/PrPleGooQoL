@@ -29,6 +29,10 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
         ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = GeneticVariables.getActualLoyaltyBuildingIndeces();
 
         int buildingIndecesSize = actualLoyaltyBuildingIndeces.size();
+        if (buildingIndecesSize < 0) {
+            return false;
+        }
+
         int randomIndex = RND.rInt(buildingIndecesSize);
 
         return IntStream.range(0, buildingIndecesSize)

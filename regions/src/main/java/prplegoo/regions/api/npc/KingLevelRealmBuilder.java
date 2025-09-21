@@ -55,8 +55,8 @@ public class KingLevelRealmBuilder {
                     if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
                 }
 
-        int i = 0;
         KingLevels kingLevelsInstance = KingLevels.getInstance();
+        int i = 0;
         while (i++ < GeneticVariables.mutationAttemptsPerTick) {
             MutationStrategy strategy = (alertMode ? alertStrategies : strategies).Pick();
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);

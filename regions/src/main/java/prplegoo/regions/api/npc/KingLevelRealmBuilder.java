@@ -20,12 +20,15 @@ public class KingLevelRealmBuilder {
         double[] genocide = new double[races.size()];
         Noble noble = BOOSTABLES.NOBLE();
         Induvidual king = faction.king().induvidual;
+
+        // do genocide aggression, tolerance, mercy, rng on king name?
         double proclivity = noble.AGRESSION.get(king)
                 / noble.TOLERANCE.get(king)
                 / noble.MERCY.get(king);
 
         for (RDRace race : races) {
             if (race.race.index == king.race().index) {
+                // don't genocide own species, ever
                 genocide[race.index()] = 0;
                 continue;
             }
@@ -46,9 +49,6 @@ public class KingLevelRealmBuilder {
                 }
             }
         }
-
-        // do genocide aggression, tolerance, mercy, rng on king name?
-        // don't genocide own species, ever
 
         FactionGenetic original = new FactionGenetic(faction);
         original.loadFitness(faction).calculateFitness(faction);

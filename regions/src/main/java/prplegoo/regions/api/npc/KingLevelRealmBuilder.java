@@ -49,6 +49,7 @@ public class KingLevelRealmBuilder {
                 } else {
                     edicts.massacre.toggled(race).set(region, 0);
                 }
+
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);
             }

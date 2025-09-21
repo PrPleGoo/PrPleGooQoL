@@ -107,10 +107,8 @@ public class FactionGenetic {
     }
 
     public boolean shouldAdopt(FactionGenetic mutant) {
-        if (mutant.anyFitnessExceedsDeficit(faction) || anyFitnessWillIncreaseDeficit(mutant)) return false;
-
         // we don't have a deficit and neither does the mutant
-        return anyFitnessIsMutationCandidate(mutant, GeneticVariables.random());
+        return !mutant.anyFitnessExceedsDeficit(faction) && !anyFitnessWillIncreaseDeficit(mutant) && anyFitnessIsMutationCandidate(mutant, GeneticVariables.random());
     }
 
     private boolean anyFitnessIsMutationCandidate(FactionGenetic mutant, double random) {

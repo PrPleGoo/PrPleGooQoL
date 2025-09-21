@@ -60,10 +60,8 @@ public class FactionGenetic {
                         double totalMoney = RD.OUTPUT().MONEY.boost.get(faction1) * TIME.secondsPerDay * 2;
 
                         for (RESOURCE resource : RESOURCES.ALL()) {
-                            double price = faction1.stockpile.price.get(resource);
-
                             double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction1, resource);
-                            if (productionAmount != 0) totalMoney += productionAmount * price;
+                            if (productionAmount != 0) totalMoney += productionAmount * faction1.stockpile.price.get(resource);
                         }
 
                         return totalMoney;

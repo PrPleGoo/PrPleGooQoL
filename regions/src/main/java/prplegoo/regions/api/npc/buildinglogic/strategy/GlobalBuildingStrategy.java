@@ -12,13 +12,18 @@ import world.region.RD;
 public class GlobalBuildingStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        return factionGenetic.getRegionGenetics().length >= 8 && super.tryMutate(factionGenetic);
+        if (factionGenetic.getRegionGenetics().length >= 8) {
+            return super.tryMutate(factionGenetic);
+        }
+        return false;
     }
 
     @Override
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region) {
         if (GeneticVariables.mutationNotAllowed(buildingGenetic.buildingIndex)
-                || !GeneticVariables.isGlobalBuilding(buildingGenetic.buildingIndex)) return false;
+                || !GeneticVariables.isGlobalBuilding(buildingGenetic.buildingIndex)) {
+            return false;
+        }
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
 

@@ -1,4 +1,4 @@
-package prplegoo.regions.api;
+package prplegoo.regions.persistence.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import game.boosting.BSourceInfo;
@@ -31,9 +31,9 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
 public class RDRecipeData {
-    public int[][][] enabledRecipeIndex;
+    public byte[][][] enabledRecipeIndex;
 
-    public RDRecipeData(int[][][] enabledRecipeIndex) {
+    public RDRecipeData(byte[][][] enabledRecipeIndex) {
         this.enabledRecipeIndex = enabledRecipeIndex;
     }
 }

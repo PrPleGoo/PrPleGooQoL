@@ -44,21 +44,32 @@ public class KingLevelRealmBuilder {
                 edicts.sanction.toggled(race).set(region, 0);
             }
 
+        // When we come into this function any values in the boosts are active so the cache is up-to-date
         FactionGenetic original = new FactionGenetic(faction);
         original.calculateFitness(true);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode)
             for (Region region : regions)
-                for (RDBuilding building : RD.BUILDINGS().all) {
-                    int buildingLevel = building.level.get(region);
-                    if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
-                }
+                for (RDBuilding building : RD.BUILDINGS().all)
+                    if (!GeneticVariables.isGrowthBuilding(building.index())
+                            && !(GeneticVariables.isHealthBuilding(building.index())
+                            && (RD.SLAVERY().getWorkforce().bo.get(region) >= 0))) {
+                        int buildingLevel = building.level.get(region);
+                        if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
+                    }
 
         KingLevels kingLevelsInstance = KingLevels.getInstance();
+        WeightedBag<MutationStrategy> activeStrategies = alertMode
+                ? alertStrategies
+                : strategies;
         int i = 0;
         while (i++ < GeneticVariables.mutationAttemptsPerTick) {
-            MutationStrategy strategy = (alertMode ? alertStrategies : strategies).Pick();
+            MutationStrategy strategy = activeStrategies.Pick();
+
+            // The cached values are still valid on the first run, unless we're in alertMode
+            if (i > 1 || alertMode) kingLevelsInstance.resetDailyProductionRateCache(faction);
+
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
 
             kingLevelsInstance.resetDailyProductionRateCache(faction);
@@ -66,13 +77,15 @@ public class KingLevelRealmBuilder {
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
+            // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
             kingLevelsInstance.resetDailyProductionRateCache(faction);
             mutator.calculateFitness(true);
 
             if (mutator.tryMutate() && originalWithStrategy.shouldAdopt(mutator)) original.adopt(mutator).commit();
+            else
+                // If we exit the loop we don't want the cache to contain values from a failed mutation
+                if (i == GeneticVariables.mutationAttemptsPerTick) kingLevelsInstance.resetDailyProductionRateCache(faction);
         }
-
-        kingLevelsInstance.resetDailyProductionRateCache(faction);
     }
 
     public KingLevelRealmBuilder() {
@@ -80,14 +93,17 @@ public class KingLevelRealmBuilder {
         strategies.Add(1, PopulationGrowthMutationStrategy);
         strategies.Add(1, HealthMutationStrategy);
         strategies.Add(1, LoyaltyMutationStrategy);
+        strategies.Add(1, LoyaltyPruningMutationStrategy);
         strategies.Add(1, ReduceDeficitMutationStrategy);
-        strategies.Add(3, PrimarySectorStrategy);
-        strategies.Add(4, ReduceStorageMutationStrategy);
+        strategies.Add(1, GlobalBuildingStrategy);
+        strategies.Add(4, PrimarySectorStrategy);
+        strategies.Add(5, IndustrializeMutationStrategy);
+        strategies.Add(1, RemoveBadRecipeMutationStrategy);
 
         alertStrategies.Add(1, PopulationGrowthMutationStrategy);
-        alertStrategies.Add(4, HealthMutationStrategy);
-        alertStrategies.Add(4, LoyaltyMutationStrategy);
-        alertStrategies.Add(2, ReduceWorkforceDeficitMutationStrategy);
+        alertStrategies.Add(1, HealthImprovementStrategy);
+        alertStrategies.Add(1, LoyaltyMutationStrategy);
+        alertStrategies.Add(1, ReduceWorkforceDeficitMutationStrategy);
     }
 
     private static final WeightedBag<MutationStrategy> strategies = new WeightedBag<>();
@@ -95,8 +111,12 @@ public class KingLevelRealmBuilder {
     private static final ReduceWorkforceDeficitMutationStrategy ReduceWorkforceDeficitMutationStrategy = new ReduceWorkforceDeficitMutationStrategy();
     private static final PopulationGrowthMutationStrategy PopulationGrowthMutationStrategy = new PopulationGrowthMutationStrategy();
     private static final HealthMutationStrategy HealthMutationStrategy = new HealthMutationStrategy();
+    private static final HealthImprovementStrategy HealthImprovementStrategy = new HealthImprovementStrategy();
     private static final LoyaltyMutationStrategy LoyaltyMutationStrategy = new LoyaltyMutationStrategy();
+    private static final LoyaltyPruningMutationStrategy LoyaltyPruningMutationStrategy = new LoyaltyPruningMutationStrategy();
     private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
-    private static final ReduceStorageMutationStrategy ReduceStorageMutationStrategy = new ReduceStorageMutationStrategy();
+    private static final IndustrializeMutationStrategy IndustrializeMutationStrategy = new IndustrializeMutationStrategy();
+    private static final RemoveBadRecipeMutationStrategy RemoveBadRecipeMutationStrategy = new RemoveBadRecipeMutationStrategy();
+    private static final GlobalBuildingStrategy GlobalBuildingStrategy = new GlobalBuildingStrategy();
 }

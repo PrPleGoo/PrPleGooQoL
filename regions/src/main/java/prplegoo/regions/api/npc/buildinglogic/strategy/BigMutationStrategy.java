@@ -8,19 +8,15 @@ import world.region.RD;
 public abstract class BigMutationStrategy extends MutationStrategy {
     @Override
     protected boolean tryLevelUpgrade(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
-        if (buildingGenetic.level < RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).levels().size() - 1
-                && RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).canAfford(region, buildingGenetic.level, buildingGenetic.level + 1) == null) {
-            buildingGenetic.level += 1;
-            levelInt.set(region, buildingGenetic.level);
-
-            boolean hasLotsOfWorkforce = RD.SLAVERY().getWorkforce().bo.get(region) > 40;
-            if (hasLotsOfWorkforce) {
-                return true | tryLevelUpgrade(levelInt, buildingGenetic, region);
+        boolean doneMutation = false;
+        for (int i = 0; i < 5; i++) {
+            if (super.tryLevelUpgrade(levelInt, buildingGenetic, region)) {
+                doneMutation = true;
+            } else {
+                break;
             }
-            
-            return true;
         }
 
-        return false;
+        return doneMutation;
     }
 }

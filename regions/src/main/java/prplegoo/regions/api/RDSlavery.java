@@ -1,8 +1,10 @@
 package prplegoo.regions.api;
 
 import game.boosting.*;
+import game.faction.npc.FactionNPC;
 import lombok.Getter;
 import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.RDSlaveryData;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
 import util.dic.Dic;
@@ -108,6 +110,16 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
             return;
         }
 
+        LOG.ln("RDSlavery.onGameSaveLoaded: data found");
+        if (selectedSlaves.size() != data.data.size()
+                || selectedSlaves.get(0).size() != data.data.get(0).size()
+                || slaveDelivery.length != data.slaveDelivery.length
+                || slaveDelivery[0].length != data.slaveDelivery[0].length)
+        {
+            LOG.ln("RDSlavery.onGameSaveLoaded: data found, length difference detected, not writing");
+            return;
+        }
+
         LOG.ln("RDSlavery.onGameSaveLoaded: data found, writing");
         selectedSlaves = data.data;
         slaveDelivery = data.slaveDelivery;
@@ -172,6 +184,16 @@ public class RDSlavery implements IDataPersistence<RDSlaveryData> {
 
         public int getDelivery(Region reg, double days) {
             return RD.SLAVERY().pushDelivery(reg, this.rdRace, boost.get(reg) * days);
+        }
+
+        public int getDelivery(FactionNPC faction, double days) {
+            int count = 0;
+            for (int i = 0; i < faction.realm().regions(); i++) {
+                Region region = faction.realm().region(i);
+                count += RD.SLAVERY().pushDelivery(region, this.rdRace, boost.get(region) * days);
+            }
+
+            return count;
         }
 
         public int hasDelivery(Region reg, double days) {

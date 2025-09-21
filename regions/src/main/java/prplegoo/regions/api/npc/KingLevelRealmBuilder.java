@@ -49,8 +49,10 @@ public class KingLevelRealmBuilder {
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) for (Region region : regions)
-            for (RDBuilding building : RD.BUILDINGS().all)
-                if (building.level.get(region) > 0) building.level.set(region, building.level.get(region) - 1);
+            for (RDBuilding building : RD.BUILDINGS().all) {
+                int buildingLevel = building.level.get(region);
+                if (buildingLevel > 0) building.level.set(region, buildingLevel - 1);
+            }
 
         for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
             MutationStrategy strategy = alertMode

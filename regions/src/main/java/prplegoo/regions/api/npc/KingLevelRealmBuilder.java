@@ -71,6 +71,7 @@ public class KingLevelRealmBuilder {
                 mutator.loadFitness(faction).calculateFitness(faction);
 
                 if (!originalWithStrategy.shouldAdopt(faction, mutator)) originalWithStrategy.commit();
+                else mutator.commit();
             }
         }
 

@@ -107,7 +107,7 @@ public class FactionGenetic {
         return this;
     }
 
-    public boolean shouldAdopt(FactionNPC faction, FactionGenetic mutant) {
+    public boolean shouldAdopt(FactionGenetic mutant) {
         if (mutant.anyFitnessExceedsDeficit(faction)) {
             return false;
         }

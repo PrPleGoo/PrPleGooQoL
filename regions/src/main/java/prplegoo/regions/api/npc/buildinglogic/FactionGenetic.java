@@ -112,20 +112,22 @@ public class FactionGenetic {
     }
 
     private boolean anyFitnessIsMutationCandidate(FactionGenetic mutant, double random) {
-        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
     }
 
     private boolean anyFitnessWillIncreaseDeficit(FactionGenetic mutant) {
-        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
     }
 
     public void commit() {
-        Arrays.stream(regionGenetics).forEach(RegionGenetic::commit);
+        Arrays.stream(regionGenetics)
+                .forEach(RegionGenetic::commit);
     }
 
     public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
-
-        return Arrays.stream(fitnessRecords).anyMatch(fitnessRecord -> fitnessRecord.exceedsDeficit(faction));
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.exceedsDeficit(faction));
     }
 }
-

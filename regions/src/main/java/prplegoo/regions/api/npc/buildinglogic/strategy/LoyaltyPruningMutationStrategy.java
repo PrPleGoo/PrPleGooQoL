@@ -4,6 +4,7 @@ import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.ArrayListGrower;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
@@ -24,15 +25,17 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
         RD.OUTPUT().taxRate.set(region, 0);
 
-        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) {
+        ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = GeneticVariables.actualLoyaltyBuildingIndeces;
+        if (actualLoyaltyBuildingIndeces == null) {
             return false;
         }
 
-        int randomIndex = RND.rInt(GeneticVariables.actualLoyaltyBuildingIndeces.size());
+        int buildingIndecesSize = actualLoyaltyBuildingIndeces.size();
+        int randomIndex = RND.rInt(buildingIndecesSize);
 
-        return IntStream.range(0, GeneticVariables.actualLoyaltyBuildingIndeces.size())
-                .map(i -> (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size())
-                .map(actualIndex -> GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex))
+        return IntStream.range(0, buildingIndecesSize)
+                .map(i -> (randomIndex + i) % buildingIndecesSize)
+                .map(actualLoyaltyBuildingIndeces::get)
                 .anyMatch(buildingIndex -> tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region));
     }
 

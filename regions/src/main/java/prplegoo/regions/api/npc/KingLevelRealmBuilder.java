@@ -55,22 +55,23 @@ public class KingLevelRealmBuilder {
             }
 
         int i = 0;
+        KingLevels kingLevelsInstance = KingLevels.getInstance();
         while (i++ < GeneticVariables.mutationAttemptsPerTick) {
             MutationStrategy strategy = (alertMode ? alertStrategies : strategies).Pick();
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
 
-            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            kingLevelsInstance.resetDailyProductionRateCache(faction);
             originalWithStrategy.loadFitness(faction).calculateFitness(faction);
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
-            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            kingLevelsInstance.resetDailyProductionRateCache(faction);
             mutator.loadFitness(faction).calculateFitness(faction);
 
             if (mutator.tryMutate() && originalWithStrategy.shouldAdopt(faction, mutator)) mutator.commit();
         }
 
-        KingLevels.getInstance().resetDailyProductionRateCache(faction);
+        kingLevelsInstance.resetDailyProductionRateCache(faction);
     }
 
     public KingLevelRealmBuilder() {

@@ -32,10 +32,8 @@ public class FactionGenetic {
         }
     }
 
-    public FactionGenetic loadFitness() {
+    public void loadFitness() {
         fitnessRecords = loadDefault(faction);
-
-        return this;
     }
 
     public static FitnessRecord[] loadDefault(FactionNPC faction) {

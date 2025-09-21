@@ -17,9 +17,7 @@ public class FactionGeneticMutator extends FactionGenetic {
     }
 
     @Override
-    public FactionGenetic loadFitness() {
+    public void loadFitness() {
         fitnessRecords = mutationStrategy.loadFitness(faction);
-
-        return this;
     }
 }

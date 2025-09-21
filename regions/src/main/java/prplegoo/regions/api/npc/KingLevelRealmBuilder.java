@@ -15,6 +15,8 @@ import world.region.RD;
 import world.region.building.RDBuilding;
 import world.region.pop.RDRace;
 
+import java.util.Arrays;
+
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
         LIST<RDRace> races = RD.RACES().all;
@@ -28,10 +30,9 @@ public class KingLevelRealmBuilder {
                 / noble.MERCY.get(king);
 
         Race kingRace = king.race();
-        for (RDRace race : races)
-            genocide[race.index()] = race.race.index == kingRace.index
-                    ? 0 // don't genocide own species, ever
-                    : ((1 - kingRace.pref().race(race.race)) * proclivity);
+        Arrays.setAll(genocide, i -> (races.get(i).race.index == kingRace.index)
+                ? 0 // don't genocide own species, ever
+                : ((1 - kingRace.pref().race(races.get(i).race) * proclivity)));
 
         for (Region region : faction.realm().all())
             for (RDRace race : races) {

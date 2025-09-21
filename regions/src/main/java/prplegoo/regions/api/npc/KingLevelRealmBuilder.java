@@ -28,34 +28,25 @@ public class KingLevelRealmBuilder {
                 / noble.MERCY.get(king);
 
         Race kingRace = king.race();
-        for (RDRace race : races) {
+        for (RDRace race : races)
             genocide[race.index()] = race.race.index == kingRace.index
                     ? 0 // don't genocide own species, ever
                     : ((1 - kingRace.pref().race(race.race)) * proclivity);
 
-        }
-
-        for (Region region : faction.realm().all()) {
+        for (Region region : faction.realm().all())
             for (RDRace race : races) {
                 RD.RACES().edicts.massacre.toggled(race).set(region, genocide[race.index()] > 3.0 ? 1 : 0);
                 RD.RACES().edicts.exile.toggled(race).set(region, 0);
                 RD.RACES().edicts.sanction.toggled(race).set(region, 0);
             }
-        }
 
         FactionGenetic original = new FactionGenetic(faction);
         original.loadFitness(faction).calculateFitness(faction);
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
-        if (alertMode) {
-            for (Region region : faction.realm().all()) {
-                for (RDBuilding building : RD.BUILDINGS().all) {
-                    if (building.level.get(region) > 0) {
-                        building.level.set(region, building.level.get(region) - 1);
-                    }
-                }
-            }
-        }
+        if (alertMode) for (Region region : faction.realm().all())
+            for (RDBuilding building : RD.BUILDINGS().all)
+                if (building.level.get(region) > 0) building.level.set(region, building.level.get(region) - 1);
 
         for (int i = 0; i < GeneticVariables.mutationAttemptsPerTick; i++) {
             MutationStrategy strategy = alertMode
@@ -68,16 +59,12 @@ public class KingLevelRealmBuilder {
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
-            if (!mutator.tryMutate()) {
-                continue;
-            }
+            if (!mutator.tryMutate()) continue;
 
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
             mutator.loadFitness(faction).calculateFitness(faction);
 
-            if (!original.shouldAdopt(faction, mutator)) {
-                original.commit();
-            }
+            if (!original.shouldAdopt(faction, mutator)) original.commit();
         }
 
         KingLevels.getInstance().resetDailyProductionRateCache(faction);

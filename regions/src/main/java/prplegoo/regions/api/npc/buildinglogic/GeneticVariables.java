@@ -1,8 +1,8 @@
 package prplegoo.regions.api.npc.buildinglogic;
 
 import game.boosting.BoostSpec;
+import lombok.Getter;
 import prplegoo.regions.api.MagicStringChecker;
-import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import snake2d.util.sets.ArrayListGrower;
@@ -82,21 +82,21 @@ public class GeneticVariables {
     }
 
     private static int[] loyaltyBuildingIndeces;
-    public static ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = new ArrayListGrower<>();
-    public static boolean isLoyaltyBuilding(int buildingIndex) {
+    @Getter
+    private final static ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = new ArrayListGrower<>();
+    public static void isLoyaltyBuilding(int buildingIndex) {
         if (loyaltyBuildingIndeces == null) {
             loyaltyBuildingIndeces = new int[RD.BUILDINGS().all.size()];
-            actualLoyaltyBuildingIndeces.clear();
         }
 
         if (loyaltyBuildingIndeces[buildingIndex] != 0) {
-            return loyaltyBuildingIndeces[buildingIndex] == 2;
+            return;
         }
 
         loyaltyBuildingIndeces[buildingIndex] = 1;
         if (mutationNotAllowed(buildingIndex)
             || isGlobalBuilding(buildingIndex)) {
-            return false;
+            return;
         }
 
         LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
@@ -119,10 +119,8 @@ public class GeneticVariables {
         if (loyaltyBuildingIndeces[buildingIndex] == 2) {
             actualLoyaltyBuildingIndeces.add(buildingIndex);
 
-            return true;
         }
 
-        return false;
     }
 
     private static int[] workforceConsumerIndeces;

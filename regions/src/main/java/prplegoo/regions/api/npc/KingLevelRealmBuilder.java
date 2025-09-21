@@ -88,26 +88,27 @@ public class KingLevelRealmBuilder {
                 kingLevelsInstance.resetDailyProductionRateCache(faction);
             }
 
-            FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
-            originalWithStrategy.calculateFitness(true);
+            original = new FactionGeneticMutator(faction, strategy);
+            original.calculateFitness(true);
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
+
+            if (!mutator.tryMutate()) {
+                continue;
+            }
 
             // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
             kingLevelsInstance.resetDailyProductionRateCache(faction);
 
             mutator.calculateFitness(true);
 
-            if (mutator.tryMutate()) {
-                if (originalWithStrategy.shouldAdopt(mutator)) {
-                    originalWithStrategy.adopt(mutator);
-                }
-                originalWithStrategy.commit();
-            }
+            if (!original.shouldAdopt(mutator)) {
+                original.commit();
 
-            // If we exit the loop we don't want the cache to contain values from a failed mutation
-            else if (i == GeneticVariables.mutationAttemptsPerTick) {
-                kingLevelsInstance.resetDailyProductionRateCache(faction);
+                // If we exit the loop we don't want the cache to contain values from a failed mutation
+                if (i == GeneticVariables.mutationAttemptsPerTick) {
+                    kingLevelsInstance.resetDailyProductionRateCache(faction);
+                }
             }
         }
     }

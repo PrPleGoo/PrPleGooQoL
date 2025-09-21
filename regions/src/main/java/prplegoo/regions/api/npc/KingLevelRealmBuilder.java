@@ -64,10 +64,10 @@ public class KingLevelRealmBuilder {
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
-            if (mutator.tryMutate()) {
-                KingLevels.getInstance().resetDailyProductionRateCache(faction);
-                mutator.loadFitness(faction).calculateFitness(faction);
+            KingLevels.getInstance().resetDailyProductionRateCache(faction);
+            mutator.loadFitness(faction).calculateFitness(faction);
 
+            if (mutator.tryMutate()) {
                 if (originalWithStrategy.shouldAdopt(faction, mutator)) mutator.commit();
                 else originalWithStrategy.commit();
             }

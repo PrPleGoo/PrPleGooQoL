@@ -12,10 +12,10 @@ import world.region.RD;
 public class GlobalBuildingStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        if (factionGenetic.getRegionGenetics().length >= 8) {
-            return super.tryMutate(factionGenetic);
+        if (factionGenetic.getRegionGenetics().length < 8) {
+            return false;
         }
-        return false;
+        return super.tryMutate(factionGenetic);
     }
 
     @Override

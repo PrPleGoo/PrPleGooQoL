@@ -42,57 +42,56 @@ public class FactionGenetic {
     }
 
     public static FitnessRecord[] loadDefault(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[7];
-        fitnessRecords[0] = new GovPoints(faction, 0);
-        fitnessRecords[1] = new Health(faction, 1);
-        fitnessRecords[2] = new Workforce(faction, 2);
-        // Raiders;
-        fitnessRecords[3] = new FitnessRecord(faction, 3) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                return -GAME.raiders().entry.get(region).probabilityRaw();
-            }
+        return new FitnessRecord[]{
+                new GovPoints(faction, 0),
+                new Health(faction, 1),
+                new Workforce(faction, 2),
+                // Raiders;
+                new FitnessRecord(faction, 3) {
+                    @Override
+                    public double determineValue(FactionNPC faction1, Region region) {
+                        return -GAME.raiders().entry.get(region).probabilityRaw();
+                    }
+                },
+                // Money;
+                new FitnessRecord(faction, 4) {
+                    @Override
+                    public double determineValue(FactionNPC faction1) {
+                        double totalMoney = RD.OUTPUT().MONEY.boost.get(faction1) * TIME.secondsPerDay * 2;
+
+                        for (RESOURCE resource : RESOURCES.ALL()) {
+                            double price = faction1.stockpile.price.get(resource);
+
+                            double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction1, resource);
+                            if (productionAmount < 0) totalMoney += productionAmount * price;
+                            else if (productionAmount > 0) totalMoney += productionAmount * price;
+                        }
+
+                        return totalMoney;
+                    }
+                },
+                // Loyalty;
+                new Loyalty(faction, 5),
+                // Religion;
+                new FitnessRecord(faction, 6) {
+                    @Override
+                    public double determineValue(FactionNPC faction1, Region region) {
+                        double amount;
+
+                        double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction1.king().induvidual);
+                        StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction1.king().induvidual);
+
+                        amount = IntStream.range(0, RD.RACES().all.size())
+                                .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions
+                                        .mapToDouble(j -> religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region)) // collect religion's data
+                                        .sum())
+                                .sum();
+
+                        return amount / tolerance;
+                    }
+                },
+                // TODO: add slaves to money
         };
-        // Money;
-        fitnessRecords[4] = new FitnessRecord(faction, 4) {
-            @Override
-            public double determineValue(FactionNPC faction) {
-                double totalMoney = RD.OUTPUT().MONEY.boost.get(faction) * TIME.secondsPerDay * 2;
-
-                for (RESOURCE resource : RESOURCES.ALL()) {
-                    double price = faction.stockpile.price.get(resource);
-
-                    double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
-                    if (productionAmount < 0) totalMoney += productionAmount * price;
-                    else if (productionAmount > 0) totalMoney += productionAmount * price;
-                }
-
-                return totalMoney;
-            }
-        };
-        // Loyalty;
-        fitnessRecords[5] = new Loyalty(faction, 5);
-        // Religion;
-        fitnessRecords[6] = new FitnessRecord(faction, 6) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                double amount;
-
-                double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual);
-                StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction.king().induvidual);
-
-                amount = IntStream.range(0, RD.RACES().all.size())
-                        .mapToDouble(i -> IntStream.range(0, RD.RELIGION().all().size()) // lookup all the religions
-                                .mapToDouble(j -> religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region)) // collect religion's data
-                                .sum())
-                        .sum();
-
-                return amount / tolerance;
-            }
-        };
-        // TODO: add slaves to money
-
-        return fitnessRecords;
     }
 
     public void calculateFitness(Boolean shouldLoadFitness) {

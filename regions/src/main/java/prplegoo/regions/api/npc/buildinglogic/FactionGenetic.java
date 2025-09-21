@@ -6,6 +6,7 @@ import game.faction.npc.FactionNPC;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
@@ -19,8 +20,12 @@ import world.region.RD;
 public class FactionGenetic {
     public final RegionGenetic[] regionGenetics;
     public FitnessRecord[] fitnessRecords;
+    @Getter
+    protected FactionNPC faction;
 
     public FactionGenetic(FactionNPC faction) {
+        this.faction = faction;
+
         regionGenetics = new RegionGenetic[faction.realm().regions()];
         for (int i = 0; i < regionGenetics.length; i++) {
             regionGenetics[i] = new RegionGenetic(faction.realm().all().get(i).index());

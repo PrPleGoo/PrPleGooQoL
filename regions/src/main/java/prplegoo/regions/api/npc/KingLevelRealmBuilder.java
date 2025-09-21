@@ -56,9 +56,7 @@ public class KingLevelRealmBuilder {
 
         int i = 0;
         while (i++ < GeneticVariables.mutationAttemptsPerTick) {
-            MutationStrategy strategy = alertMode
-                    ? PickAlertStrategy()
-                    : PickStrategy();
+            MutationStrategy strategy = (alertMode ? alertStrategies : strategies).Pick();
             FactionGenetic originalWithStrategy = new FactionGeneticMutator(faction, strategy);
 
             KingLevels.getInstance().resetDailyProductionRateCache(faction);
@@ -76,14 +74,6 @@ public class KingLevelRealmBuilder {
         }
 
         KingLevels.getInstance().resetDailyProductionRateCache(faction);
-    }
-
-    private MutationStrategy PickStrategy() {
-        return strategies.Pick();
-    }
-
-    private MutationStrategy PickAlertStrategy() {
-        return alertStrategies.Pick();
     }
 
     public KingLevelRealmBuilder() {

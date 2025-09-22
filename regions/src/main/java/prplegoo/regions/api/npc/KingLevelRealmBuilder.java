@@ -1,41 +1,49 @@
 package prplegoo.regions.api.npc;
 
 import game.boosting.BOOSTABLES;
+import game.boosting.BOOSTABLES.Noble;
 import game.faction.npc.FactionNPC;
-import game.faction.royalty.Royalty;
+import init.race.Race;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGeneticMutator;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.strategy.*;
+import settlement.stats.Induvidual;
+import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
 import world.region.pop.RDRaces;
-import game.boosting.BOOSTABLES.Noble;
+
+import java.util.Arrays;
 
 public class KingLevelRealmBuilder {
     public void build(FactionNPC faction) {
         RDRaces races = RD.RACES();
-
+        LIST<RDRace> racesAll = races.all;
         Noble noble = BOOSTABLES.NOBLE();
-        Royalty king = faction.king();
-        double proclivity = noble.AGRESSION.get(king.induvidual)
-                / noble.TOLERANCE.get(king.induvidual)
-                / noble.MERCY.get(king.induvidual);
+        Induvidual king = faction.king().induvidual;
+        // do genocide aggression, tolerance, mercy, rng on king name?
+        double proclivity = noble.AGRESSION.get(king)
+                / noble.TOLERANCE.get(king)
+                / noble.MERCY.get(king);
 
-        double[] genocide = new double[races.all.size()];
+        double[] genocide = new double[racesAll.size()];
 
-        for (RDRace race : races.all) {
-            genocide[race.index()] = (race.race.index == king.induvidual.race().index)
-                    ? 0
-                    : (1 - king.induvidual.race().pref().race(race.race)) * proclivity;
-        }
+        Race kingRace = king.race();
+        Arrays.setAll(genocide, i -> {
+            Race race = racesAll.get(i).race;
+            return (race.index == kingRace.index)
+                    ? 0 // don't genocide own species, ever
+                    : ((1 - kingRace.pref().race(race) * proclivity));
+        });
 
         RDEdicts edicts = races.edicts;
-        for (Region region : faction.realm().all())
-            for (RDRace race : races.all) {
+        LIST<Region> regions = faction.realm().all();
+        for (Region region : regions) {
+            for (RDRace race : racesAll) {
                 if (genocide[race.index()] > 3.0) {
                     edicts.massacre.toggled(race).set(region, 1);
                 } else {
@@ -45,14 +53,15 @@ public class KingLevelRealmBuilder {
                 edicts.exile.toggled(race).set(region, 0);
                 edicts.sanction.toggled(race).set(region, 0);
             }
+        }
 
         // When we come into this function any values in the boosts are active so the cache is up-to-date
         FactionGenetic original = new FactionGenetic(faction);
-        original.loadFitness(faction).calculateFitness(faction);
+        original.calculateFitness();
 
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) {
-            for (Region region : faction.realm().all()) {
+            for (Region region : regions) {
                 for (RDBuilding building : RD.BUILDINGS().all) {
                     if (GeneticVariables.isGrowthBuilding(building.index())) {
                         continue;
@@ -63,8 +72,9 @@ public class KingLevelRealmBuilder {
                         continue;
                     }
 
-                    if (building.level.get(region) > 0) {
-                        building.level.set(region, building.level.get(region) - 1);
+                    int buildingLevel = building.level.get(region);
+                    if (buildingLevel > 0) {
+                        building.level.set(region, buildingLevel - 1);
                     }
                 }
             }
@@ -74,8 +84,8 @@ public class KingLevelRealmBuilder {
         WeightedBag<MutationStrategy> activeStrategies = alertMode
                 ? alertStrategies
                 : strategies;
-
-        for (int i = 1; i <= GeneticVariables.mutationAttemptsPerTick; i++) {
+        int i = 0;
+        while (i++ < GeneticVariables.mutationAttemptsPerTick) {
             MutationStrategy strategy = activeStrategies.Pick();
 
             // The cached values are still valid on the first run, unless we're in alertMode
@@ -84,7 +94,7 @@ public class KingLevelRealmBuilder {
             }
 
             original = new FactionGeneticMutator(faction, strategy);
-            original.loadFitness(faction).calculateFitness(faction);
+            original.calculateFitness();
 
             FactionGeneticMutator mutator = new FactionGeneticMutator(faction, strategy);
 
@@ -95,9 +105,9 @@ public class KingLevelRealmBuilder {
             // Mutation succeeded, so we changed something that changes the values of boosts, so we need to clear the cache
             kingLevels.resetDailyProductionRateCache(faction);
 
-            mutator.loadFitness(faction).calculateFitness(faction);
+            mutator.calculateFitness();
 
-            if (!original.shouldAdopt(faction, mutator)) {
+            if (!original.shouldAdopt(mutator)) {
                 original.commit();
 
                 // If we exit the loop we don't want the cache to contain values from a failed mutation
@@ -140,4 +150,3 @@ public class KingLevelRealmBuilder {
     private static final RemoveBadRecipeMutationStrategy RemoveBadRecipeMutationStrategy = new RemoveBadRecipeMutationStrategy();
     private static final GlobalBuildingStrategy GlobalBuildingStrategy = new GlobalBuildingStrategy();
 }
-

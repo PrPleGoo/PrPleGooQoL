@@ -4,19 +4,21 @@ import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.ArrayListGrower;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
-import world.region.building.RDBuilding;
-import world.region.pop.RDRace;
+
+import java.util.stream.IntStream;
 
 public class LoyaltyPruningMutationStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        int randomIndex = RND.rInt(factionGenetic.regionGenetics.length);
+        RegionGenetic[] regionGenetics = factionGenetic.getRegionGenetics();
+        int randomIndex = RND.rInt(regionGenetics.length);
 
-        return mutateRegion(factionGenetic.regionGenetics[randomIndex]);
+        return mutateRegion(regionGenetics[randomIndex]);
     }
 
     @Override
@@ -24,21 +26,18 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
         RD.OUTPUT().taxRate.set(region, 0);
 
-        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) {
+        ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = GeneticVariables.getActualLoyaltyBuildingIndeces();
+        if (actualLoyaltyBuildingIndeces.isEmpty()) {
             return false;
         }
 
-        int randomIndex = RND.rInt(GeneticVariables.actualLoyaltyBuildingIndeces.size());
-        for(int i = 0; i < GeneticVariables.actualLoyaltyBuildingIndeces.size(); i++) {
-            int actualIndex = (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size();
+        int buildingIndecesSize = actualLoyaltyBuildingIndeces.size();
+        int randomIndex = RND.rInt(buildingIndecesSize);
 
-            int buildingIndex = GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex);
-            if (tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region)) {
-                return true;
-            }
-        }
-
-        return false;
+        return IntStream.range(0, buildingIndecesSize)
+                .map(i -> (randomIndex + i) % buildingIndecesSize)
+                .map(actualLoyaltyBuildingIndeces::get)
+                .anyMatch(buildingIndex -> tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region));
     }
 
     @Override
@@ -50,10 +49,8 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
-
-        fitnessRecords[0] = new Loyalty(faction, 0);
-
-        return fitnessRecords;
+        return new FitnessRecord[]{
+                new Loyalty(faction, 0)
+        };
     }
 }

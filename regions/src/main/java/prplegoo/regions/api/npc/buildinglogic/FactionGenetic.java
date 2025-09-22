@@ -6,138 +6,133 @@ import game.faction.npc.FactionNPC;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
+import settlement.stats.Induvidual;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsReligion;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.Realm;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class FactionGenetic {
-    public final RegionGenetic[] regionGenetics;
-    public FitnessRecord[] fitnessRecords;
+    @Getter
+    private final RegionGenetic[] regionGenetics;
+    @Getter
+    protected FitnessRecord[] fitnessRecords;
+    @Getter
+    protected FactionNPC faction;
 
     public FactionGenetic(FactionNPC faction) {
-        regionGenetics = new RegionGenetic[faction.realm().regions()];
-        for (int i = 0; i < regionGenetics.length; i++) {
-            regionGenetics[i] = new RegionGenetic(faction.realm().all().get(i).index());
-        }
+        this.faction = faction;
+
+        Realm realm = faction.realm();
+        regionGenetics = new RegionGenetic[realm.regions()];
+        Arrays.setAll(regionGenetics, i -> new RegionGenetic(realm.all().get(i).index()));
     }
 
-    public FactionGenetic loadFitness(FactionNPC faction) {
+    public void loadFitness() {
         fitnessRecords = loadDefault(faction);
-
-        return this;
     }
 
     public static FitnessRecord[] loadDefault(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[7];
-        fitnessRecords[0] = new GovPoints(faction, 0);
-        fitnessRecords[1] = new Health(faction, 1);
-        fitnessRecords[2] = new Workforce(faction, 2);
-        // Raiders;
-        fitnessRecords[3] = new FitnessRecord(faction, 3) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                return -GAME.raiders().entry.get(region).probabilityRaw();
-            }
-        };
-        // Money;
-        fitnessRecords[4] = new FitnessRecord(faction, 4) {
-            @Override
-            public double determineValue(FactionNPC faction) {
-                double totalMoney = RD.OUTPUT().MONEY.boost.get(faction) * TIME.secondsPerDay * 2;
-
-                for (RESOURCE resource : RESOURCES.ALL()) {
-                    double price = faction.stockpile.price.get(resource);
-
-                    double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
-                    if (productionAmount < 0) {
-                        totalMoney += productionAmount * price;
-                    } else if (productionAmount > 0) {
-                        totalMoney += productionAmount * price;
+        return new FitnessRecord[]{
+                new GovPoints(faction, 0),
+                new Health(faction, 1),
+                new Workforce(faction, 2),
+                // Raiders;
+                new FitnessRecord(faction, 3) {
+                    @Override
+                    public double determineValue(FactionNPC faction1, Region region) {
+                        return -GAME.raiders().entry.get(region).probabilityRaw();
                     }
-                }
+                },
+                // Money;
+                new FitnessRecord(faction, 4) {
+                    @Override
+                    public double determineValue(FactionNPC faction1) {
+                        double totalMoney = RD.OUTPUT().MONEY.boost.get(faction1) * TIME.secondsPerDay * 2;
 
-                return totalMoney;
-            }
-        };
-        // Loyalty;
-        fitnessRecords[5] = new Loyalty(faction, 5);
-        // Religion;
-        fitnessRecords[6] = new FitnessRecord(faction, 6) {
-            @Override
-            public double determineValue(FactionNPC faction, Region region) {
-                double amount = 0;
+                        for (RESOURCE resource : RESOURCES.ALL()) {
+                            double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction1, resource);
+                            if (productionAmount != 0) {
+                                totalMoney += productionAmount * faction1.stockpile.price.get(resource);
+                            }
+                        }
 
-                double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual);
-                StatsReligion.StatReligion religiousLikings = STATS.RELIGION().getter.get(faction.king().induvidual);
-
-                for (int i = 0; i < RD.RACES().all.size(); i++) {
-                    for (int j = 0; j < RD.RELIGION().all().size(); j++) {
-                        amount += religiousLikings.opposition(STATS.RELIGION().ALL.get(j)) * RD.RELIGION().all().get(j).target(region);
+                        return totalMoney;
                     }
-                }
+                },
+                // Loyalty;
+                new Loyalty(faction, 5),
+                // Religion;
+                new FitnessRecord(faction, 6) {
+                    @Override
+                    public double determineValue(FactionNPC faction1, Region region) {
 
-                return amount / tolerance;
-            }
+                        Induvidual king = faction1.king().induvidual;
+                        double tolerance = BOOSTABLES.NOBLE().TOLERANCE.get(king);
+                        StatsReligion religionStats = STATS.RELIGION();
+                        StatsReligion.StatReligion religiousLikings = religionStats.getter.get(king);
+
+                        double amount = IntStream.range(0, RD.RACES().all.size())
+                                .mapToObj(i -> RD.RELIGION().all()) // collect religion list as "religions"
+                                .mapToDouble(religions -> IntStream.range(0, religions.size()) // lookup all the religions
+                                        .mapToDouble(j -> religiousLikings.opposition(religionStats.ALL.get(j)) * religions.get(j).target(region)) // collect religion's data
+                                        .sum())
+                                .sum();
+
+                        return amount / tolerance;
+                    }
+                },
+                // TODO: add slaves to money
         };
-        // TODO: add slaves to money
-
-        return fitnessRecords;
     }
 
-    public FactionGenetic calculateFitness(FactionNPC faction) {
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
+    public void calculateFitness() {
+        if (fitnessRecords == null) {
+            loadFitness();
+        }
+
+        Arrays.stream(fitnessRecords).forEach(fitnessRecord -> {
             fitnessRecord.addValue(faction);
 
-            for (int i = 0; i < faction.realm().all().size(); i++) {
-                fitnessRecord.addValue(faction, i);
-            }
-        }
-
-        return this;
+            IntStream.range(0, faction.realm().all().size())
+                    .forEach(i -> fitnessRecord.addValue(faction, i));
+        });
     }
 
-    public boolean shouldAdopt(FactionNPC faction, FactionGenetic mutant) {
-        if (mutant.anyFitnessExceedsDeficit(faction)) {
-            return false;
-        }
-
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.willIncreaseDeficit(faction, mutant)) {
-                return false;
-            }
-        }
-
+    public boolean shouldAdopt(FactionGenetic mutant) {
         // we don't have a deficit and neither does the mutant
-        double random = GeneticVariables.random();
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.tryMutation(faction, mutant, random)) {
-                return true;
-            }
-        }
+        return !mutant.anyFitnessExceedsDeficit(faction)
+                && !anyFitnessWillIncreaseDeficit(mutant)
+                && anyFitnessIsMutationCandidate(mutant, GeneticVariables.random());
+    }
 
-        return false;
+    private boolean anyFitnessIsMutationCandidate(FactionGenetic mutant, double random) {
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.tryMutation(faction, mutant, random));
+    }
+
+    private boolean anyFitnessWillIncreaseDeficit(FactionGenetic mutant) {
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.willIncreaseDeficit(faction, mutant));
     }
 
     public void commit() {
-        for (int i = 0; i < regionGenetics.length; i++) {
-            regionGenetics[i].commit();
-        }
+        Arrays.stream(regionGenetics)
+                .forEach(RegionGenetic::commit);
     }
 
     public boolean anyFitnessExceedsDeficit(FactionNPC faction) {
-        for (FitnessRecord fitnessRecord : fitnessRecords) {
-            if (fitnessRecord.exceedsDeficit(faction)) {
-                return true;
-            }
-        }
-
-        return false;
+        return Arrays.stream(fitnessRecords)
+                .anyMatch(fitnessRecord -> fitnessRecord.exceedsDeficit(faction));
     }
 }
-

@@ -97,11 +97,7 @@ public class FactionGenetic {
     }
 
     public void calculateFitness() {
-        calculateFitness(true);
-    }
-
-    public void calculateFitness(Boolean shouldLoadFitness) {
-        if (shouldLoadFitness == true) {
+        if (fitnessRecords == null) {
             loadFitness();
         }
 

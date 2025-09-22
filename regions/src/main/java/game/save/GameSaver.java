@@ -74,7 +74,7 @@ public class GameSaver {
 			}
 
 			
-			FilePutter fp = new FilePutter(path, 120*SETT.TAREA);
+			FilePutter fp = new FilePutter(path, 120*SETT.TAREA*5);
 			save(fp);
 			CORE.checkIn();
 			ACTION a = new ACTION() {

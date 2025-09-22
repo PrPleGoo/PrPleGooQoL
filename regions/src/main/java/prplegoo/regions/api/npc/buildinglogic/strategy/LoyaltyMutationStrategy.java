@@ -2,9 +2,9 @@ package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import snake2d.util.rnd.RND;
+import snake2d.util.sets.ArrayListGrower;
 import util.data.INT_O;
 import world.WORLD;
 import world.map.regions.Region;
@@ -41,19 +41,21 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
             return false;
         }
 
-        if (GeneticVariables.actualLoyaltyBuildingIndeces == null) {
+        ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = GeneticVariables.getActualLoyaltyBuildingIndeces();
+        if (actualLoyaltyBuildingIndeces.isEmpty()) {
             for (RDBuilding building : RD.BUILDINGS().all) {
                 GeneticVariables.isLoyaltyBuilding(building.index());
             }
         }
 
         boolean didMutationOccur = false;
-        int randomIndex = RND.rInt(GeneticVariables.actualLoyaltyBuildingIndeces.size());
-        for(int i = 0; i < GeneticVariables.actualLoyaltyBuildingIndeces.size(); i++) {
-            int actualIndex = (randomIndex + i) % GeneticVariables.actualLoyaltyBuildingIndeces.size();
+        int buildingIndecesSize = actualLoyaltyBuildingIndeces.size();
+        int randomIndex = RND.rInt(buildingIndecesSize);
+        for(int i = 0; i < buildingIndecesSize; i++) {
+            int actualIndex = (randomIndex + i) % buildingIndecesSize;
 
-            int buildingIndex = GeneticVariables.actualLoyaltyBuildingIndeces.get(actualIndex);
-            didMutationOccur = didMutationOccur | tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region, anyLessThanZero, anyMoreThanZero);
+            int buildingIndex = actualLoyaltyBuildingIndeces.get(actualIndex);
+            didMutationOccur |= tryMutateBuilding(regionGenetic.buildingGenetics[buildingIndex], region, anyLessThanZero, anyMoreThanZero);
         }
 
         return didMutationOccur;

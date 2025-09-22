@@ -5,7 +5,6 @@ import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
-import prplegoo.regions.api.npc.buildinglogic.fitness.Loyalty;
 import util.data.INT_O;
 import world.map.regions.Region;
 import world.region.RD;
@@ -13,7 +12,7 @@ import world.region.RD;
 public class GlobalBuildingStrategy extends MutationStrategy {
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
-        if (factionGenetic.regionGenetics.length < 8) {
+        if (factionGenetic.getRegionGenetics().length < 8) {
             return false;
         }
 
@@ -34,15 +33,13 @@ public class GlobalBuildingStrategy extends MutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionNPC faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
-
-        fitnessRecords[0] = new FitnessRecord(faction, 0){
-            @Override
-            public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {
-                return true;
-            }
+        return new FitnessRecord[] {
+                new FitnessRecord(faction, 0){
+                    @Override
+                    public boolean tryMutation(FactionNPC faction1, FactionGenetic mutant, double random) {
+                        return true;
+                    }
+                }
         };
-
-        return fitnessRecords;
     }
 }

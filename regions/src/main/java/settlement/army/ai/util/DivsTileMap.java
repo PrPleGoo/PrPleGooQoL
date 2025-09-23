@@ -70,7 +70,7 @@ public final class DivsTileMap {
 			while(t != null) {
 				if (t.divI == currentI)
 					return;
-				t = tiles[t.next];
+				t = tiles[t.next&0x0FFFF];
 			}
 		}
 
@@ -90,7 +90,7 @@ public final class DivsTileMap {
 					statuses[t.divI].enemyCollisionSet(currentI);
 				}
 			}
-			t = tiles[t.next];
+			t = tiles[t.next&0x0FFFF];
 		}
 
 		firstTiles[tileI] = makeNewTile(firstTiles[tileI], current);
@@ -168,12 +168,12 @@ public final class DivsTileMap {
 
 		@Override
 		public boolean is(int tileI, Div value) {
-			Tile t = tiles[firstTiles[tileI]];
+			Tile t = tiles[firstTiles[tileI]&0x0FFFF];
 			while(t != null) {
 				Div d = SETT.ARMIES().division(t.divI);
 				if (d != value && d.army() == value.army())
 					return true;
-				t = tiles[t.next];
+				t = tiles[t.next&0x0FFFF];
 			}
 			return false;
 		}
@@ -192,12 +192,12 @@ public final class DivsTileMap {
 
 		@Override
 		public boolean is(int tileI, Div value) {
-			Tile t = tiles[firstTiles[tileI]];
+			Tile t = tiles[firstTiles[tileI]&0x0FFFF];
 			while(t != null) {
 				Div d = SETT.ARMIES().division(t.divI);
 				if (d == value)
 					return true;
-				t = tiles[t.next];
+				t = tiles[t.next&0x0FFFF];
 			}
 			return false;
 		}
@@ -224,23 +224,23 @@ public final class DivsTileMap {
 	}
 
 	private Iterable<Div> getMask(LISTE<Div> res, int tileI, int aMask){
-		Tile t = tiles[firstTiles[tileI]];
+		Tile t = tiles[firstTiles[tileI]&0x0FFFF];
 		while(t != null && res.hasRoom()) {
 			Div d = SETT.ARMIES().division(t.divI);
 			if ((d.army().bit & aMask) != 0)
 				res.add(d);
-			t = tiles[t.next];
+			t = tiles[t.next&0x0FFFF];
 		}
 		return res;
 	}
 
 	private Div get(int tileI, int aMask){
-		Tile t = tiles[firstTiles[tileI]];
+		Tile t = tiles[firstTiles[tileI]&0x0FFFF];
 		while(t != null) {
 			Div d = SETT.ARMIES().division(t.divI);
 			if ((d.army().bit & aMask) != 0)
 				return d;
-			t = tiles[t.next];
+			t = tiles[t.next&0x0FFFF];
 		}
 		return null;
 	}

@@ -7,6 +7,7 @@ import game.faction.FACTIONS;
 import game.faction.FResources;
 import game.faction.Faction;
 import game.faction.diplomacy.DIP;
+import game.faction.npc.FactionNPC;
 import game.faction.trade.ITYPE;
 import init.C;
 import init.RES;
@@ -203,7 +204,7 @@ public final class WArmy extends WEntity{
 
     }
 
-    void checkForResources() {
+    public void checkForResources() {
         if (faction() == FACTIONS.player() || (KingLevels.isActive() && faction() != null)) {
             for (ADSupply s : AD.supplies().all) {
                 if (s.current().get(this) > s.targetAmount(this)) {
@@ -235,8 +236,8 @@ public final class WArmy extends WEntity{
                             ship.loadAndReserve(ss.res, am);
                         }
 
-                        if (faction() != FACTIONS.player()) {
-                            faction().res().inc(ss.res, FResources.RTYPE.ARMY_SUPPLY, am);
+                        if (faction() instanceof FactionNPC) {
+                            ((FactionNPC) faction()).stockpile.inc(ss.res, am);
                         }
                     }
                     ss.current().inc(this, -am);

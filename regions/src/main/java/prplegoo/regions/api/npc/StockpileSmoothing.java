@@ -71,9 +71,9 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
 
             double delta = actualTarget - currentTarget[faction.index()][resourceIndex];
             if (delta < 0) {
-                delta = Math.min(-50, delta) / 32;
+                delta = Math.min(-50, delta) / 64;
             } else {
-                delta = Math.max(50, delta) / 16;
+                delta = Math.max(50, delta) / 8;
             }
 
             double toAdd = delta * deltaDays;
@@ -100,8 +100,6 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
             // TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
             amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(faction))) + 5);
         }
-
-        amTarget *= 15;
 
         int tradeSets = (int) (amTarget / TradeManager.MIN_LOAD);
         return (tradeSets + 1) * TradeManager.MIN_LOAD;

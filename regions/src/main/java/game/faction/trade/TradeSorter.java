@@ -82,8 +82,14 @@ final class TradeSorter {
 		}
 
 		while(tree.hasMore()) {
+
 			ResTree t = tree.pollSmallest();
 			Holder h = t.traders.pollGreatest();
+
+			FactionNPC buyer = (FactionNPC) h.p.faction();
+			if (KingLevels.isActive() && buyer != null && buyer.stockpile.getCredits().getD() < 100000.0) {
+				break;
+			}
 
 			int am = CLAMP.i(player.seller().forSale(t.res), 0, TradeManager.MIN_LOAD);
 

@@ -2,6 +2,7 @@ package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
+import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.GovPoints;
 import util.data.INT_O;
@@ -13,6 +14,7 @@ import world.region.building.RDBuilding;
 import java.util.*;
 
 public class PopulationGrowthMutationStrategy extends MutationStrategy {
+    private static final double regionCapDivider = 2.0;
     @Override
     public boolean tryMutate(FactionGenetic factionGenetic) {
         if (GeneticVariables.growthBuildingIndex == -1) {
@@ -24,7 +26,7 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
         }
 
         RegionGenetic[] regionGenetics = factionGenetic.getRegionGenetics();
-        Faction faction = WORLD.REGIONS().all().get(regionGenetics[0].regionIndex).faction();
+        FactionNPC faction = (FactionNPC) WORLD.REGIONS().all().get(regionGenetics[0].regionIndex).faction();
         double govPointsBefore = RD.BUILDINGS().costs.GOV.bo.get(faction.capitolRegion());
 
         for (RegionGenetic regionGenetic : regionGenetics) {
@@ -48,7 +50,7 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
 
         Collections.sort(regionsWithSize);
 
-        double capForRegion = RD.BUILDINGS().costs.GOV.bo.added(faction.capitolRegion()) / 2;
+        double capForRegion = RD.BUILDINGS().costs.GOV.bo.added(faction.capitolRegion()) / regionCapDivider;
 
         for(int i = 0; i < regionGenetics.length; i++) {
             int regionIndex = regionsWithSize.get(regionGenetics.length - i - 1).RegionIndex;
@@ -58,7 +60,12 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
                 }
             }
 
-            capForRegion = Math.max(5, capForRegion / 2);
+            capForRegion = capForRegion / regionCapDivider;
+        }
+
+        for(int i = 0; i < regionGenetics.length; i++) {
+            int regionIndex = regionsWithSize.get(regionGenetics.length - i - 1).RegionIndex;
+            mutateRegion(regionGenetics[regionIndex], Double.NEGATIVE_INFINITY);
         }
 
         return true;
@@ -73,7 +80,7 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
     public boolean tryMutateBuilding(BuildingGenetic buildingGenetic, Region region, double capForRegion) {
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(GeneticVariables.growthBuildingIndex).level;
 
-        if (region.faction().realm().regions() > 2
+        if (region.faction().realm().regions() > 1
                 && capForRegion > RD.BUILDINGS().costs.GOV.bo.get(region.faction().capitolRegion())) {
             return false;
         }
@@ -88,7 +95,7 @@ public class PopulationGrowthMutationStrategy extends MutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new GovPoints(faction, 0);

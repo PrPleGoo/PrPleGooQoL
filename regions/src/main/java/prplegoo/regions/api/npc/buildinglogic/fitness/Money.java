@@ -5,11 +5,12 @@ import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import world.region.RD;
 
 public class Money extends FitnessRecord {
-    public Money(FactionNPC faction, int index) {
+    public Money(FactionGenetic faction, int index) {
         super(faction, index);
     }
 

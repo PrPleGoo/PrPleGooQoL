@@ -9,7 +9,7 @@ import world.region.RD;
 import world.region.pop.RDRace;
 
 public class Loyalty extends FitnessRecord {
-    public Loyalty(FactionNPC faction, int index) {
+    public Loyalty(FactionGenetic faction, int index) {
         super(faction, index);
     }
     @Override

@@ -4,6 +4,7 @@ import game.faction.npc.FactionNPC;
 import init.resources.RESOURCE;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
+import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
@@ -37,7 +38,7 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
         FactionNPC faction = (FactionNPC) region.faction();
 
         int randomIndex = RND.rInt(industries.size());
-        double multiplier = CLAMP.d(blue.bonus().get(region.faction()), 1, 15);
+        double multiplier = KingLevels.getInstance().getModifiedTechMul(building, faction);
         main:
         for(int recipeIndex = 0; recipeIndex < industries.size(); recipeIndex++) {
             int actualIndex = (recipeIndex + randomIndex) % industries.size();
@@ -62,7 +63,8 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
                 RESOURCE resource = outputs.get(j).resource;
                 double ratePrice = faction.stockpile.price.get(resource) * outputs.get(j).rate;
 
-                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0) {
+                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
+                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
                     ratePrice *= 2;
                 }
 
@@ -84,7 +86,7 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[2];
 
         fitnessRecords[0] = new Workforce(faction, 0);

@@ -10,6 +10,7 @@ import world.region.RD;
 public class RegionGenetic {
     public final int regionIndex;
     public final BuildingGenetic[] buildingGenetics;
+    public int taxRate;
 
     public RegionGenetic(int regionIndex) {
         this.regionIndex = regionIndex;
@@ -17,11 +18,15 @@ public class RegionGenetic {
         for (int i = 0; i < buildingGenetics.length; i++) {
             buildingGenetics[i] = new BuildingGenetic(regionIndex, i);
         }
+
+        taxRate = RD.OUTPUT().taxRate.get(WORLD.REGIONS().all().get(regionIndex));
     }
 
     public void commit() {
         for (BuildingGenetic buildingGenetic : buildingGenetics) {
             buildingGenetic.commit(WORLD.REGIONS().all().get(regionIndex));
         }
+
+        RD.OUTPUT().taxRate.set(WORLD.REGIONS().all().get(regionIndex), taxRate);
     }
 }

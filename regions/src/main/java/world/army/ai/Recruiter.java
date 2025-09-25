@@ -8,11 +8,9 @@ import init.race.Race;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
-import snake2d.LOG;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
-import snake2d.util.sets.LIST;
 import snake2d.util.sets.Tree;
 import world.WORLD;
 import world.army.*;
@@ -69,13 +67,16 @@ final class Recruiter {
 					arts.target.set(a, 0);
 				}
 
-				if(AD.supplies().isMissingArtsEquip(arts, a)) {
+				if (AD.supplies().isMissingArtsEquip(arts, a)) {
 					arts.target.inc(a, -1);
+				} else if(arts.target.get(a) < ((KingLevels.getInstance().getLevel(f) * 13) + 1)) {
+					arts.target.inc(a, 1);
 				}
 			}
 
 			if (KingLevels.isActive() && a.divs().size() > 1) {
-				if (AD.supplies().health(a) < 1) {
+				if (AD.supplies().health(a) < 1
+						|| menTarget < 0) {
 					int divisionsToDisband = Math.max(1, a.divs().size() / 5);
 
 					for (int i = 0; i < divisionsToDisband; i++) {
@@ -94,13 +95,12 @@ final class Recruiter {
 					continue;
 				}
 
-				if (AD.supplies().equip(a) < 0.6
-					|| AD.supplies().supplyEquip(a) < 0.6) {
+				if (AD.supplies().equip(a) < 0.6) {
 					for (int i = 0; i < a.divs().size(); i++) {
 						WDivRegional div = (WDivRegional) a.divs().get(i);
 
-						if (div.men() != 0 
-								&& isMissingEquips(a, div)) {
+						if (div.men() != 0
+								&& shouldShuffleEquips(a, div)) {
 							double trai = 0.1 + 0.9*0.25*BOOSTABLES.NOBLE().AGRESSION.get(f.court().king().roy().induvidual);
 							double equip = 0.1 + 0.9*0.5*BOOSTABLES.NOBLE().COMPETANCE.get(f.court().king().roy().induvidual);
 
@@ -131,15 +131,23 @@ final class Recruiter {
 		
 	}
 
-	private boolean isMissingEquips(WArmy a, ADDiv div) {
+	private boolean shouldShuffleEquips(WArmy a, ADDiv div) {
+		int count = 0;
+		double value = 0.0;
 		for (EquipBattle e : STATS.EQUIP().BATTLE_ALL()) {
-			if (div.equipTarget(e) != 0
-					&& AD.supplies().get(e).amountValue(a) < 0.6) {
-				return true;
+			if (div.equipTarget(e) != 0) {
+				count++;
+				value += AD.supplies().get(e).amountValue(a);
 			}
 		}
 
-		return false;
+		double prob = value / count;
+
+		if (prob > 0.6) {
+			return false;
+		}
+
+		return RND.rFloat() > prob;
 	}
 
 	private void recruit(FactionNPC f, WArmy a, int target) {

@@ -12,7 +12,7 @@ import world.region.building.RDBuildPoints;
 import world.region.building.RDBuilding;
 
 public class GeneticVariables {
-    public static final int mutationAttemptsPerTick = 10;
+    public static final int mutationAttemptsPerTick = 20;
 
     public static double clamp(double value) {
         return CLAMP.d(value, -1, 1);
@@ -176,5 +176,32 @@ public class GeneticVariables {
         }
 
         return globalBuildingIndeces[buildingIndex] == 2;
+    }
+
+    private static int[] moneyBuildingIndeces;
+    public static boolean isMoneyBuilding(int buildingIndex) {
+        if (moneyBuildingIndeces == null) {
+            moneyBuildingIndeces = new int[RD.BUILDINGS().all.size()];
+        }
+
+        if (moneyBuildingIndeces[buildingIndex] != 0) {
+            return moneyBuildingIndeces[buildingIndex] == 2;
+        }
+
+        moneyBuildingIndeces[buildingIndex] = 1;
+        if (mutationNotAllowed(buildingIndex)) {
+            return false;
+        }
+
+        LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
+        for (int i = 0; i < boosts.size(); i++) {
+            BoostSpec boost = boosts.get(i);
+            if (boost.boostable.key.startsWith("WORLD_TAX_INCOME")) {
+                moneyBuildingIndeces[buildingIndex] = 2;
+                break;
+            }
+        }
+
+        return moneyBuildingIndeces[buildingIndex] == 2;
     }
 }

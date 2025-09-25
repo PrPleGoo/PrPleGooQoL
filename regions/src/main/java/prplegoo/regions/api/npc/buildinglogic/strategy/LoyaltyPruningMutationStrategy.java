@@ -18,13 +18,12 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
         RegionGenetic[] regionGenetics = factionGenetic.getRegionGenetics();
         int randomIndex = RND.rInt(regionGenetics.length);
 
-        return mutateRegion(regionGenetics[randomIndex]);
+        return tryMutateRegion(regionGenetics[randomIndex]);
     }
 
     @Override
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
-        RD.OUTPUT().taxRate.set(region, 0);
 
         ArrayListGrower<Integer> actualLoyaltyBuildingIndeces = GeneticVariables.getActualLoyaltyBuildingIndeces();
         if (actualLoyaltyBuildingIndeces.isEmpty()) {
@@ -48,7 +47,7 @@ public class LoyaltyPruningMutationStrategy extends MutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         return new FitnessRecord[]{
                 new Loyalty(faction, 0)
         };

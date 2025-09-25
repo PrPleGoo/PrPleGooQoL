@@ -1,6 +1,5 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
-import game.faction.npc.FactionNPC;
 import prplegoo.regions.api.npc.buildinglogic.*;
 import snake2d.util.rnd.RND;
 import util.data.INT_O;
@@ -14,13 +13,13 @@ public abstract class MutationStrategy {
         int randomIndex = RND.rInt(factionGenetic.getRegionGenetics().length);
         for(int i = 0; i < factionGenetic.getRegionGenetics().length; i++) {
             int actualIndex = (randomIndex + i) % factionGenetic.getRegionGenetics().length;
-            didMutationOccur = didMutationOccur | mutateRegion(factionGenetic.getRegionGenetics()[actualIndex]);
+            didMutationOccur = didMutationOccur | tryMutateRegion(factionGenetic.getRegionGenetics()[actualIndex]);
         }
 
         return didMutationOccur;
     }
 
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
         boolean didMutationOccur = false;
@@ -69,7 +68,29 @@ public abstract class MutationStrategy {
         return false;
     }
 
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public boolean tryIncreaseTax(RegionGenetic regionGenetic, Region region) {
+        if (RD.OUTPUT().taxRate.isMax(region)) {
+            return false;
+        }
+
+        RD.OUTPUT().taxRate.inc(region, 1);
+        regionGenetic.taxRate = RD.OUTPUT().taxRate.get(region);
+
+        return true;
+    }
+
+    public boolean tryDecreaseTax(RegionGenetic regionGenetic, Region region) {
+        if (RD.OUTPUT().taxRate.get(region) == 0) {
+            return false;
+        }
+
+        RD.OUTPUT().taxRate.inc(region, -1);
+        regionGenetic.taxRate = RD.OUTPUT().taxRate.get(region);
+
+        return true;
+    }
+
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         return FactionGenetic.loadDefault(faction);
     }
 }

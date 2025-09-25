@@ -26,6 +26,10 @@ public class KingLevel {
     @Getter
     private final double income;
     @Getter
+    private final double techApplied;
+    @Getter
+    private final double conscriptMul;
+    @Getter
     private final int maxRegions;
     @Getter
     private final double[] consumption;
@@ -42,6 +46,8 @@ public class KingLevel {
         govPointsPerRegion = kingLevelJson.d("GOV_POINTS_PER_REGION");
         capitalPopulationCapacityMul = kingLevelJson.d("CAPITAL_POPULATION_CAPACITY_MUL");
         income = kingLevelJson.d("INCOME");
+        techApplied = kingLevelJson.d("TECH_APPLIED");
+        conscriptMul = kingLevelJson.d("CONSCRIPT_MUL");
         maxRegions = kingLevelJson.i("MAX_REGIONS");
 
         consumption = MapConsumption(kingLevelJson.json("CONSUMPTION"));

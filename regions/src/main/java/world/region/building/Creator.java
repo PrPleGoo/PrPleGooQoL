@@ -395,7 +395,7 @@ final class Creator {
                             return 1;
                         }
 
-						return bu.getBlue().bonus().get(reg.faction());
+						return KingLevels.getInstance().getModifiedTechMul(bu, (FactionNPC) reg.faction());
                     }
                 };
                 appliedScience.add(bu.efficiency);

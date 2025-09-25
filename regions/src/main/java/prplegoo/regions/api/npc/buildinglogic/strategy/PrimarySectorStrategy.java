@@ -5,6 +5,7 @@ import game.faction.npc.stockpile.NPCStockpile;
 import init.resources.RESOURCE;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
+import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
@@ -43,23 +44,25 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
             for (int j = 0; j < outputs.size(); j++) {
                 RESOURCE resource = outputs.get(j).resource;
 
-                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0) {
-                    return tryLevelUpgrade(building.level, buildingGenetic, region);
+                double price = faction.stockpile.price.get(resource);
+
+                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
+                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
+                    price *= 2;
                 }
 
                 outputCount += outputs.get(j).rate;
 
-                double price = faction.stockpile.price.get(resource);
                 priceSum += outputs.get(j).rate * price / NPCStockpile.AVERAGE_PRICE;
             }
 
             double valueRate = priceSum / outputCount;
 
-            double randomLow = 0.2 + RND.rFloat(1.8);
-            double randomHigh = RND.rFloat(4.0) + 2.0;
+            double randomLow = 0.1 + RND.rFloat(0.6);
+            double randomHigh = RND.rFloat(4.0) + 0.7;
             if (valueRate < randomLow) {
                 return tryDestroyBuilding(building.level, buildingGenetic, region);
-            } else if (valueRate * blue.bonus().get(region.faction()) > randomHigh) {
+            } else if (valueRate * KingLevels.getInstance().getModifiedTechMul(building, (FactionNPC) region.faction()) > randomHigh) {
                 return tryLevelUpgrade(building.level, buildingGenetic, region);
             }
         }
@@ -68,7 +71,7 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[2];
 
         fitnessRecords[0] = new Workforce(faction, 0);

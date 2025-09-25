@@ -6,7 +6,7 @@ import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import world.region.RD;
 
 public class GovPoints extends FitnessRecord {
-    public GovPoints(FactionNPC faction, int index) {
+    public GovPoints(FactionGenetic faction, int index) {
         super(faction, index);
     }
 

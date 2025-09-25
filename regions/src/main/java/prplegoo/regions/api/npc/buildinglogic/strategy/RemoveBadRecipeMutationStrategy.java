@@ -71,7 +71,7 @@ public class RemoveBadRecipeMutationStrategy extends BigMutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new FitnessRecord(faction, 0){

@@ -14,9 +14,8 @@ import world.region.pop.RDRace;
 
 public class LoyaltyMutationStrategy extends MutationStrategy {
     @Override
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
-        RD.OUTPUT().taxRate.set(region, 0);
 
         boolean anyLessThanZero = false;
         boolean anyMoreThanZero = false;
@@ -75,7 +74,7 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new Loyalty(faction, 0){

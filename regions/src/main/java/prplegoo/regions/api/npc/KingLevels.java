@@ -18,6 +18,7 @@ import world.army.ADSupply;
 import world.entity.army.WArmy;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.building.RDBuilding;
 
 import java.util.Arrays;
 
@@ -73,6 +74,10 @@ public class KingLevels {
 
     public KingLevel getKingLevel(FactionNPC faction) {
         return kingLevels[getLevel(faction)];
+    }
+
+    public double getModifiedTechMul(RDBuilding building, FactionNPC faction) {
+        return 1.0 + (building.getBlue().bonus().get(faction) - 1.0) * getKingLevel(faction).getTechApplied();
     }
 
     public KingLevel getDesiredKingLevel(FactionNPC faction) {
@@ -187,23 +192,30 @@ public class KingLevels {
         return amount;
     }
 
-
     public double getDesiredStockpile(FactionNPC faction, RESOURCE resource) {
         return getDesiredStockpileAtLevel(faction, getKingLevel(faction), resource);
     }
 
+    public double getDesiredStockpileAtNextLevel(FactionNPC faction, RESOURCE resource) {
+        return getDesiredStockpileAtLevel(faction, getDesiredKingLevel(faction), resource);
+    }
+
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource)
-                // Stock a year's worth.
-                * 16
+                // Stock two years' worth.
+                * 32
                 // Higher levels want bigger stocks.
-                * (kingLevel.getIndex() + 1) / 2
+                // * (kingLevel.getIndex() + 1) / 2
                 // Scale for the player's performance, military equipment desire scales off fielded conscripts.
                 * Math.min(KingLevels.getInstance().getPlayerScalingMul(), 40);
 
         for (ADSupply supply : AD.supplies().get(resource)) {
             for (WArmy army : faction.armies().all()) {
-                amount += supply.targetAmount(army) + supply.consumedPerDayTarget(army) * 16;
+                // Keep enough stock to plop down another army
+                amount += supply.targetAmount(army);
+
+                // Add two years' worth consumption
+                amount += supply.consumedPerDayTarget(army) * 32;
             }
         }
 
@@ -222,6 +234,7 @@ public class KingLevels {
         pickMaxLevel(faction, false);
     }
 
+    private static final int maxMissingResourcesForRankUp = 5;
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;
@@ -232,7 +245,7 @@ public class KingLevels {
             return;
         }
 
-        kingLevelIndexes.setNextPickYear(faction, currentYear + 1 + RND.rInt(4));
+        kingLevelIndexes.setNextPickYear(faction, currentYear + 2 + RND.rInt(2));
 
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
 
@@ -248,13 +261,13 @@ public class KingLevels {
                         && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
                     missingResourceCount++;
 
-                    if (missingResourceCount >= 3) {
+                    if (missingResourceCount >= maxMissingResourcesForRankUp) {
                         break;
                     }
                 }
             }
 
-            if (missingResourceCount < 3) {
+            if (missingResourceCount < maxMissingResourcesForRankUp) {
                 kingLevelIndexes.setLevel(faction, i);
 
                 return;

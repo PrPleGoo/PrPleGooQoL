@@ -62,7 +62,7 @@ public class SoldGoodsTracker implements IDataPersistence<SellingData> {
 
     public void Update(FactionNPC faction, double deltaDays) {
         for (int resourceIndex = 0; resourceIndex < RESOURCES.ALL().size(); resourceIndex++) {
-            double delta = sold[faction.index()][resourceIndex] / 16;
+            double delta = sold[faction.index()][resourceIndex] / 32;
 
             double toSubtract = delta * deltaDays;
 

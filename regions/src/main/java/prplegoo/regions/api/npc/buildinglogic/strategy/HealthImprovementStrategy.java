@@ -1,10 +1,7 @@
 package prplegoo.regions.api.npc.buildinglogic.strategy;
 
 import game.faction.npc.FactionNPC;
-import prplegoo.regions.api.npc.buildinglogic.BuildingGenetic;
-import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
-import prplegoo.regions.api.npc.buildinglogic.GeneticVariables;
-import prplegoo.regions.api.npc.buildinglogic.RegionGenetic;
+import prplegoo.regions.api.npc.buildinglogic.*;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Health;
 import util.data.INT_O;
 import world.WORLD;
@@ -13,7 +10,7 @@ import world.region.RD;
 
 public class HealthImprovementStrategy extends MutationStrategy {
     @Override
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
         boolean didMutationOccur = false;
@@ -48,7 +45,7 @@ public class HealthImprovementStrategy extends MutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new Health(faction, 0);

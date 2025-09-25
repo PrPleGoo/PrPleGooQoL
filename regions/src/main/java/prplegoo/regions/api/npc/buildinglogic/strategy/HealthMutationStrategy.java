@@ -15,7 +15,7 @@ import world.region.pop.RDRace;
 
 public class HealthMutationStrategy extends LoopingMutationStrategy {
     @Override
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
         if (RD.HEALTH().boostablee.get(region) <= 0.5) {
@@ -58,7 +58,7 @@ public class HealthMutationStrategy extends LoopingMutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
         fitnessRecords[0] = new Health(faction, 0);
 

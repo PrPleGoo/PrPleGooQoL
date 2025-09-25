@@ -1,6 +1,7 @@
 package prplegoo.regions.api.npc.buildinglogic;
 
 import game.faction.npc.FactionNPC;
+import world.WORLD;
 import world.map.regions.Region;
 
 public abstract class FitnessRecord {
@@ -8,9 +9,9 @@ public abstract class FitnessRecord {
     public double factionValue = 0;
     private final double[] regionValues;
 
-    public FitnessRecord(FactionNPC faction, int index) {
+    public FitnessRecord(FactionGenetic faction, int index) {
         this.index = index;
-        regionValues = new double[faction.realm().all().size()];
+        regionValues = new double[faction.getRegionGenetics().length];
     }
 
     public double determineValue(FactionNPC faction, Region region) {
@@ -42,15 +43,15 @@ public abstract class FitnessRecord {
         return false;
     }
 
-    public void addValue(FactionNPC faction, int regionIndex) {
-        regionValues[regionIndex] += determineValue(faction, faction.realm().all().get(regionIndex));
+    public void addValue(FactionNPC faction, int index, RegionGenetic regionGenetic) {
+        regionValues[index] += determineValue(faction, WORLD.REGIONS().getByIndex(regionGenetic.regionIndex));
     }
 
     public void addValue(FactionNPC faction) {
         factionValue += determineValue(faction);
     }
 
-    public boolean willIncreaseDeficit(FactionNPC faction, FactionGenetic mutant) {
+    public boolean willIncreaseDeficit(FactionGenetic mutant) {
         if (factionValue < 0) {
             return factionValue > mutant.fitnessRecords[index].factionValue;
         }
@@ -58,7 +59,7 @@ public abstract class FitnessRecord {
             return true;
         }
 
-        for (int i = 0; i < faction.realm().all().size(); i++) {
+        for (int i = 0; i < regionValues.length; i++) {
             if (regionValues[i] < 0) {
                 return regionValues[i] > mutant.fitnessRecords[index].regionValues[i];
             }
@@ -74,7 +75,7 @@ public abstract class FitnessRecord {
         if (mutant.fitnessRecords[index].factionValue != factionValue) {
             return (mutant.fitnessRecords[index].factionValue - factionValue) / factionValue > random;
         }
-        for (int i = 0; i < faction.realm().all().size(); i++) {
+        for (int i = 0; i < regionValues.length; i++) {
             if (mutant.fitnessRecords[index].regionValues[i] != regionValues[i]
                     && (mutant.fitnessRecords[index].regionValues[i] - regionValues[i]) / regionValues[i] > random) {
                 return true;

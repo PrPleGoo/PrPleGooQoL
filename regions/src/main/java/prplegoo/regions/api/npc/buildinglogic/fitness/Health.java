@@ -8,7 +8,7 @@ import world.map.regions.Region;
 import world.region.RD;
 
 public class Health extends FitnessRecord {
-    public Health(FactionNPC faction, int index) {
+    public Health(FactionGenetic faction, int index) {
         super(faction, index);
     }
 

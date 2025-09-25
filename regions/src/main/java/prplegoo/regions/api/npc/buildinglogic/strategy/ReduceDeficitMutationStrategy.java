@@ -42,7 +42,7 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
     }
 
     @Override
-    public FitnessRecord[] loadFitness(FactionNPC faction) {
+    public FitnessRecord[] loadFitness(FactionGenetic faction) {
         FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new Workforce(faction, 0);

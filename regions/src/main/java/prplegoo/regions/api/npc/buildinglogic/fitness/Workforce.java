@@ -5,12 +5,13 @@ import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.api.npc.buildinglogic.FactionGenetic;
 import prplegoo.regions.api.npc.buildinglogic.FitnessRecord;
 import world.map.regions.Region;
 import world.region.RD;
 
 public class Workforce extends FitnessRecord {
-    public Workforce(FactionNPC faction, int index) {
+    public Workforce(FactionGenetic faction, int index) {
         super(faction, index);
     }
 
@@ -20,5 +21,5 @@ public class Workforce extends FitnessRecord {
     }
 
     @Override
-    public double getRegionDeficitMax(FactionNPC faction) { return -10; }
+    public double getRegionDeficitMax(FactionNPC faction) { return 0; }
 }

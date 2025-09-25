@@ -94,8 +94,11 @@ public class StockpileSmoothing implements IDataPersistence<StockpileSmoothingDa
     }
 
     public double actualTarget(FactionNPC faction, int resourceIndex) {
-        double amTarget = KingLevels.getInstance().getDesiredStockpileAtLevel(faction, KingLevels.getInstance().getDesiredKingLevel(faction), RESOURCES.ALL().get(resourceIndex))
-                - Math.min(0, KingLevels.getInstance().getDailyProductionRate(faction, RESOURCES.ALL().get(resourceIndex))) * 2;
+        double amTarget = KingLevels.getInstance().getDesiredStockpileAtLevel(faction, KingLevels.getInstance().getDesiredKingLevel(faction), RESOURCES.ALL().get(resourceIndex));
+
+        // A year's worth of whatever is being consumed right now.
+        amTarget-= Math.min(0, KingLevels.getInstance().getDailyProductionRate(faction, RESOURCES.ALL().get(resourceIndex))) * 16;
+
         if (amTarget == 0) {
             // TODO: TOLERANCE as a stand in for curiosity or hoarding or something;
             amTarget = Math.max(amTarget, BOOSTABLES.NOBLE().TOLERANCE.get(faction.king().induvidual) * 0.9 * Math.pow(10, Math.sqrt(KingLevels.getInstance().getLevel(faction))) + 5);

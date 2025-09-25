@@ -26,8 +26,7 @@ public class KingLevelBoostAttacher {
 
                 FactionNPC faction = (FactionNPC) t.faction();
 
-                return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) *
-                        (KingLevels.getInstance().getKingLevel(faction).getGovPoints()
+                return (KingLevels.getInstance().getKingLevel(faction).getGovPoints()
                         + KingLevels.getInstance().getKingLevel(faction).getGovPointsPerRegion() * (faction.realm().regions() - 1))
                         / 40000;
             }
@@ -54,18 +53,33 @@ public class KingLevelBoostAttacher {
             }
         }.add(RD.RACES().capacity);
 
-        new RBooster(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
+        new RBooster(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 0, 40, true) {
             @Override
             public double get(Region t) {
                 if (!KingLevels.isActive()) {
-                    return 0;
+                    return 1 / max();
                 }
 
                 if (!(t.faction() instanceof FactionNPC)) {
-                    return 0;
+                    return 1 / max();
                 }
 
-                return KingLevels.getInstance().getPlayerScalingD() / max();
+                return (1 + (KingLevels.getInstance().getPlayerScalingD() / 2)) / max();
+            }
+        }.add(RD.MILITARY().conscriptTarget);
+
+        new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 0, 1, true) {
+            @Override
+            public double get(Region t) {
+                if (!KingLevels.isActive()) {
+                    return 1;
+                }
+
+                if (!(t.faction() instanceof FactionNPC)) {
+                    return 1;
+                }
+
+                return KingLevels.getInstance().getKingLevel((FactionNPC) t.faction()).getConscriptMul();
             }
         }.add(RD.MILITARY().conscriptTarget);
 

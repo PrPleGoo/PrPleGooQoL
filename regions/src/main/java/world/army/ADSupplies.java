@@ -262,7 +262,7 @@ public final class ADSupplies {
 			}
 
 			double current = s.current.get(a);
-			if (current / needed < 0.5) {
+			if (current / needed < 0.75) {
 				return true;
 			}
 		}

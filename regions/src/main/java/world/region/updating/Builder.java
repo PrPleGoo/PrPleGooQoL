@@ -61,7 +61,7 @@ final class Builder {
 		RealmBuilder builder = rebBuilder;
 		if (reg.faction() instanceof FactionNPC) {
 			if (KingLevels.isActive()) {
-				KingLevels.getInstance().getBuilder().build((FactionNPC) reg.faction());
+				KingLevels.getInstance().getBuilder().build((FactionNPC) reg.faction(), reg);
 
 				return;
 			}

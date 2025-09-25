@@ -10,11 +10,11 @@ import java.util.Arrays;
 public abstract class LoopingMutationStrategy extends MutationStrategy {
     public boolean tryMutate(FactionGenetic factionGenetic) {
         return Arrays.stream(factionGenetic.getRegionGenetics())
-                .map(this::mutateRegion)
+                .map(this::tryMutateRegion)
                 .reduce(false, (didMutationOccur, mutateRegionResult) -> didMutationOccur | mutateRegionResult);
     }
 
-    public boolean mutateRegion(RegionGenetic regionGenetic) {
+    public boolean tryMutateRegion(RegionGenetic regionGenetic) {
         Region region = WORLD.REGIONS().all().get(regionGenetic.regionIndex);
 
         return Arrays.stream(regionGenetic.buildingGenetics)

@@ -74,6 +74,10 @@ public final class DealParty {
 		public int max(RESOURCE t) {
 			if (f == FACTIONS.player())
 				return f.res().getAvailable(t);
+			if (KingLevels.isActive() && f instanceof FactionNPC) {
+				return ((FactionNPC) f).stockpile.maxToSell(t.index());
+			}
+
 			return Math.max(f.res().getAvailable(t)-1, 0);
 		}
 

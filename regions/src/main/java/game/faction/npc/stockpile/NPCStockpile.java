@@ -201,6 +201,15 @@ public class NPCStockpile extends NPCResource{
 		return mul*price;
 	}
 
+	public int maxToSell(int ri) {
+		double maxToSell = amount(ri);
+		while (price(ri, -maxToSell) * maxToSell >= 500000000) {
+			maxToSell = maxToSell * 0.5;
+		}
+
+		return (int) maxToSell;
+	}
+
 	public double priceBuy(int ri, double amount) {
 
 		double price = price(ri, amount);

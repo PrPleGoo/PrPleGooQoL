@@ -145,6 +145,37 @@ public class RDDistance {
 			}
 		};
 
+		GVALUES.FACTION.push("PLAYER_BORDERS", ¤¤Borders, UI.icons().s.wheel, new BOOLEANO<Faction>() {
+
+			@Override
+			public boolean is(Faction t) {
+				return factionBorders.isMax(t);
+			}
+		});
+		GVALUES.FACTION.push("PLAYER_REACHABLE", ¤¤Reachable, UI.icons().s.wheel, new BOOLEANO<Faction>() {
+
+			@Override
+			public boolean is(Faction t) {
+				return factionReachable.isMax(t);
+			}
+		});
+
+		GVALUES.REGION.pushI("PLAYER_DISTANCE", ¤¤Distance, UI.icons().s.wheel, distance);
+		GVALUES.REGION.push("PLAYER_REACHABLE", ¤¤Reachable, UI.icons().s.wheel, new BOOLEANO<Region>() {
+
+			@Override
+			public boolean is(Region t) {
+				return regionReachable.isMax(t);
+			}
+		});
+		GVALUES.REGION.push("PLAYER_BORDERS", ¤¤Borders, UI.icons().s.wheel, new BOOLEANO<Region>() {
+
+			@Override
+			public boolean is(Region t) {
+				return regionBorders.isMax(t);
+			}
+		});
+
 	}
 
 	private void init() {

@@ -21,5 +21,5 @@ public class Workforce extends FitnessRecord {
     }
 
     @Override
-    public double getRegionDeficitMax(FactionNPC faction) { return 0; }
+    public double getRegionDeficitMax(FactionNPC faction) { return -1; }
 }

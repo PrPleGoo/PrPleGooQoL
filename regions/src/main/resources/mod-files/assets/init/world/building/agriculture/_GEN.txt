@@ -1,12 +1,7 @@
 GENS: [
 	{
 		INDUSTRIES: [
-			FARM_GRAIN,
-			FARM_FRUIT,
-			FARM_VEG,
-			FARM_COTTON,
-			FARM_SPICES,
-			FARM_HERB,
+			FARM_*,
 		],
 		LEVELS: 10,
 		OUTPUT: 500,
@@ -15,12 +10,10 @@ GENS: [
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
 		EFFICIENCY: {
-			BOOST: {
-				PROP_FERTILTIY: [0, 1.2,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 		LEVEL_CAP: {
-			PROSPECT: [0.6,0.4,],
+			PROSPECT: [1.0,0.0,],
 		},
 	},
 	{
@@ -34,26 +27,10 @@ GENS: [
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
 		EFFICIENCY: {
-			BOOST: {
-				PROP_FERTILTIY: [0.5, 0.7,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 		LEVEL_CAP: {
-			PROSPECT: [0.6,0.4,],
+			PROSPECT: [1.0,0.0,],
 		},
-	},
-	{
-		INDUSTRIES: [
-			FARM_MUSHROOM*,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-		},
-		LEVEL_CAP: {
-			PROSPECT: [0.4, 0.6, ],
-		},		
 	},
 ],

@@ -9,7 +9,8 @@ public abstract class BigMutationStrategy extends MutationStrategy {
     @Override
     protected boolean tryLevelUpgrade(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
         boolean doneMutation = false;
-        for (int i = 0; i < 5; i++) {
+        int loopsToDo = (int) (RD.SLAVERY().getWorkforce().bo.get(region) / 20);
+        for (int i = 0; i < loopsToDo + 1; i++) {
             if (super.tryLevelUpgrade(levelInt, buildingGenetic, region)) {
                 doneMutation = true;
             } else {

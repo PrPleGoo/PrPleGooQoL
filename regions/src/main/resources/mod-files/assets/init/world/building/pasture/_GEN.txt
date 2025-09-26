@@ -1,10 +1,7 @@
 GENS: [
 	{
 		INDUSTRIES: [
-			PASTURE_AUR,
-			PASTURE_ENT,
-			PASTURE_GLOBDIEN,
-			PASTURE_ONX,
+			PASTURE_*,
 		],
 		LEVELS: 10,
 		OUTPUT: 500,
@@ -12,28 +9,11 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
-		LEVEL_CAP: {
-			PROSPECT: [0.6,0.4,],
-			BOOST: {
-				PROP_AREA: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			PASTURE_BALTI,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
+		EFFICIENCY: {
+			PROSPECT: [1.0,0.0,],
 		},
 		LEVEL_CAP: {
-			PROSPECT: [0.6, 0.4,],
-			BOOST: {
-				PROP_AREA: [0.3, 0.7,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 	},
 	{
@@ -46,10 +26,11 @@ GENS: [
 		BOOST: {
 			WORLD_POINT_WORKFORCE>ADD: -50,
 		},
+		EFFICIENCY: {
+			PROSPECT: [1.0,0.0,],
+		},
 		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_WATER: [0.1, 0.9,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 	},
 ],

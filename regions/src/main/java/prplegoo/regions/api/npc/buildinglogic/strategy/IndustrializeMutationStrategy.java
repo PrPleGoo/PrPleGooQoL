@@ -45,6 +45,10 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
 
             LIST<Industry.IndustryResource> inputs = industries.get(actualIndex).ins();
 
+            if (inputs.isEmpty()) {
+                continue;
+            }
+
             double inputPrice = 0.0;
             for (int j = 0; j < inputs.size(); j++) {
                 RESOURCE resource = inputs.get(j).resource;
@@ -74,11 +78,12 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
             double margin = (outputPrice / inputPrice) - 1;
             boolean profitableRecipe = margin * multiplier > RND.rFloat(1.0);
 
-            if (profitableRecipe) {
+            if (profitableRecipe
+                    && tryLevelUpgrade(building.level, buildingGenetic, region)) {
                 RD.RECIPES().setRecipe(region, buildingGenetic.buildingIndex, building.getBlue(), actualIndex);
                 buildingGenetic.recipe = actualIndex;
 
-                return tryLevelUpgrade(building.level, buildingGenetic, region);
+                return true;
             }
         }
 
@@ -87,10 +92,9 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionGenetic faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[2];
+        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new Workforce(faction, 0);
-        fitnessRecords[1] = new Money(faction, 1);
 
         return fitnessRecords;
     }

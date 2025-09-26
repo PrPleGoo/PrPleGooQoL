@@ -5,11 +5,13 @@ import game.boosting.BSourceInfo;
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import init.sprite.SPRITES;
+import snake2d.util.misc.CLAMP;
 import world.army.AD;
 import world.army.ADConscripts;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
+import world.region.RDHealth;
 
 public class KingLevelBoostAttacher {
     public static void attachKingLevelBoosts() {
@@ -50,6 +52,35 @@ public class KingLevelBoostAttacher {
                 FactionNPC faction = (FactionNPC) t.faction();
 
                 return KingLevels.getInstance().getKingLevel(faction).getCapitalPopulationCapacityMul() / max();
+            }
+        }.add(RD.RACES().capacity);
+
+        new RBooster(new BSourceInfo("Bad capital compensation", SPRITES.icons().s.crown), 0, 10, true) {
+            @Override
+            public double get(Region t) {
+                if (!KingLevels.isActive()) {
+                    return 1 / max();
+                }
+
+                if (!(t.faction() instanceof FactionNPC)) {
+                    return 1 / max();
+                }
+
+                if (!t.capitol()) {
+                    return 1 / max();
+                }
+
+                double mul = 1.0;
+
+                double area = t.info.area();
+                if (area < RD.RACES().getMaxArea()) {
+                    mul *= Math.max(1, (RD.RACES().getMaxArea() - 20) / area);
+                }
+                if (t.info.moisture() < 1) {
+                    mul *= Math.max(1, 1.0 / ((t.info.moisture() * 1.2) + 0.2));
+                }
+
+                return mul / max();
             }
         }.add(RD.RACES().capacity);
 

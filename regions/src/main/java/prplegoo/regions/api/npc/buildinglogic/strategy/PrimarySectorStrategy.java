@@ -72,10 +72,9 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
 
     @Override
     public FitnessRecord[] loadFitness(FactionGenetic faction) {
-        FitnessRecord[] fitnessRecords = new FitnessRecord[2];
+        FitnessRecord[] fitnessRecords = new FitnessRecord[1];
 
         fitnessRecords[0] = new Workforce(faction, 0);
-        fitnessRecords[1] = new Money(faction, 1);
 
         return fitnessRecords;
     }

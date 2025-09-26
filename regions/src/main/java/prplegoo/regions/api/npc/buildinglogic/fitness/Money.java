@@ -22,11 +22,8 @@ public class Money extends FitnessRecord {
             double price = faction.stockpile.price.get(resource);
 
             double productionAmount = KingLevels.getInstance().getDailyProductionRate(faction, resource);
-            if (productionAmount < 0) {
-                totalMoney += productionAmount * price;
-            } else if (productionAmount > 0) {
-                totalMoney += productionAmount * price;
-            }
+
+            totalMoney += productionAmount * price;
         }
 
         return totalMoney;

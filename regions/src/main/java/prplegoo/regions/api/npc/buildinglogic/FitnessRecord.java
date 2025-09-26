@@ -72,16 +72,16 @@ public abstract class FitnessRecord {
     }
 
     public boolean tryMutation(FactionNPC faction, FactionGenetic mutant, double random) {
-        if (mutant.fitnessRecords[index].factionValue != factionValue) {
-            return (mutant.fitnessRecords[index].factionValue - factionValue) / factionValue > random;
-        }
-        for (int i = 0; i < regionValues.length; i++) {
-            if (mutant.fitnessRecords[index].regionValues[i] != regionValues[i]
-                    && (mutant.fitnessRecords[index].regionValues[i] - regionValues[i]) / regionValues[i] > random) {
-                return true;
-            }
-        }
+//        if (mutant.fitnessRecords[index].factionValue != factionValue) {
+//            return (mutant.fitnessRecords[index].factionValue - factionValue) / factionValue > random;
+//        }
+//        for (int i = 0; i < regionValues.length; i++) {
+//            if (mutant.fitnessRecords[index].regionValues[i] != regionValues[i]
+//                    && (mutant.fitnessRecords[index].regionValues[i] - regionValues[i]) / regionValues[i] > random) {
+//                return true;
+//            }
+//        }
 
-        return false;
+        return true;
     }
 }

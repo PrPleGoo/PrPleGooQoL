@@ -34,6 +34,7 @@ import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.text.Str;
 import util.data.BOOLEANO;
+import util.data.DOUBLE_O;
 import util.data.INT_O;
 import util.data.INT_O.INT_OE;
 import util.dic.Dic;
@@ -228,6 +229,12 @@ public final class RDBuilding implements MAPPED{
 
 		});
 
+		GVALUES.REGION.push(kk + "_PROSPECT", Dic.¤¤Prospect, UI.icons().s.question, new DOUBLE_O<Region>() {
+			@Override
+			public double getD(Region r) {
+				return levelCap.get(r);
+			}
+		});
 	}
 
 	public SPRITE icon() {

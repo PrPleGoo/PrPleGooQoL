@@ -1,7 +1,7 @@
 GENS: [
 	{
 		INDUSTRIES: [
-			MINE_CLAY,
+			MINE_*,
 		],
 		LEVELS: 10,
 		OUTPUT: 500,
@@ -10,95 +10,11 @@ GENS: [
 			WORLD_POINT_WORKFORCE>ADD: -50,
 			WORLD_VISUAL_MINE>ADD: 1,
 		},
-		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_WET: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			MINE_COAL,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-			WORLD_VISUAL_MINE>ADD: 1,
+		EFFICIENCY: {
+			PROSPECT: [1.0,0.0,],
 		},
 		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			MINE_GEM,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-			WORLD_VISUAL_MINE>ADD: 1,
-		},
-		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			MINE_ORE,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-			WORLD_VISUAL_MINE>ADD: 1,
-		},
-		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			MINE_SITHILON,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-			WORLD_VISUAL_MINE>ADD: 1,
-		},
-		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_MOUNTAIN: [0.1,0.9,],
-			},
-		},
-	},
-	{
-		INDUSTRIES: [
-			MINE_STONE,
-		],
-		LEVELS: 10,
-		OUTPUT: 500,
-		CREDITS: 1000,
-		BOOST: {
-			WORLD_POINT_WORKFORCE>ADD: -50,
-			WORLD_VISUAL_MINE>ADD: 1,
-		},
-		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_MOUNTAIN: [0.2,0.8,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 	},
 	{
@@ -112,10 +28,11 @@ GENS: [
 			WORLD_POINT_WORKFORCE>ADD: -50,
 			WORLD_VISUAL_MINE>ADD: 1,
 		},
+		EFFICIENCY: {
+			PROSPECT: [1.0,0.0,],
+		},
 		LEVEL_CAP: {
-			BOOST: {
-				PROP_TERRAIN_FOREST: [0.1,0.9,],
-			},
+			PROSPECT: [1.0,0.0,],
 		},
 	},
 ],

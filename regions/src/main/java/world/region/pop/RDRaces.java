@@ -10,6 +10,7 @@ import init.race.RACES;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
+import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
 import settlement.tilemap.ground.Ground;
@@ -49,6 +50,7 @@ public class RDRaces {
 	public final RData population;
 	public final Visuals visuals;
 
+	@Getter
 	private final double maxArea = 10*10;
 	private final double aveFertility = 0.5;
 	private final double maxFerArea = maxArea*aveFertility;
@@ -230,7 +232,8 @@ public class RDRaces {
 		}else if (reg.faction() == null) {
 			double fa = maxPop*reg.info.area()*reg.info.moisture()/maxFerArea;
 
-			fa *= KingLevels.isActive() ? 1 : 1;
+			// 0.1 to compensate for the Poor capital scaling
+			fa *= KingLevels.isActive() ? 0.1 : 1;
 
 			return fa*0.1;
 		}

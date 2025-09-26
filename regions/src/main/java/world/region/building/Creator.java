@@ -26,14 +26,17 @@ import init.text.D;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
 import lombok.Getter;
+import lombok.var;
 import prplegoo.regions.api.PrPleGooEfficiencies;
 import prplegoo.regions.api.RDRecipe;
+import prplegoo.regions.api.gen.ProspectCache;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.Industry.IndustryResource;
+import settlement.room.industry.module.IndustryRegion;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
@@ -120,8 +123,6 @@ final class Creator {
 			BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
 		}
 
-		pushEfficiency(b, json);
-
 		return b;
 
 	}
@@ -154,7 +155,7 @@ final class Creator {
 			}
 
 
-			if (b instanceof RoomBlueprintImp && b  instanceof INDUSTRY_HASER) {
+			if (b instanceof RoomBlueprintImp && b instanceof INDUSTRY_HASER) {
 				INDUSTRY_HASER h = (INDUSTRY_HASER) b;
 				RoomBlueprintImp blue = (RoomBlueprintImp) b;
 
@@ -170,7 +171,21 @@ final class Creator {
 					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_A"));
 					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_B"));
 				} else {
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index()));
+					RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
+					res.add(bu);
+
+//					if (h.industries().get(0).reg() != null) {
+//						IndustryRegion ii = h.industries().get(0).reg();
+//						Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.plusBig), 0.0, 10, true) {
+//							@Override
+//							double get(Region reg) {
+//								return true ? 1 : RD.PROSPECT().get(ii, reg);
+//							};
+//						};
+//						bo.add(bu.efficiency);
+//						// this is the magic?
+//						bu.baseFactors.add(bo);
+//					}
 				}
 			}
 
@@ -240,8 +255,6 @@ final class Creator {
 
 		pushLevelCapping(b, data);
 		pushFactionBoosts(b);
-
-		pushEfficiency(b, data);
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
 		sp.read(data, BValue.VALUE1);
@@ -371,10 +384,6 @@ final class Creator {
 		};
 		BOOSTING.connecter(a);
 
-
-		pushEfficiency(b, data);
-
-
 		return b;
 
 	}
@@ -383,19 +392,19 @@ final class Creator {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, true) {
+                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, false) {
                     @Override
                     double get(Region reg) {
 						if (reg.faction() instanceof Player) {
 							double scienceValue = Math.max(1, bu.getBlue().bonus().get(reg.faction())) - 1;
-							return min() + scienceValue * RD.SCHOOL().booster.get(reg);
+							return scienceValue * RD.SCHOOL().booster.get(reg);
 						}
 
 						if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
-                            return 1;
+                            return 0;
                         }
 
-						return KingLevels.getInstance().getModifiedTechMul(bu, (FactionNPC) reg.faction());
+						return KingLevels.getInstance().getModifiedTechD(bu, (FactionNPC) reg.faction());
                     }
                 };
                 appliedScience.add(bu.efficiency);
@@ -421,106 +430,29 @@ final class Creator {
 		BOOSTING.connecter(ca);
 	}
 
-	private void pushEfficiency(RDBuilding bu, Json da) {
-
-		if (!da.has("EFFICIENCY"))
-			return;
-
-		Json data = da.json("EFFICIENCY");
-
-
-		if (data.has("PROSPECT")) {
-			double[] p = data.ds("PROSPECT", 2);
-			double from = p[0];
-			double mul = p[1];
-			Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.gift), from, from+mul, true) {
-
-				@Override
-				double get(Region reg) {
-					return from +  mul*RD.RAN().get(reg, bu.index()*4, 4)/15.0;
-				};
-
-
-			};
-			bo.add(bu.efficiency);
-			bu.baseFactors.add(bo);
-		}
-
-		ACTION ca = new ACTION() {
-
-			@Override
-			public void exe() {
-				if (data.has("BOOST")) {
-					Json e = data.json("BOOST");
-					for (String k : e.keys()) {
-						double[] p = e.ds(k, 2);
-						double from = p[0];
-						double mul = p[1];
-						for (Value<Region> v : GVALUES.REGION.get(k, e)) {
-							Bo bo = new Bo(new BSourceInfo(v.name, v.icon), from, from+mul, true) {
-
-								@Override
-								double get(Region reg) {
-									return from +  mul*v.d.getD(reg);
-								};
-							};
-							bo.add(bu.efficiency);
-							bu.baseFactors.add(bo);
-						}
-					}
-				}
-
-			}
-		};
-
-		BOOSTING.connecter(ca);
-	}
-
 	private void pushLevelCapping(RDBuilding bu, Json da) {
 		if (!da.has("LEVEL_CAP"))
 			return;
 
 		Json data = da.json("LEVEL_CAP");
 
-		if (data.has("PROSPECT")) {
-			double[] p = data.ds("PROSPECT", 2);
-			double from = p[0];
-			double mul = p[1];
-			Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.gift), from, from+mul, true) {
-
-				@Override
-				double get(Region reg) {
-					return from +  mul*RD.RAN().get(reg, bu.index()*4, 4)/15.0;
-				};
-
-
-			};
-			bo.add(bu.levelCap);
-		}
-
 		ACTION ca = new ACTION() {
 
 			@Override
 			public void exe() {
-				if (data.has("BOOST")) {
-					Json e = data.json("BOOST");
-					for (String k : e.keys()) {
-						double[] p = e.ds(k, 2);
-						double from = p[0];
-						double mul = p[1];
-						for (Value<Region> v : GVALUES.REGION.get(k, e)) {
-							Bo bo = new Bo(new BSourceInfo(v.name, v.icon), from, from+mul, true) {
 
-								@Override
-								double get(Region reg) {
-									return from + mul*v.d.getD(reg);
-								};
-							};
-							bo.add(bu.levelCap);
+				if (data.has("PROSPECT")) {
+					double[] p = data.ds("PROSPECT", 2);
+					double from = p[0];
+					double mul = p[1];
+					Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.plusBig), from, from+mul, true) {
+						@Override
+						double get(Region reg) {
+							return ProspectCache.getInstance().getLevelCap(reg, bu);
 						}
-					}
+					};
+					bo.add(bu.levelCap);
 				}
-
 			}
 		};
 

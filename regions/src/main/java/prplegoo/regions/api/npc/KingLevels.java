@@ -77,7 +77,11 @@ public class KingLevels {
     }
 
     public double getModifiedTechMul(RDBuilding building, FactionNPC faction) {
-        return 1.0 + (building.getBlue().bonus().get(faction) - 1.0) * getKingLevel(faction).getTechApplied();
+        return 1.0 + getModifiedTechD(building, faction);
+    }
+
+    public double getModifiedTechD(RDBuilding building, FactionNPC faction) {
+        return (building.getBlue().bonus().get(faction) - 1.0) * getKingLevel(faction).getTechApplied();
     }
 
     public KingLevel getDesiredKingLevel(FactionNPC faction) {

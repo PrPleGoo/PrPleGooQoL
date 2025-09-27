@@ -99,7 +99,8 @@ public class RDHealth extends RDataE {
 			public double get(Region t) {
 				if (btoggle)
 					return RD.RACES().popSize(t);
-				return RD.RACES().popSizeTarget(t);
+				// * 10 to compensate for bad AI start scaling.
+				return RD.RACES().popSizeTarget(t) * (KingLevels.isActive() ? 10 : 1);
 			}
 			
 			

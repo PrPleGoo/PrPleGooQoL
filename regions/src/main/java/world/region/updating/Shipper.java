@@ -50,7 +50,7 @@ final class Shipper {
             return;
 
         double days = seconds*TIME.secondsPerDayI;
-        int am = 0;
+        boolean hasShipment = false;
 
         if (f == FACTIONS.player()) {
             if (r.capitol())
@@ -64,16 +64,22 @@ final class Shipper {
         }
 
         for (RDResource res : RD.OUTPUT().RES) {
-            int a = (int) Math.ceil(res.boost.get(r)*days);
-            am += Math.abs(a);
+            hasShipment = amount(f, res, r, seconds) > 0;
+            if (hasShipment) {
+                break;
+            }
         }
 
-        for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-            int a = rdSlave.hasDelivery(r, days);
-            am += Math.abs(a);
+        if (!hasShipment) {
+            for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+                hasShipment = rdSlave.hasDelivery(r, days) > 0;
+                if (hasShipment) {
+                    break;
+                }
+            }
         }
 
-        if (am <= 0)
+        if (!hasShipment)
             return;
 
         Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), ITYPE.tax);

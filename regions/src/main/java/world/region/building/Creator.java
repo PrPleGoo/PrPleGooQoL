@@ -2,13 +2,7 @@ package world.region.building;
 
 import java.io.IOException;
 
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BValue;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.BoosterImp;
-import game.boosting.BoosterValue;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -54,6 +48,7 @@ import snake2d.util.sprite.text.Str;
 import util.dic.Dic;
 import util.info.GFORMAT;
 import util.info.INFO;
+import world.WORLD;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RD.RDInit;
@@ -247,6 +242,7 @@ final class Creator {
 			}
 
 			levels.add(l);
+//			levels.get(0).local.all().get(0).get(WORLD.REGIONS().all().get(0));
 		}
 
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));

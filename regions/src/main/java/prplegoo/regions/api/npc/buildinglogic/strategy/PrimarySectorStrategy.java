@@ -46,10 +46,10 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
 
                 double price = faction.stockpile.price.get(resource);
 
-                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
-                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
-                    price *= 2;
-                }
+//                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
+//                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
+//                    price *= 2;
+//                }
 
                 outputCount += outputs.get(j).rate;
 

@@ -8,7 +8,6 @@ import game.time.TIME;
 import init.paths.PATHS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
-import init.type.HTYPES;
 import lombok.Getter;
 import prplegoo.regions.api.RDSlavery;
 import snake2d.util.file.Json;
@@ -60,6 +59,8 @@ public class KingLevels {
 
         productionCacheTick = new int[FACTIONS.MAX()][RESOURCES.ALL().size()];
         productionCache = new double[FACTIONS.MAX()][RESOURCES.ALL().size()];
+        factionBuildingBonus = new double[FACTIONS.MAX()][RD.BUILDINGS().all.size()];
+        Arrays.stream(factionBuildingBonus).forEach(x -> Arrays.fill(x, -1));
     }
 
     public static void setActive(boolean active) {
@@ -70,6 +71,7 @@ public class KingLevels {
         stockpileSmoothing.reset(index);
         soldGoodsTracker.reset(index);
         kingLevelIndexes.reset(index);
+        Arrays.fill(factionBuildingBonus[index], -1);
     }
 
     public KingLevel getKingLevel(FactionNPC faction) {
@@ -81,7 +83,16 @@ public class KingLevels {
     }
 
     public double getModifiedTechD(RDBuilding building, FactionNPC faction) {
-        return (building.getBlue().bonus().get(faction) - 1.0) * getKingLevel(faction).getTechApplied();
+        return (getCachedModifiedTechD(faction, building) - 1.0) * getKingLevel(faction).getTechApplied();
+    }
+
+    private final double[][] factionBuildingBonus;
+    private double getCachedModifiedTechD(FactionNPC faction, RDBuilding building) {
+        if (factionBuildingBonus[faction.index()][building.index()] == -1) {
+            factionBuildingBonus[faction.index()][building.index()] = building.getBlue().bonus().get(faction);
+        }
+
+        return factionBuildingBonus[faction.index()][building.index()];
     }
 
     public KingLevel getDesiredKingLevel(FactionNPC faction) {
@@ -154,7 +165,7 @@ public class KingLevels {
         }
 
 
-        return amount;
+        return amount * getPlayerScalingMul();
     }
 
     // For getting amounts that the empire will consume;
@@ -179,7 +190,7 @@ public class KingLevels {
     }
 
     public double getDailyProductionRate(FactionNPC faction, RESOURCE resource) {
-        int currentSecond = (int) TIME.currentSecond();
+        int currentSecond = (int) (TIME.currentSecond() / 60);
         if (productionCacheTick[faction.index()][resource.index()] == currentSecond) {
             return productionCache[faction.index()][resource.index()];
         }

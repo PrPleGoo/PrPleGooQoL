@@ -67,10 +67,10 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
                 RESOURCE resource = outputs.get(j).resource;
                 double ratePrice = faction.stockpile.price.get(resource) * outputs.get(j).rate;
 
-                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
-                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
-                    ratePrice *= 2;
-                }
+//                if (KingLevels.getInstance().getDailyProductionRate(faction, resource) < 0
+//                        || KingLevels.getInstance().getDesiredStockpileAtNextLevel(faction, resource) > faction.stockpile.amount(resource)) {
+//                    ratePrice *= 2;
+//                }
 
                 outputPrice += ratePrice;
             }

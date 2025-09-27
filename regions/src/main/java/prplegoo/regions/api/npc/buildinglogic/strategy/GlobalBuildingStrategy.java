@@ -18,7 +18,7 @@ public class GlobalBuildingStrategy extends MutationStrategy {
 
         INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
 
-        if (region.faction().realm().regions() < 16) {
+        if (region.faction().realm().regions() < 12) {
             return tryLevelDowngrade(levelInt, buildingGenetic, region);
         } else {
             return tryLevelUpgrade(levelInt, buildingGenetic, region);

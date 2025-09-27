@@ -4,6 +4,7 @@ import game.boosting.BOOSTING;
 import game.boosting.BSourceInfo;
 import game.boosting.Boostable;
 import game.boosting.BoostableCat;
+import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.values.GVALUES;
 import init.race.RACES;
@@ -202,7 +203,7 @@ public class RDRaces {
 	}
 
 	public double popSizeTarget(Region reg) {
-		if (reg.capitol()) {
+		if (reg.capitol() && reg.faction() == FACTIONS.player()) {
 			return popTarget.getD(reg)/(double)ENTETIES.MAX;
 		}
 		return CLAMP.d(popTarget.getD(reg)*maxPopI, 0, 1);

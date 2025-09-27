@@ -3,10 +3,13 @@ package world.overlay;
 import game.boosting.BUtil;
 import init.C;
 import init.text.D;
+import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
 import snake2d.Renderer;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.DIR;
+import snake2d.util.sets.LIST;
 import util.rendering.RenderData;
 import util.rendering.RenderData.RenderIterator;
 import util.rendering.ShadowBatch;
@@ -42,7 +45,7 @@ class OverlayMineral extends WorldOverlays.OverlayTileNormal{
 					int am = 0;
 					
 					for (RDBuilding b : RD.BUILDINGS().all) {
-						if (BUtil.value(b.baseFactors, reg) > 1) {
+						if (buildingShouldRender(reg, b)) {
 							am++;
 						}
 						
@@ -54,7 +57,7 @@ class OverlayMineral extends WorldOverlays.OverlayTileNormal{
 					
 					
 					for (RDBuilding b : RD.BUILDINGS().all) {
-						if (BUtil.value(b.baseFactors, reg) > 1) {
+						if (buildingShouldRender(reg, b)) {
 							int ss = (int) (C.TILE_SIZE);
 							int d = (size-ss)/2;
 							COLOR.BLACK.bind();
@@ -75,7 +78,29 @@ class OverlayMineral extends WorldOverlays.OverlayTileNormal{
 		}
 		
 	}
-	
+
+	public boolean buildingShouldRender(Region region, RDBuilding building) {
+		if (building.levelCap.get(region) < 5) {
+			return false;
+		}
+
+		if (!(building.getBlue() instanceof INDUSTRY_HASER)) {
+			return false;
+		}
+
+		LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
+		if (industries.size() != 1) {
+			return false;
+		}
+
+		Industry recipe = industries.get(0);
+		if (recipe.ins().isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void renderAbove(SPRITE_RENDERER r, ShadowBatch s, RenderIterator it) {
 		

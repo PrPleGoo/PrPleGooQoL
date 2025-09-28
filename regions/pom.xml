@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.69.39.20</version>
+    <version>0.69.39.21</version>
 
     <profiles>
         <profile>
@@ -133,13 +133,6 @@ Features:
 - (Experimental and optional) AI empires use production to do work on their stockpiles.
 - Take science boosts and use the school to apply them.
 - Custom NPC behavior to interact with the world map and simulate a real economy.
-
-Known issues:
-- Negative production values could be ignored for a massive early game boost.
-
-Planned features (in order, subject to change):
-- Merge Garrison and Barracks and have them scale to population, higher levels just make better trained/equipped troops.
-- Instruct vassals to produce specific goods.
 
 This mod completely reworks regions.
 As per my idea listed in the suggestion forum on discord.

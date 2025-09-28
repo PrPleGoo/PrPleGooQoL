@@ -108,9 +108,11 @@ final class Shipper {
                             a -= needed;
                             s.current().inc(e, needed);
                             FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, needed);
+                            FACTIONS.player().res().inc(res.res, FResources.RTYPE.TAX, needed);
                         } else {
                             s.current().inc(e, a);
                             FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, a);
+                            FACTIONS.player().res().inc(res.res, FResources.RTYPE.TAX, a);
                             a = 0;
                         }
                     }
@@ -133,20 +135,7 @@ final class Shipper {
     }
 
     private int amount(Faction f, RDResource res, Region r, double seconds) {
-        Growable g = RESOURCES.growable().get(res.res);
-        if (g != null && !(f instanceof FactionNPC)) {
-            double year = TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
-            double harvest = g.seasonalOffset*TIME.secondsPerDay*TIME.years().bitConversion(TIME.days());
-            double now = TIME.currentSecond()%year;
-            double before = (TIME.currentSecond()-seconds)%year;
-            if (now >= harvest && before <= harvest || (now < harvest && before > harvest)) {
-                return(int) Math.ceil(res.boost.get(r)*TIME.years().bitConversion(TIME.days()));
-            }
-            return 0;
-
-        }else {
-            return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI);
-        }
+        return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI);
     }
 
     public void shipAll(Faction f, double days) {

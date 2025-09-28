@@ -27,7 +27,7 @@ public final class RDUpdater {
 
 
 	private final double upD = TIME.secondsPerDay/4;
-	private final double ship = TIME.secondsPerDay;
+	private final double ship = TIME.secondsPerDay * 16;
 	private final double build = TIME.secondsPerDay*2;
 	
 	public RDUpdater(RDInit init){

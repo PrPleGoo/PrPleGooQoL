@@ -24,6 +24,7 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         putter.put(RD.FOOD_CONSUMPTION().getKey(), RD.FOOD_CONSUMPTION().getData());
         putter.put(RD.SLAVERY().getKey(), RD.SLAVERY().getData());
         putter.put(RD.RECIPES().getKey(), RD.RECIPES().getData());
+        putter.put(RD.DEFICITS().getKey(), RD.DEFICITS().getData());
         putter.put(KingLevels.getInstance().stockpileSmoothing.getKey(), KingLevels.getInstance().stockpileSmoothing.getData());
         putter.put(KingLevels.getInstance().soldGoodsTracker.getKey(), KingLevels.getInstance().soldGoodsTracker.getData());
         putter.put(KingLevels.getInstance().kingLevelIndexes.getKey(), KingLevels.getInstance().kingLevelIndexes.getData());
@@ -40,6 +41,7 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         RD.FOOD_CONSUMPTION().putData(gotten);
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
         RD.RECIPES().putData(getter.get(RD.RECIPES()));
+        RD.DEFICITS().putData(getter.get(RD.DEFICITS()));
         KingLevels.getInstance().stockpileSmoothing.putData(getter.get(KingLevels.getInstance().stockpileSmoothing));
         KingLevels.getInstance().soldGoodsTracker.putData(getter.get(KingLevels.getInstance().soldGoodsTracker));
         KingLevels.getInstance().kingLevelIndexes.putData(getter.get(KingLevels.getInstance().kingLevelIndexes));

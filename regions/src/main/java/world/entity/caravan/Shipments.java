@@ -67,6 +67,19 @@ public final class Shipments extends WEntityConstructor<Shipment> {
         return null;
     }
 
+    public Shipment createActualDest(Region start, Region dest, ITYPE type) {
+        COORDINATE cc = WORLD.PATH().rnd(start);
+        if (cc != null) {
+            Shipment c = create();
+            c.add(cc.x(), cc.y(), dest, type);
+            if (c.added())
+                return c;
+
+            free.push(c);
+        }
+        return null;
+    }
+
     public Shipment create(int sx, int sy, Region dest, ITYPE type) {
         Shipment c = create();
         c.add(sx, sy, dest.faction(), type);

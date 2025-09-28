@@ -15,10 +15,7 @@ import game.values.GVALUES;
 import init.race.Race;
 import init.sprite.UI.UI;
 import init.text.D;
-import prplegoo.regions.api.RDFoodConsumption;
-import prplegoo.regions.api.RDRecipe;
-import prplegoo.regions.api.RDSchoolScience;
-import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.*;
 import prplegoo.regions.api.npc.KingLevelBoostAttacher;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.file.FileGetter;
@@ -68,6 +65,7 @@ public class RD extends WorldResource {
     private final RDFoodConsumption foodConsumption;
     private final RDSchoolScience schoolScience;
     private final RDRecipe recipes;
+    private final RDDeficits deficits;
     private final KingLevels kingLevels;
     private RDUpdater updater;
 
@@ -108,6 +106,7 @@ public class RD extends WorldResource {
         foodConsumption = new RDFoodConsumption();
         schoolScience = new RDSchoolScience();
         recipes = new RDRecipe();
+        deficits = new RDDeficits();
         kingLevels = new KingLevels();
         KingLevelBoostAttacher.attachKingLevelBoosts();
 
@@ -280,6 +279,7 @@ public class RD extends WorldResource {
         prof.logStart(this);
 
         updater.update(ds);
+        deficits.update(ds);
         prof.logEnd(this);
     }
 
@@ -394,6 +394,10 @@ public class RD extends WorldResource {
 
     public static RDRecipe RECIPES() {
         return self.recipes;
+    }
+
+    public static RDDeficits DEFICITS() {
+        return self.deficits;
     }
 
     public static Realm REALM(Region reg) {

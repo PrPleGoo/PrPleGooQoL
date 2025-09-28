@@ -22,6 +22,7 @@ import init.type.CLIMATES;
 import lombok.Getter;
 import lombok.var;
 import prplegoo.regions.api.PrPleGooEfficiencies;
+import prplegoo.regions.api.RDDeficits;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
 import prplegoo.regions.api.npc.KingLevels;
@@ -224,9 +225,11 @@ final class Creator {
 				BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
 				for (int ri = 0; ri < outs.size(); ri++) {
 					IndustryResource i = outs.get(ri);
-					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
+
+					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
+
 					RDOutput out = RD.OUTPUT().get(i.resource);
-					l.local.push(bo, out.boost);
+					l.local.push(recipe, out.boost);
 
 					if (li == 0) {
 						desc += i.resource.name + ", ";
@@ -235,9 +238,11 @@ final class Creator {
 
 				for (int ri = 0; ri < ins.size(); ri++) {
 					IndustryResource i = ins.get(ri);
-					BoosterValue bo = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex, all.size());
+
+					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex, all.size());
+
 					RDOutput in = RD.OUTPUT().get(i.resource);
-					l.local.push(bo, in.boost);
+					l.local.push(recipe, in.boost);
 				}
 			}
 
@@ -250,6 +255,7 @@ final class Creator {
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
+		pushDeficitHandling(b, industries);
 		pushFactionBoosts(b);
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
@@ -295,6 +301,28 @@ final class Creator {
 
 		return b;
 
+	}
+
+	private void pushDeficitHandling(RDBuilding building, LIST<Industry> industries) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+				Bo deficit = new Bo(new BSourceInfo("Lacking input material", UI.icons().s.alert), 0, 1, true) {
+					@Override
+					double get(Region reg) {
+						if (reg.faction() != FACTIONS.player()) {
+							return 1;
+						}
+
+						return RD.DEFICITS().getWorstDeficit(reg, building, industries);
+					}
+				};
+
+				deficit.add(building.efficiency);
+			}
+		};
+
+		BOOSTING.connecter(ca);
 	}
 
 	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, ROOM_TEMPLE temple, Json data){

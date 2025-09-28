@@ -2,6 +2,7 @@ package world.region.updating;
 
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
+import game.faction.FResources;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.trade.ITYPE;
@@ -86,39 +87,41 @@ final class Shipper {
         if (c != null) {
             for (RDResource res : RD.OUTPUT().RES) {
                 int a = amount(f, res, r, seconds);
+
+                if (a < 0) {
+                    a = RD.DEFICITS().handleDeficit(res.res, a);
+                }
+
                 if (a == 0)
                 {
                     continue;
                 }
 
-                if (a > 0) {
-                    for (ADSupply s : AD.supplies().get(res.res)) {
-                        for (WArmy e : FACTIONS.player().armies().all()) {
-                            if (!e.recruiting()) {
-                                continue;
-                            }
+                for (ADSupply s : AD.supplies().get(res.res)) {
+                    for (WArmy e : FACTIONS.player().armies().all()) {
+                        if (!e.recruiting()) {
+                            continue;
+                        }
 
-                            int needed = (int) s.needed(e);
-                            if (needed < a) {
-                                a -= needed;
-                                s.current().inc(e, needed);
-                            } else {
-                                s.current().inc(e, a);
-                                a = 0;
-                            }
+                        int needed = (int) s.needed(e);
+                        if (needed < a) {
+                            a -= needed;
+                            s.current().inc(e, needed);
+                            FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, needed);
+                        } else {
+                            s.current().inc(e, a);
+                            FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, a);
+                            a = 0;
                         }
                     }
-
-                    if (a == 0)
-                    {
-                        continue;
-                    }
-
-                    c.loadAndReserve(res.res, a);
                 }
-                else {
-                    f.seller().remove(res.res, -a, ITYPE.tax);
+
+                if (a == 0)
+                {
+                    continue;
                 }
+
+                c.loadAndReserve(res.res, a);
             }
 
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {

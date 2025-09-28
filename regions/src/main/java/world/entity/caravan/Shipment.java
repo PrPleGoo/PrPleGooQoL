@@ -222,6 +222,24 @@ public final class Shipment extends WEntity{
         add();
     }
 
+    void add(int tx, int ty, Region destination, ITYPE type) {
+
+        for (int i = 0; i < payload.length; i++)
+            payload[i] = 0;
+        for (int i = 0; i < slaves.length; i++)
+            slaves[i] = 0;
+        body().moveX1Y1(tx*C.TILE_SIZE, ty*C.TILE_SIZE);
+        path.clear();
+        this.destFaction = (short) destination.index();
+        this.destReg = (short) destination.index();
+
+        path.find(tx, ty, destination.cx(), destination.cy());
+
+        this.type = (byte) type.index;
+
+        add();
+    }
+
     @Override
     protected void addAction() {
 
@@ -231,7 +249,8 @@ public final class Shipment extends WEntity{
     protected void removeAction() {
         if (!constructor().free.isFull())
             constructor().free.push(this);
-        if (destination() == null) {
+        if (destination() == null
+                || !destination().capitol()) {
             return;
         }
         for (RESOURCE r : RESOURCES.ALL()) {

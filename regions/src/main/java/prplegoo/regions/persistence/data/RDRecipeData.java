@@ -37,3 +37,4 @@ public class RDRecipeData {
         this.enabledRecipeIndex = enabledRecipeIndex;
     }
 }
+

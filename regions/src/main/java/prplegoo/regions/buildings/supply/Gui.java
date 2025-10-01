@@ -1,7 +1,6 @@
 package prplegoo.regions.buildings.supply;
 
 import game.GAME;
-import game.faction.FACTIONS;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.settings.S;
@@ -10,7 +9,6 @@ import init.text.D;
 import settlement.main.SETT;
 import settlement.room.infra.logistics.MoveDic;
 import settlement.room.infra.logistics.MoveOrderPullUI;
-import settlement.room.military.supply.SupplyTally.TallyData;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.COORDINATE;
@@ -27,34 +25,27 @@ import util.dic.Dic;
 import util.gui.misc.*;
 import util.info.GFORMAT;
 import view.sett.ui.room.UIRoomModule.UIRoomModuleImp;
-import world.army.AD;
-import world.army.ADSupply;
+import world.region.RD;
 
 import java.util.Arrays;
 
 import static settlement.room.infra.logistics.MoveDic.*;
 
-class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
+class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_LOGISTICS> {
 
-	private static CharSequence ¤¤away = "¤Shipments Underway";
-	private static CharSequence ¤¤ready = "¤Wagons ready";
+	private static final CharSequence underway = "Shipments Underway";
+	private static final CharSequence wagonsReady = "Wagons ready";
 	
-	private static CharSequence ¤¤liveStockD = "¤A {0} is used up for every 10th trip.";
+	private static final CharSequence liveStockD = "A {0} is used up for every 5th trip.";
 
-	private static CharSequence ¤¤consumed = "¤Daily Consumption";
-	private static CharSequence ¤¤needed = "¤Needed Delivery";
-	private static CharSequence ¤¤underway = "¤Deliveries Underway";
-	private static CharSequence ¤¤possible = "¤Possible";
-	private static CharSequence ¤¤possibleD = "¤Some armies can not currently be supplied. To be supplied they need to be fortified and in own or allied territory.";
-	private static CharSequence ¤¤closedD = "¤Your capitol is closed and deliveries can not be undertaken.";
-	private static CharSequence ¤¤deliver = "¤There are no armies that needs the selected resources delivered.";
-	static {
-		D.ts(Gui.class);
-	}
-	
+	private static final CharSequence neededDelivery = "Needed Delivery";
+	private static final CharSequence deliveriesUnderway = "Deliveries Underway";
+	private static final CharSequence closedD = "Your capitol is closed and deliveries can not be undertaken.";
+	private static final CharSequence deliver = "There is no region that needs the selected resources delivered.";
+
 	private final Crate crate;
 	
-	Gui(ROOM_SUPPLY s) {
+	Gui(ROOM_LOGISTICS s) {
 		super(s);
 		crate = new Crate(s);
 	}
@@ -161,36 +152,36 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 		}
 		{
 			GuiSection s = new GuiSection();
-			
+
 			s.addRightC(4, new GStat() {
-				
+
 				@Override
 				public void update(GText text) {
 					cache(g.get());
 					GFORMAT.iofkInv(text, livestock, carts);
 				}
-				
+
 				@Override
 				public void hoverInfoGet(GBox b) {
 					b.title(blueprint.liveStock.name);
 					GText t = b.text();
-					t.add(¤¤liveStockD);
+					t.add(liveStockD);
 					t.insert(0, blueprint.liveStock.name);
 					b.add(t);
 				};
 			}.hh(blueprint.liveStock.icon()));
-			
+
 			s.addRightC(80, new GStat() {
-				
+
 				@Override
 				public void update(GText text) {
 					cache(g.get());
 					GFORMAT.iofk(text, away, carts);
 				}
-			}.hh(UI.icons().m.arrow_right).hoverTitleSet(¤¤away));
-			
+			}.hh(UI.icons().m.arrow_right).hoverTitleSet(underway));
+
 			section.addRelBody(4, DIR.S, s);
-			
+
 		}
 		
 		GuiSection s = new GuiSection();
@@ -198,7 +189,7 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 		int k =0;
 		
 		GText text = new GText(UI.FONT().S, 16);
-		for (RESOURCE res : AD.supplies().resses()) {
+		for (RESOURCE res : RESOURCES.ALL()) {
 			
 			ClickableAbs c = new ClickableAbs(64, 64) {
 				
@@ -233,12 +224,12 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 
 					
 
-					b.textLL(¤¤underway);
+					b.textLL(deliveriesUnderway);
 					b.tab(7);
 					b.add(GFORMAT.i(b.text(), blueprint.tally.spaceReserved.get(g.get(), res) + blueprint.tally.amount.get(g.get(), res)));
 					b.NL();
 					
-					b.textLL(¤¤ready);
+					b.textLL(wagonsReady);
 					b.tab(7);
 					b.add(GFORMAT.i(b.text(), ready(res, g.get())));
 					b.sep();
@@ -268,7 +259,7 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 						
 						b.NL(8);
 						
-						for (TallyData d : blueprint.tally.datas) {
+						for (SupplyTally.TallyData d : blueprint.tally.datas) {
 							b.textLL(d.name);
 							b.tab(7);
 							b.add(GFORMAT.i(b.text(), d.get(g.get(), res)));
@@ -323,40 +314,22 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 	
 	
 	private void hoverNeeded(GBox b, RESOURCE res) {
-		b.textLL(Dic.¤¤Armies);
+		b.textLL(Dic.¤¤Regions);
 		b.NL();
 		
-		int stored = 0;
-		int max = 0;
-		int minimum = 0;
-		double consumed = 0;
-		for (ADSupply s : AD.supplies().get(res)) {
-			max += s.targetAmount(FACTIONS.player());
-			stored += s.current().faction(FACTIONS.player());
-			minimum += s.minimumAmount(FACTIONS.player());
-			consumed += -s.consumedPerDayCurrent(FACTIONS.player());
-		}
-		
-		b.textL(Dic.¤¤Stored);
+		int supplied = RD.DEFICITS().getSupplies(res);
+		int deficit = -RD.DEFICITS().getDeficit(res);
+
+		b.textL(deliveriesUnderway);
 		b.tab(6);
-		b.add(GFORMAT.i(b.text(), stored));
+		b.add(GFORMAT.i(b.text(), supplied));
 		b.NL();
 		
-		b.textL(Dic.¤¤Minimum);
+		b.textL(Dic.¤¤Missing);
 		b.tab(6);
-		b.add(GFORMAT.i(b.text(), minimum));
+		b.add(GFORMAT.i(b.text(), deficit));
 		b.NL();
-		
-		b.textL(Dic.¤¤Max);
-		b.tab(6);
-		b.add(GFORMAT.i(b.text(), max));
-		b.NL();
-		
-		b.textL(¤¤consumed);
-		b.tab(6);
-		b.add(GFORMAT.f0(b.text(), consumed));
-		b.NL();
-		
+
 		b.textL(SETT.ROOMS().STOCKPILE.info.names);
 		b.tab(6);
 		b.add(GFORMAT.i(b.text(), SETT.ROOMS().STOCKPILE.tally().amountReservable.get(res)));
@@ -364,24 +337,13 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 		
 		b.NL(4);
 		
-		b.textLL(¤¤needed);
+		b.textLL(neededDelivery);
 		b.tab(6);
 		b.add(GFORMAT.i(b.text(), blueprint.cache.needed(res)));
 		b.NL();
-		
-		int dd = blueprint.cache.deliverableSecret(res);
-		b.textLL(¤¤possible);
-		b.tab(6);
-		b.add(GFORMAT.i(b.text(), dd));
-		b.NL();
-		
-		if (dd < blueprint.cache.needed(res)){
-			b.error(¤¤possibleD);
-			b.NL();
-		}
-		
+
 		if (SETT.ENTRY().isClosed()) {
-			b.error(¤¤closedD);
+			b.error(closedD);
 			b.NL();
 		}
 		
@@ -395,28 +357,25 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 
 		int k =0;
 		
-		for (RESOURCE res : AD.supplies().resses()) {
+		for (RESOURCE res : RESOURCES.ALL()) {
 			
 			ClickableAbs c = new ClickableAbs(64, 40) {
 				
 				@Override
 				protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
 					GButt.ButtPanel.renderBG(r, isActive, isSelected, isHovered, body);
-					
-					double stored = 0;
-					double max = 0;
-					
-					for (ADSupply s : AD.supplies().get(res)) {
-						max += s.targetAmount(FACTIONS.player());
-						stored += s.current().faction(FACTIONS.player());
+
+					double supplied = RD.DEFICITS().getSupplies(res);
+					double deficit = -RD.DEFICITS().getDeficit(res);
+
+					if (deficit > 0) {
+						double d = supplied / deficit;
+						supplied += blueprint.tally.amount.total(res) + blueprint.tally.spaceReserved.total(res);
+						double d2 = supplied / deficit;
+
+						GMeter.renderDelta(r, d, d2, body.x1() + 5, body.x2() - 5, body.y1() + 5, body.y2() - 5, false, false);
 					}
-					
-					double d = stored/max;
-					stored += blueprint.tally.amount.total(res)+blueprint.tally.spaceReserved.total(res);
-					double d2 = stored/max;
-					if (max > 0)
-						GMeter.renderDelta(r, d, d2, body.x1()+5, body.x2()-5, body.y1()+5, body.y2()-5, false, false);
-					
+
 					res.icon().renderC(r, body.cX(), body.cY());
 					GButt.ButtPanel.renderFrame(r, body);
 					
@@ -453,13 +412,13 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 
 					hoverNeeded(b, res);
 
-					b.textLL(¤¤underway);
+					b.textLL(deliveriesUnderway);
 					b.tab(7);
 					b.add(GFORMAT.i(b.text(), blueprint.tally.amount.total(res)+blueprint.tally.spaceReserved.total(res)));
 					b.NL();
 					
 					if (S.get().developer) {
-						for (TallyData d : blueprint.tally.datas) {
+						for (SupplyTally.TallyData d : blueprint.tally.datas) {
 							b.textLL(d.name);
 							b.tab(7);
 							b.add(GFORMAT.i(b.text(), d.total(res)));
@@ -488,7 +447,7 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 	@Override
 	protected void problem(SupplyInstance i, Stack<Str> free, LISTE<CharSequence> errors, LISTE<CharSequence> warnings) {
 		if (SETT.ENTRY().isClosed()) {
-			errors.add(¤¤closedD);
+			errors.add(closedD);
 		}
 		
 		boolean deliver = false;
@@ -501,11 +460,11 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_SUPPLY> {
 		}
 		
 		if (deliver) {
-			warnings.add(¤¤deliver);
+			warnings.add(Gui.deliver);
 		}
 	}
 	
-	private int[] ready = new int[RESOURCES.ALL().size()];
+	private final int[] ready = new int[RESOURCES.ALL().size()];
 	private int livestock;
 	private int carts;
 	private int away;

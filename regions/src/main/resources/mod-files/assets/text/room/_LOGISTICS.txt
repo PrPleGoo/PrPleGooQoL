@@ -1,0 +1,34 @@
+INFO: {
+	NAME: "Regional Supply Distribution Depot",
+	NAMES: "Regional Supply Distribution Depots",
+	DESC: "Needed to supply region on the world map with crafting materials.",
+	WIKI: {
+		CATEGORY: "Logistics",
+		NAME: "Regional Supply Distribution Depot",
+		TEXT: "This building can be used to send supplies to regions on the world map. Workers will gather the selected resources here and then transport them off map. Note that regions that supply themselves with crafting materials have no such need for logistics.",
+	},
+},
+
+WORK: {
+	TITLE: "Trader",
+	VERB: "Delivering crafting supplies to regions",
+},
+
+STATS: [
+	{
+		NAME: "Workers",
+		DESC: "The amount of workers that can be employed.",
+	},
+	{
+		NAME: "Storage",
+		DESC: "The amount of storage",
+	},
+],
+
+ITEMS: [
+	{
+		NAME: "Crates",
+		DESC: "Where goods are stored.",
+	},
+],
+

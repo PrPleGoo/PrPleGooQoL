@@ -8,7 +8,6 @@ import settlement.room.infra.logistics.MoveDic;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.sets.ArrayListGrower;
 import util.dic.Dic;
-import world.army.AD;
 
 import java.util.Arrays;
 
@@ -20,13 +19,13 @@ public final class SupplyTally{
 	public final TallyData crates = new TallyData(MoveDic.¤¤crates);
 	public final TallyData spaceReserved = new TallyData(Dic.¤¤Inbound);
 	public final TallyData amount = new TallyData(MoveDic.¤¤Stored);
-	private final ROOM_SUPPLY b;
+	private final ROOM_LOGISTICS b;
 
 
 	
 
 	
-	public SupplyTally(ROOM_SUPPLY b) {
+	public SupplyTally(ROOM_LOGISTICS b) {
 		this.b = b;
 	}
 
@@ -130,14 +129,14 @@ public final class SupplyTally{
 	
 	RESOURCE getNewCrate(int ai, RBIT allowed) {
 		
-		for (int i = 0; i < AD.supplies().resses().size(); i++) {
-			ai %= AD.supplies().resses().size();
-			RESOURCE res = AD.supplies().resses().get(ai);
+		for (int i = 0; i < RESOURCES.ALL().size(); i++) {
+			ai %= RESOURCES.ALL().size();
+			RESOURCE res = RESOURCES.ALL().get(ai);
 			if (allowed.has(res)) {
 				int am = b.cache.needed(res); 
 		
 			
-				if (crates.total(res)* ROOM_SUPPLY.STORAGE < am)
+				if (crates.total(res)* ROOM_LOGISTICS.STORAGE < am)
 					return res;
 			}
 			ai++;
@@ -166,7 +165,7 @@ public final class SupplyTally{
 		
 		tmp.clear();
 		
-		for (RESOURCE res : AD.supplies().resses()) {
+		for (RESOURCE res : RESOURCES.ALL()) {
 			if (!allowed.has(res))
 				continue;
 			
@@ -179,7 +178,7 @@ public final class SupplyTally{
 				}
 			}else if (otherCapacity(ins, res) > 0) {
 				int am = b.cache.needed(res);
-				am -= crates.total(res)* ROOM_SUPPLY.STORAGE;
+				am -= crates.total(res)* ROOM_LOGISTICS.STORAGE;
 				if (am > 0) {
 					tmp.or(res);
 				}
@@ -191,11 +190,11 @@ public final class SupplyTally{
 	}
 	
 	private int capacity(SupplyInstance ins, RESOURCE res) {
-		return crates.get(ins, res)* ROOM_SUPPLY.STORAGE - spaceReserved.get(ins, res) - amount.get(ins, res);
+		return crates.get(ins, res)* ROOM_LOGISTICS.STORAGE - spaceReserved.get(ins, res) - amount.get(ins, res);
 	}
 	
 	int otherCapacity(SupplyInstance ins, RESOURCE res) {
-		return unusedCrates(ins)* ROOM_SUPPLY.STORAGE;
+		return unusedCrates(ins)* ROOM_LOGISTICS.STORAGE;
 	}
 	
 	int capacity(SupplyInstance ins, RESOURCE res, RBIT allowed) {

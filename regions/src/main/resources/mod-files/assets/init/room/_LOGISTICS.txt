@@ -1,0 +1,56 @@
+ICON: 32->LOGISTICS->0,
+RESOURCES: [STONE,WOOD,],
+AREA_COSTS: [0,0,],
+FLOOR: WOOD_SQUARE,
+FLOOR2: STONE_BRICK,
+FENCE: WOOD,
+MINI_COLOR: 48_139_204,
+LIVESTOCK: LIVESTOCK,
+WORK: {
+	SHIFT_OFFSET: 0.25,
+	SOUND: DUMMY,
+	USES_TOOL: true,
+	FULLFILLMENT: 0.8,
+},
+ITEMS: [
+	{
+		COSTS: [5,8,],
+		STATS: [1,1,],
+	},
+],
+SPRITES: {
+	TORCH_1X1: [
+		{
+			ROTATES: false,
+			TINT: true,
+			SHADOW_LENGTH: 5,
+			FRAMES: [
+				TABLES: 4,
+			],
+		},
+	],
+	WORKTABLE_1X1: [
+		{
+			SHADOW_LENGTH: 5,
+			FRAMES: [
+				TABLES: 0,
+			],
+		},
+		{
+			SHADOW_LENGTH: 5,
+			FRAMES: [
+				TABLES: 6,
+			],
+		},
+	],
+	FENCE_COMBO: [
+		{
+			TINT: true,
+			SHADOW_LENGTH: 4,
+			SHADOW_HEIGHT: 2,
+			FRAMES:[
+				FENCE: 1,
+			],
+		},
+	],
+},

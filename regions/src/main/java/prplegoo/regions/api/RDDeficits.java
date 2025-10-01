@@ -1,6 +1,7 @@
 package prplegoo.regions.api;
 
 import game.faction.FACTIONS;
+import game.faction.FResources;
 import game.faction.Faction;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
@@ -8,7 +9,6 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDDeficitData;
-import prplegoo.regions.persistence.data.RDRecipeData;
 import settlement.room.industry.module.Industry;
 import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 public class RDDeficits  implements IDataPersistence<RDDeficitData> {
     private static final double timer = TIME.secondsPerDay;
     private int[] deficits;
+    private int[] supplies;
     private int[] unresolvedDeficits;
     private double since = 0;
 
@@ -34,6 +35,7 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
 
     private void initialize() {
         deficits = new int[RESOURCES.ALL().size()];
+        supplies = new int[RESOURCES.ALL().size()];
         unresolvedDeficits = new int[RESOURCES.ALL().size()];
     }
 
@@ -44,7 +46,7 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
 
     @Override
     public RDDeficitData getData() {
-        return new RDDeficitData(deficits, unresolvedDeficits, since);
+        return new RDDeficitData(deficits, supplies, unresolvedDeficits, since);
     }
 
     @Override
@@ -57,6 +59,8 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
 
         LOG.ln("RDDeficits.onGameSaveLoaded: data found");
         if (deficits.length != data.deficits.length
+                || data.supplies == null
+                || supplies.length != data.supplies.length
                 || unresolvedDeficits.length != data.unresolvedDeficits.length)
         {
             LOG.ln("RDDeficits.onGameSaveLoaded: data found, length difference detected, not writing");
@@ -65,6 +69,7 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
 
         LOG.ln("RDDeficits.onGameSaveLoaded: data found, writing");
         deficits = data.deficits;
+        supplies = data.supplies;
         unresolvedDeficits = data.unresolvedDeficits;
         since = data.since;
     }
@@ -90,7 +95,7 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
         for (int i = 0; i < RESOURCES.ALL().size(); i++) {
             RESOURCE resource = RESOURCES.ALL().get(i);
 
-            int toResolve = Math.min(Math.abs(deficits[i]), player.res().getAvailable(resource));
+            int toResolve = Math.min(Math.abs(deficits[i]), supplies[i]);
 
             if (toResolve > 0) {
                 Region caravanDestination = findRandomRegionConsuming(resource);
@@ -103,8 +108,9 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
                     caravan.loadAlreadyReserved(resource, toResolve);
                 }
 
-                player.seller().remove(resource, toResolve, ITYPE.tax);
+                player.res().dec(resource, FResources.RTYPE.TAX, toResolve);
                 deficits[i] += toResolve;
+                supplies[i] -= toResolve;
             }
 
             unresolvedDeficits[i] = deficits[i];
@@ -139,13 +145,13 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
     }
 
     private double getDeficitModifier(RESOURCE resource) {
-        if (unresolvedDeficits[resource.index()] >= 0) {
+        if (unresolvedDeficits[resource.index()] >= -80) {
             return 1;
         }
 
-        double shortage = (100 + unresolvedDeficits[resource.index()]);
+        double shortage = (1000 + unresolvedDeficits[resource.index()]);
 
-        double result = CLAMP.d(shortage / 100.0, 0, 1);
+        double result = CLAMP.d(shortage / 1000.0, 0, 1);
 
         if (result < 0.1) {
             return 0;
@@ -166,5 +172,21 @@ public class RDDeficits  implements IDataPersistence<RDDeficitData> {
         }
 
         return worst;
+    }
+
+    public int getOutstandingDeficit(RESOURCE resource) {
+        return -deficits[resource.index()] - supplies[resource.index()];
+    }
+
+    public int getDeficit(RESOURCE resource) {
+        return deficits[resource.index()];
+    }
+
+    public int getSupplies(RESOURCE resource) {
+        return supplies[resource.index()];
+    }
+
+    public void addSupplies(RESOURCE resource, int amount) {
+        supplies[resource.index()] += amount;
     }
 }

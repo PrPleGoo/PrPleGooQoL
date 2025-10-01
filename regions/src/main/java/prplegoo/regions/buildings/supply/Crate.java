@@ -15,7 +15,6 @@ import snake2d.util.bit.Bits;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.datatypes.Coo;
 import snake2d.util.datatypes.DIR;
-import world.army.AD;
 
 import static settlement.main.SETT.PATH;
 
@@ -35,10 +34,10 @@ final class Crate {
 	private final RoomBits bAwayres =				new BB(		new Bits(0x20000000));
 	private final RoomBits bState =	new RoomBits(coo,			new Bits(0xC0000000));
 	
-	private final ROOM_SUPPLY b;
+	private final ROOM_LOGISTICS b;
 	private SupplyInstance ins;
 	
-	protected Crate(ROOM_SUPPLY b){
+	protected Crate(ROOM_LOGISTICS b){
 		this.b = b;
 	}
 	
@@ -108,7 +107,7 @@ final class Crate {
 		if (goIsReady() != 0) {
 			return 0;
 		}
-		if (bAmount.get() < ROOM_SUPPLY.STORAGE && bState.get() < bState.max()) {
+		if (bAmount.get() < ROOM_LOGISTICS.STORAGE && bState.get() < bState.max()) {
 			bState.inc(ins, 1);
 			return 0;
 		}
@@ -123,7 +122,7 @@ final class Crate {
 			return 0;
 		
 		am = b.cache.deliver(res, am);
-		FACTIONS.player().res().inc(res, RTYPE.ARMY_SUPPLY, -am);
+		FACTIONS.player().res().inc(res, RTYPE.TAX, -am);
 		bAmount.inc(ins, -am);
 		if (am <= 0)
 			return 0;
@@ -146,7 +145,7 @@ final class Crate {
 		
 		bAway.set(ins, 1);
 		
-		if (ins.liveCount++> 10) {
+		if (ins.liveCount++> 5) {
 			ins.liveCount = 0;
 			bAnimals.inc(ins, -1);
 		}
@@ -227,8 +226,8 @@ final class Crate {
 			
 			
 			
-			if (resAmount() + amount > ROOM_SUPPLY.STORAGE)
-				throw new RuntimeException(resource() + " " + resAmount() + " " + amount + " " + ROOM_SUPPLY.STORAGE);
+			if (resAmount() + amount > ROOM_LOGISTICS.STORAGE)
+				throw new RuntimeException(resource() + " " + resAmount() + " " + amount + " " + ROOM_LOGISTICS.STORAGE);
 			
 			bReservedSpace.inc(ins, -amount);
 			bAmount.inc(ins, amount);
@@ -242,7 +241,7 @@ final class Crate {
 		@Override
 		public int storageReservable() {
 			
-			int am = ROOM_SUPPLY.STORAGE - resAmount() - storageReserved();
+			int am = ROOM_LOGISTICS.STORAGE - resAmount() - storageReserved();
 			if (resource() == null)
 				return am;
 			int m = b.tally.fetchAmount(resource());
@@ -268,7 +267,7 @@ final class Crate {
 			if (i == noRes)
 				return null;
 			i--;
-			if (i >= RESOURCES.ALL().size() || AD.supplies().get(RESOURCES.ALL().get(i)).size() == 0) {
+			if (i >= RESOURCES.ALL().size()) {
 				return null;
 			}
 			return RESOURCES.ALL().get(i);

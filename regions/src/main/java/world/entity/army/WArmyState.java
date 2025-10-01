@@ -13,6 +13,7 @@ import init.config.Config;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.misc.ACTION;
 import snake2d.util.rnd.RND;
@@ -148,8 +149,16 @@ public abstract class WArmyState implements INDEXED{
 				
 				if (to != null) {
 					for (RESOURCE res : RESOURCES.ALL()) {
-						
-						int am = (int) Math.ceil(RD.OUTPUT().get(res).loot(reg)*d*10.0);
+
+						double output = RD.OUTPUT().get(res).loot(reg)*d*10.0;
+						if (KingLevels.isActive() && reg.faction() instanceof FactionNPC) {
+							output /= KingLevels.getInstance().getPlayerScalingMul();
+							output /= 10;
+						}
+
+						int am = (int) (KingLevels.isActive()
+								? Math.round(output)
+								: Math.ceil(output));
 						
 						if (am > 0 && to != null) {
 							if (s == null) {

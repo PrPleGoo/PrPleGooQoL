@@ -7,6 +7,7 @@ import java.io.IOException;
 import game.boosting.BOOSTING;
 import game.boosting.Boostable;
 import game.debug.Profiler;
+import prplegoo.regions.buildings.supply.ROOM_LOGISTICS;
 import settlement.main.SETT;
 import settlement.misc.util.FSERVICE;
 import settlement.path.AVAILABILITY;
@@ -141,6 +142,7 @@ public final class ROOMS extends TileMap.Resource {
 	public final ROOM_STOCKPILE STOCKPILE = new ROOM_STOCKPILE(init, CATS.LOGISTICS);
 	public final ROOM_EXPORT EXPORT = new ROOM_EXPORT(init, CATS.LOGISTICS);
 	public final ROOM_IMPORT IMPORT = new ROOM_IMPORT(init, CATS.LOGISTICS);
+	public final ROOM_LOGISTICS LOGISTICS = new ROOM_LOGISTICS(init, CATS.LOGISTICS);
 	public final ROOM_SUPPLY SUPPLY = new ROOM_SUPPLY(init, CATS.MILITARY);
 	public final ROOM_HAULER HAULER = new ROOM_HAULER(init, CATS.LOGISTICS);
 	public final ROOM_TRANSPORT TRANSPORT = new ROOM_TRANSPORT(init, CATS.LOGISTICS);

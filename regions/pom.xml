@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.69.39.21</version>
+    <version>0.69.39.22</version>
 
     <profiles>
         <profile>
@@ -118,46 +118,46 @@ This mod is for you if:
 
 Features:
 - You can build refineries and workshops in regions.
+- Ship resources to regions to keep them crafting.
 - Region production reworked, basing output numbers on available population.
-- You get 1 workforce for every 18.5 people in a region.
+- You get workforce based on a region's population.
 - Population numbers in regions have been reduced drastically.
+- More negative health to account for lower population levels.
+- A food stall to use food instead of admin to grow cities.
 - Production scaling now goes off the "normal" values, instead of weird "region" values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
-- Negative production values are grabbed from your capital.
+- School reworked to apply your science to regions.
 - Law gives you PoWs as tax from a region.
-- A food stall to use food instead of admin to grow cities.
 - Slaver's guild building that specializes in PoW output.
-- More negative health to account for lower population levels.
-- Max level of region building based on deposits/prospect instead of scaling output.
-- Supply armies directly from your regions.
-- (Experimental and optional) AI empires use production to do work on their stockpiles.
-- Take science boosts and use the school to apply them.
+- Max level of region building based on terrain/prospect instead of scaling output.
+- AI empires use production to do work on their stockpiles.
 - Custom NPC behavior to interact with the world map and simulate a real economy.
 
 This mod completely reworks regions.
 As per my idea listed in the suggestion forum on discord.
-A lot of that idea is either not implemented, WIP or deemed too difficult to mod.
 Basically the idea is that regions are just abstracted cities that work on pretty much the same rules as your capital does.
 I never really liked that they seemed to operate on a completely separate set of rules.
 
 This also has a lot of balance implications, so make sure you are ready to relearn region management!
 Not compatible with existing saves!
-I would also not advise you combine this mod with any of the mods that are not confirmed to be compatible (list later on).
+Saves made with this mod cannot be loaded without it!
+I would also not advise you combine this mod with any of the mods that are not confirmed to be compatible (list bellow).
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
 - PrPleGoo's Quality of Life Mod, https://steamcommunity.com/sharedfiles/filedetails/?id=3260671025
 
-If you use a different mod than any of the above and notice no game breaking issues, please let me and other users know!
+If you use a different mod than any of the above and notice no game breaking issues, please let me know so I can update the list!
 
 Enjoy!
 
 - a fellow despot
 
-Available on github.
+Available on github: https://github.com/PrPleGoo/PrPleGooQoL
 
 Credits:
 - Redic, thumbnail art
-- Argoon, technical support.
+- Argoon, technical support
+- Dinosaure, refactoring
         </mod.info>
         <game.version.major>69</game.version.major>
         <game.version.minor>39</game.version.minor>

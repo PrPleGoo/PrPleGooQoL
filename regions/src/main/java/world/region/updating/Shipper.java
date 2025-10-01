@@ -97,32 +97,6 @@ final class Shipper {
                     continue;
                 }
 
-                for (ADSupply s : AD.supplies().get(res.res)) {
-                    for (WArmy e : FACTIONS.player().armies().all()) {
-                        if (!e.recruiting()) {
-                            continue;
-                        }
-
-                        int needed = (int) s.needed(e);
-                        if (needed < a) {
-                            a -= needed;
-                            s.current().inc(e, needed);
-                            FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, needed);
-                            FACTIONS.player().res().inc(res.res, FResources.RTYPE.TAX, needed);
-                        } else {
-                            s.current().inc(e, a);
-                            FACTIONS.player().res().dec(res.res, FResources.RTYPE.ARMY_SUPPLY, a);
-                            FACTIONS.player().res().inc(res.res, FResources.RTYPE.TAX, a);
-                            a = 0;
-                        }
-                    }
-                }
-
-                if (a == 0)
-                {
-                    continue;
-                }
-
                 c.loadAndReserve(res.res, a);
             }
 

@@ -4,6 +4,7 @@ import game.GAME;
 import init.resources.RBIT;
 import init.resources.RBIT.RBITImp;
 import init.resources.RESOURCE;
+import init.resources.RESOURCES;
 import settlement.entity.humanoid.Humanoid;
 import settlement.main.SETT;
 import settlement.maintenance.ROOM_DEGRADER;
@@ -23,7 +24,6 @@ import settlement.room.main.job.ROOM_RADIUS.ROOM_RADIUS_INSTANCE;
 import settlement.room.main.util.RoomInit;
 import snake2d.LOG;
 import snake2d.util.datatypes.COORDINATE;
-import world.army.AD;
 
 import static settlement.main.SETT.ROOMS;
 
@@ -45,7 +45,7 @@ final class SupplyInstance extends RoomInstance implements JOBMANAGER_HASER, ROO
 	byte goCount;
 	private boolean prio = true;
 
-	SupplyInstance(ROOM_SUPPLY blueprint, TmpArea area, RoomInit init) {
+	SupplyInstance(ROOM_LOGISTICS blueprint, TmpArea area, RoomInit init) {
 		super(blueprint, area, init);
 		jobs = new Jobs(this);
 		int w = (int) (blueprint.constructor.workers.get(this));
@@ -136,8 +136,8 @@ final class SupplyInstance extends RoomInstance implements JOBMANAGER_HASER, ROO
 	}
 	
 	@Override
-	public ROOM_SUPPLY blueprintI() {
-		return ROOMS().SUPPLY;
+	public ROOM_LOGISTICS blueprintI() {
+		return ROOMS().LOGISTICS;
 	}
 
 	@Override
@@ -375,7 +375,7 @@ final class SupplyInstance extends RoomInstance implements JOBMANAGER_HASER, ROO
 	@Override
 	public void copyFrom(MoveOrderPullInstance same) {
 		SupplyInstance ins = (SupplyInstance) same;
-		for (RESOURCE res : AD.supplies().resses()) {
+		for (RESOURCE res : RESOURCES.ALL()) {
 			if (allowed().has(res) != ins.allowed().has(res)) {
 				allowedToggle(res);
 				reset();

@@ -46,21 +46,21 @@ final class Constructor extends Furnisher{
 			return GFORMAT.i(t, (int)value);
 		}
 	};
-	
+
 	final FurnisherStat storage = new FurnisherStat(this, 0) {
-		
+
 		@Override
 		public double get(AREA area, double fromItems) {
-			return fromItems* ROOM_SUPPLY.STORAGE;
+			return fromItems* ROOM_LOGISTICS.STORAGE;
 		}
-		
+
 		@Override
 		public GText format(GText t, double value) {
 			return GFORMAT.i(t, (int)value);
 		}
 	};
-	
-	protected Constructor(ROOM_SUPPLY b, RoomInitData init)
+
+	protected Constructor(ROOM_LOGISTICS b, RoomInitData init)
 			throws IOException {
 		super(init, 1, 2, 88, 44);
 	
@@ -132,10 +132,10 @@ final class Constructor extends Furnisher{
 			}
 		};
 		
-		RoomSprite smarker = new RoomSprite1x1(sp, "OVERLAY_1X1") {
+		RoomSprite smarker = new RoomSprite1x1(sp, "WORKTABLE_1X1") {
 			@Override
 			public void renderBelow(SPRITE_RENDERER r, ShadowBatch s, int data, RenderIterator it, double degrade) {
-				OPACITY.O50.bind();
+				OPACITY.O100.bind();
 				super.render(r, s, data, it, degrade, false);
 				OPACITY.unbind();
 			};
@@ -167,39 +167,35 @@ final class Constructor extends Furnisher{
 		FurnisherItemTile __ = new FurnisherItemTile(this, false, null, AVAILABILITY.ROOM, false);
 		
 		new FurnisherItem(new FurnisherItemTile[][] {
-			{ss,__,oo,__,oo,__,ss},
-			{ff,__,aa,__,aa,__,ff},
-			{ff,__,cc,__,cc,__,ff},
-			{ff,__,__,__,__,__,ff},
+			{ss,oo,__,oo,__,oo,ss},
+			{ff,aa,__,aa,__,aa,ff},
+			{ff,cc,__,cc,__,cc,ff},
 			{ff,ff,ff,ff,ff,ff,ff},
-		}, 2);
-		
-		new FurnisherItem(new FurnisherItemTile[][] {
-			{ss,__,oo,__,oo,__,oo,__,ss},
-			{ff,__,aa,__,aa,__,aa,__,ff},
-			{ff,__,cc,__,cc,__,cc,__,ff},
-			{ff,__,__,__,__,__,__,__,ff},
-			{ff,ff,ff,ff,ff,ff,ff,ff,ff},
 		}, 3);
 		
 		new FurnisherItem(new FurnisherItemTile[][] {
-			{ss,__,oo,__,oo,__,oo,__,oo,__,ss},
-			{ff,__,aa,__,aa,__,aa,__,aa,__,ff},
-			{ff,__,cc,__,cc,__,cc,__,cc,__,ff},
-			{ff,__,__,__,__,__,__,__,__,__,ff},
-			{ff,ff,ff,ff,ff,ff,ff,ff,ff,ff,ff},
+			{ss,oo,__,oo,__,oo,__,oo,ss},
+			{ff,aa,__,aa,__,aa,__,aa,ff},
+			{ff,cc,__,cc,__,cc,__,cc,ff},
+			{ff,ff,ff,ff,ff,ff,ff,ff,ff},
 		}, 4);
 		
 		new FurnisherItem(new FurnisherItemTile[][] {
-			{ss,__,oo,__,oo,__,oo,__,oo,__,ss},
-			{ff,__,aa,__,aa,__,aa,__,aa,__,ff},
-			{ff,__,cc,__,cc,__,cc,__,cc,__,ff},
-			{ff,__,oo,__,oo,__,oo,__,oo,__,ff},
-			{ff,__,aa,__,aa,__,aa,__,aa,__,ff},
-			{ff,__,cc,__,cc,__,cc,__,cc,__,ff},
-			{ff,__,__,__,__,__,__,__,__,__,ff},
+			{ss,oo,__,oo,__,oo,__,oo,__,oo,ss},
+			{ff,aa,__,aa,__,aa,__,aa,__,aa,ff},
+			{ff,cc,__,cc,__,cc,__,cc,__,cc,ff},
 			{ff,ff,ff,ff,ff,ff,ff,ff,ff,ff,ff},
-		}, 8);
+		}, 5);
+		
+		new FurnisherItem(new FurnisherItemTile[][] {
+			{ss,oo,__,oo,__,oo,__,oo,__,oo,ss},
+			{ff,aa,__,aa,__,aa,__,aa,__,aa,ff},
+			{ff,cc,__,cc,__,cc,__,cc,__,cc,ff},
+			{ff,oo,__,oo,__,oo,__,oo,__,oo,ff},
+			{ff,aa,__,aa,__,aa,__,aa,__,aa,ff},
+			{ff,cc,__,cc,__,cc,__,cc,__,cc,ff},
+			{ff,ff,ff,ff,ff,ff,ff,ff,ff,ff,ff},
+		}, 10);
 		
 		
 		flush(3);
@@ -235,8 +231,8 @@ final class Constructor extends Furnisher{
 	}
 
 	@Override
-	public ROOM_SUPPLY blue() {
-		return SETT.ROOMS().SUPPLY;
+	public ROOM_LOGISTICS blue() {
+		return SETT.ROOMS().LOGISTICS;
 	}
 
 }

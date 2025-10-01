@@ -11,9 +11,6 @@ LEVELS: [
 	{
 		ICON: 32->world->CENTRE->0,
 		CREDITS: 500,
-		BOOST: {
-			WORLD_TAX_INCOME>ADD: 100,
-		},
 		BOOST_GLOBAL: {
 			CIVIC_GOV>ADD: -1,
 		},

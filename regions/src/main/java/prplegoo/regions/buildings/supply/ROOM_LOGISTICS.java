@@ -21,21 +21,19 @@ import view.sett.ui.room.UIRoomModule;
 
 import java.io.IOException;
 
-public final class ROOM_SUPPLY extends RoomBlueprintIns<SupplyInstance> implements ROOM_RADIUS, ROOM_EMPLOY_AUTO{
+public final class ROOM_LOGISTICS extends RoomBlueprintIns<SupplyInstance> implements ROOM_RADIUS, ROOM_EMPLOY_AUTO{
 
-	public static final int STORAGE = 80;
+	public static final int STORAGE = 160;
 	final Constructor constructor;
 	final Crate crate = new Crate(this);
 	final Cache cache = new Cache(this);
 	public final SupplyTally tally = new SupplyTally(this);
 	final RESOURCE liveStock;
 	
-	public ROOM_SUPPLY(RoomInitData init, RoomCategorySub cat) throws IOException {
-		super(0, init, "_MILITARY_SUPPLY", cat);
+	public ROOM_LOGISTICS(RoomInitData init, RoomCategorySub cat) throws IOException {
+		super(0, init, "_LOGISTICS", cat);
 		constructor = new Constructor(this, init);
 		liveStock = RESOURCES.map().read("LIVESTOCK", init.data());
-		
-
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import game.faction.npc.FactionNPC;
 import init.config.Config;
 import init.race.RACES;
 import init.race.Race;
+import prplegoo.regions.api.gen.KingLevelRecruiter;
+import prplegoo.regions.api.npc.KingLevel;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
@@ -31,6 +33,11 @@ final class Recruiter {
 	};
 
 	public void recruit(FactionNPC f) {
+		if (KingLevels.isActive()) {
+			KingLevelRecruiter.recruit(f);
+
+			return;
+		}
 		
 		if (f.realm().all().size() == 0)
 			return;

@@ -1,11 +1,11 @@
 LEVELS: [
     {
-        GOV_POINTS: 35,
+        GOV_POINTS: 40,
         GOV_POINTS_PER_REGION: 30,
-        CAPITAL_POPULATION_CAPACITY_MUL: 1.50,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.25,
         INCOME: 15000,
         TECH_APPLIED: 0.15,
-        CONSCRIPT_MUL: 1.00,
+        CONSCRIPT_MUL: 0.25,
         MAX_REGIONS: 2,
 
         CONSUMPTION: {
@@ -16,12 +16,12 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 65,
+        GOV_POINTS: 75,
         GOV_POINTS_PER_REGION: 40,
-        CAPITAL_POPULATION_CAPACITY_MUL: 1.75,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.50,
         INCOME: 20000,
         TECH_APPLIED: 0.40,
-        CONSCRIPT_MUL: 1.00,
+        CONSCRIPT_MUL: 0.50,
         MAX_REGIONS: 8,
 
         CONSUMPTION: {
@@ -32,17 +32,17 @@ LEVELS: [
             TOOL: 0.001,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.025,
+            EDIBLE: 0.01,
             STRUCTURE: 0.0001,
         },
     },
     {
-        GOV_POINTS: 90,
+        GOV_POINTS: 105,
         GOV_POINTS_PER_REGION: 50,
-        CAPITAL_POPULATION_CAPACITY_MUL: 2.00,
+        CAPITAL_POPULATION_CAPACITY_MUL: 1.75,
         INCOME: 25000,
         TECH_APPLIED: 0.75,
-        CONSCRIPT_MUL: 1.00,
+        CONSCRIPT_MUL: 0.75,
         MAX_REGIONS: 20,
 
         CONSUMPTION: {
@@ -65,9 +65,9 @@ LEVELS: [
         },
     },
     {
-        GOV_POINTS: 150,
+        GOV_POINTS: 170,
         GOV_POINTS_PER_REGION: 60,
-        CAPITAL_POPULATION_CAPACITY_MUL: 2.25,
+        CAPITAL_POPULATION_CAPACITY_MUL: 2.00,
         INCOME: 30000,
         TECH_APPLIED: 1.00,
         CONSCRIPT_MUL: 1.00,

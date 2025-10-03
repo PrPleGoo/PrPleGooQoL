@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
-public class KingLevelIndexData {
-    public byte[] npcLevels;
-    public int[] nextPickYear;
+public class ShipperData {
+    public double[] since;
+    public double[][] resources;
+    public int[][] slaves;
 
-    public KingLevelIndexData(byte[] npcLevels, int[] nextPickYear) {
-        this.npcLevels = npcLevels;
-        this.nextPickYear = nextPickYear;
+    public ShipperData(double[] since, double[][] resources, int[][] slaves) {
+        this.since = since;
+        this.resources = resources;
+        this.slaves = slaves;
     }
 }
-

@@ -58,8 +58,8 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
 
             double valueRate = priceSum / outputCount;
 
-            double randomLow = 0.1 + RND.rFloat(0.6);
-            double randomHigh = RND.rFloat(4.0) + 0.7;
+            double randomLow = 0.1 + RND.rFloat(0.4);
+            double randomHigh = RND.rFloat(4.0) + 0.5;
             if (valueRate < randomLow) {
                 return tryDestroyBuilding(building.level, buildingGenetic, region);
             } else if (valueRate * KingLevels.getInstance().getModifiedTechMul(building, (FactionNPC) region.faction()) > randomHigh) {

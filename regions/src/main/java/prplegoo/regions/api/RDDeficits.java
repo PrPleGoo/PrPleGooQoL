@@ -22,7 +22,7 @@ import world.region.building.RDBuilding;
 
 import java.util.HashMap;
 
-public class RDDeficits  implements IDataPersistence<RDDeficitData> {
+public class RDDeficits implements IDataPersistence<RDDeficitData> {
     private static final double timer = TIME.secondsPerDay;
     private int[] deficits;
     private int[] supplies;

@@ -127,6 +127,16 @@ public class NPCStockpile extends NPCResource{
 		return (int)resses[res.index()].tradeAm();
 	}
 
+	public int offset(RESOURCE res) {
+		if (res == null) {
+			int tt = 0;
+			for (int ri = 0; ri < RESOURCES.ALL().size(); ri++)
+				tt += resses[ri].offset();
+			return tt;
+		}
+		return (int)resses[res.index()].offset();
+	}
+
 	public int amount(int ri) {
 		return (int)resses[ri].tradeAm();
 	}
@@ -193,7 +203,7 @@ public class NPCStockpile extends NPCResource{
 		double mul = f.race().pref().priceMul(RESOURCES.ALL().get(ri));
 		SRes r = resses[ri];
 		double before = r.price();
-		double after = r.priceAt(amount + (KingLevels.isActive() ? r.offset : 0));
+		double after = r.priceAt(amount + (KingLevels.isActive() ? r.tradeAm() : 0));
 		double price = before + (after-before)*0.5;
 
 		price *= creditScore();
@@ -358,10 +368,10 @@ public class NPCStockpile extends NPCResource{
 		@Override
 		public double tradeAm() {
 			double productionDeficits = Math.min(0, KingLevels.getInstance().getDailyProductionRate(f, RESOURCES.ALL().get(resourceIndex))) * 2;
-			double kingConsumptionRate = KingLevels.getInstance().getDailyConsumptionRate(f, RESOURCES.ALL().get(resourceIndex)) * 2;
+			double stockpileDesired = KingLevels.getInstance().getDesiredStockpileAtNextLevel(f, RESOURCES.ALL().get(resourceIndex));
 
 			return Math.max(0, offset()
-					- kingConsumptionRate
+					- stockpileDesired
 					+ productionDeficits);
 		}
 
@@ -372,7 +382,7 @@ public class NPCStockpile extends NPCResource{
 
 		@Override
 		public double price() {
-			return super.priceAt(offset);
+			return super.priceAt(tradeAm());
 		}
 
 		@Override

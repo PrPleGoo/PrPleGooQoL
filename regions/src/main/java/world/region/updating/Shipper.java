@@ -2,35 +2,37 @@ package world.region.updating;
 
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
-import game.faction.FResources;
 import game.faction.Faction;
-import game.faction.npc.FactionNPC;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
-import init.resources.Growable;
+import init.race.RACES;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
 import prplegoo.regions.api.RDSlavery;
-import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.persistence.IDataPersistence;
+import prplegoo.regions.persistence.data.ShipperData;
+import prplegoo.regions.persistence.data.ShipperData;
 import snake2d.LOG;
-import snake2d.util.misc.CLAMP;
 import world.WORLD;
-import world.army.AD;
-import world.army.ADSupply;
-import world.entity.army.WArmy;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RDOutputs.RDResource;
 
-final class Shipper {
-
+public final class Shipper implements IDataPersistence<ShipperData> {
+    private double[] since;
+    private double[][] resources;
+    private int[][] slaves;
 
     public Shipper() {
-
+        initialize();
     }
 
-
+    private void initialize(){
+        since = new double[WORLD.REGIONS().all().size()];
+        resources = new double[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
+        slaves = new int[WORLD.REGIONS().all().size()][RACES.all().size()];
+    }
 
     public void ship(Region r, double seconds) {
 
@@ -42,16 +44,10 @@ final class Shipper {
         if (r.besieged())
             return;
 
-        if (false) {
-            //fix farm expoit.
-            //fix performance stuttering
-        }
-
         if (f.capitolRegion() == null)
             return;
 
         double days = seconds*TIME.secondsPerDayI;
-        boolean hasShipment = false;
 
         if (f == FACTIONS.player()) {
             if (r.capitol())
@@ -65,47 +61,71 @@ final class Shipper {
         }
 
         for (RDResource res : RD.OUTPUT().RES) {
-            hasShipment = amount(f, res, r, seconds) > 0;
-            if (hasShipment) {
-                break;
+            int a = amount(f, res, r, seconds);
+
+            if (a < 0) {
+                a = RD.DEFICITS().handleDeficit(res.res, a);
             }
+
+            if (a == 0)
+            {
+                continue;
+            }
+
+            resources[r.index()][res.res.index()] += a;
         }
 
-        if (!hasShipment) {
-            for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-                hasShipment = rdSlave.hasDelivery(r, days) > 0;
-                if (hasShipment) {
-                    break;
-                }
-            }
+        for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+            int a = rdSlave.getDelivery(r, days);
+            slaves[r.index()][rdSlave.rdRace.race.index] += a;
         }
 
-        if (!hasShipment)
+        since[r.index()] += seconds;
+
+        if (!timeToShip(r) || !hasAnythingToShip(r)){
             return;
+        }
 
         Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), ITYPE.tax);
         if (c != null) {
             for (RDResource res : RD.OUTPUT().RES) {
-                int a = amount(f, res, r, seconds);
-
-                if (a < 0) {
-                    a = RD.DEFICITS().handleDeficit(res.res, a);
-                }
-
-                if (a == 0)
-                {
-                    continue;
-                }
+                int a = (int) resources[r.index()][res.res.index()];
 
                 c.loadAndReserve(res.res, a);
+
+                resources[r.index()][res.res.index()] -= a;
             }
 
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-                int a = rdSlave.getDelivery(r, days);
+                int a = slaves[r.index()][rdSlave.rdRace.race.index()];
+
                 c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
+
+                slaves[r.index()][rdSlave.rdRace.race.index()] -= a;
+            }
+
+            since[r.index()] = 0;
+        }
+    }
+
+    private boolean timeToShip(Region region) {
+        return since[region.index()] > TIME.secondsPerDay * 16;
+    }
+
+    private boolean hasAnythingToShip(Region region) {
+        for (RDResource res : RD.OUTPUT().RES) {
+            if (resources[region.index()][res.res.index()] > 0) {
+                return true;
             }
         }
 
+        for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+            if (slaves[region.index()][rdSlave.rdRace.index()] > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private int amount(Faction f, RDResource res, Region r, double seconds) {
@@ -127,5 +147,41 @@ final class Shipper {
 
     }
 
+    @Override
+    public String getKey() {
+        return ShipperData.class.toString();
+    }
 
+    @Override
+    public ShipperData getData() {
+        return new ShipperData(since, resources, slaves);
+    }
+
+    @Override
+    public void putData(ShipperData data) {
+        if (data == null) {
+            LOG.ln("Shipper.onGameSaveLoaded: data null, initializing");
+            initialize();
+            return;
+        }
+
+        LOG.ln("Shipper.onGameSaveLoaded: data found");
+        if (since.length != data.since.length
+                || resources.length != data.resources.length
+                || slaves.length != data.slaves.length)
+        {
+            LOG.ln("Shipper.onGameSaveLoaded: data found, length difference detected, not writing");
+            return;
+        }
+
+        LOG.ln("Shipper.onGameSaveLoaded: data found, writing");
+        since = data.since;
+        resources = data.resources;
+        slaves = data.slaves;
+    }
+
+    @Override
+    public Class<ShipperData> getDataClass() {
+        return ShipperData.class;
+    }
 }

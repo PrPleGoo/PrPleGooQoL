@@ -3,6 +3,7 @@ package world.region.updating;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.time.TIME;
+import lombok.Getter;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -22,12 +23,13 @@ public final class RDUpdater {
 	private final LIST<RDUpdatable> all;
 	private float[] timers = new float[WREGIONS.MAX];
 
+	@Getter
 	private final Shipper shipper = new Shipper();
 	private final Builder builder = new Builder();
 
 
 	private final double upD = TIME.secondsPerDay/4;
-	private final double ship = TIME.secondsPerDay * 16;
+	private final double ship = TIME.secondsPerDay;
 	private final double build = TIME.secondsPerDay*2;
 	
 	public RDUpdater(RDInit init){

@@ -113,25 +113,25 @@ public class KingLevels {
             double amount = deltaDays * (getDailyProductionRate(faction, resource) - getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource));
 
             npcStockpile.inc(resource, amount);
+            double actualStorage = npcStockpile.offset(resource);
 
             for (ADSupply supply : AD.supplies().get(resource)) {
-                if (npcStockpile.amount(resource) <= 0) {
+                if (actualStorage <= 0) {
                     continue;
                 }
 
                 for (int armyIndex = 0; armyIndex < faction.armies().all().size(); armyIndex++) {
                     WArmy army = faction.armies().all().get(armyIndex);
 
-                    int supplyAmountToMove = (int) Math.min(supply.needed(army), npcStockpile.amount(resource));
+                    int supplyAmountToMove = (int) Math.min(supply.needed(army), actualStorage);
 
                     npcStockpile.inc(resource, -supplyAmountToMove);
                     supply.current().inc(army, supplyAmountToMove);
                 }
             }
 
-            double amountStored = npcStockpile.amount(resource.index());
-            if (amountStored > 0) {
-                double spoilageAmount = amountStored
+            if (actualStorage > 0) {
+                double spoilageAmount = actualStorage
                         // Compensated for year
                         * -resource.degradeSpeed() / 16
                         / 2 // Compensated for warehouse

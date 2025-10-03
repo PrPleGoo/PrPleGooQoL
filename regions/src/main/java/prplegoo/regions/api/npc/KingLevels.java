@@ -61,6 +61,10 @@ public class KingLevels {
         productionCache = new double[FACTIONS.MAX()][RESOURCES.ALL().size()];
         factionBuildingBonus = new double[FACTIONS.MAX()][RD.BUILDINGS().all.size()];
         Arrays.stream(factionBuildingBonus).forEach(x -> Arrays.fill(x, -1));
+
+        getDesiredStockpileAtLevelCache = new double[FACTIONS.MAX()][kingLevels.length][RESOURCES.ALL().size()];
+        getDesiredStockpileAtLevelCacheTimers = new double[FACTIONS.MAX()][kingLevels.length][RESOURCES.ALL().size()];
+        Arrays.stream(getDesiredStockpileAtLevelCacheTimers).forEach(x -> Arrays.stream(x).forEach(y -> Arrays.fill(y, -61)));
     }
 
     public static void setActive(boolean active) {
@@ -215,7 +219,14 @@ public class KingLevels {
         return getDesiredStockpileAtLevel(faction, getDesiredKingLevel(faction), resource);
     }
 
+    private final double[][][] getDesiredStockpileAtLevelCache;
+    private final double[][][] getDesiredStockpileAtLevelCacheTimers;
+
     public double getDesiredStockpileAtLevel(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
+        if (getDesiredStockpileAtLevelCacheTimers[faction.index()][kingLevel.getIndex()][resource.index()] + 60 > TIME.currentSecond()) {
+            return getDesiredStockpileAtLevelCache[faction.index()][kingLevel.getIndex()][resource.index()];
+        }
+
         double amount = getDailyConsumptionRateNotHandledElseWhere(faction, kingLevel, resource)
                 // Stock two years' worth.
                 * 32
@@ -234,7 +245,10 @@ public class KingLevels {
             }
         }
 
-        return amount;
+        getDesiredStockpileAtLevelCache[faction.index()][kingLevel.getIndex()][resource.index()] = amount;
+        getDesiredStockpileAtLevelCacheTimers[faction.index()][kingLevel.getIndex()][resource.index()] = TIME.currentSecond();
+
+        return getDesiredStockpileAtLevelCache[faction.index()][kingLevel.getIndex()][resource.index()];
     }
 
     public int getLevel(FactionNPC faction) {
@@ -260,7 +274,7 @@ public class KingLevels {
             return;
         }
 
-        kingLevelIndexes.setNextPickYear(faction, currentYear + 2 + RND.rInt(2));
+        kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(4));
 
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
 
@@ -273,7 +287,7 @@ public class KingLevels {
 
                 if (amountConsumedBeforeNextCycle > 0
                         // Prideful kings will be riskier with their ambition.
-                        && faction.stockpile.amount(resource.index()) < amountConsumedBeforeNextCycle / pride) {
+                        && faction.stockpile.offset(resource) < amountConsumedBeforeNextCycle / pride) {
                     missingResourceCount++;
 
                     if (missingResourceCount >= maxMissingResourcesForRankUp) {
@@ -289,6 +303,7 @@ public class KingLevels {
             }
         }
 
+        kingLevelIndexes.setNextPickYear(faction, currentYear + 1);
         kingLevelIndexes.setLevel(faction, 0);
     }
 

@@ -144,7 +144,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         return amount;
     }
 
-    private double getDeficitModifier(RESOURCE resource) {
+    public double getDeficitModifier(RESOURCE resource) {
         if (unresolvedDeficits[resource.index()] >= -80) {
             return 1;
         }
@@ -188,5 +188,17 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
     public void addSupplies(RESOURCE resource, int amount) {
         supplies[resource.index()] += amount;
+    }
+
+    public double getFoodDeficit(Region region) {
+        double amTotal = 0;
+
+        for(RESOURCE resource : RESOURCES.EDI().res()) {
+            if (RD.FOOD_CONSUMPTION().has(region, resource)) {
+                amTotal += getDeficitModifier(resource);
+            }
+        }
+
+        return CLAMP.d(amTotal / RD.FOOD_CONSUMPTION().getFoodTypeCount(region), 0, 1);
     }
 }

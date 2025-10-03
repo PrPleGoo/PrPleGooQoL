@@ -27,6 +27,8 @@ public class PrPleGooEfficiencies {
                     double totalPop = RD.RACES().popTarget.getD(reg);
                     double foodConsumption = RD.FOOD_CONSUMPTION().booster.get(reg);
 
+                    foodConsumption *= RD.DEFICITS().getDeficitModifier(food);
+
                     return (foodConsumption * totalPop / totalFoods) / -50000.0;
                 }
             }, RD.OUTPUT().get(food).boost);

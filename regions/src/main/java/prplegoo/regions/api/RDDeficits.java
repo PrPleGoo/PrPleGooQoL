@@ -25,6 +25,7 @@ import java.util.HashMap;
 public class RDDeficits implements IDataPersistence<RDDeficitData> {
     private static final double timer = TIME.secondsPerDay;
     private int[] deficits;
+    private int[] oldDeficits;
     private int[] supplies;
     private int[] unresolvedDeficits;
     private double since = 0;
@@ -35,6 +36,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
     private void initialize() {
         deficits = new int[RESOURCES.ALL().size()];
+        oldDeficits = new int[RESOURCES.ALL().size()];
         supplies = new int[RESOURCES.ALL().size()];
         unresolvedDeficits = new int[RESOURCES.ALL().size()];
     }
@@ -46,7 +48,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
     @Override
     public RDDeficitData getData() {
-        return new RDDeficitData(deficits, supplies, unresolvedDeficits, since);
+        return new RDDeficitData(deficits, oldDeficits, supplies, unresolvedDeficits, since);
     }
 
     @Override
@@ -59,6 +61,8 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
         LOG.ln("RDDeficits.onGameSaveLoaded: data found");
         if (deficits.length != data.deficits.length
+                || data.oldDeficits == null
+                || oldDeficits.length != data.oldDeficits.length
                 || data.supplies == null
                 || supplies.length != data.supplies.length
                 || unresolvedDeficits.length != data.unresolvedDeficits.length)
@@ -69,6 +73,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
         LOG.ln("RDDeficits.onGameSaveLoaded: data found, writing");
         deficits = data.deficits;
+        oldDeficits = data.oldDeficits;
         supplies = data.supplies;
         unresolvedDeficits = data.unresolvedDeficits;
         since = data.since;
@@ -95,7 +100,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         for (int i = 0; i < RESOURCES.ALL().size(); i++) {
             RESOURCE resource = RESOURCES.ALL().get(i);
 
-            int toResolve = Math.min(Math.abs(deficits[i]), supplies[i]);
+            int toResolve = Math.min(Math.abs(oldDeficits[i]), supplies[i]);
 
             if (toResolve > 0) {
                 Region caravanDestination = findRandomRegionConsuming(resource);
@@ -109,11 +114,14 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
                 }
 
                 player.res().dec(resource, FResources.RTYPE.TAX, toResolve);
-                deficits[i] += toResolve;
+                oldDeficits[i] += toResolve;
                 supplies[i] -= toResolve;
             }
 
-            unresolvedDeficits[i] = deficits[i];
+            unresolvedDeficits[i] = oldDeficits[i];
+
+            oldDeficits[i] += deficits[i];
+            deficits[i] = 0;
         }
     }
 
@@ -175,11 +183,11 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     }
 
     public int getOutstandingDeficit(RESOURCE resource) {
-        return -deficits[resource.index()] - supplies[resource.index()];
+        return -(deficits[resource.index()] + oldDeficits[resource.index()]) - supplies[resource.index()];
     }
 
     public int getDeficit(RESOURCE resource) {
-        return deficits[resource.index()];
+        return deficits[resource.index()] + oldDeficits[resource.index()];
     }
 
     public int getSupplies(RESOURCE resource) {

@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 @SuppressWarnings("InnerClassMayBeStatic")
 public class RDDeficitData {
     public int[] deficits;
+    public int[] oldDeficits;
     public int[] supplies;
     public int[] unresolvedDeficits;
     public double since;
 
-    public RDDeficitData(int[] deficits, int[] supplies, int[] unresolvedDeficits, double since){
+    public RDDeficitData(int[] deficits, int[] oldDeficits, int[] supplies, int[] unresolvedDeficits, double since){
         this.deficits = deficits;
+        this.oldDeficits = oldDeficits;
         this.supplies = supplies;
         this.unresolvedDeficits = unresolvedDeficits;
         this.since = since;

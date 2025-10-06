@@ -41,13 +41,19 @@ public class KingLevelRecruiter {
 
         int menTarget = AD.conscripts().total(null).get(f);
         // increasing the max needs really good testing, maybe it causes a save issue
-        int armies = CLAMP.i(1 + menTarget/5000, 1, 3);
+        int armies = CLAMP.i(1 + menTarget/10000, 1, 3);
 
         while(f.armies().all().size() < armies && f.armies().canCreate()) {
             Region r = f.realm().all().rnd();
             COORDINATE c = WORLD.PATH().rnd(r);
             WORLD.ENTITIES().armies.create(c.x(), c.y(), f);
         }
+
+        if (f.armies().all().isEmpty()) {
+            return;
+        }
+
+        int menPerArmy = menTarget / f.armies().all().size();
 
         tree.clear();
         for (int ai = 0; ai < f.armies().all().size(); ai++) {
@@ -70,7 +76,8 @@ public class KingLevelRecruiter {
 
                         continue;
                     }
-                } else if (divisionSize < Config.BATTLE.MEN_PER_DIVISION){
+                } else if (divisionSize < Config.BATTLE.MEN_PER_DIVISION
+                        && getArmySize(army) < menPerArmy){
                     int availableConscripts = AD.conscripts().available(division.race()).get(f);
                     int totalPips = (availableConscripts + divisionSize) / 15;
 
@@ -108,6 +115,10 @@ public class KingLevelRecruiter {
             }
 
             for (Race race : RACES.all()) {
+                if (army.divs().size() >= Config.BATTLE.DIVISIONS_PER_ARMY) {
+                    break;
+                }
+
                 int availableConscripts = AD.conscripts().available(race).get(f);
 
                 if (availableConscripts < 16) {
@@ -142,6 +153,15 @@ public class KingLevelRecruiter {
                 }
             }
         }
+    }
+
+    private static int getArmySize(WArmy army) {
+        int total = 0;
+        for(int i = 0; i < army.divs().size(); i++) {
+            total += army.divs().get(i).menTarget();
+        }
+
+        return total;
     }
 
     private static void fillOpenSlots(WDivRegional division) {

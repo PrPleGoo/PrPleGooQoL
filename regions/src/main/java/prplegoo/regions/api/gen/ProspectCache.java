@@ -4,11 +4,13 @@ import init.type.TERRAIN;
 import init.type.TERRAINS;
 import settlement.main.SETT;
 import settlement.room.food.farm.ROOM_FARM;
+import settlement.room.food.fish.ROOM_FISHERY;
 import settlement.room.food.orchard.ROOM_ORCHARD;
 import settlement.room.food.pasture.ROOM_PASTURE;
 import settlement.room.industry.mine.ROOM_MINE;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.industry.woodcutter.ROOM_WOODCUTTER;
 import settlement.room.main.RoomBlueprintImp;
 import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
@@ -56,23 +58,23 @@ public class ProspectCache {
             LOG.err("RDBuilding: " + building.info.name + " calculating prospect value, but more than 1 recipe.");
         }
 
-        if (blue.cat.name().equals("Mines")) {
+        if (blue instanceof ROOM_MINE) {
             return calculateMinesProspectValue(region, blue);
         }
 
-        if (blue.cat.name().equals("Farms")) {
+        if (blue instanceof ROOM_ORCHARD || blue instanceof ROOM_FARM) {
             return calculateFarmProspectValue(region, blue);
         }
 
-        if (blue.cat.name().equals("Aquaculture")) {
+        if (blue instanceof ROOM_FISHERY) {
             return calculateAquacultureProspectValue(region);
         }
 
-        if (blue.cat.name().equals("Husbandry")) {
+        if (blue instanceof ROOM_PASTURE) {
             return calculateHusbandryProspectValue(region, blue);
         }
 
-        if (building.info.name.equals("Woodcutter")) {
+        if (blue instanceof ROOM_WOODCUTTER) {
             return calculateWoodcutterProspectValue(region);
         }
 

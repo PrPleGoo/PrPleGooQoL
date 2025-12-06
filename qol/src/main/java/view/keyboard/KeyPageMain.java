@@ -1,8 +1,7 @@
 package view.keyboard;
 
-import init.text.D;
 import snake2d.KEYCODES;
-import util.dic.Dic;
+import util.text.D;
 
 public class KeyPageMain extends KeyPage{
 
@@ -33,7 +32,7 @@ public class KeyPageMain extends KeyPage{
 	public final Key PAUSE = new Key("PAUSE", D.g("Pause"), D.g("PauseD", "Toggles game pause."), this,  KEYCODES.KEY_P);
 	public final Key SPEED0 = new Key("SPEED0", D.g("speed-paused"), D.g("speed-pausedD", "Sets 0 speed, thus pausing the game."),this,  KEYCODES.KEY_1);
 	public final Key SPEED1 = new Key("SPEED1", D.g("speed-normal"),D.g("speed-normalD", "Sets 1x speed. Double press for 1/4th speed."),this,  KEYCODES.KEY_2);
-	public final Key SPEED2 = new Key("SPEED2", D.g("speed-fast"),D.g("speed-fastD", "Sets 3x speed."),this,  KEYCODES.KEY_3);
+	public final Key SPEED2 = new Key("SPEED2", D.g("speed-fast"),D.g("speed-fastD", "Sets 5x speed."),this,  KEYCODES.KEY_3);
 	public final Key SPEED3 = new Key("SPEED3", D.g("speed-fastest"),D.g("speed-fastestD", "Sets 25x speed. Double press for x250 speed."),this,  KEYCODES.KEY_4);
 
 	public final Key MUP = new Key("MAP_UP", D.g("Slow-Up"),D.g("Slow-UpD", "Slowly pans the map."),this,  KEYCODES.KEY_LEFT_ALT, KEYCODES.KEY_UP);
@@ -46,20 +45,20 @@ public class KeyPageMain extends KeyPage{
 	public final Key DEBUGGER = new Key("STATS", D.g("Stats"),D.g("StatsD", "Toggles stats."),this,  KEYCODES.KEY_F11);
 
 	public final Key ENTER = new Key("ENTER", D.g("Enter"),D.g("EnterD", "The enter key."),this, -1, KEYCODES.KEY_ENTER, false);
-	public final Key KP_ENTER = new Key("KP_ENTER", "Enter","The enter key.",this, -1, KEYCODES.KEY_KP_ENTER, false);
+	public final Key KP_ENTER = new Key("KP_ENTER", "Enter","The other enter key.",this, -1, KEYCODES.KEY_KP_ENTER, false);
 	public final Key BACKSPACE = new Key("BACKSPACE", D.g("Backspace"),D.g("BackspaceD", "The backspace key."),this, -1, KEYCODES.KEY_BACKSPACE, false);
 	public final Key ESCAPE = new Key("ESCAPE", D.g("Escape"),D.g("EscapeD", "Toggles the menu, or closes panels."),this, -1, KEYCODES.KEY_ESCAPE, false);
 
 	public final Key MOD = new Key("MOD", D.g("mod"),D.g("modD", "When pressed, modulates certain functions, such as the mouse wheel."),this, KEYCODES.KEY_LEFT_CONTROL);
 	public final Key UNDO = new Key("UNDO", D.g("place-undo"),D.g("place-undoD", "When pressed, lets you use alternative tools when using a tool."),this, KEYCODES.KEY_LEFT_SHIFT);
 
-	public final Key SWAP = new Key("SWAP", D.g("toggle", "Toggle view"),D.g("toggleD", "Toggle between world view and city view."),this, KEYCODES.KEY_TAB);
+	public final Key SWAP = new Key("SWAP", D.g("toggle", "Toggle view"),D.g("toggleD", "Toggle between common views."),this, KEYCODES.KEY_TAB);
 
-
+	private final CharSequence name = D.g("General");
 
 	@Override
 	public CharSequence name() {
-		return Dic.¤¤General;
+		return name;
 	}
 
 

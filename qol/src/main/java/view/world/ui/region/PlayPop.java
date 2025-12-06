@@ -16,7 +16,6 @@ import snake2d.util.sets.LinkedList;
 import snake2d.util.sprite.SPRITE;
 import util.colors.GCOLOR;
 import util.data.GETTER.GETTER_IMP;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.gui.misc.GHeader;
@@ -25,6 +24,9 @@ import util.gui.misc.GStat;
 import util.gui.misc.GText;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
+import util.text.D;
+import util.text.Dic;
+import view.keyboard.KEYS;
 import view.main.VIEW;
 import world.map.regions.Region;
 import world.region.RD;
@@ -34,6 +36,10 @@ import world.region.pop.RDRace;
 final class PlayPop extends GuiSection{
 
 	static CharSequence ¤¤eWarning = "¤Enabling an edict has a global effect in your whole kingdom. The affected race will have their loyalty decreased in all regions.";
+
+	static {
+		D.ts(PlayPop.class);
+	}
 
 	public PlayPop(GETTER_IMP<Region> g, int width, int height) {
 
@@ -314,7 +320,7 @@ final class PlayPop extends GuiSection{
 
 
 						int i = (e.toggled(r).get(g.get())+1)&1;
-						if (i == 1 && !(CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_LEFT_SHIFT) || CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_RIGHT_SHIFT))) {
+						if (i == 1 && !KEYS.MAIN().MOD.isPressed()) {
 							VIEW.inters().yesNo.activate(¤¤eWarning, a, ACTION.NOP, true);
 						}else
 							a.exe();

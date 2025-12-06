@@ -2,8 +2,6 @@ package util.gui.slider;
 
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
-import init.text.D;
-import snake2d.*;
 import snake2d.MButt;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
@@ -19,6 +17,7 @@ import util.data.INT.INTE;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.info.GFORMAT;
+import util.text.D;
 import view.keyboard.KEYS;
 import view.main.VIEW;
 
@@ -60,33 +59,34 @@ public class GSliderInt extends GuiSection{
 
         if (buttons) {
             addRightC(0, new GButt.ButtPanel(SPRITES.icons().s.minifier) {
-                private double clickSpeed;
 
                 @Override
                 protected void clickA() {
-                    if (CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_LEFT_SHIFT) || CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_RIGHT_SHIFT))
-                    {
+                    in.inc(-1);
+                    if (KEYS.MAIN().MOD.isPressed())
                         in.set(in.min());
-                    }
-                    else
-                    {
-                        in.inc(-1);
-                    }
                 }
 
                 @Override
                 protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected,
                                       boolean isHovered) {
                     if (isHovered &&  MButt.LEFT.isDown()) {
-                        clickSpeed += ds;
-                        if (clickSpeed > 10)
-                            clickSpeed = 10;
-                        in.inc(-(int)clickSpeed);
+                        clickSpeed1 += ds;
+                        if (clickSpeed1 > 10)
+                            clickSpeed1 = 10;
+                        in.inc(-(int)clickSpeed1);
 
                     }else {
-                        clickSpeed = 0;
+                        clickSpeed1 = 0;
                     }
                     super.render(r, ds, isActive, isSelected, isHovered);
+                }
+
+
+                @Override
+                public void hoverInfoGet(GUI_BOX text) {
+                    GAllocator.hov(text);
+                    super.hoverInfoGet(text);
                 }
             });
 
@@ -97,33 +97,34 @@ public class GSliderInt extends GuiSection{
 
         if (buttons) {
             addRightC(4, new GButt.ButtPanel(SPRITES.icons().s.magnifier) {
-                private double clickSpeed;
 
                 @Override
                 protected void clickA() {
-                    if (CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_LEFT_SHIFT) || CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_RIGHT_SHIFT))
-                    {
+                    in.inc(1);
+                    if (KEYS.MAIN().MOD.isPressed())
                         in.set(in.max());
-                    }
-                    else
-                    {
-                        in.inc(1);
-                    }
                 }
 
                 @Override
                 protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected,
                                       boolean isHovered) {
                     if (isHovered &&  MButt.LEFT.isDown()) {
-                        clickSpeed += ds*2;
-                        if (clickSpeed > 10)
-                            clickSpeed = 10;
-                        in.inc((int)clickSpeed);
+                        clickSpeed2 += ds*2;
+                        if (clickSpeed2 > 10)
+                            clickSpeed2 = 10;
+                        in.inc((int)clickSpeed2);
 
                     }else {
-                        clickSpeed = 0;
+                        clickSpeed2 = 0;
                     }
                     super.render(r, ds, isActive, isSelected, isHovered);
+                }
+
+
+                @Override
+                public void hoverInfoGet(GUI_BOX text) {
+                    GAllocator.hov(text);
+                    super.hoverInfoGet(text);
                 }
             });
 
@@ -178,22 +179,28 @@ public class GSliderInt extends GuiSection{
     public void hoverInfoGet(GUI_BOX text) {
         GBox b = (GBox) text;
         b.add(GFORMAT.i(b.text(), in.get()));
+        super.hoverInfoSelf(text);
     }
 
     protected void renderMidColor(SPRITE_RENDERER r, int x1, int width, int widthFull, int y1, int y2) {
         COLOR.WHITE65.render(r, x1, x1+width, y1, y2);
     }
-
+    private int RI = -2;
     private boolean clicked = false;
+    private double clickSpeed1 = 0;
+    private double clickSpeed2 = 0;
 
     public void reset() {
+        clickSpeed1 = 0;
+        clickSpeed2 = 0;
         clicked = false;
+        RI = -1;
     }
 
     private class Mid extends CLICKABLE.ClickableAbs {
 
 
-        private int RI = -2;
+
         Mid(int width, int height){
             super(width, height-4);
         }

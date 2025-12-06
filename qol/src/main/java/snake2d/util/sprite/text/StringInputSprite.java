@@ -10,8 +10,6 @@ import snake2d.util.gui.clickable.CLICKABLE;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.TextureCoords;
-import snake2d.util.sprite.text.Font;
-import snake2d.util.sprite.text.Str;
 
 public class StringInputSprite extends CHAR_LISTENER implements SPRITE{
 

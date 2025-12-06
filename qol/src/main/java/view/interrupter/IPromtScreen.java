@@ -1,6 +1,6 @@
 package view.interrupter;
 
-import init.C;
+import init.constant.C;
 import init.sprite.UI.UI;
 import snake2d.MButt;
 import snake2d.Renderer;

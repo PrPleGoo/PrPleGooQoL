@@ -22,7 +22,6 @@ import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.TILE_SHEET;
 import snake2d.util.sprite.TextureCoords;
 import util.colors.GCOLOR;
-import util.dic.DicTime;
 import util.gui.misc.GBox;
 import util.gui.misc.GStat;
 import util.gui.misc.GText;
@@ -31,6 +30,7 @@ import util.spritecomposer.ComposerDests;
 import util.spritecomposer.ComposerSources;
 import util.spritecomposer.ComposerThings.ITileSheet;
 import util.spritecomposer.ComposerThings.ITileSprite;
+import util.text.DicTime;
 import util.spritecomposer.ComposerUtil;
 import view.keyboard.KEYS;
 import view.keyboard.Key;
@@ -297,6 +297,25 @@ public final class UISpecials {
                 }
             }.hv(SETT.WEATHER().moisture.info.name);
             ss.addC(h, 100, 0);
+
+			h = new GStat() {
+
+				@Override
+				public void update(GText text) {
+					GFORMAT.perc(text, SETT.WEATHER().wind.getD());
+				}
+			}.hv(SETT.WEATHER().wind.info.name);
+			ss.addC(h, -100, 50);
+
+			h = new GStat() {
+
+				@Override
+				public void update(GText text) {
+					GFORMAT.perc(text, SETT.WEATHER().growth.getD());
+				}
+			}.hv(SETT.WEATHER().growth.info.name);
+			ss.addC(h, 100, 50);
+
             hover.addRelBody(8, DIR.S, ss);
         }
 

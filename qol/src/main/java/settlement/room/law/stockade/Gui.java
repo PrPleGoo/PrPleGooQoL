@@ -6,7 +6,6 @@ import init.race.Race;
 import init.resources.RESOURCES;
 import init.resources.ResG;
 import init.sprite.UI.UI;
-import init.text.D;
 import settlement.entity.ENTITY;
 import settlement.entity.humanoid.Humanoid;
 import settlement.entity.humanoid.ai.types.prisoner.AIModule_Prisoner;
@@ -29,7 +28,6 @@ import snake2d.util.sets.Stack;
 import snake2d.util.sprite.text.Str;
 import util.colors.GCOLOR;
 import util.data.GETTER;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.gui.misc.GChart;
@@ -40,7 +38,10 @@ import util.gui.misc.GText;
 import util.gui.table.GTableBuilder;
 import util.gui.table.GTableBuilder.GRowBuilder;
 import util.info.GFORMAT;
+import util.text.D;
+import util.text.Dic;
 import view.interrupter.ISidePanel;
+import view.keyboard.KEYS;
 import view.main.VIEW;
 import view.sett.ui.room.UIRoomModule.UIRoomModuleImp;
 import view.ui.message.MessageSection;
@@ -197,7 +198,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
 
                     @Override
                     protected void clickA() {
-                        if (CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_LEFT_SHIFT) || CORE.getInput().getKeyboard().isPressed(KEYCODES.KEY_RIGHT_SHIFT)) {
+                        if (KEYS.MAIN().MOD.isPressed()) {
                             a.exe();
                         } else {
                             VIEW.inters().yesNo.activate(Str.TMP.clear().add(¤¤setSure).insert(0, p.action), a, ACTION.NOP, true);

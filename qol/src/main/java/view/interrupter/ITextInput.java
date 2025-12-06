@@ -1,6 +1,6 @@
 package view.interrupter;
 
-import init.C;
+import init.constant.C;
 import init.sprite.UI.UI;
 import snake2d.MButt;
 import snake2d.Renderer;
@@ -14,14 +14,14 @@ import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.text.Str;
 import snake2d.util.sprite.text.StringInputSprite;
 import util.colors.GCOLOR;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.gui.misc.GInput;
 import util.gui.panel.GPanel;
+import util.text.Dic;
 import view.keyboard.KEYS;
 
-public final class ITextInput extends Interrupter {
+public final class ITextInput extends Interrupter{
 
 	private final GuiSection s = new GuiSection();
 	private final Str title = new Str(64);
@@ -138,7 +138,7 @@ public final class ITextInput extends Interrupter {
 	@Override
 	protected boolean update(float ds) {
 
-		if (KEYS.MAIN().ESCAPE.consumeClick()){
+		if (KEYS.MAIN().ESCAPE.consumeClick() || MButt.RIGHT.isDown()){
 			client.acceptString(null);
 			hide();
 		} else if (KEYS.MAIN().ENTER.consumeClick()

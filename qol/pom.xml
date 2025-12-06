@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.69.39.3</version>
+    <version>0.70.14.0</version>
 
     <profiles>
         <profile>
@@ -101,33 +101,26 @@
         <mod.version>${project.version}</mod.version>
         <mod.name>PrPleGooQoL</mod.name>
         <mod.description>
-Hold shift to max/min values. Commit war crimes with less wrist strain by holding down shift. Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
+Commit war crimes with less wrist strain! Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info>
 Greetings despot,
 
 This mod changes a few interactions in the game:
-- Holding shift when when clicking plus or minus buttons will set their value to the maximum or minimum respectively.
 - You can no longer input text into an input field that prompts you for a number.
 - Keypad enter to work on all places where enter works.
-- Holding shift when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
-- Hold shift to not get prompted for assigning punishments in the stockades.
+- Holding CTRL (default for MOD) when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
+- Hold CTRL (default for MOD) to not get prompted for assigning punishments in the stockades.
 - You can filter punishments by race in the stockades.
-- A little arrow over the resources to show if your consumption is outpacing your income.
+- A little arrow over the resources in the side panel to show if your consumption is outpacing your income.
 - Real life time is displayed under the season wheel.
-- Quickly replace a noble when they die.
 
 I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
 If you have any more suggestions like this, feel free to contact me on discord or steam.
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
-- [v68] PrPleGoo Region Rework, https://steamcommunity.com/sharedfiles/filedetails/?id=3417936451
-- Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
-- Trade-Sorter (v68), https://steamcommunity.com/sharedfiles/filedetails/?id=3419268878
-- Cute Race!, https://steamcommunity.com/workshop/filedetails/?id=3418470482
-- Vargen Race (V68), https://steamcommunity.com/sharedfiles/filedetails/?id=2918830792
-- Draken Race (V68), https://steamcommunity.com/sharedfiles/filedetails/?id=3160170506
+- PrPleGoo Region Rework, https://steamcommunity.com/sharedfiles/filedetails/?id=3417936451
 If you use a different mod than any of the above and notice no game breaking issues, please let me and other users know!
 
 Enjoy!
@@ -136,8 +129,8 @@ Enjoy!
 
 Available on github.
         </mod.info>
-        <game.version.major>69</game.version.major>
-        <game.version.minor>39</game.version.minor>
+        <game.version.major>70</game.version.major>
+        <game.version.minor>14</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

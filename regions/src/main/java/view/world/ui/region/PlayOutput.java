@@ -91,7 +91,8 @@ final class PlayOutput extends GuiSection{
                         b.NL();
                     }
 
-                    for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+                    for (int i = 0; i < RD.SLAVERY().all().size(); i++) {
+                        RDSlavery.RDSlave rdSlave = RD.SLAVERY().all().get(i);
                         int amount = shipper.getAccumulatedTaxes(g.get(), rdSlave);
 
                         if (amount <= 0)
@@ -199,7 +200,6 @@ final class PlayOutput extends GuiSection{
 		for (PlayButt b : butts) {
 
 			if (hasValue(b.getBoostable(), g.get())
-                    || (b.hasYearlyBoostable() && hasValue(b.getYearlyBoostable(), g.get()))
             ) {
                 activeButts.add(b);
             }
@@ -208,14 +208,7 @@ final class PlayOutput extends GuiSection{
     }
 
     private boolean hasValue(Boostable bo, Region reg) {
-
-		for (Booster b : bo.all()) {
-			double v = b.get(reg);
-			if ((!b.isMul && v != 0)) {
-				return true;
-			}
-		}
-		return false;
+        return bo.get(reg) != 0;
     }
 
     private class Row extends GuiSection{
@@ -245,8 +238,6 @@ final class PlayOutput extends GuiSection{
 
     private abstract class PlayButt extends ClickableAbs {
         abstract Boostable getBoostable();
-        abstract Boostable getYearlyBoostable();
-        abstract boolean hasYearlyBoostable();
     }
 
     private class ResButt extends PlayButt{
@@ -308,14 +299,6 @@ final class PlayOutput extends GuiSection{
         Boostable getBoostable() {
             return bu.boost;
         }
-        @Override
-        Boostable getYearlyBoostable() {
-            return bu.boostYearlyPart;
-        }
-        @Override
-        boolean hasYearlyBoostable() {
-            return true;
-        }
     }
     private class RaceButt extends PlayButt {
         private final RDSlavery.RDSlave rdSlave;
@@ -348,14 +331,6 @@ final class PlayOutput extends GuiSection{
         @Override
         Boostable getBoostable() {
             return rdSlave.boost;
-        }
-        @Override
-        Boostable getYearlyBoostable() {
-            return rdSlave.boost;
-        }
-        @Override
-        boolean hasYearlyBoostable() {
-            return false;
         }
     }
 }

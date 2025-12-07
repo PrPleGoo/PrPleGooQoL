@@ -92,19 +92,31 @@ public class KingLevelRecruiter {
 
                 for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
                     double currentPips = division.target.equip(equipment);
+
+                    // TEMP to deal with bugged equipment on AI armies
+                    if (currentPips > 1) {
+                        division.target.equipSet(equipment, 1);
+                        continue;
+                    }
+                    if (currentPips < 0) {
+                        division.target.equipSet(equipment, 0);
+                        continue;
+                    }
+                    // END TEMP
+
                     if (currentPips == 0) {
                         continue;
                     }
 
                     if (AD.supplies().get(equipment).amountValue(army) < 0.75) {
-                        division.target.equipSet(equipment, currentPips - 0.2);
+                        division.target.equipSet(equipment,  CLAMP.d(currentPips - 0.2, 0, 1));
 
                         continue;
                     }
 
                     if (f.stockpile.amount(equipment.resource) > 0
-                            && equipment.equipMax > division.target.equip(equipment)) {
-                        division.target.equipSet(equipment, currentPips + 0.2);
+                            && division.target.equip(equipment) < 1) {
+                        division.target.equipSet(equipment, CLAMP.d(currentPips + 0.2, 0, 1));
                     }
                 }
 
@@ -175,6 +187,10 @@ public class KingLevelRecruiter {
         nextEquipment:
         for (int e = 0; e < STATS.EQUIP().BATTLE_ALL().size(); e++) {
             EquipBattle equipment = STATS.EQUIP().BATTLE_ALL().get((e + randomIndex) % STATS.EQUIP().BATTLE_ALL().size());
+
+            if (!equipment.allowed(division.race())) {
+               continue;
+            }
 
             for (int i = 0; i < EquipBattle.SLOTS; i ++) {
                 if (slotsUsed[i] + equipment.slotUse(i) > 1) {

@@ -133,7 +133,7 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         }
 
         for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
-            if (slaves[region.index()][rdSlave.rdRace.index()] > 0) {
+            if (slaves[region.index()][rdSlave.rdRace.race.index()] > 0) {
                 return true;
             }
         }
@@ -146,7 +146,7 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     }
 
     public int getAccumulatedTaxes(Region region, RDSlavery.RDSlave rdSlave){
-        return (int) slaves[region.index()][rdSlave.rdRace.index()];
+        return (int) slaves[region.index()][rdSlave.rdRace.race.index()];
     }
 
     private int amount(Faction f, RDResource res, Region r, double seconds) {

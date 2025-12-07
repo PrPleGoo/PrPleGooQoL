@@ -5,6 +5,7 @@ import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import init.type.POP_CL;
 import prplegoo.regions.api.MagicStringChecker;
+import snake2d.LOG;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -186,5 +187,24 @@ public final class Boostable extends INFO implements MAPPED{
         }
         return false;
     }
+
+	public void debug(BOOSTABLE_O indu) {
+		double add = baseValue;
+		double sub = 0;
+		double mul = 1;
+		LOG.ln(name + " " + baseValue);
+		for (Booster f : all) {
+			double v = f.get(indu);
+			if (f.isMul)
+				mul*= v;
+			else if (v < 0)
+				sub -= v;
+			else
+				add += v;
+			LOG.ln((add*mul -sub) + " " +  f.info.name + " " +(f.isMul ? "*" : "+") + " " + v);
+		}
+		LOG.ln((add*mul -sub));
+
+	}
 
 }

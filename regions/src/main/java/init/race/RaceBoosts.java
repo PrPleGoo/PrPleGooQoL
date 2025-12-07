@@ -3,6 +3,7 @@ package init.race;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import game.battle.div.Div;
 import game.boosting.BOOSTABLE_O;
 import game.boosting.BOOSTING;
 import game.boosting.BSourceInfo;
@@ -14,7 +15,6 @@ import game.boosting.Booster;
 import game.faction.npc.FactionNPC;
 import game.faction.player.Player;
 import init.sprite.UI.UI;
-import settlement.army.div.Div;
 import settlement.main.SETT;
 import settlement.room.main.employment.RoomEmploymentSimple;
 import settlement.stats.Induvidual;
@@ -225,6 +225,8 @@ public final class RaceBoosts {
 
                 @Override
                 public double vGet(FactionNPC f) {
+//					if (true)
+//						return isMul ? 1.0 : 1;
                     if (f == null || f.capitolRegion() == null)
                         return 0;
                     return vGet(f.capitolRegion());

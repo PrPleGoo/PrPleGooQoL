@@ -13,11 +13,10 @@ import game.faction.royalty.opinion.ROPINIONS;
 import game.faction.trade.ResourcePrices;
 import game.faction.trade.TradeManager;
 import game.time.TIME;
-import init.RES;
+import init.sprite.SPRITES;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.sprite.UI.UI;
-import init.text.D;
 import prplegoo.regions.api.gen.FactionGenerator;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
@@ -29,7 +28,8 @@ import snake2d.util.rnd.RND;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
 import snake2d.util.sprite.text.Str;
-import util.dic.Dic;
+import util.text.D;
+import util.text.Dic;
 import util.updating.IUpdater;
 import view.interrupter.IDebugPanel;
 import world.WORLD;
@@ -125,6 +125,8 @@ public class FACTIONS extends GameResource {
         });
 
         prices = new ResourcePrices();
+
+
     }
 
     private void activate(Faction f) {
@@ -178,7 +180,7 @@ public class FACTIONS extends GameResource {
     }
 
     @Override
-    protected void update(float ds, Profiler prof) {
+	protected void update(double ds, Profiler prof) {
 
         prof.logStart(updater.getClass());
         updater.update(ds);
@@ -219,18 +221,18 @@ public class FACTIONS extends GameResource {
 
     public void prime() {
 
-        RES.loader().print(¤¤sim);
+		SPRITES.loader().print(¤¤sim);
 
         int a = 50;
 
 
 
         for (int i = 0; i < a; i++) {
-            RES.loader().print(¤¤sim + ": " + (int)(100*((i*2+a*2)/(double)(a*4))) + "%");
+			SPRITES.loader().print(¤¤sim + ": " + (int)(100*((i*2+a*2)/(double)(a*4))) + "%");
 
             for (FactionNPC f : FACTIONS.NPCs()) {
                 RD.UPDATER().shipAll(f, 1.0);
-                f.stockpile.update(f, TIME.secondsPerDay);
+				f.stockpile.update(f, TIME.secondsPerDay());
             }
 
             if (i % 4 == 0) {

@@ -9,7 +9,6 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
-import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.Tree;
 
 final class TradeSorter {
@@ -18,7 +17,9 @@ final class TradeSorter {
 	private final Tree<ResTree> tree = new Tree<TradeSorter.ResTree>(RESOURCES.ALL().size()) {
 
 		@Override
-		protected boolean isGreaterThan(ResTree current, ResTree cmp) { return current.value > cmp.value; }
+		protected boolean isGreaterThan(ResTree current, ResTree cmp) {
+			return current.value > cmp.value;
+		}
 
 	};
 	private Holder[] holders = new Holder[FACTIONS.MAX()*RESOURCES.ALL().size()];
@@ -35,41 +36,37 @@ final class TradeSorter {
 		Faction player = FACTIONS.player();
 		tree.clear();
 		int hI = 0;
-		for (RESOURCE r : RESOURCES.ALL()) {
+		if (shipper.partners() <= 0)
+			return;
 
+		for (int ri = 0; ri < RESOURCES.ALL().size(); ri++) {
+			RESOURCE r = RESOURCES.ALL().get(ri);
 			ResTree t = resTrees[r.index()];
 			t.traders.clear();
 
+			int am = player.seller().forSale(r);
 
-			if (player.seller().forSale(r) <= 0)
+			if (am <= 0)
 				continue;
 
-
+			am = 1;
 
 			for (int i = 0; i < shipper.partners(); i++) {
 
 				Partner buyer = shipper.partner(i);
 
-				int am = CLAMP.i(player.seller().forSale(r), 0, TradeManager.MIN_LOAD);
-				if (am <= 0)
+				int price = sellPricePlayer(r, 1, buyer.faction(), buyer.distance());
+
+				if (price < 0)
 					continue;
 
-				int price = buyer.faction().buyer().buyPrice(r, am);
-				double toll = TradeManager.totalFee(player, buyer.faction(), buyer.distance(), r, am);
-
-				price -= toll;
-
-
-				if (price <= 0)
-					continue;
-
-				if (!SETT.ROOMS().EXPORT.tally.okPrice(r,  (int) Math.ceil(price/am)))
+				if (!SETT.ROOMS().EXPORT.tally.okPrice(r,  price))
 					continue;
 
 				Holder h = holders[hI++];
 
 				h.p = buyer;
-				h.value = price/am;
+				h.value = price;
 				h.price = price;
 				t.traders.add(h);
 
@@ -82,7 +79,6 @@ final class TradeSorter {
 		}
 
 		while(tree.hasMore()) {
-
 			ResTree t = tree.pollSmallest();
 			Holder h = t.traders.pollGreatest();
 
@@ -91,29 +87,53 @@ final class TradeSorter {
 				break;
 			}
 
-			int am = CLAMP.i(player.seller().forSale(t.res), 0, TradeManager.MIN_LOAD);
+			int forSale = player.seller().forSale(t.res);
 
-			if (am <= 0)
+			if (forSale <= 0)
 				continue;
 
+			int minPrice = 0;
+			if (t.traders.hasMore()) {
+				Holder h2 = t.traders.smallest();
+				minPrice = sellPricePlayer(t.res, 1, h2.p.faction(), h2.p.distance());
+			}
 
+			minPrice = Math.max(minPrice, SETT.ROOMS().EXPORT.tally.priceCapsI.get(t.res));
 
-			h.p.trade(t.res, am);
+			int am = forSale;
+			int d = forSale/2;
 
-			h.p.faction().buyer().buy(t.res, am, h.price, player);
-			player.seller().sell(t.res, am, h.price, h.p.faction());
-			//LOG.ln(h.res.name + " " + MIN_LOAD + " " + (h.price-h.toll) + " " + h.f.appearence().name());
+			while(d > 0) {
 
-			//LOG.ln("sold " + t.res.name + " to " + h.p.faction().name + " for: " + h.price);
-
-			am = CLAMP.i(player.seller().forSale(t.res), 0, TradeManager.MIN_LOAD);
+				int p = sellPricePlayer(t.res, am, h.p.faction(), h.p.distance())/am;
+				if (p < minPrice) {
+					am -= d;
+					if (am < 0) {
+						am = 0;
+				break;
+			}
+				}else if (p > minPrice) {
+					am += d;
+					if (am >= forSale) {
+						am = forSale;
+						break;
+					}
+				}
+				d/= 2;
+			}
 
 			if (am > 0) {
-				int price = h.p.faction().buyer().buyPrice(t.res, am);
-				double toll = TradeManager.totalFee(player, h.p.faction(), h.p.distance(), t.res, am);
-				price -= toll;
 
-				if (price > 0 && SETT.ROOMS().EXPORT.tally.okPrice(t.res, (int) Math.ceil(price/am))) {
+
+				int price = sellPricePlayer(t.res, am, h.p.faction(), h.p.distance());
+				h.p.trade(t.res, am);
+
+				h.p.faction().buyer().buy(t.res, am, price, player);
+				player.seller().sell(t.res, am, price, h.p.faction());
+
+				if (player.seller().forSale(t.res) > 0) {
+					price = sellPricePlayer(t.res, 1, h.p.faction(), h.p.distance());
+					if (price > 0 && SETT.ROOMS().EXPORT.tally.okPrice(t.res, price)) {
 					h.value = price/am;
 					h.price = price;
 					t.traders.add(h);
@@ -126,10 +146,19 @@ final class TradeSorter {
 				t.value = SETT.ROOMS().EXPORT.tally.prio(t.res);
 				tree.add(t);
 			}
+
+			}
+
 		}
 
 	}
 
+	private int sellPricePlayer(RESOURCE res, int am, Faction buyer, double distance) {
+		int price = buyer.buyer().buyPrice(res, am);
+		double toll = TradeManager.totalFee(FACTIONS.player(), buyer, distance, res, am);
+		price -= toll;
+		return price;
+	}
 
 	void buy(Faction buyer, TradeShipper shipper) {
 
@@ -228,7 +257,6 @@ final class TradeSorter {
 				}else {
 					h.p.faction().seller().sell(t.res, am, sellPrice, buyer);
 				}
-
 
 
 

@@ -10,7 +10,7 @@ import init.sprite.UI.UI;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDFoodConsumptionData;
 import snake2d.LOG;
-import util.dic.Dic;
+import util.text.Dic;
 import world.WORLD;
 import world.map.regions.Region;
 

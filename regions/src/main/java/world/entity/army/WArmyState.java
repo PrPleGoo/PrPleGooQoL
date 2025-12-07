@@ -7,9 +7,8 @@ import game.faction.npc.FactionNPC;
 import game.faction.royalty.opinion.ROPINIONS;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
-import init.C;
-import init.RES;
-import init.config.Config;
+import init.constant.C;
+import init.constant.Config;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.type.HTYPES;
@@ -21,9 +20,11 @@ import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.INDEXED;
 import snake2d.util.sets.LIST;
 import snake2d.util.sprite.text.Str;
+import util.GUTIL;
 import util.colors.GCOLOR;
-import util.dic.Dic;
 import util.gui.misc.GText;
+import util.text.D;
+import util.text.Dic;
 import view.main.VIEW;
 import world.WORLD;
 import world.army.AD;
@@ -38,6 +39,10 @@ public abstract class WArmyState implements INDEXED{
 	
 	private static CharSequence ¤¤siege = "Are you sure you wish to besiege {0} and declare war on the faction of {0}?"; 
 	
+	static {
+		D.ts(WArmyState.class);
+	}
+
 	public static LIST<WArmyState> all(){
 		return all;
 	}
@@ -69,7 +74,7 @@ public abstract class WArmyState implements INDEXED{
 		WArmyState update(WArmy a, double ds) {
 			checkTile(a);
 			a.stateFloat += ds;
-			if (a.stateFloat > TIME.secondsPerDay/2)
+			if (a.stateFloat > TIME.secondsPerDay()/2)
 				return fortified;
 			return this;
 				
@@ -91,8 +96,8 @@ public abstract class WArmyState implements INDEXED{
 	
 	private static void checkTile(WArmy a) {
 		if (!WORLD.PATH().map.is.is(a.ctx(), a.cty())) {
-			for (int i = 0; i < RES.circle().length(); i++) {
-				COORDINATE c = RES.circle().get(i);
+			for (int i = 0; i < GUTIL.circle().length(); i++) {
+				COORDINATE c = GUTIL.circle().get(i);
 				int x = a.body().cX()+c.x();
 				int y = a.body().cY()+c.y();
 				int tx = x >> C.T_SCROLL;
@@ -124,10 +129,10 @@ public abstract class WArmyState implements INDEXED{
 			a.stateFloat -= 120;
 			
 			double rd = RD.RACES().popSizeTarget(reg);
-			double ad = (double)AD.men(null).get(a)/(Config.BATTLE.MEN_PER_ARMY);
+			double ad = (double)AD.men(null).get(a)/(Config.battle().MEN_PER_ARMY);
 			double dd = ad/rd;
 			
-			double d = 120*dd/(TIME.secondsPerDay*4);
+			double d = 120*dd/(TIME.secondsPerDay()*4);
 			
 			double inc = RD.DEVASTATION().current.max(reg)*d;
 			int iinc = (int) inc;

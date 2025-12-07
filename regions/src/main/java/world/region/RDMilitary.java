@@ -8,10 +8,9 @@ import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.time.TIME;
-import init.config.Config;
+import init.constant.Config;
 import init.race.Race;
 import init.sprite.UI.UI;
-import init.text.D;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.entity.ENTETIES;
 import settlement.stats.STATS;
@@ -20,8 +19,9 @@ import snake2d.util.sets.LIST;
 import util.data.DOUBLE_O;
 import util.data.DOUBLE_O.DOUBLE_OE;
 import util.data.INT_O.INT_OE;
-import util.dic.Dic;
 import util.info.INFO;
+import util.text.D;
+import util.text.Dic;
 import world.WORLD;
 import world.army.WDIV;
 import world.map.regions.Region;
@@ -50,7 +50,7 @@ public class RDMilitary {
         bgarrison = BOOSTING.push("GARRISON", 0, Dic.¤¤garrison, ¤¤garrisonD, UI.icons().s.shield,  BoostableCat.ALL().WORLD);
         bFortification = BOOSTING.push("FORTIFICATION", 8, Dic.¤¤Fort, Dic.¤¤FortD, UI.icons().s.degrade,  BoostableCat.ALL().WORLD);
 
-        INT_OE<Region> dd = init.count.new DataShort("GARRISON", null, Config.BATTLE.REGION_MAX_DIVS*Config.BATTLE.MEN_PER_DIVISION) {
+		INT_OE<Region> dd = init.count.new DataShort("GARRISON", null, Config.battle().REGION_MAX_DIVS*Config.battle().MEN_PER_DIVISION) {
             @Override
             public int get(Region t) {
                 if (FACTIONS.player().capitolRegion() == t) {
@@ -73,7 +73,7 @@ public class RDMilitary {
         fort = init.count.new DataDouble("REG_FORT");
 
         init.upers.add(new RDUpdatable() {
-            private final double dt = 2.0/(TIME.secondsPerDay);
+			private final double dt = 2.0/(TIME.secondsPerDay());
 
             @Override
             public void update(Region reg, double time) {
@@ -81,10 +81,9 @@ public class RDMilitary {
                 int t = garrisonTarget(reg);
 
                 if (WORLD.BATTLES().besigedTime(reg) > 0) {
-                    if (false) {
-                        //have the garrison decrease unconditionally here...
-                    }
+
                     int d = (int) (garrisonTarget(reg)*(1.0-besigeMul(reg)));
+					d = (int) Math.min(garrison.get(reg)*(1.0-besigeMul(reg)), d);
                     d = CLAMP.i(d, 0, t);
                     if (d < garrison.get(reg)) {
                         garrison.set(reg, d);
@@ -141,7 +140,7 @@ public class RDMilitary {
     }
 
     public double besigeMul(Region t) {
-        return CLAMP.d((WORLD.BATTLES().besigedTime(t)-TIME.secondsPerDay)/(TIME.secondsPerDay*16.0), 0, 1);
+		return CLAMP.d((WORLD.BATTLES().besigedTime(t)-TIME.secondsPerDay())/(TIME.secondsPerDay()*16.0), 0, 1);
     }
 
     public int defensePower(Region reg) {

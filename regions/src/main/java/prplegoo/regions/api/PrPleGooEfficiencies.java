@@ -1,17 +1,13 @@
 package prplegoo.regions.api;
 
 import game.boosting.*;
-import init.resources.Minable;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
-import init.type.TERRAINS;
-import snake2d.LOG;
-import util.dic.Dic;
+import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
 import world.region.building.RDBuilding;
-import world.region.pop.RDRace;
 
 public class PrPleGooEfficiencies {
     public static void FOOD_CONSUMER(RDBuilding bu) {

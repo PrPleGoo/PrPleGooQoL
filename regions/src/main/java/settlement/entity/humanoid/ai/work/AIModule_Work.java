@@ -1,8 +1,9 @@
 package settlement.entity.humanoid.ai.work;
 
+import static settlement.main.SETT.ROOMS;
+
 import game.GAME;
 import init.sprite.UI.UI;
-import init.text.D;
 import init.type.BUILDING_PREFS;
 import init.type.HTYPES;
 import init.type.WGROUP;
@@ -28,8 +29,7 @@ import settlement.room.spirit.grave.GraveData;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
 import settlement.stats.STATS;
 import snake2d.util.rnd.RND;
-
-import static settlement.main.SETT.ROOMS;
+import util.text.D;
 
 public final class AIModule_Work extends AIModule{
 
@@ -49,7 +49,12 @@ public final class AIModule_Work extends AIModule{
 	
 	public AIModule_Work(){
 		super(UI.icons().s.hammer, ¤¤name, ¤¤desc);
-		Works w = new Works();
+		Works w = new WorkAbs.Works();
+
+		if (false) {
+			// scrap the priorities. Use work groups. Make work groups a priority list. Keep track of work groups and employees and their priority.
+			//use master prio to set employee caps. To find a workplace, iterate all industries, and find the higest prio. If full, see if you can kick out any low prio workers.
+		}
 		
 		for (ROOM_FARM  b : ROOMS().FARMS) {
 			new WorkAbs(this, b, map, w) {
@@ -90,7 +95,7 @@ public final class AIModule_Work extends AIModule{
 		new WorkTransporterSupply(this, map, w);
 		new PrPleGooWorkTransporterLogistics(this, map, w);
 		new WorkAbs(this, SETT.ROOMS().STATION, map, w);
-		new WorkEmissary(this, map);
+		new WorkEmissary(this, map, w);
 		new WorkAbs(this, SETT.ROOMS().CHAMBER, map, w);
 		{
 			for (RoomBlueprintIns<?> p : ROOMS().PHYSICIANS)
@@ -165,7 +170,7 @@ public final class AIModule_Work extends AIModule{
 		if (!validateEmployment(a, d)) {
 			if (!PlanOddjobber.hasOddjob(a, true))
 				return null;
-			if (SETT.ARMIES().enemy().men() > 0)
+			if (GAME.ARMIES().enemy().men() > 0)
 				return null;
 			AiPlanActivation p = oddjobber.activateOddjobber(a, d);
 			return p;
@@ -189,7 +194,7 @@ public final class AIModule_Work extends AIModule{
 			
 			if (b.shouldReportWorkFailure(a, d))
 				AIModules.data().byte2.set(d, 1);
-			if (PlanOddjobber.hasOddjob(a, false) && SETT.ARMIES().enemy().men() == 0) {
+			if (PlanOddjobber.hasOddjob(a, false) && GAME.ARMIES().enemy().men() == 0) {
 				p = oddjobber.activateHelpOut(a, d);
 				if (p != null)
 					return p;
@@ -231,7 +236,7 @@ public final class AIModule_Work extends AIModule{
 	public int getPriority(Humanoid a, AIManager d) {
 		
 		if (work(a) == null && !ROOMS().employment.hasWork(a)) {
-			if (SETT.ARMIES().enemy().men() > 0)
+			if (GAME.ARMIES().enemy().men() > 0)
 				return 0;
 			if (!PlanOddjobber.hasOddjob(a, true))
 				return 0;
@@ -392,7 +397,7 @@ public final class AIModule_Work extends AIModule{
 		private RoomInstance getEmployableRoom(RoomBlueprintIns<?> current, int ri) {
 			if (ri < current.instancesSize()) {
 				RoomInstance ins = current.getInstance(ri);
-				if (ins.employees().employed() < ins.employees().target()) {
+				if (ins.active() && ins.employees().employed() < ins.employees().target()) {
 					return ins;
 				}
 			}

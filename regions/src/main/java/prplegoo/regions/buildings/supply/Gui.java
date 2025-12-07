@@ -5,7 +5,6 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.settings.S;
 import init.sprite.UI.UI;
-import init.text.D;
 import settlement.main.SETT;
 import settlement.room.infra.logistics.MoveDic;
 import settlement.room.infra.logistics.MoveOrderPullUI;
@@ -21,9 +20,9 @@ import snake2d.util.sets.Stack;
 import snake2d.util.sprite.text.Str;
 import util.colors.GCOLOR;
 import util.data.GETTER;
-import util.dic.Dic;
 import util.gui.misc.*;
 import util.info.GFORMAT;
+import util.text.Dic;
 import view.sett.ui.room.UIRoomModule.UIRoomModuleImp;
 import world.region.RD;
 

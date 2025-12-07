@@ -1,5 +1,7 @@
 package world.region.updating;
 
+import java.io.IOException;
+
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.time.TIME;
@@ -16,8 +18,6 @@ import world.map.regions.WREGIONS;
 import world.region.RD.RDInit;
 import world.region.RD.RDUpdatable;
 
-import java.io.IOException;
-
 public final class RDUpdater {
 
 	private final LIST<RDUpdatable> all;
@@ -28,12 +28,12 @@ public final class RDUpdater {
 	private final Builder builder = new Builder();
 
 
-	private final double upD = TIME.secondsPerDay/4;
-	private final double ship = TIME.secondsPerDay;
-	private final double build = TIME.secondsPerDay*2;
+	private final double upD = TIME.secondsPerDay() >> 2;
+	private final double ship = TIME.secondsPerDay();
+	private final double build = TIME.secondsPerDay()*2;
 	
 	public RDUpdater(RDInit init){
-		
+
 		this.all = init.upers;
 		for (int i = 0; i < timers.length; i++) {
 			timers[i] = (float) (RND.rFloat()*build);
@@ -72,7 +72,8 @@ public final class RDUpdater {
 							u.update(r, upD);
 					}
 					if (next >= build) {
-						builder.build(r);
+						if (r.faction() != null)
+							builder.build(r);
 						shipper.ship(r, build);
 						next -= build;
 						
@@ -90,7 +91,6 @@ public final class RDUpdater {
 		public void save(FilePutter file) {
 			file.fs(timers);
 			uper.save(file);
-		
 		}
 		
 		@Override
@@ -101,12 +101,11 @@ public final class RDUpdater {
 		
 		@Override
 		public void clear() {
-
 		}
 	};
 
 
-	public void update(float ds) {
+	public void update(double ds) {
 		uper.update(ds);
 	}
 	

@@ -25,7 +25,7 @@ public class KingLevels {
     @Getter
     private static KingLevels instance;
     @Getter
-    private static boolean isActive = false;
+    private static boolean isActive = true;
 
     private final KingLevel[] kingLevels;
     @Getter

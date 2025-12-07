@@ -10,7 +10,6 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.resources.ResSupply;
 import init.sprite.UI.UI;
-import init.text.D;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import settlement.room.military.artillery.ROOM_ARTILLERY;
@@ -26,7 +25,8 @@ import snake2d.util.sets.LIST;
 import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.text.Str;
 import util.data.INT_O.INT_OE;
-import util.dic.Dic;
+import util.text.D;
+import util.text.Dic;
 import view.ui.message.MessageText;
 import world.army.ADInit.Register;
 import world.army.ADInit.Updater;
@@ -159,7 +159,7 @@ public final class ADSupplies {
 				if (KingLevels.isActive() || a.faction() == FACTIONS.player()) {
 					double he = health(a);
 					for (ADSupply s : all) {
-						double am = s.consumedPerDayCurrent(a)*timeSinceLast*TIME.secondsPerDayI;
+						double am = s.consumedPerDayCurrent(a)*timeSinceLast*TIME.secondsPerDayI();
 						int tot = (int) am;
 						if (am-tot > RND.rFloat())
 							tot++;
@@ -174,7 +174,7 @@ public final class ADSupplies {
 				}else {
 					for (ADSupply s : AD.supplies().all) {
 						double am = Math.ceil(s.targetAmount(a)/16.0);
-						am = CLAMP.d(am, 0, s.needed(a));
+						am = CLAMP.d(am, 0, s.minimumAmount(a));
 						s.current().inc(a, (int)am);
 					}
 				}

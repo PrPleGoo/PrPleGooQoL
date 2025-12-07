@@ -2,36 +2,31 @@ package world.region.building;
 
 import java.io.IOException;
 
+import game.battle.div.Div;
 import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
 import game.faction.player.Player;
-import game.values.GVALUES;
-import game.values.Lockable;
-import game.values.Value;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
-import init.text.D;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
+import init.value.GVALUES;
+import init.value.Lockable;
 import lombok.Getter;
-import lombok.var;
 import prplegoo.regions.api.PrPleGooEfficiencies;
-import prplegoo.regions.api.RDDeficits;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
 import prplegoo.regions.api.npc.KingLevels;
-import settlement.army.div.Div;
 import settlement.main.SETT;
-import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
-import settlement.room.industry.module.Industry.IndustryResource;
-import settlement.room.industry.module.IndustryRegion;
+import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.IndustryResource;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
@@ -40,16 +35,15 @@ import settlement.stats.Induvidual;
 import snake2d.LOG;
 import snake2d.util.file.Json;
 import snake2d.util.misc.ACTION;
-import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.LIST;
 import snake2d.util.sets.LISTE;
 import snake2d.util.sprite.text.Str;
-import util.dic.Dic;
 import util.info.GFORMAT;
 import util.info.INFO;
-import world.WORLD;
+import util.text.D;
+import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RD.RDInit;
@@ -184,19 +178,6 @@ final class Creator {
 				} else {
 					RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
 					res.add(bu);
-
-//					if (h.industries().get(0).reg() != null) {
-//						IndustryRegion ii = h.industries().get(0).reg();
-//						Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.plusBig), 0.0, 10, true) {
-//							@Override
-//							double get(Region reg) {
-//								return true ? 1 : RD.PROSPECT().get(ii, reg);
-//							};
-//						};
-//						bo.add(bu.efficiency);
-//						// this is the magic?
-//						bu.baseFactors.add(bo);
-//					}
 				}
 			}
 
@@ -470,7 +451,9 @@ final class Creator {
 	}
 
 	private void pushLevelCapping(RDBuilding bu, Json da) {
-		if (!da.has("LEVEL_CAP"))
+		bu.setLevelCapped(da.has("LEVEL_CAP"));
+
+		if (!bu.isLevelCapped())
 			return;
 
 		Json data = da.json("LEVEL_CAP");

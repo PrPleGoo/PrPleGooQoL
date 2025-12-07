@@ -9,7 +9,7 @@ import game.faction.Faction;
 import game.faction.trade.FACTION_IMPORTER;
 import game.faction.trade.ITYPE;
 import game.time.TIME;
-import init.C;
+import init.constant.C;
 import init.race.RACES;
 import init.race.Race;
 import init.resources.RESOURCE;
@@ -137,7 +137,7 @@ public final class Shipment extends WEntity{
     }
 
     @Override
-    protected void update(float ds) {
+	protected void update(double ds) {
 
         path.move(this, speed*ds);
         if (!path.isValid()) {

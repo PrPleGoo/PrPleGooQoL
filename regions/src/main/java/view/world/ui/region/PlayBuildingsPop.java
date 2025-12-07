@@ -8,17 +8,11 @@ import game.boosting.BoostSpec;
 import game.boosting.Boostable;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
-import init.C;
+import init.constant.C;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
-import init.text.D;
-import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.ui.FoodSelector;
-import prplegoo.regions.ui.SlaveSelector;
-import settlement.room.industry.module.INDUSTRY_HASER;
-import settlement.room.industry.module.Industry;
-import settlement.room.main.RoomBlueprintImp;
+import settlement.room.industry.module.IndustryResource;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -34,12 +28,17 @@ import snake2d.util.gui.renderable.RENDEROBJ;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListResize;
+import prplegoo.regions.api.MagicStringChecker;
+import prplegoo.regions.ui.FoodSelector;
+import prplegoo.regions.ui.SlaveSelector;
+import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.industry.module.Industry;
+import settlement.room.main.RoomBlueprintImp;
 import snake2d.util.sets.LIST;
 import snake2d.util.sprite.SPRITE;
 import snake2d.util.sprite.text.Str;
 import util.colors.GCOLOR;
 import util.data.GETTER.GETTER_IMP;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.gui.misc.GStat;
@@ -47,6 +46,8 @@ import util.gui.misc.GText;
 import util.gui.panel.GPanel;
 import util.gui.table.GScrollRows;
 import util.info.GFORMAT;
+import util.text.D;
+import util.text.Dic;
 import view.main.VIEW;
 import world.map.regions.Region;
 import world.region.RD;
@@ -299,7 +300,7 @@ class PlayBuildingsPop {
             }
 
             int rendered = 0;
-            for (Industry.IndustryResource res : industry.ins()){
+            for (IndustryResource res : industry.ins()){
                 res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
                 rendered++;
             }
@@ -307,7 +308,7 @@ class PlayBuildingsPop {
             UI.icons().m.arrow_right.medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
             rendered++;
 
-            for (Industry.IndustryResource res : industry.outs()){
+            for (IndustryResource res : industry.outs()){
                 res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
                 rendered++;
             }
@@ -350,7 +351,7 @@ class PlayBuildingsPop {
         if (d < 0) {
             am = (int) (-d*7);
         }else {
-            am = (int) (d*4);
+			am = (int) (d*7);
         }
         am = CLAMP.i(am, -7, 7);
 
@@ -419,11 +420,11 @@ class PlayBuildingsPop {
         b.add(b.text().lablify().add(Dic.¤¤ProductionRate));
         b.NL();
 
-        for (Industry.IndustryResource res : industry.outs()){
+        for (IndustryResource res : industry.outs()){
             hoverCost(b, res.resource.icon(), res.resource.name, res.rate);
         }
 
-        for (Industry.IndustryResource res : industry.ins()){
+        for (IndustryResource res : industry.ins()){
             hoverCost(b, res.resource.icon(), res.resource.name, -res.rate);
         }
     }

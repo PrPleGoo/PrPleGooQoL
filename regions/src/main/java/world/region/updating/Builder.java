@@ -318,12 +318,11 @@ final class Builder {
 				RBuilding<RDResource> br = new RBuilding<RDResource>(bu) {
 					@Override
 					double value(RDResource t, RealmBuilder builder, Region reg) {
-						if (false)
-							;//no efficiency here
-						return builder.priority(t.res, reg)*bu.efficiency.get(reg)*bu.efficiency.get(reg);
+						return builder.priority(t.res, reg)*bu.baseEfficiency(reg);
 					}
 				};
 				for (BoostSpec s : bu.boosters().all()) {
+
 					if (map.containsKey(s.boostable.key)) {
 						br.bos.add(new RSpec<RDResource>(s, map.get(s.boostable.key)));
 					}
@@ -384,8 +383,8 @@ final class Builder {
 			this.all = all;
 		}
 
-		private RealmBuilder current;
-		private Region rcurrent;
+		protected RealmBuilder current;
+		protected Region rcurrent;
 
 		double init(Region reg, RealmBuilder builder) {
 			current = builder;

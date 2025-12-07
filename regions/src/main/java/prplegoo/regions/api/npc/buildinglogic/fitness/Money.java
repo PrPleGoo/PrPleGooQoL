@@ -16,7 +16,7 @@ public class Money extends FitnessRecord {
 
     @Override
     public double determineValue(FactionNPC faction) {
-        double totalMoney = RD.OUTPUT().MONEY.boost.get(faction) * TIME.secondsPerDay * 2;
+        double totalMoney = RD.OUTPUT().MONEY.boost.get(faction) * TIME.secondsPerDay() * 2;
 
         for (RESOURCE resource : RESOURCES.ALL()) {
             double price = faction.stockpile.price.get(resource);

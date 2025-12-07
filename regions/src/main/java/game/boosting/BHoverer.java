@@ -4,9 +4,9 @@ import init.sprite.UI.UI;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.sets.ArrayListInt;
 import snake2d.util.sets.LIST;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.info.GFORMAT;
+import util.text.Dic;
 
 public final class BHoverer {
 
@@ -28,8 +28,13 @@ public final class BHoverer {
             b.textLL(name);
         b.NL();
 
+		BoosterAbs.hover(box, baseValue, 0, UI.icons().s.dot, false, Dic.¤¤BaseValue);
+		box.NL();
+
         for (BoosterAbs<T> l : all) {
             double d = l.get(f);
+
+
 
             if (!l.isMul && d != 0) {
                 l.hover(box, d);

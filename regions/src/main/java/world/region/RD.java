@@ -11,10 +11,9 @@ import game.debug.Profiler;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
-import game.values.GVALUES;
 import init.race.Race;
 import init.sprite.UI.UI;
-import init.text.D;
+import lombok.Getter;
 import prplegoo.regions.api.*;
 import prplegoo.regions.api.npc.KingLevelBoostAttacher;
 import prplegoo.regions.api.npc.KingLevels;
@@ -27,8 +26,7 @@ import snake2d.util.sets.LIST;
 import snake2d.util.sets.LinkedList;
 import snake2d.util.sprite.text.Str;
 import util.data.DataO;
-import util.data.INT_O;
-import util.data.INT_O.INT_OE;
+import util.text.D;
 import view.tool.PLACABLE;
 import view.tool.ToolManager;
 import world.WORLD;
@@ -275,7 +273,7 @@ public class RD extends WorldResource {
     }
 
     @Override
-    public void update(float ds, Profiler prof) {
+	public void update(double ds, Profiler prof) {
         prof.logStart(this);
 
         updater.update(ds);

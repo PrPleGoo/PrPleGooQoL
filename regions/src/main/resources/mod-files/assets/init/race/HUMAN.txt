@@ -94,9 +94,7 @@ RESOURCE: {
 	MEAT: 30,
 	LEATHER: 10,
 },
-MILITARY_EQUIPMENT_EFFICIENCY: {
-	*: 1,
-},
+
 STATS: {
 
 	ACCESS*: {
@@ -154,6 +152,9 @@ SPRITE_FILE: HUMAN,
 ICON_SMALL: 24->race->Human->0,
 ICON_BIG: 32->race->Human->0,
 
+EQUIPMENT_ENABLED: [
+	*,
+],
 
 
 BOOST: {

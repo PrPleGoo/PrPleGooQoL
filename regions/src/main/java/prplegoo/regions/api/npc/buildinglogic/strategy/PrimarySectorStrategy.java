@@ -12,6 +12,7 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.industry.module.IndustryResource;
 import settlement.room.main.RoomBlueprintImp;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
@@ -37,7 +38,7 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
         FactionNPC faction = (FactionNPC) region.faction();
 
         if (industries.size() == 1 && industries.get(0).ins().isEmpty()) {
-            LIST<Industry.IndustryResource> outputs = industries.get(0).outs();
+            LIST<IndustryResource> outputs = industries.get(0).outs();
 
             double outputCount = 0.0;
             double priceSum = 0.0;

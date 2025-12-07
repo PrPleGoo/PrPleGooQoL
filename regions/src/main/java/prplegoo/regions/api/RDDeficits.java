@@ -10,6 +10,7 @@ import init.resources.RESOURCES;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDDeficitData;
 import settlement.room.industry.module.Industry;
+import settlement.room.industry.module.IndustryResource;
 import snake2d.LOG;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
@@ -23,7 +24,7 @@ import world.region.building.RDBuilding;
 import java.util.HashMap;
 
 public class RDDeficits implements IDataPersistence<RDDeficitData> {
-    private static final double timer = TIME.secondsPerDay;
+    private static double timer;
     private int[] deficits;
     private int[] oldDeficits;
     private int[] supplies;
@@ -35,6 +36,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     }
 
     private void initialize() {
+        timer = TIME.secondsPerDay();
         deficits = new int[RESOURCES.ALL().size()];
         oldDeficits = new int[RESOURCES.ALL().size()];
         supplies = new int[RESOURCES.ALL().size()];
@@ -172,7 +174,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         Industry selectedRecipe = industries.get(RD.RECIPES().getRecipeIndex(region, building.index(), building.getBlue()));
 
         double worst = 1;
-        for (Industry.IndustryResource resource : selectedRecipe.ins()) {
+        for (IndustryResource resource : selectedRecipe.ins()) {
             double deficit = RD.DEFICITS().getDeficitModifier(resource.resource);
             if (deficit < worst) {
                 worst = deficit;

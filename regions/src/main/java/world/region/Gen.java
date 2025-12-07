@@ -2,8 +2,7 @@ package world.region;
 
 import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
-import init.RES;
-import lombok.Getter;
+import init.sprite.SPRITES;
 import prplegoo.regions.api.gen.FactionGenerator;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.misc.ACTION;
@@ -98,8 +97,8 @@ public class Gen {
     }
 
 
-    public void generateKingdoms() {
-        RES.loader().init();
+	private void generateKingdoms() {
+		SPRITES.loader().init();
 
         if (KingLevels.isActive()) {
             factionGenerator.generateKingdoms();

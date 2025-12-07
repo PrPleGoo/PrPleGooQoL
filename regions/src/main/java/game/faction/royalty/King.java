@@ -49,7 +49,7 @@ public class King {
 
 	void init() {
 
-		Royalty roy = court.all.get(0);
+		Royalty roy = court.all().get(0);
 		RDNames nn = RD.RACES().get(roy.induvidual.race()).names;
 		name.clear().add(nn.rNames.next());
 		name.s();
@@ -70,7 +70,7 @@ public class King {
 	}
 
 	public Royalty roy() {
-		return court.all.get(0);
+		return court.all().get(0);
 	}
 
 
@@ -106,7 +106,7 @@ public class King {
 
 		@Override
 		public double policy(Race race, Region reg) {
-			double add = BOOSTABLES.NOBLE().TOLERANCE.get(roy().induvidual);
+			double add = BOOSTABLES.NOBLE().TOLERANCE.get(roy().induvidual)-1;
 			if (race == roy().induvidual.race())
 				return 4*RD.RACES().all.size()-add*RD.RACES().all.size();
 			return -1 + roy().induvidual.race().pref().race(race)+add;

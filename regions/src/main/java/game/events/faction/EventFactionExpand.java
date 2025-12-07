@@ -24,13 +24,17 @@ import world.region.RD;
 
 public class EventFactionExpand extends EventResource{
 
-    private static final double dtime = TIME.secondsPerDay*2;
-    private double timer = dtime;
+	private static final double dtime() {
+        return TIME.secondsPerDay()*2;
+    }
+    private double timer;
     private int nextFaction = RND.rInt(FACTIONS.MAX());
 
 
     EventFactionExpand(){
         super("FACTION_EXPAND");
+
+        timer = dtime();
     }
 
     @Override
@@ -105,7 +109,7 @@ public class EventFactionExpand extends EventResource{
 
     @Override
     protected void clear() {
-        timer = RND.rFloat()*dtime;
+        timer = RND.rFloat()*dtime();
         nextFaction = RND.rInt(FACTIONS.MAX());
     }
 

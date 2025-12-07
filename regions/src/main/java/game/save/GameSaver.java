@@ -1,14 +1,13 @@
 package game.save;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import game.GAME;
 import game.GameSpec;
-import game.save.AutoSaver;
-import game.save.PROP;
-import game.save.Savable;
-import game.save.SaveFile;
-import init.RES;
 import init.paths.PATHS;
-import init.text.D;
+import init.sprite.SPRITES;
 import settlement.main.SETT;
 import snake2d.CORE;
 import snake2d.LOG;
@@ -19,11 +18,8 @@ import snake2d.util.misc.ACTION.ACTION_O;
 import snake2d.util.sets.ArrayListGrower;
 import snake2d.util.sets.KeyMap;
 import snake2d.util.sets.LIST;
+import util.text.D;
 import view.main.VIEW;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class GameSaver {
 
@@ -58,15 +54,15 @@ public class GameSaver {
 	}
 	
 	public Path save(String name, boolean minified) {
-		return save(PATHS.local().SAVE.get(), name, minified);
+		return save(PATHS.local().save().get(), name, minified);
 	}
 	
 	public Path save(Path path, String name, boolean minified) {
-		path = path.resolve(name + PATHS.local().SAVE.fileEnding());
+		path = path.resolve(name + PATHS.local().save().fileEnding());
 		boolean succ = false;
-		RES.loader().minify(minified, ¤¤save);
-		RES.loader().init();
-		RES.loader().print("Saving the world...");
+		SPRITES.loader().minify(minified, ¤¤save);
+		SPRITES.loader().init();
+		SPRITES.loader().print("Saving the world...");
 		auto.reset();
 		try {
 			if (Files.exists(path)) {
@@ -81,7 +77,7 @@ public class GameSaver {
 				
 				@Override
 				public void exe() {
-					RES.loader().print(¤¤savingDisk);
+					SPRITES.loader().print(¤¤savingDisk);
 				}
 			};
 			a.exe();
@@ -89,14 +85,14 @@ public class GameSaver {
 			timeOfLastSave = CORE.getUpdateInfo().getSecondsSinceFirstUpdate();
 			System.gc();
 			CORE.getInput().clearAllInput();
-			RES.loader().minify(false, ¤¤save);
+			SPRITES.loader().minify(false, ¤¤save);
 			auto.reset();
 			System.gc();
 			return succ ? path : null;
 			
 		}catch(Exception e) {
 			e.printStackTrace();
-			RES.loader().minify(false, ¤¤save);
+			SPRITES.loader().minify(false, ¤¤save);
 			return null;
 		}
 		
@@ -157,15 +153,18 @@ public class GameSaver {
 			if (e != null) {
 				try {
 					e.load(f);
-				}catch(IOException ee) {
+				}catch(Exception ee) {
+					ee.printStackTrace(System.out);
 					LOG.ln(k + " " + f.getPosition() + " " + pos + " " + e.getClass().getSimpleName());
 					f.setPosition(pos);
+					e.loadFail();
 				}
 				
 				CORE.checkIn();
 				if (f.getPosition() != pos) {
 					LOG.ln(k + " " + f.getPosition() + " " + pos + " " + e.getClass().getSimpleName());
 					f.setPosition(pos);
+					e.loadFail();
 				}
 			}else {
 				LOG.ln("skipping " + k);
@@ -193,28 +192,28 @@ public class GameSaver {
 		if (!VIEW.canSave())
 			return false;
 		int am = 0;
-		for (String s : PATHS.local().SAVE.getFiles()) {
+		for (String s : PATHS.local().save().getFiles()) {
 			if (SaveFile.name(s).equals(sname)){
 				am++;
 			}
 		}
 		if (am >= max) {
 			String least = null;
-			for (String s : PATHS.local().SAVE.getFiles()) {
+			for (String s : PATHS.local().save().getFiles()) {
 				if (SaveFile.name(s).equals(sname)){
 					if (least == null || SaveFile.time(s) < SaveFile.time(least)) {
 						least = s;
 					}
 				}
 			}
-			PATHS.local().SAVE.delete(least);
+			PATHS.local().save().delete(least);
 		}
 		return save(SaveFile.stamp(sname), mini) != null;
 	}
 
 
 
-	public void autoSave(float ds) {
+	public void autoSave(double ds) {
 		auto.autosave(ds);
 		
 	}

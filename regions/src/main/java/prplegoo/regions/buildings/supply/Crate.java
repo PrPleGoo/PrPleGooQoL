@@ -1,6 +1,6 @@
 package prplegoo.regions.buildings.supply;
 
-import game.audio.Sound;
+import game.audio.SoundRace;
 import game.faction.FACTIONS;
 import game.faction.FResources.RTYPE;
 import init.resources.RBIT;
@@ -292,7 +292,7 @@ final class Crate {
 		}
 		
 		@Override
-		public Sound jobSound() {
+		public SoundRace jobSound() {
 			return null;
 		}
 		

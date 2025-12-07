@@ -8,6 +8,7 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.industry.module.IndustryResource;
 import snake2d.util.sets.LIST;
 import world.map.regions.Region;
 import world.region.RD;
@@ -28,7 +29,7 @@ public class ReduceDeficitMutationStrategy extends LoopingMutationStrategy {
 
         LIST<Industry> industries = ((INDUSTRY_HASER) building.getBlue()).industries();
         FactionNPC faction = (FactionNPC) region.faction();
-        LIST<Industry.IndustryResource> inputs = industries.get(RD.RECIPES().getRecipeIndex(region, buildingGenetic.buildingIndex, building.getBlue())).ins();
+        LIST<IndustryResource> inputs = industries.get(RD.RECIPES().getRecipeIndex(region, buildingGenetic.buildingIndex, building.getBlue())).ins();
 
         for(int j = 0; j < inputs.size(); j++) {
             RESOURCE resource = inputs.get(j).resource;

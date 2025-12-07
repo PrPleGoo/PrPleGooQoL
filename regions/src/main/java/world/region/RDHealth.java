@@ -9,14 +9,14 @@ import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.time.TIME;
 import init.sprite.UI.UI;
-import init.text.D;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sprite.text.Str;
-import util.dic.Dic;
 import util.gui.misc.GBox;
 import util.info.GFORMAT;
+import util.text.D;
+import util.text.Dic;
 import view.ui.message.MessageText;
 import world.map.regions.Region;
 import world.region.RD.RDInit;
@@ -45,7 +45,7 @@ public class RDHealth extends RDataE {
 	public final RDataE outbreak;
 	private boolean btoggle = false;
 	
-	private static double dTime = 1.0/(TIME.secondsPerDay*2);
+	private static double dTime;
 	
 	private CharSequence eDesc(Region reg) {
 		Str.TMP.clear().add(¤¤epidemicD).insert(0, reg.info.name());
@@ -91,6 +91,8 @@ public class RDHealth extends RDataE {
 	
 	RDHealth(RDInit init) {
 		super("HEALTH", init.count.new DataByte("HEALTH"), init, ¤¤name);
+
+		dTime = 1.0/(TIME.secondsPerDay()*2);
 		boostablee = BOOSTING.push("HEALTH", 1, ¤¤name, ¤¤desc, UI.icons().s.heart,  BoostableCat.ALL().WORLD);
 		
 		new RBooster(new BSourceInfo(Dic.¤¤Population, UI.icons().s.human), 0, -10, false) {
@@ -121,6 +123,7 @@ public class RDHealth extends RDataE {
 				};
 				for (RDOutput o : RD.OUTPUT().ALL) {
 					bo.add(o.boost);
+					bo.add(o.boostYearlyPart);
 				}
 				bo = new RBooster(new BSourceInfo(¤¤epidemic, UI.icons().s.death), 1, 0, true) {
 					

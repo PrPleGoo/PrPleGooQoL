@@ -585,6 +585,7 @@ public final class ROOMS extends TileMap.Resource {
 		PROD = new RoomProduction(this);
 		updater = new Updater(RoomBlueprintIns.INS);
 		new RoomTests(this);
+
 	}
 
 	@Override
@@ -724,7 +725,7 @@ public final class ROOMS extends TileMap.Resource {
 	}
 
 	@Override
-	protected void update(float ds, Profiler profiler) {
+	protected void update(double ds, Profiler profiler) {
 		profiler.logStart(RoomBlueprint.class);
 		for (RoomBlueprint b : RoomBlueprint.ALL) {
 			b.update(ds);
@@ -813,7 +814,7 @@ public final class ROOMS extends TileMap.Resource {
 
 		protected abstract void clear();
 		
-		protected abstract void update(float ds);
+		protected abstract void update(double ds);
 		
 		
 	}

@@ -105,11 +105,11 @@ public class KingLevel {
                 }
                 if (key.equals("STRUCTURE")) {
                     for (TBuilding building : TERRAIN().BUILDINGS.all()) {
-                        if (building.resource == null || building.resAmount == 0) {
+                        if (building.structure.resource == null || building.structure.resAmount == 0) {
                             continue;
                         }
 
-                        result[race.index()][building.resource.index()] = race.race.pref().structure(BUILDING_PREFS.get(building)) * consumptionValue;
+                        result[race.index()][building.structure.resource.index()] = race.race.pref().structure(BUILDING_PREFS.get(building.structure)) * consumptionValue;
                     }
                     continue;
                 }

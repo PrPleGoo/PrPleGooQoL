@@ -3,15 +3,18 @@ package view.world.ui.region;
 import game.boosting.Boostable;
 import game.boosting.Booster;
 import game.time.TIME;
+import init.race.Race;
 import init.resources.Growable;
+import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.sprite.UI.UI;
-import init.text.D;
+import settlement.room.industry.module.IndustryResource;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
 import snake2d.util.gui.renderable.RENDEROBJ;
+import snake2d.util.misc.ACTION;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import util.colors.GCOLOR;
@@ -25,11 +28,14 @@ import util.gui.slider.GSliderInt;
 import util.gui.table.GTableBuilder;
 import util.gui.table.GTableBuilder.GRowBuilder;
 import util.info.GFORMAT;
+import util.text.D;
+import view.main.VIEW;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDOutputs.RDResource;
 import prplegoo.regions.api.RDSlavery;
+import world.region.updating.Shipper;
 
 final class PlayOutput extends GuiSection{
 
@@ -37,7 +43,7 @@ final class PlayOutput extends GuiSection{
     static {
         D.ts(PlayOutput.class);
     }
-    private final ArrayListGrower<PlayButt> butts = new ArrayListGrower<PlayButt>();
+	private final ArrayListGrower<PlayButt> butts = new ArrayListGrower<PlayButt>();
     private final GETTER_IMP<Region> g;
     private final ArrayList<RENDEROBJ> activeButts;
     private final int width;
@@ -45,6 +51,70 @@ final class PlayOutput extends GuiSection{
     private final int amX;
 
     public PlayOutput(GETTER_IMP<Region> g, int width) {
+        {
+            GButt.ButtPanel taxInfo = new GButt.ButtPanel(UI.icons().s.time) {
+                @Override
+                public void hoverInfoGet(GUI_BOX text) {
+                    GBox b = (GBox) text;
+
+                    Shipper shipper = RD.UPDATER().getShipper();
+
+                    int daysUntilTaxes = shipper.daysUntilTaxes(g.get());
+
+                    if (daysUntilTaxes < 0) {
+                        b.text("Taxes are shipped annually");
+
+                        return;
+                    }
+
+                    b.text("Taxes are shipped annually in " + daysUntilTaxes + " days.");
+                    b.sep();
+                    b.text(" Accumulated so far:");
+                    b.NL();
+
+                    for (RDResource res : RD.OUTPUT().RES) {
+                        int amount = shipper.getAccumulatedTaxes(g.get(), res);
+
+                        if (amount <= 0)
+                        {
+                            continue;
+                        }
+
+                        RESOURCE rr = res.res;
+
+                        b.add(rr.icon());
+                        b.text(rr.name);
+
+                        b.tab(7);
+                        b.add(GFORMAT.i(b.text(), amount));
+
+                        b.NL();
+                    }
+
+                    for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
+                        int amount = shipper.getAccumulatedTaxes(g.get(), rdSlave);
+
+                        if (amount <= 0)
+                        {
+                            continue;
+                        }
+
+                        Race race = rdSlave.rdRace.race;
+
+                        b.add(race.appearance().icon);
+                        b.textL(race.info.name);
+                        b.textL("(Prisoners)");
+
+                        b.tab(7);
+                        b.add(GFORMAT.i(b.text(), amount));
+
+                        b.NL();
+                    }
+                }
+            };
+
+            addRight(4, taxInfo);
+        }
 
         {
             INTE ii = new INTE() {
@@ -77,9 +147,10 @@ final class PlayOutput extends GuiSection{
                     super.hoverInfoGet(text);
                 }
             };
-            sl.body().moveX2(body().x2()-16);
-            sl.body().moveY1(4);
-            add(sl);
+
+            addRight(4, sl);
+
+            sl.body().moveY1(sl.body().y1() - 2);
         }
 
 
@@ -114,7 +185,7 @@ final class PlayOutput extends GuiSection{
                 }
             });
 
-            addRelBody(2, DIR.S, builder.createHeight((height)*3, false));
+			addRelBody(2, DIR.S, builder.createHeight((height)*2, false));
         }
 
         pad(6, 6);
@@ -125,17 +196,26 @@ final class PlayOutput extends GuiSection{
         GButt.ButtPanel.renderBG(r, true, false, false, body());
         GButt.ButtPanel.renderFrame(r, body());
         activeButts.clearSloppy();
-        for (PlayButt b : butts) {
-            if (hasValue(b.getBoostable(), g.get())) {
+		for (PlayButt b : butts) {
+
+			if (hasValue(b.getBoostable(), g.get())
+                    || (b.hasYearlyBoostable() && hasValue(b.getYearlyBoostable(), g.get()))
+            ) {
                 activeButts.add(b);
             }
         }
-
         super.render(r, ds);
     }
 
     private boolean hasValue(Boostable bo, Region reg) {
-        return bo.get(reg) != 0;
+
+		for (Booster b : bo.all()) {
+			double v = b.get(reg);
+			if ((!b.isMul && v != 0)) {
+				return true;
+			}
+		}
+		return false;
     }
 
     private class Row extends GuiSection{
@@ -165,6 +245,8 @@ final class PlayOutput extends GuiSection{
 
     private abstract class PlayButt extends ClickableAbs {
         abstract Boostable getBoostable();
+        abstract Boostable getYearlyBoostable();
+        abstract boolean hasYearlyBoostable();
     }
 
     private class ResButt extends PlayButt{
@@ -186,7 +268,7 @@ final class PlayOutput extends GuiSection{
             bu.boost.icon.medium.renderC(r, body.x1()+16, body.cY());
 
             tt.clear();
-            GFORMAT.i(tt, (long) bu.boost.get(g.get()));
+			GFORMAT.i(tt, (long) (bu.boost.get(g.get()) + bu.boostYearlyPart.get(g.get())));
 
             tt.renderC(r, body.x1()+32, body.cY());
 
@@ -196,33 +278,43 @@ final class PlayOutput extends GuiSection{
 
         @Override
         public void hoverInfoGet(GUI_BOX text) {
-            if (bu instanceof RDResource) {
-                RDResource r = (RDResource) bu;
-                Growable g = RESOURCES.growable().get(r.res);
+
+
+
+
+
+			if (bu.boostYearlyPart.get(g.get()) > 0) {
+				bu.boostYearlyPart.hover(text, g.get(), true);
                 GBox b = (GBox) text;
-                if (g != null) {
+				b.sep();
                     GText t = b.text();
                     t.add(¤¤ship);
-                    int d = (int) (g.seasonalOffset*TIME.years().bitConversion(TIME.days()));
-                    int now = TIME.days().bitsSinceStart()%(int)TIME.years().bitConversion(TIME.days());
-                    if (now >= d) {
-                        t.insert(0, now-d);
-                    }else {
-                        t.insert(0, d-now);
-                    }
+				t.insert(0, bu.daysUntilDailydelivery());
+				t.insert(1, bu.yearlyAccumilation.get(g.get()));
                     b.add(t);
                     b.sep();
+
+				if (bu.boost.get(g.get()) > 0) {
+                    bu.boost.hover(text, g.get(), true);
                 }
+
+
+            }else {
+                bu.boost.hover(text, g.get(), true);
             }
-
-
-            bu.boost.hover(text, g.get(), true);
-
         }
 
         @Override
         Boostable getBoostable() {
             return bu.boost;
+        }
+        @Override
+        Boostable getYearlyBoostable() {
+            return bu.boostYearlyPart;
+        }
+        @Override
+        boolean hasYearlyBoostable() {
+            return true;
         }
     }
     private class RaceButt extends PlayButt {
@@ -256,6 +348,14 @@ final class PlayOutput extends GuiSection{
         @Override
         Boostable getBoostable() {
             return rdSlave.boost;
+        }
+        @Override
+        Boostable getYearlyBoostable() {
+            return rdSlave.boost;
+        }
+        @Override
+        boolean hasYearlyBoostable() {
+            return false;
         }
     }
 }

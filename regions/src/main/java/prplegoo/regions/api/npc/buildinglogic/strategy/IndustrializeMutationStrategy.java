@@ -11,6 +11,7 @@ import prplegoo.regions.api.npc.buildinglogic.fitness.Money;
 import prplegoo.regions.api.npc.buildinglogic.fitness.Workforce;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
+import settlement.room.industry.module.IndustryResource;
 import settlement.room.main.RoomBlueprintImp;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
@@ -43,7 +44,7 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
         for(int recipeIndex = 0; recipeIndex < industries.size(); recipeIndex++) {
             int actualIndex = (recipeIndex + randomIndex) % industries.size();
 
-            LIST<Industry.IndustryResource> inputs = industries.get(actualIndex).ins();
+            LIST<IndustryResource> inputs = industries.get(actualIndex).ins();
 
             if (inputs.isEmpty()) {
                 continue;
@@ -60,7 +61,7 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
                 inputPrice += faction.stockpile.price.get(resource) * inputs.get(j).rate;
             }
 
-            LIST<Industry.IndustryResource> outputs = industries.get(actualIndex).outs();
+            LIST<IndustryResource> outputs = industries.get(actualIndex).outs();
 
             double outputPrice = 0.0;
             for (int j = 0; j < outputs.size(); j++) {

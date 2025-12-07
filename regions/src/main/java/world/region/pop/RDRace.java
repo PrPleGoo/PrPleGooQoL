@@ -10,14 +10,13 @@ import game.boosting.BoostableCat;
 import game.boosting.BoosterImp;
 import game.faction.FACTIONS;
 import game.time.TIME;
-import game.values.GVALUES;
 import init.race.RACES;
 import init.race.Race;
 import init.sprite.UI.UI;
-import init.text.D;
 import init.type.CLIMATES;
 import init.type.HCLASSES;
 import init.type.TERRAINS;
+import init.value.GVALUES;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
@@ -30,7 +29,8 @@ import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.INDEXED;
 import snake2d.util.sprite.text.Str;
 import util.data.DOUBLE_O;
-import util.dic.Dic;
+import util.text.D;
+import util.text.Dic;
 import world.WORLD;
 import world.army.AD;
 import world.entity.army.WArmy;
@@ -82,8 +82,8 @@ public class RDRace implements INDEXED{
 
 
 
-		pop = new RDRacePopulation(init, this, maxPop, growth);
-		loyalty = new RDRaceLoyalty(init, this);
+		pop = new RDRacePopulation(init, race, maxPop, growth);
+		loyalty = new RDRaceLoyalty(init, race);
 
 
 	}
@@ -102,11 +102,14 @@ public class RDRace implements INDEXED{
 
 		public final Boostable target;
 
-		private static final double DTime = 8.0/(TIME.secondsPerDay);
-		RDRaceLoyalty(RDInit init, RDRace race) {
-			super("RACE_LOYALTY" + race.race.key, init.count.new DataByte("RACE_LOYALTY" + race.race.key),
-					init, RDRaces.¤¤Loyalty + ": " + race.race.info.names);
-			target = BOOSTING.push("LOYALTY_" + race.race.key, 0, name, name, race.race.appearance().iconBig,  BoostableCat.ALL().WORLD_CIVICS);
+		private static double DTime;
+
+		RDRaceLoyalty(RDInit init, Race race) {
+			super("RACE_LOYALTY" + race.key, init.count.new DataByte("RACE_LOYALTY" + race.key),
+					init, RDRaces.¤¤Loyalty + ": " + race.info.names);
+
+			DTime = 8.0/(TIME.secondsPerDay());
+			target = BOOSTING.push("LOYALTY_" + race.key, 0, name, name, race.appearance().iconBig,  BoostableCat.ALL().WORLD_CIVICS);
 			init.upers.add(this);
 			new RBooster(new BSourceInfo(STATS.ENV().OTHERS.info().name, UI.icons().s.citizen), 0.75, 1.0, true) {
 				@Override
@@ -115,8 +118,9 @@ public class RDRace implements INDEXED{
 					if (tot == 0)
 						return 0;
 					double rr = 0;
-					for (RDRace o : RD.RACES().all) {
-						rr += o.pop.target(t)*(race.race.pref().race(o.race));
+					for (int ri = 0; ri < RD.RACES().all.size(); ri++) {
+						RDRace o = RD.RACES().all.get(ri);
+						rr += o.pop.target(t)*(race.pref().race(o.race));
 					}
 					return CLAMP.d(rr/tot, 0, 1);
 				}
@@ -155,8 +159,8 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					int cit = STATS.POP().POP.data(HCLASSES.CITIZEN()).get(race.race);
-					int slaves = STATS.POP().POP.data(HCLASSES.SLAVE()).get(race.race);
+					int cit = STATS.POP().POP.data(HCLASSES.CITIZEN()).get(race);
+					int slaves = STATS.POP().POP.data(HCLASSES.SLAVE()).get(race);
 					int tot = STATS.POP().POP.data().get(null) + 1;
 					if (cit == 0) {
 						if (slaves > 0)
@@ -172,7 +176,7 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					int cit = STATS.POP().POP.data(HCLASSES.NOBLE()).get(race.race);
+					int cit = STATS.POP().POP.data(HCLASSES.NOBLE()).get(race);
 					int tot = STATS.POP().POP.data(HCLASSES.NOBLE()).get(null);
 					if (cit == 0) {
 						if (tot > RACES.playable().size())
@@ -190,15 +194,15 @@ public class RDRace implements INDEXED{
 				public void exe() {
 
 
-					double to = STATS.BATTLE().WAR.standing.definition(race.race).mul;
-					if (STATS.BATTLE().WAR.standing.definition(race.race).inverted)
+					double to = STATS.BATTLE().WAR.standing.definition(race).mul;
+					if (STATS.BATTLE().WAR.standing.definition(race).inverted)
 						to = -to;
 
 					new RBooster(new BSourceInfo(STATS.BATTLE().WAR.info().name, UI.icons().s.sword), 0, to, false) {
 
 						@Override
 						protected double get(Region reg) {
-							return CLAMP.d(STATS.BATTLE().WAR.data(HCLASSES.CITIZEN()).getD(race.race, 0), 0, 1);
+							return CLAMP.d(STATS.BATTLE().WAR.data(HCLASSES.CITIZEN()).getD(race, 0), 0, 1);
 						}
 					}.add(target);
 
@@ -226,34 +230,36 @@ public class RDRace implements INDEXED{
 
 	}
 
-	public static final class RDRacePopulation extends RDataEFix implements RDUpdatable {
+	public static final class RDRacePopulation extends RDataE implements RDUpdatable {
 
 		public final double maxPopulation;
 		public final double growthBase;
 		public final Boostable dtarget;
 		//		private Boostable<Region> targetBase;
 		public final Boostable growth;
-		private static final double DTime = 1.0/TIME.secondsPerDay;
+		private static double DTime;
 		private final BoosterImp biome;
 
-		RDRacePopulation(RDInit init, RDRace race, double max, double growthBase) {
-			super("RACEPOP" + race.race.key, init.count.new DataShortE("RACEPOP" + race.race.key), init, Dic.¤¤Population + ": " + race.race.info.names);
+		RDRacePopulation(RDInit init, Race race, double max, double growthBase) {
+			super("RACEPOP" + race.key, count(init, race), init, Dic.¤¤Population + ": " + race.info.names);
+
+			DTime = 1.0/TIME.secondsPerDay();
 			init.upers.add(this);
 			maxPopulation = max;
 			this.growthBase = growthBase;
-			dtarget = BOOSTING.push("POPULATION_TARGET_" + race.race.key, 1, ¤¤PopulationTarget + ": " + race.race.info.names, race.race.info.names, race.race.appearance().iconBig, BoostableCat.ALL().WORLD_CIVICS);
-			growth = BOOSTING.push("POPULATION_GROWTH_" + race.race.key, 1, Dic.¤¤Growth + ": " + race.race.info.names, race.race.info.names, race.race.appearance().iconBig, BoostableCat.ALL().WORLD_CIVICS);
+			dtarget = BOOSTING.push("POPULATION_TARGET_" + race.key, 1, ¤¤PopulationTarget + ": " + race.info.names, race.info.names, race.appearance().iconBig, BoostableCat.ALL().WORLD_CIVICS);
+			growth = BOOSTING.push("POPULATION_GROWTH_" + race.key, 1, Dic.¤¤Growth + ": " + race.info.names, race.info.names, race.appearance().iconBig, BoostableCat.ALL().WORLD_CIVICS);
 			biome = new RBooster(new BSourceInfo(¤¤Biome, UI.icons().s.temperature), 0.1, 2, true) {
 				@Override
 				public double get(Region reg) {
 
 					double c = 0;
 					for (int i = 0; i < CLIMATES.ALL().size(); i++)
-						c += reg.info.climate(CLIMATES.ALL().get(i))*race.race.population().climate(CLIMATES.ALL().get(i));
+						c += reg.info.climate(CLIMATES.ALL().get(i))*race.population().climate(CLIMATES.ALL().get(i));
 
 					double t = 0;
 					for (int i = 0; i < TERRAINS.ALL().size(); i++)
-						t += reg.info.terrain(TERRAINS.ALL().get(i))*race.race.population().terrain(TERRAINS.ALL().get(i));
+						t += reg.info.terrain(TERRAINS.ALL().get(i))*race.population().terrain(TERRAINS.ALL().get(i));
 					return c*t;
 				}
 			};
@@ -264,7 +270,7 @@ public class RDRace implements INDEXED{
 			new RBooster(new BSourceInfo(¤¤RulingSpecies, UI.icons().s.crown), 1, 1.2, true) {
 				@Override
 				public double get(Region t) {
-					if (t.faction() != null && t.faction().race() == race.race)
+					if (t.faction() != null && t.faction().race() == race)
 						return 1;
 					return 0;
 				}
@@ -288,15 +294,16 @@ public class RDRace implements INDEXED{
 
 
 
-			GVALUES.REGION.pushI("POPULATION_RACE_" + race.race.key, Dic.¤¤Population + ": " + race.race.info.names, race.race.appearance().iconBig, this);
+			GVALUES.REGION.pushI("POPULATION_RACE_" + race.key, Dic.¤¤Population + ": " + race.info.names, race.appearance().iconBig, this);
 		}
 
 		@Override
 		public void update(Region reg, double time) {
+
 			int t = target(reg);
 			int pop = get(reg);
 
-			if(t > pop) {
+			if(t > pop && reg.faction() != null) {
 				double pp = (pop+10)* Math.max(0, growth(reg))*time*DTime;
 				int inc = (int) pp;
 				if (pp - inc > RND.rFloat())

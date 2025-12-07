@@ -10,7 +10,6 @@ import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.NPCResource;
 import game.faction.npc.stockpile.UpdaterTree.ResIns;
-import game.faction.trade.TradeManager;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -23,7 +22,6 @@ import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
 import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
-import snake2d.util.sets.LIST;
 import snake2d.util.sets.LISTE;
 import util.data.DOUBLE;
 import util.statistics.HistoryResource;
@@ -38,9 +36,9 @@ public class NPCStockpile extends NPCResource{
 	public static final int AVERAGE_PRICE = 200;
 	private static final double PRICE_MAX = 10.0;
 	private static final double PRICE_MIN = 1.0/PRICE_MAX;
-	private static final double PILE_SIZE = 25*ENTETIES.MAX/40000.0;
+	private static final double PILE_SIZE = 12*ENTETIES.MAX/40000.0;
 
-	private static final double PLAYER_AMOUNT = 0.025;
+	private static final double PLAYER_AMOUNT = 0.075;
 
 //	private static final double WORK_SPEED = 0.07*ENTETIES.MAX/40000.0;
 
@@ -96,11 +94,12 @@ public class NPCStockpile extends NPCResource{
 				}
 
 				GAME.factions().prime();
+				FACTIONS.PRICE().clearCache();
                 if(KingLevels.isActive()) {
                     for (FactionNPC f : FACTIONS.NPCs()) {
                         f.stockpile.saver().clear();
 						f.credits().set(100000);
-                        f.stockpile.update(f, TIME.secondsPerDay * 2);
+                        f.stockpile.update(f, TIME.secondsPerDay() * 2);
                     }
                 }
 			}
@@ -203,11 +202,12 @@ public class NPCStockpile extends NPCResource{
 		double mul = f.race().pref().priceMul(RESOURCES.ALL().get(ri));
 		SRes r = resses[ri];
 		double before = r.price();
-		double after = r.priceAt(amount + (KingLevels.isActive() ? r.tradeAm() : 0));
+		double after = KingLevels.isActive()
+				? r.priceAt(amount + r.tradeAm())
+				:r.priceAt(r.amTarget()+r.offset()+amount);
+
 		double price = before + (after-before)*0.5;
-
 		price *= creditScore();
-
 		return mul*price;
 	}
 
@@ -305,7 +305,7 @@ public class NPCStockpile extends NPCResource{
 			//wf *= 0.75 + 0.25*(BOOSTABLES.NOBLE().COMPETANCE.get(faction.court().king().roy().induvidual));
 
 
-			workforce = wf * PILE_SIZE / RESOURCES.ALL().size();
+
 			for (RESOURCE res : RESOURCES.ALL()) {
 				game.faction.npc.stockpile.UpdaterTree.TreeRes o = updater.tree.o(res);
 				double prod = 0;
@@ -324,10 +324,10 @@ public class NPCStockpile extends NPCResource{
 				resses[res.index()].totRate = prodTot;
 			}
 
-			updater.update(this, seconds * TIME.secondsPerDayI);
+			updater.update(this, seconds * TIME.secondsPerDayI());
 		}
 
-		KingLevels.getInstance().consumeResources(faction, this, seconds*TIME.secondsPerDayI);
+		KingLevels.getInstance().consumeResources(faction, this, seconds*TIME.secondsPerDayI());
 
 		for (RESOURCE res : RESOURCES.ALL()) {
 			price.set(res, (int) Math.round(res(res.index()).price()));
@@ -400,12 +400,6 @@ public class NPCStockpile extends NPCResource{
 			totalTarget = CLAMP.d(totalTarget, PRICE_MIN, PRICE_MAX);
 			return totalTarget;
 		}
-
-//		@Override
-//		public void clear() {
-//			super.clear();
-//			offset = getNonZeroAmTarget();
-//		}
 	}
 
 
@@ -428,8 +422,6 @@ public class NPCStockpile extends NPCResource{
 		public double rateTot() {
 			return totRate;
 		}
-
-
 
 		public double amTarget() {
 			return 1 + rate*workforce;
@@ -499,8 +491,7 @@ public class NPCStockpile extends NPCResource{
 			totRate = file.d();
 			rate = file.d();
 			offset = file.d();
-			if (!VERSION.versionIsBefore(68, 18))
-				playerOffset = file.d();
+			playerOffset = file.d();
 		}
 
 		@Override
@@ -511,13 +502,8 @@ public class NPCStockpile extends NPCResource{
 			playerOffset = 0;
 			rateSpeed = 1;
 		}
+
 	}
-
-	static double WV = 9.99;
-	static double WVt = 10;
-
-
-
 
 
 }

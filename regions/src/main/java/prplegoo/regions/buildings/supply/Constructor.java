@@ -1,7 +1,7 @@
 package prplegoo.regions.buildings.supply;
 
 import game.GAME;
-import init.C;
+import init.constant.C;
 import init.sprite.SPRITES;
 import settlement.main.SETT;
 import settlement.path.AVAILABILITY;

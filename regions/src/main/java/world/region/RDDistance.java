@@ -12,9 +12,8 @@ import game.faction.Faction;
 import game.faction.diplomacy.DIP;
 import game.faction.diplomacy.DipStance;
 import game.faction.npc.FactionNPC;
-import game.values.GVALUES;
 import init.sprite.UI.UI;
-import init.text.D;
+import init.value.GVALUES;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.PathTile;
 import snake2d.util.file.FileGetter;
@@ -27,7 +26,8 @@ import snake2d.util.sets.LIST;
 import util.data.BOOLEANO;
 import util.data.INT_O;
 import util.data.INT_O.INT_OE;
-import util.dic.Dic;
+import util.text.D;
+import util.text.Dic;
 import world.WORLD;
 import world.map.pathing.WRegFinder.RegDist;
 import world.map.pathing.WRegFinder.Treaty;
@@ -104,8 +104,10 @@ public class RDDistance {
 				for (RDRace r : RD.RACES().all) {
 					bo.add(r.loyalty.target);
 				}
-				for (RDOutput o : RD.OUTPUT().ALL)
+				for (RDOutput o : RD.OUTPUT().ALL) {
 					bo.add(o.boost);
+					bo.add(o.boostYearlyPart);
+				}
 			}
 		});
 

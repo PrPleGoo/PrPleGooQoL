@@ -1,5 +1,7 @@
 package game.events.faction;
 
+import java.io.IOException;
+
 import game.events.EVENTS.EventResource;
 import game.faction.FACTIONS;
 import game.faction.Faction;
@@ -21,13 +23,13 @@ import world.map.pathing.WRegSel;
 import world.region.RD;
 import world.region.pop.RDRace;
 
-import java.io.IOException;
-
 public class EventFactionWar extends EventResource{
 
 	
-	private static final double dtime = TIME.secondsPerDay*16;
-	private double timer = dtime;
+	private static final double dtime(){
+		return TIME.secondsPerDay()*16;
+	}
+	private double timer = dtime();
 	private int nextFaction;
 	
 	EventFactionWar(){
@@ -46,6 +48,7 @@ public class EventFactionWar extends EventResource{
 		
 		if (f == null)
 			return;
+
 
 		clear();
 		if (!KingLevels.isActive()) {
@@ -109,7 +112,7 @@ public class EventFactionWar extends EventResource{
 				DIP.WAR().set(f, enemy);
 
 				if (!KingLevels.isActive()) {
-					timer += TIME.secondsPerDay * 20;
+					timer += TIME.secondsPerDay() * 20;
 				}
 			}else {
 				
@@ -140,7 +143,7 @@ public class EventFactionWar extends EventResource{
 	protected void clear() {
 		double div = KingLevels.isActive() ? 8 : 1;
 
-		timer = dtime / div;
+		timer = dtime() / div;
 		nextFaction = RND.rInt();
 	}	
 

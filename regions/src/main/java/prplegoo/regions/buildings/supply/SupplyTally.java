@@ -7,7 +7,7 @@ import init.resources.RESOURCES;
 import settlement.room.infra.logistics.MoveDic;
 import snake2d.util.datatypes.COORDINATE;
 import snake2d.util.sets.ArrayListGrower;
-import util.dic.Dic;
+import util.text.Dic;
 
 import java.util.Arrays;
 

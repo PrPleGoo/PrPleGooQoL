@@ -37,7 +37,7 @@ public final class ROOM_LOGISTICS extends RoomBlueprintIns<SupplyInstance> imple
 	}
 
 	@Override
-	protected void update(float ds) {
+	protected void update(double ds) {
 		
 		
 	}

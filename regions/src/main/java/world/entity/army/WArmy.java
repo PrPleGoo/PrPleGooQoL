@@ -9,8 +9,7 @@ import game.faction.Faction;
 import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import game.faction.trade.ITYPE;
-import init.C;
-import init.RES;
+import init.constant.C;
 import prplegoo.regions.api.npc.KingLevels;
 import snake2d.PathTile;
 import snake2d.Renderer;
@@ -21,6 +20,7 @@ import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sprite.text.Str;
+import util.GUTIL;
 import util.rendering.ShadowBatch;
 import world.WORLD;
 import world.army.AD;
@@ -178,7 +178,7 @@ public final class WArmy extends WEntity{
     }
 
     @Override
-    protected void update(float ds) {
+	protected void update(double ds) {
 
         if (AD.men(null).get(this) == 0) {
             if (region() == null || region().faction() != faction()) {
@@ -231,14 +231,12 @@ public final class WArmy extends WEntity{
                 int am = (int) (ss.current().get(this)-ss.targetAmount(this));
                 am = CLAMP.i(am, 0, Short.MAX_VALUE);
                 if (am > 0) {
-                    if (ss.baseHealth == 0) {
-                        if (ship != null) {
-                            ship.loadAndReserve(ss.res, am);
-                        }
+                    if (ship != null) {
+                        ship.loadAndReserve(ss.res, am);
+                    }
 
-                        if (faction() instanceof FactionNPC) {
-                            ((FactionNPC) faction()).stockpile.inc(ss.res, am);
-                        }
+                    if (faction() instanceof FactionNPC) {
+                        ((FactionNPC) faction()).stockpile.inc(ss.res, am);
                     }
                     ss.current().inc(this, -am);
                 }
@@ -299,22 +297,22 @@ public final class WArmy extends WEntity{
         COORDINATE c = besigeTile(reg);
         if (c != null) {
             if (path.find(ctx(), cty(),c.x(), c.y())) {
-                RES.coos().set(0);
+				GUTIL.coos().set(0);
                 do {
                     if (reg.is(path.x(), path.y())) {
-                        RES.coos().get().set(path.x(), path.y());
-                        RES.coos().inc();
+						GUTIL.coos().get().set(path.x(), path.y());
+						GUTIL.coos().inc();
                     }
                     path.setNext();
                 }while(!path.arrived());
 
-                int am = RES.coos().getI() - 1;
+				int am = GUTIL.coos().getI() - 1;
                 GAME.Notify(am);
 
                 if (am > 0) {
-                    RES.coos().shuffle(am);
-                    RES.coos().set(0);
-                    if (path.find(ctx(), cty(),RES.coos().get().x(), RES.coos().get().y())) {
+					GUTIL.coos().shuffle(am);
+					GUTIL.coos().set(0);
+					if (path.find(ctx(), cty(),GUTIL.coos().get().x(), GUTIL.coos().get().y())) {
                         setState((byte) WArmyState.movingRaid.index());
                         stateFloat = 0;
                         return;

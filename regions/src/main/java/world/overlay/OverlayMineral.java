@@ -1,8 +1,7 @@
 package world.overlay;
 
 import game.boosting.BUtil;
-import init.C;
-import init.text.D;
+import init.constant.C;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import snake2d.Renderer;
@@ -12,6 +11,7 @@ import snake2d.util.datatypes.DIR;
 import snake2d.util.sets.LIST;
 import util.rendering.RenderData;
 import util.rendering.RenderData.RenderIterator;
+import util.text.D;
 import util.rendering.ShadowBatch;
 import world.WORLD;
 import world.map.regions.Region;

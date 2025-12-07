@@ -7,13 +7,16 @@ import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDSlaveryData;
 import snake2d.LOG;
 import snake2d.util.sets.ArrayList;
-import util.dic.Dic;
+import snake2d.util.sets.LIST;
+import util.text.Dic;
 import world.WORLD;
 import world.map.regions.Region;
 import world.region.RBooster;
 import world.region.RD;
 import world.region.building.RDBuildPoints;
+import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
+import world.region.pop.RDRaces;
 
 import java.util.HashMap;
 

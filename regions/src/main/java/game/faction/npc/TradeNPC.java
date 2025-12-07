@@ -1,5 +1,7 @@
 package game.faction.npc;
 
+import java.io.IOException;
+
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
@@ -16,8 +18,6 @@ import snake2d.util.file.SAVABLE;
 import snake2d.util.misc.CLAMP;
 import world.region.RD;
 
-import java.io.IOException;
-
 public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 
 	private final FactionNPC s;
@@ -25,6 +25,9 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 
 	public TradeNPC(FactionNPC s) {
 		this.s = s;
+		if (false) {
+			//the trade caps need examining. PRobably importing should be the inverse of exporting.
+		}
 	}
 
 	public int amount(RESOURCE res) {
@@ -93,11 +96,11 @@ public class TradeNPC implements FACTION_IMPORTER, FACTION_EXPORTER{
 	public void buy(RESOURCE res, int amount, int price, Faction seller) {
 		s.credits().inc(-price, CTYPE.TRADE, res, amount);
 		reserveSpace(res, amount, ITYPE.trade);
-
 		if (seller == FACTIONS.player()) {
 			s.stockpile.incPlayer(res, amount);
 			ROPINIONS.trade(s, price);
 		}
+
 	}
 
 //	@Override

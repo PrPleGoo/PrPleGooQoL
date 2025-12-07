@@ -2,6 +2,7 @@ package world.region.building;
 
 import java.util.Arrays;
 
+import game.battle.div.Div;
 import game.boosting.BOOSTABLE_O;
 import game.boosting.BOOSTING;
 import game.boosting.BSourceInfo;
@@ -17,13 +18,12 @@ import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.player.Player;
-import game.values.GVALUES;
-import game.values.Lock;
 import init.sprite.UI.UI;
-import init.text.D;
+import init.value.GVALUES;
+import init.value.Lock;
 import lombok.Getter;
+import lombok.Setter;
 import prplegoo.regions.api.MagicStringChecker;
-import settlement.army.div.Div;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.stats.Induvidual;
 import snake2d.util.sets.ArrayList;
@@ -37,9 +37,10 @@ import util.data.BOOLEANO;
 import util.data.DOUBLE_O;
 import util.data.INT_O;
 import util.data.INT_O.INT_OE;
-import util.dic.Dic;
 import util.info.INFO;
 import util.keymap.MAPPED;
+import util.text.D;
+import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RD.RDInit;
@@ -61,6 +62,9 @@ public final class RDBuilding implements MAPPED{
 	final String kk;
 	public final boolean AIBuild;
 	public final boolean notify;
+	@Setter
+	@Getter
+	private boolean levelCapped = false;
 	final String order;
 	@Getter
 	private final RoomBlueprintImp blue;
@@ -173,6 +177,8 @@ public final class RDBuilding implements MAPPED{
 
 			});
 
+
+
 		}
 		GVALUES.REGION.pushI(kk + "_LEVEL", Dic.¤¤Level + ": "+ info.name, this.levels.get(1).icon, level);
 
@@ -235,6 +241,8 @@ public final class RDBuilding implements MAPPED{
 				return levelCap.get(r);
 			}
 		});
+
+
 	}
 
 	public SPRITE icon() {
@@ -302,17 +310,48 @@ public final class RDBuilding implements MAPPED{
 
 		for (RDBuildingLevel lev : levels) {
 
-			for (Lock<Region> l : lev.reqs.all()) {
-				String k = ""+l.unlocker.name;
+			for (Lock<Region> lock : lev.reqs.all()) {
+				String k = ""+lock.unlocker.name;
 				if (!lmap.containsKey(k)) {
 					lmap.put(k, k);
-					new BoosterImp(new BSourceInfo("!" + l.unlocker.name,  UI.icons().s.boom), 0, 1, true) {
-						final int ll = lev.index;
+
+					ArrayListGrower<Lock<Region>> locks = new ArrayListGrower<>();
+
+					for (int li = 0; li < levels.size(); li++) {
+						RDBuildingLevel le = levels.get(li);
+						Lock<Region> fl = null;
+						for (int ri = 0; ri < le.reqs.all().size(); ri++) {
+							Lock<Region> re = le.reqs.all().get(ri);
+							if ((""+re.unlocker.name).equals(k)) {
+								fl = re;
+								break;
+							}
+
+						}
+						if (fl == null && li > 0) {
+							locks.add(locks.get(li-1));
+						}else
+							locks.add(fl);
+					}
+
+
+
+					new BoosterImp(new BSourceInfo("!" + lock.unlocker.name,  UI.icons().s.boom), 0, 1, true) {
+
 						@Override
 						public double vGet(Region t) {
 							if (t.faction() == FACTIONS.player()) {
-								if (RD.BUILDINGS().tmp().level(RDBuilding.this, t) >= ll)
-									return l.unlocker.inUnlocked(t) ? 1 : 0;
+								for (int l = RD.BUILDINGS().tmp().level(RDBuilding.this, t); l >= 0; l--) {
+
+								}
+
+								Lock<Region> re = locks.get(RD.BUILDINGS().tmp().level(RDBuilding.this, t));
+								if (re == null)
+									return 1;
+
+								return re.unlocker.inUnlocked(t) ? 1 : 0;
+
+
 							}
 							return 1;
 						}
@@ -326,6 +365,8 @@ public final class RDBuilding implements MAPPED{
 		}
 
 	}
+
+
 
 	public CharSequence canAfford(Region reg, int lc, int level) {
 
@@ -483,6 +524,7 @@ public final class RDBuilding implements MAPPED{
 			}
 			if (b.booster.isMul) {
 				res += 1;
+
 			}
 
 			return res;

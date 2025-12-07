@@ -36,7 +36,7 @@ public class KingLevelRealmBuilder {
         original.calculateFitness();
 // TODO: AI leaves conscription in free lands, fucking over their economy into equipment
 // TODO: AI expands more than it should, increasing their conscription level and fucking over their economy into equipment
-// TODO: Check if conscripts are killed after a fight
+// Conscripts are killed after a fight
         boolean alertMode = original.anyFitnessExceedsDeficit(faction);
         if (alertMode) {
             for (RDBuilding building : RD.BUILDINGS().all) {

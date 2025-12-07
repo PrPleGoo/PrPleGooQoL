@@ -24,11 +24,16 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     private double[][] resources;
     private int[][] slaves;
 
+    private final int shipmentInterval;
+
     public Shipper() {
+        this.shipmentInterval = TIME.secondsPerDay() * 16;
+
         initialize();
     }
 
     private void initialize(){
+
         since = new double[WORLD.REGIONS().all().size()];
         resources = new double[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
         slaves = new int[WORLD.REGIONS().all().size()][RACES.all().size()];
@@ -47,7 +52,7 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         if (f.capitolRegion() == null)
             return;
 
-        double days = seconds*TIME.secondsPerDayI;
+		double days = seconds*TIME.secondsPerDayI();
 
         if (f == FACTIONS.player()) {
             if (r.capitol())
@@ -108,8 +113,16 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         }
     }
 
+    public int daysUntilTaxes(Region region) {
+        int secondsUntilShipment = shipmentInterval - (int) since[region.index()];
+
+        int daysUntilShipment = secondsUntilShipment / TIME.secondsPerDay();
+
+        return daysUntilShipment + 1;
+    }
+
     private boolean timeToShip(Region region) {
-        return since[region.index()] > TIME.secondsPerDay * 16;
+        return since[region.index()] > shipmentInterval;
     }
 
     private boolean hasAnythingToShip(Region region) {
@@ -128,8 +141,16 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         return false;
     }
 
+    public int getAccumulatedTaxes(Region region, RDResource resource){
+        return (int) resources[region.index()][resource.res.index()];
+    }
+
+    public int getAccumulatedTaxes(Region region, RDSlavery.RDSlave rdSlave){
+        return (int) slaves[region.index()][rdSlave.rdRace.index()];
+    }
+
     private int amount(Faction f, RDResource res, Region r, double seconds) {
-        return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI);
+        return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI());
     }
 
     public void shipAll(Faction f, double days) {

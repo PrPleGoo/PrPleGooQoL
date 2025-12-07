@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.69.39.26</version>
+    <version>0.70.14.0</version>
 
     <profiles>
         <profile>
@@ -103,7 +103,7 @@
         <mod.version>${project.version}</mod.version>
         <mod.name>Region rework</mod.name>
         <mod.description>
-Completely reworks regions
+Industry in regions and custom AI empire behavior
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info>
@@ -112,26 +112,22 @@ Greetings despot,
 This mod is for you if:
 - You want more than just raw resources from regions;
 - You like to develop regions;
-- You want regions to be a little more powerful than in v68 but not as powerful as they were in v67;
+- You want regions to be more flexible;
 - You want a steady stream of prisoners for "purposes";
 - You want some logistical interplay between your capital and your regions;
 
 Features:
 - You can build refineries and workshops in regions.
-- Ship resources to regions to keep them crafting.
-- Region production reworked, basing output numbers on available population.
-- You get workforce based on a region's population.
+- Ship resources to regions to keep them crafting (new building for your capital).
+- A food stall to use food instead of gov points to grow cities.
 - Population numbers in regions have been reduced drastically.
-- More negative health to account for lower population levels.
-- A food stall to use food instead of admin to grow cities.
-- Production scaling now goes off the "normal" values, instead of weird "region" values.
+- Production scaling now goes off the "normal"-racial values, instead of weird "region"-racial values.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
 - School reworked to apply your science to regions.
 - Law gives you PoWs as tax from a region.
 - Slaver's guild building that specializes in PoW output.
 - Max level of region building based on terrain/prospect instead of scaling output.
-- AI empires use production to do work on their stockpiles.
-- Custom NPC behavior to interact with the world map and simulate a real economy.
+- AI empires use their regions for their economy, armies, etc.
 
 This mod completely reworks regions.
 As per my idea listed in the suggestion forum on discord.
@@ -159,8 +155,8 @@ Credits:
 - Argoon, technical support
 - Dinosaure, refactoring
         </mod.info>
-        <game.version.major>69</game.version.major>
-        <game.version.minor>39</game.version.minor>
+        <game.version.major>70</game.version.major>
+        <game.version.minor>14</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

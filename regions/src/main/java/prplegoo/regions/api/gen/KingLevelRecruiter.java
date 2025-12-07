@@ -1,13 +1,10 @@
 package prplegoo.regions.api.gen;
 
 import game.boosting.BOOSTABLES;
-import game.faction.FACTIONS;
 import game.faction.npc.FactionNPC;
-import init.config.Config;
+import init.constant.Config;
 import init.race.RACES;
 import init.race.Race;
-import init.resources.ResSupply;
-import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsBattle;
 import settlement.stats.equip.EquipBattle;
@@ -69,45 +66,45 @@ public class KingLevelRecruiter {
                 int divisionSize = division.menTarget();
                 if (AD.supplies().supplyEquip(army) < 0.9
                         || AD.conscripts().available(division.race()).get(f) <= 0) {
-                    division.menTargetSet(divisionSize - 15);
+                    division.target.menSet(divisionSize - 15);
                     if (division.menTarget() == 0) {
                         division.disband();
                         i--;
 
                         continue;
                     }
-                } else if (divisionSize < Config.BATTLE.MEN_PER_DIVISION
+                } else if (divisionSize < Config.battle().MEN_PER_DIVISION
                         && getArmySize(army) < menPerArmy){
                     int availableConscripts = AD.conscripts().available(division.race()).get(f);
                     int totalPips = (availableConscripts + divisionSize) / 15;
 
-                    int maxSizeToSet = Math.min(totalPips * 15, Config.BATTLE.MEN_PER_DIVISION);
+                    int maxSizeToSet = Math.min(totalPips * 15, Config.battle().MEN_PER_DIVISION);
 
                     if (maxSizeToSet != divisionSize) {
-                        division.menTargetSet(maxSizeToSet);
+                        division.target.menSet(maxSizeToSet);
                     }
                 }
 
                 double trainingTarget = 0.4 * BOOSTABLES.NOBLE().COMPETANCE.get(f.court().king().roy().induvidual);
                 for (StatsBattle.StatTraining trainingType : STATS.BATTLE().TRAINING_ALL) {
-                    division.trainingTargetSet(trainingType, trainingTarget);
+                    division.target.trainingSet(trainingType, trainingTarget);
                 }
 
                 for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
-                    int currentPips = division.equipTarget(equipment);
+                    double currentPips = division.target.equip(equipment);
                     if (currentPips == 0) {
                         continue;
                     }
 
                     if (AD.supplies().get(equipment).amountValue(army) < 0.75) {
-                        division.equipTargetset(equipment, currentPips - 1);
+                        division.target.equipSet(equipment, currentPips - 0.2);
 
                         continue;
                     }
 
                     if (f.stockpile.amount(equipment.resource) > 0
-                            && equipment.equipMax > division.equipTarget(equipment)) {
-                        division.equipTargetset(equipment, currentPips + 1);
+                            && equipment.equipMax > division.target.equip(equipment)) {
+                        division.target.equipSet(equipment, currentPips + 0.2);
                     }
                 }
 
@@ -115,7 +112,7 @@ public class KingLevelRecruiter {
             }
 
             for (Race race : RACES.all()) {
-                if (army.divs().size() >= Config.BATTLE.DIVISIONS_PER_ARMY) {
+                if (army.divs().size() >= Config.battle().DIVISIONS_PER_ARMY) {
                     break;
                 }
 
@@ -129,7 +126,7 @@ public class KingLevelRecruiter {
                     continue;
                 }
 
-                AD.regional().create(race, 15.0 /Config.BATTLE.MEN_PER_DIVISION, army);
+                AD.regional().create(race, 15.0 /Config.battle().MEN_PER_DIVISION, army);
             }
 
             ADSupplies.ADArtillery arts = AD.supplies().arts().rnd();

@@ -57,6 +57,10 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
                 priceSum += outputs.get(j).rate * price / NPCStockpile.AVERAGE_PRICE;
             }
 
+            if (priceSum * NPCStockpile.AVERAGE_PRICE < 500) {
+                return tryDestroyBuilding(building.level, buildingGenetic, region);
+            }
+
             double valueRate = priceSum / outputCount;
 
             double randomLow = 0.1 + RND.rFloat(0.4);

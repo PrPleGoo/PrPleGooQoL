@@ -10,6 +10,8 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.RDSlavery;
+import settlement.stats.STATS;
+import settlement.stats.equip.EquipBattle;
 import snake2d.util.file.Json;
 import snake2d.util.rnd.RND;
 import world.army.AD;
@@ -158,6 +160,7 @@ public class KingLevels {
     }
 
     // For getting amounts that KingLevels actually needs to handle consuming;
+    private static final double nerf = 0.1;
     private double getDailyConsumptionRateNotHandledElseWhere(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = 0;
 
@@ -169,7 +172,7 @@ public class KingLevels {
         }
 
 
-        return amount * getPlayerScalingMul();
+        return amount * nerf;
     }
 
     // For getting amounts that the empire will consume;
@@ -274,7 +277,7 @@ public class KingLevels {
             return;
         }
 
-        kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(4));
+        kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(2));
 
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
 
@@ -282,7 +285,15 @@ public class KingLevels {
 
         for (int i = desiredLevel; i > 0; i--) {
             int missingResourceCount = 0;
+
+            resource:
             for (RESOURCE resource : RESOURCES.ALL()) {
+                for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
+                    if (equipment.resource.index() == resource.index()) {
+                        continue resource;
+                    }
+                }
+
                 double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
 
                 if (amountConsumedBeforeNextCycle > 0

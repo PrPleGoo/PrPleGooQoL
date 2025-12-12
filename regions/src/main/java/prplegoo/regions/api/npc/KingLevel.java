@@ -85,21 +85,25 @@ public class KingLevel {
                 double consumptionValue = consumptionJson.d(key);
                 if (key.equals("EDIBLE")) {
                     for (ResG edible : race.race.pref().food) {
-                        result[race.index()][edible.resource.index()] = consumptionValue;
+                        result[race.index()][edible.resource.index()] = consumptionValue / race.race.pref().food.size();
                     }
                     continue;
                 }
                 if (key.equals("DRINK")) {
                     for (ResGDrink drink : race.race.pref().drink) {
-                        result[race.index()][drink.resource.index()] = consumptionValue;
+                        result[race.index()][drink.resource.index()] = consumptionValue / race.race.pref().drink.size();
                     }
                     continue;
                 }
                 if (key.equals("FURNITURE")) {
                     HCLASS clas = HCLASSES.CITIZEN();
                     LIST<RES_AMOUNT> rr = race.race.home().clas(clas).resources();
+                    int totalAmount = 0;
                     for (int ri = 0; ri < rr.size(); ri++) {
-                        result[race.index()][rr.get(ri).resource().index()] = rr.get(ri).amount() * consumptionValue;
+                        totalAmount += rr.get(ri).amount();
+                    }
+                    for (int ri = 0; ri < rr.size(); ri++) {
+                        result[race.index()][rr.get(ri).resource().index()] = rr.get(ri).amount() * consumptionValue / totalAmount;
                     }
                     continue;
                 }

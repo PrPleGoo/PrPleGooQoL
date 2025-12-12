@@ -66,7 +66,7 @@ public class KingLevelRecruiter {
                 int divisionSize = division.menTarget();
                 if (AD.supplies().supplyEquip(army) < 0.9
                         || AD.conscripts().available(division.race()).get(f) <= 0) {
-                    division.target.menSet(divisionSize - 15);
+                    division.target.menSet(divisionSize - 10);
                     if (division.menTarget() == 0) {
                         division.disband();
                         i--;
@@ -76,9 +76,9 @@ public class KingLevelRecruiter {
                 } else if (divisionSize < Config.battle().MEN_PER_DIVISION
                         && getArmySize(army) < menPerArmy){
                     int availableConscripts = AD.conscripts().available(division.race()).get(f);
-                    int totalPips = (availableConscripts + divisionSize) / 15;
+                    int totalPips = (availableConscripts + divisionSize) / 10;
 
-                    int maxSizeToSet = Math.min(totalPips * 15, Config.battle().MEN_PER_DIVISION);
+                    int maxSizeToSet = Math.min(totalPips * 10, Config.battle().MEN_PER_DIVISION);
 
                     if (maxSizeToSet != divisionSize) {
                         division.target.menSet(maxSizeToSet);
@@ -93,34 +93,23 @@ public class KingLevelRecruiter {
                 for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
                     double currentPips = division.target.equip(equipment);
 
-                    // TEMP to deal with bugged equipment on AI armies
-                    if (currentPips > 1) {
-                        division.target.equipSet(equipment, 1);
-                        continue;
-                    }
-                    if (currentPips < 0) {
-                        division.target.equipSet(equipment, 0);
-                        continue;
-                    }
-                    // END TEMP
-
                     if (currentPips == 0) {
                         continue;
                     }
 
                     if (AD.supplies().get(equipment).amountValue(army) < 0.75) {
-                        division.target.equipSet(equipment,  CLAMP.d(currentPips - 0.2, 0, 1));
+                        division.target.equipSet(equipment, 0.0);
 
                         continue;
                     }
 
-                    if (f.stockpile.amount(equipment.resource) > 0
-                            && division.target.equip(equipment) < 1) {
-                        division.target.equipSet(equipment, CLAMP.d(currentPips + 0.2, 0, 1));
-                    }
+//                    if (f.stockpile.amount(equipment.resource) > division.menTarget()
+//                            && division.target.equip(equipment) < 1.0) {
+//                        division.target.equipSet(equipment, 1.0);
+//                    }
                 }
 
-                fillOpenSlots(division);
+                fillOpenSlots(division, f, army);
             }
 
             for (Race race : RACES.all()) {
@@ -130,7 +119,7 @@ public class KingLevelRecruiter {
 
                 int availableConscripts = AD.conscripts().available(race).get(f);
 
-                if (availableConscripts < 16) {
+                if (availableConscripts < 11) {
                     continue;
                 }
 
@@ -138,7 +127,7 @@ public class KingLevelRecruiter {
                     continue;
                 }
 
-                AD.regional().create(race, 15.0 /Config.battle().MEN_PER_DIVISION, army);
+                AD.regional().create(race, 10.0 /Config.battle().MEN_PER_DIVISION, army);
             }
 
             ADSupplies.ADArtillery arts = AD.supplies().arts().rnd();
@@ -173,10 +162,10 @@ public class KingLevelRecruiter {
         return total;
     }
 
-    private static void fillOpenSlots(WDivRegional division) {
+    private static void fillOpenSlots(WDivRegional division, FactionNPC f, WArmy army) {
         double[] slotsUsed = new double[EquipBattle.SLOTS];
         for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
-            if (division.equip(equipment) > 0) {
+            if (division.target.equip(equipment) > 0) {
                 for (int i = 0; i < EquipBattle.SLOTS; i ++) {
                     slotsUsed[i] += equipment.slotUse(i);
                 }
@@ -198,7 +187,8 @@ public class KingLevelRecruiter {
                 }
             }
 
-            division.equipTargetset(equipment, 1);
+            division.target.equipSet(equipment, 1.0);
+
             break;
         }
     }

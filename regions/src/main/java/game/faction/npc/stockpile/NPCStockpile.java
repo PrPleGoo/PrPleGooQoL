@@ -34,7 +34,8 @@ import world.region.pop.RDRace;
 
 public class NPCStockpile extends NPCResource{
 	public static final int AVERAGE_PRICE = 200;
-	private static final double PRICE_MAX = 10.0;
+	@Getter
+	private static final double PRICE_MAX = 30.0;
 	private static final double PRICE_MIN = 1.0/PRICE_MAX;
 	private static final double PILE_SIZE = 12*ENTETIES.MAX/40000.0;
 

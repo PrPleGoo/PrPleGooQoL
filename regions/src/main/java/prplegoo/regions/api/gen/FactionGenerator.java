@@ -76,7 +76,7 @@ public class FactionGenerator {
         ArrayListGrower<Region> relevantRegions = new ArrayListGrower<>();
         relevantRegions.add(region);
 
-        int npcCount = RND.rInt(2) + 3;
+        int npcCount = RND.rInt(3) + 3;
         while (npcCount > 0 && !relevantRegions.isEmpty()) {
             Region attempt = relevantRegions.get(0);
             relevantRegions.remove(0);

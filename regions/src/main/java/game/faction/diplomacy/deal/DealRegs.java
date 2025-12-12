@@ -128,7 +128,7 @@ public final class DealRegs {
 
     }
 
-    private static boolean log = true;
+    private static boolean log = false;
 
     private static double valueRegion(Region reg, FactionNPC faction, double dist) {
 

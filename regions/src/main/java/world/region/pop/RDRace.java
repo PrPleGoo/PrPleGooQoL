@@ -17,6 +17,7 @@ import init.type.CLIMATES;
 import init.type.HCLASSES;
 import init.type.TERRAINS;
 import init.value.GVALUES;
+import prplegoo.regions.api.gen.RacePreferenceCache;
 import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
@@ -77,7 +78,7 @@ public class RDRace implements INDEXED{
 
 
 
-		maxPop = race.population().max;
+		maxPop = 1.0; //race.population().max;
 		growth = race.population().growth;
 
 
@@ -131,7 +132,8 @@ public class RDRace implements INDEXED{
 				@Override
 				public double get(Region t) {
 					// 0.1 to compensate for the Poor capital scaling
-					double fa = KingLevels.isActive() ? 0.1 : 1;
+					// 0.66 to compensate for max level pop boost
+					double fa = KingLevels.isActive() ? 0.066 : 1;
 
 					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop() * fa);
 					d = (int)(d*100)/100.0;
@@ -159,6 +161,10 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
+					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
+						return 0.5;
+					}
+
 					int cit = STATS.POP().POP.data(HCLASSES.CITIZEN()).get(race);
 					int slaves = STATS.POP().POP.data(HCLASSES.SLAVE()).get(race);
 					int tot = STATS.POP().POP.data().get(null) + 1;
@@ -176,6 +182,10 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
+					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
+						return 0.5;
+					}
+
 					int cit = STATS.POP().POP.data(HCLASSES.NOBLE()).get(race);
 					int tot = STATS.POP().POP.data(HCLASSES.NOBLE()).get(null);
 					if (cit == 0) {
@@ -252,15 +262,15 @@ public class RDRace implements INDEXED{
 			biome = new RBooster(new BSourceInfo(¤¤Biome, UI.icons().s.temperature), 0.1, 2, true) {
 				@Override
 				public double get(Region reg) {
-
-					double c = 0;
-					for (int i = 0; i < CLIMATES.ALL().size(); i++)
-						c += reg.info.climate(CLIMATES.ALL().get(i))*race.population().climate(CLIMATES.ALL().get(i));
-
-					double t = 0;
-					for (int i = 0; i < TERRAINS.ALL().size(); i++)
-						t += reg.info.terrain(TERRAINS.ALL().get(i))*race.population().terrain(TERRAINS.ALL().get(i));
-					return c*t;
+					return RacePreferenceCache.getInstance().getRacePreference(reg, RD.RACE(race));
+//					double c = 0;
+//					for (int i = 0; i < CLIMATES.ALL().size(); i++)
+//						c += reg.info.climate(CLIMATES.ALL().get(i))*race.population().climate(CLIMATES.ALL().get(i));
+//
+//					double t = 0;
+//					for (int i = 0; i < TERRAINS.ALL().size(); i++)
+//						t += reg.info.terrain(TERRAINS.ALL().get(i))*race.population().terrain(TERRAINS.ALL().get(i));
+//					return c*t;
 				}
 			};
 			biome.add(dtarget);

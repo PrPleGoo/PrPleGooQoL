@@ -61,6 +61,11 @@ public class RemoveBadRecipeMutationStrategy extends BigMutationStrategy {
             outputPrice += ratePrice;
         }
 
+        double profit = (outputPrice - inputPrice);
+        if (profit < 500) {
+            return tryDestroyBuilding(building.level, buildingGenetic, region);
+        }
+
         double margin = (outputPrice / inputPrice) - 1;
         boolean isMarginTooLow = margin < RND.rFloat(0.25);
 

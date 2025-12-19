@@ -52,7 +52,7 @@ final class SupplyInstance extends RoomInstance implements JOBMANAGER_HASER, ROO
 		employees().maxSet(w*4);
 		employees().neededSet(w);
 		blueprint.tally.init(this);
-		allowed.setAll();
+		allowed.clear();
 		activate();
 	}
 

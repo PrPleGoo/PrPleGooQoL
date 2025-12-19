@@ -98,15 +98,15 @@ public class KingLevelRecruiter {
                     }
 
                     if (AD.supplies().get(equipment).amountValue(army) < 0.75) {
-                        division.target.equipSet(equipment, 0.0);
+                        division.target.equipSet(equipment, currentPips - 0.2);
 
                         continue;
                     }
 
-//                    if (f.stockpile.amount(equipment.resource) > division.menTarget()
-//                            && division.target.equip(equipment) < 1.0) {
-//                        division.target.equipSet(equipment, 1.0);
-//                    }
+                    if (f.stockpile.amount(equipment.resource) > division.menTarget()
+                            && division.target.equip(equipment) < 1.0) {
+                        division.target.equipSet(equipment, currentPips + 0.2);
+                    }
                 }
 
                 fillOpenSlots(division, f, army);
@@ -187,7 +187,7 @@ public class KingLevelRecruiter {
                 }
             }
 
-            division.target.equipSet(equipment, 1.0);
+            division.target.equipSet(equipment, 0.2);
 
             break;
         }

@@ -159,8 +159,6 @@ public class KingLevels {
         soldGoodsTracker.Update(faction, deltaDays);
     }
 
-    // For getting amounts that KingLevels actually needs to handle consuming;
-    private static final double nerf = 0.1;
     private double getDailyConsumptionRateNotHandledElseWhere(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
         double amount = 0;
 
@@ -172,7 +170,7 @@ public class KingLevels {
         }
 
 
-        return amount * nerf;
+        return amount / (double) (kingLevels.length - kingLevel.getIndex());
     }
 
     // For getting amounts that the empire will consume;

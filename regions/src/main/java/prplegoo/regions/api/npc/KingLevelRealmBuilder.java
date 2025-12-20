@@ -106,7 +106,9 @@ public class KingLevelRealmBuilder {
         // do genocide aggression, tolerance, mercy, rng on king name?
         double proclivity = noble.AGRESSION.get(king)
                 / noble.TOLERANCE.get(king)
-                / noble.MERCY.get(king);
+                / noble.MERCY.get(king)
+                * (KingLevels.getInstance().maxLevel() + 1)
+                / (KingLevels.getInstance().getLevel(faction) + 1);
 
         double[] genocide = new double[racesAll.size()];
 

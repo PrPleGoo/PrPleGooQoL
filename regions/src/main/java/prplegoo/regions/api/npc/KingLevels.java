@@ -30,6 +30,11 @@ public class KingLevels {
     private static boolean isActive = true;
 
     private final KingLevel[] kingLevels;
+
+    public int maxLevel() {
+        return kingLevels.length;
+    }
+
     @Getter
     private final KingLevelRealmBuilder builder;
 
@@ -278,10 +283,15 @@ public class KingLevels {
         kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(2));
 
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
+        int maxLevel = (currentYear / 15) + FACTIONS.player().realm().regions();
 
         double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
 
         for (int i = desiredLevel; i > 0; i--) {
+            if (i > maxLevel) {
+                continue;
+            }
+
             int missingResourceCount = 0;
 
             resource:

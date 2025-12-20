@@ -100,7 +100,7 @@ public class RacePreferenceCache {
             }
         }
 
-        if (true)
+        if (false)
         {
             Arrays.fill(regionRacePreferenceSum, 0);
             for(int ra = 0; ra < RD.RACES().all.size(); ra++)

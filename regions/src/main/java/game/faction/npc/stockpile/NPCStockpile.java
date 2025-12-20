@@ -284,14 +284,11 @@ public class NPCStockpile extends NPCResource{
 
 	public void update(FactionNPC faction, double seconds, double wf) {
 		if (KingLevels.isActive()) {
-			double stockpileValue = faction.stockpile.credit();
-			if (stockpileValue < 0) {
+			if (faction.credits().getD() < 0) {
 				double netWorth = FACTIONS.WORTH().faction(faction);
-				if (netWorth < -stockpileValue) {
-					Region region = faction.capitolRegion();
 
+				if (netWorth < -faction.credits().getD()) {
 					FACTIONS.remove(faction, true);
-					FACTIONS.activateNext(region, null, true);
 
 					return;
 				}

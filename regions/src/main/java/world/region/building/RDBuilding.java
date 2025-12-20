@@ -383,7 +383,7 @@ public final class RDBuilding implements MAPPED{
 			}
 		}
 
-		if (reg.faction() != null) {
+		if (reg.faction() == FACTIONS.player()) {
 			int cr = this.levels.get(level).cost - this.levels.get(RD.BUILDINGS().tmp().level(this, reg)).cost;
 			if (cr > reg.faction().credits().credits())
 				return Str.TMP.clear().add(¤¤NotEnough).add(':').s().add(Dic.¤¤Currs);

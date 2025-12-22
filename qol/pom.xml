@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>prplegoo-qol-mod</artifactId>
-    <version>0.70.14.0</version>
+    <version>0.70.21.0</version>
 
     <profiles>
         <profile>
@@ -121,6 +121,8 @@ If you have any more suggestions like this, feel free to contact me on discord o
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
 - PrPleGoo Region Rework, https://steamcommunity.com/sharedfiles/filedetails/?id=3417936451
+- Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
+- Cute Race!, https://steamcommunity.com/sharedfiles/filedetails/?id=3418470482
 If you use a different mod than any of the above and notice no game breaking issues, please let me and other users know!
 
 Enjoy!
@@ -130,7 +132,7 @@ Enjoy!
 Available on github.
         </mod.info>
         <game.version.major>70</game.version.major>
-        <game.version.minor>14</game.version.minor>
+        <game.version.minor>21</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

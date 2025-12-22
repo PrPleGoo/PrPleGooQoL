@@ -33,6 +33,10 @@ public class ProspectCache {
         return _instance;
     }
 
+    public static void Reset() {
+        _instance = null;
+    }
+
     private final int[][] _regionBuildingLevelCap;
 
     private ProspectCache() {

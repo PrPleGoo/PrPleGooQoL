@@ -22,6 +22,10 @@ public class RacePreferenceCache {
         return _instance;
     }
 
+    public static void Reset() {
+        _instance = null;
+    }
+
     private final double[][] _regionRacePreference;
 
     private RacePreferenceCache() {

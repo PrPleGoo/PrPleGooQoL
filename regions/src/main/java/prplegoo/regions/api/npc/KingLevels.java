@@ -10,6 +10,8 @@ import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import lombok.Getter;
 import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.gen.ProspectCache;
+import prplegoo.regions.api.gen.RacePreferenceCache;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
 import snake2d.util.file.Json;
@@ -72,6 +74,9 @@ public class KingLevels {
         getDesiredStockpileAtLevelCache = new double[FACTIONS.MAX()][kingLevels.length][RESOURCES.ALL().size()];
         getDesiredStockpileAtLevelCacheTimers = new double[FACTIONS.MAX()][kingLevels.length][RESOURCES.ALL().size()];
         Arrays.stream(getDesiredStockpileAtLevelCacheTimers).forEach(x -> Arrays.stream(x).forEach(y -> Arrays.fill(y, -61)));
+
+        RacePreferenceCache.Reset();
+        ProspectCache.Reset();
     }
 
     public static void setActive(boolean active) {

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.github.prplegoo</groupId>
-    <artifactId>prplegoo-qol-mod</artifactId>
+    <artifactId>loyalty</artifactId>
     <version>0.70.21.0</version>
 
     <profiles>
@@ -99,32 +99,23 @@
 
         <!-- These settings will go into the mods _Info.txt file -->
         <mod.version>${project.version}</mod.version>
-        <mod.name>PrPleGooQoL</mod.name>
+        <mod.name>LoyaltyFix</mod.name>
         <mod.description>
-Commit war crimes with less wrist strain! Press enter to confirm "ARE YOU SURE" alerts. Don't input text when the game asks for a number. Keypad enter is enter too!
+Fix the loyalty cap bug
         </mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info>
 Greetings despot,
 
-This mod changes a few interactions in the game:
-- You can no longer input text into an input field that prompts you for a number.
-- Keypad enter to work on all places where enter works.
-- Holding CTRL (default for MOD) when doing the various war crimes on the world map no longer gives you a pop-up to confirm.
-- Hold CTRL (default for MOD) to not get prompted for assigning punishments in the stockades.
-- You can filter punishments by race in the stockades.
-- A little arrow over the resources in the side panel to show if your consumption is outpacing your income.
-- Real life time is displayed under the season wheel.
+There is currently a bug in the game because happiness caps at 100%.
+Loyalty is a simple calculation, happiness * loyalty modifier (title/race/difficulty)
+At hard+++ you'll be playing with a 40% loyalty multiplier.
+This would be okay if happiness scaled to 250%, allowing you to achieve 100% loyalty.
+However, because happiness is capped at 100%; loyalty is capped at 40%
+Which means constant riots, unplayable in my opinion.
 
-I did this by directly overwriting the classes that implement these behaviours. So if your game is on a different version it probably won't work. If you have another mod that alters the same file, it won't work.
-If you have any more suggestions like this, feel free to contact me on discord or steam.
-
-Known compatible mods, these mods have been used by me or others and no problems have been reported:
-- PrPleGoo Region Rework, https://steamcommunity.com/sharedfiles/filedetails/?id=3417936451
-- Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
-- Cute Race!, https://steamcommunity.com/sharedfiles/filedetails/?id=3418470482
-- Classic Races [V70], https://steamcommunity.com/sharedfiles/filedetails/?id=2527476367
-If you use a different mod than any of the above and notice no game breaking issues, please let me and other users know!
+This mod changes the happiness cap to 250%, effectively fixing the bug.
+It also communicates clearly to the player where they are over spending on fulfilment.
 
 Enjoy!
 

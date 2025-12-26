@@ -15,6 +15,7 @@ import prplegoo.regions.api.gen.RacePreferenceCache;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
 import snake2d.util.file.Json;
+import snake2d.util.misc.CLAMP;
 import snake2d.util.rnd.RND;
 import world.army.AD;
 import world.army.ADSupply;
@@ -167,6 +168,8 @@ public class KingLevels {
 
         stockpileSmoothing.Update(faction, deltaDays);
         soldGoodsTracker.Update(faction, deltaDays);
+
+        subtractPlayerTraded(npcStockpile, deltaDays);
     }
 
     private double getDailyConsumptionRateNotHandledElseWhere(FactionNPC faction, KingLevel kingLevel, RESOURCE resource) {
@@ -353,5 +356,21 @@ public class KingLevels {
         }
 
         return (double) scalePercentage / 100.0;
+    }
+
+    private void subtractPlayerTraded(NPCStockpile npcStockpile, double deltaTime) {
+        // code from updater
+        for (int ri = 0; ri < RESOURCES.ALL().size(); ri++) {
+            RESOURCE res = RESOURCES.ALL().get(ri);
+            double pam = npcStockpile.playerTraded(res);
+            if (pam == 0)
+                continue;
+            double am = Math.abs(pam);
+            double max = npcStockpile.playerTradeLimit(res);
+            am -= max*deltaTime;
+            am = CLAMP.d(am, 0, Double.MAX_VALUE);
+            am -= am*deltaTime*0.5;
+            npcStockpile.res(ri).playerSet(Math.signum(pam)*am);
+        }
     }
 }

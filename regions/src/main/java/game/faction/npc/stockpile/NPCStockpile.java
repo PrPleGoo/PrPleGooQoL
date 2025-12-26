@@ -343,7 +343,7 @@ public class NPCStockpile extends NPCResource{
 
 	}
 
-	SRes res(int index) {
+	public SRes res(int index) {
 		return resses[index];
 	}
 
@@ -401,7 +401,7 @@ public class NPCStockpile extends NPCResource{
 	}
 
 
-	class SRes implements SAVABLE{
+	public class SRes implements SAVABLE{
 
 		protected double totRate = 1;
 		protected double rate = 1;
@@ -472,7 +472,7 @@ public class NPCStockpile extends NPCResource{
 			return playerOffset;
 		}
 
-		void playerSet(double am) {
+		public void playerSet(double am) {
 			playerOffset = am;
 		}
 

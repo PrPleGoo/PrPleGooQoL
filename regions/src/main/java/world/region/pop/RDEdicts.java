@@ -2,19 +2,21 @@ package world.region.pop;
 
 import game.boosting.BSourceInfo;
 import game.boosting.BoostSpecs;
-import game.boosting.BoosterImp;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.time.TIME;
 import init.sprite.UI.UI;
 import init.type.HCLASSES;
+import lombok.Getter;
 import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.api.resettlement.RDRaceEdictDiscourage;
+import prplegoo.regions.api.resettlement.RDRaceEdictEncourage;
+import prplegoo.regions.api.resettlement.RDRaceEdictMassacre;
 import settlement.stats.STATS;
-import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
 import snake2d.util.sprite.SPRITE;
-import util.data.INT_O.INT_OE;
+import util.data.INT_O;
 import util.info.INFO;
 import util.text.D;
 import util.text.Dic;
@@ -25,7 +27,7 @@ import world.region.RD.RDInit;
 import world.region.RD.RDUpdatable;
 
 public class RDEdicts {
-
+	@Getter
 	private static CharSequence ¤¤Distant = "¤Distant";
 	
 	private static CharSequence ¤¤Prosecute = "¤Persecution";
@@ -52,9 +54,9 @@ public class RDEdicts {
 	RDEdicts(LIST<RDRace> races, RDInit init) {
 		dtime = 1.0/(TIME.secondsPerDay()*2*16);
 
-		sanction = new RDRaceEdict("SANCTION", init, new INFO(¤¤Prosecute, ¤¤ProsecuteD), UI.icons().m.descrimination, races, 0.25, 0.5);
-		exile = new RDRaceEdict("EXILE", init, new INFO(¤¤Exile, ¤¤ExileD), UI.icons().m.exit, races, 1.0, 0.6);
-		massacre = new RDRaceEdict("MASSACRE", init, new INFO(¤¤Massacre, ¤¤MassacreD), UI.icons().m.skull, races, 1.0, 1.0);
+		sanction = new RDRaceEdictEncourage("SANCTION", init, new INFO("Encourage growth", "Encouraging growth of a species will cause members from your empire to move here."), UI.icons().m.descrimination, races);
+		exile = new RDRaceEdictDiscourage("EXILE", init, new INFO("Discourage growth", "Discouraging growth of a species will cause members from your empire to move away from here. If there's no place to go they will feel exiled."), UI.icons().m.exit, races);
+		massacre = new RDRaceEdictMassacre("MASSACRE", init, new INFO(¤¤Massacre, ¤¤MassacreD), UI.icons().m.skull, races, 1.0, 1.0);
 		this.all = new ArrayList<RDRaceEdict>(sanction,exile,massacre);
 		for (RDRace r : races)
 			init.upers.add(new Up(r));
@@ -100,19 +102,16 @@ public class RDEdicts {
 		@Override
 		public void update(Region reg, double ds) {
 			if (reg.faction() != null && reg.capitol()) {
-				for (RDRaceEdict e : all) {
-					int am = 0;
-					for (int ri = 0; ri < reg.faction().realm().regions(); ri++) {
-						Region r = reg.faction().realm().region(ri);
-						am+=e.toggled(race).get(r);
-					}
+				int am = 0;
+				for (int ri = 0; ri < reg.faction().realm().regions(); ri++) {
+					Region r = reg.faction().realm().region(ri);
+					am+=massacre.toggled(race).get(r);
+				}
 
-					if (am > 0) {
-						e.realm(race).incFraction(reg.faction(), am*0.5*ds*TIME.secondsPerDayI()*e.realm(race).max(null));
-					}else {
-						e.realm(race).incFraction(reg.faction(), -ds*dtime*e.realm(race).max(null));
-					}
-					
+				if (am > 0) {
+					massacre.realm(race).incFraction(reg.faction(), am*0.5*ds*TIME.secondsPerDayI()*massacre.realm(race).max(null));
+				}else {
+					massacre.realm(race).incFraction(reg.faction(), -ds*dtime*massacre.realm(race).max(null));
 				}
 			}
 		}
@@ -141,85 +140,45 @@ public class RDEdicts {
 			}
 		}
 	}
-	
-	public static final class RDRaceEdict {
-		
-		public final LIST<INT_OE<Region>> toggled;
-		public final LIST<INT_OE<Faction>> realm;
+
+	public static abstract class RDRaceEdict {
+
+		protected final LIST<INT_O.INT_OE<Region>> toggled;
+		protected final LIST<INT_O.INT_OE<Faction>> realm;
 		public final INFO info;
 		public final SPRITE icon;
 		public final BoostSpecs boosts;
-		
-		private RDRaceEdict(String key, RDInit init, INFO info, SPRITE icon, LIST<RDRace> races, double loyalty, double growth) {
+
+		public RDRaceEdict(String key, RD.RDInit init, INFO info, SPRITE icon, LIST<RDRace> races) {
 			this.info = info;
-			
-			ArrayList<INT_OE<Region>> toggleds = new ArrayList<INT_OE<Region>>(races.size());
-			ArrayList<INT_OE<Faction>> realms = new ArrayList<INT_OE<Faction>>(races.size());
-			
-			
+
+			ArrayList<INT_O.INT_OE<Region>> toggleds = new ArrayList<INT_O.INT_OE<Region>>(races.size());
+			ArrayList<INT_O.INT_OE<Faction>> realms = new ArrayList<INT_O.INT_OE<Faction>>(races.size());
+
+
 			boosts = new BoostSpecs(info.name, icon, true);
-			
+
 			for (RDRace r : races) {
-				
-				INT_OE<Region> toggled = init.count.new DataBit(key + "_RACE_TOGGLED" + r.race.key);
-				INT_OE<Faction> realm = init.rCount.new DataByte(key + "_RACE_REALM" + r.race.key);
-				
-				boosts.push(new RBooster(new BSourceInfo(info.name, icon), 1, 1.0-loyalty, true) {
 
-					@Override
-					public double get(Region t) {
-						return toggled.get(t);
-					}
-				
-				}, r.loyalty.target);
-				
-				boosts.push(new BoosterImp(new BSourceInfo(¤¤Distant + ": " + info.name, icon), 1, 1.0-loyalty, true) {
+				INT_O.INT_OE<Region> toggled = init.count.new DataBit(key + "_RACE_TOGGLED" + r.race.key);
+				INT_O.INT_OE<Faction> realm = init.rCount.new DataByte(key + "_RACE_REALM" + r.race.key);
 
-					@Override
-					public double vGet(Region t) {
-						if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
-							return 0;
-						}
-
-						if (t.faction() != null && realm.get(t.faction()) > 0)
-							return CLAMP.d(realm.getD(t.faction()), 0, 1);
-						return 0;
-					}
-
-					@Override
-					public double vGet(Faction f) {
-						return CLAMP.d(realm.getD(f), 0, 1);
-					}
-					
-
-				}, r.loyalty.target);
-				
-				boosts.push(new RBooster(new BSourceInfo(info.name, icon), 1, 1.0-growth, true) {
-
-					@Override
-					public double get(Region t) {
-						return toggled.get(t);
-					}
-				
-				}, r.pop.dtarget);	
-				
 				toggleds.add(toggled);
 				realms.add(realm);
 			}
-			
+
 			this.toggled = toggleds;
 			this.realm = realms;
-			
+
 			this.icon = icon;
 		}
-		
-		public INT_OE<Region> toggled(RDRace r){
+
+		public INT_O.INT_OE<Region> toggled(RDRace r){
 			return toggled.get(r.index());
 		}
-		
-		public INT_OE<Faction> realm(RDRace r){
+
+		public INT_O.INT_OE<Faction> realm(RDRace r){
 			return realm.get(r.index());
 		}
 	}
-	
 }

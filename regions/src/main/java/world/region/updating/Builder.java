@@ -23,7 +23,7 @@ import world.region.RD;
 import world.region.RDOutputs.RDResource;
 import world.region.RDReligions.RDReligion;
 import world.region.building.RDBuilding;
-import world.region.pop.RDEdicts.RDRaceEdict;
+import world.region.pop.RDEdicts;
 import world.region.pop.RDRace;
 
 final class Builder {
@@ -88,7 +88,7 @@ final class Builder {
 		}
 
 		for (RDRace rr : RD.RACES().all) {
-			for (RDRaceEdict e : RD.RACES().edicts.all)
+			for (RDEdicts.RDRaceEdict e : RD.RACES().edicts.all)
 				e.toggled(rr).set(reg, 0);
 		}
 
@@ -281,7 +281,7 @@ final class Builder {
 
 			for (RDRace r : RD.RACES().all) {
 				double v = builder.policy(r.race, reg);
-				for (RDRaceEdict ee : RD.RACES().edicts.all) {
+				for (RDEdicts.RDRaceEdict ee : RD.RACES().edicts.all) {
 					ee.toggled(r).set(reg, 0);
 				}
 

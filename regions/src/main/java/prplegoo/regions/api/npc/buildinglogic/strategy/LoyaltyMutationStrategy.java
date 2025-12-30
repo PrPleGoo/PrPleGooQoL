@@ -87,3 +87,4 @@ public class LoyaltyMutationStrategy extends MutationStrategy {
         return fitnessRecords;
     }
 }
+

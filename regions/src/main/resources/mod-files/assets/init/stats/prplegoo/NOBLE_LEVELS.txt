@@ -31,7 +31,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.50,
+            EDIBLE: 0.25,
 			DRINK: 0.0,
 			FURNITURE: 0.0,
         },
@@ -51,7 +51,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.50,
+            EDIBLE: 0.25,
 			DRINK: 0.0,
 			FURNITURE: 0.015625,
         },
@@ -74,7 +74,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.50,
+            EDIBLE: 0.25,
 			DRINK: 0.0,
 			FURNITURE: 0.03125,
         },
@@ -97,7 +97,7 @@ LEVELS: [
         CONSUMPTION_CAPITAL_POP: {
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.75,
+            EDIBLE: 0.35,
 			DRINK: 0.0,
 			FURNITURE: 0.03125,
         },
@@ -122,7 +122,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 0.75,
+            EDIBLE: 0.35,
 			DRINK: 0.0,
 			FURNITURE: 0.046875,
         },
@@ -147,7 +147,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 1.00,
+            EDIBLE: 0.50,
 			DRINK: 0.20,
 			FURNITURE: 0.046875,
         },
@@ -172,7 +172,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 1.50,
+            EDIBLE: 0.75,
 			DRINK: 0.30,
 			FURNITURE: 0.0625,
         },
@@ -197,7 +197,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 2.00,
+            EDIBLE: 1.00,
 			DRINK: 0.40,
 			FURNITURE: 0.078125,
         },
@@ -222,7 +222,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 2.50,
+            EDIBLE: 1.25,
 			DRINK: 0.50,
 			FURNITURE: 0.09375,
         },
@@ -247,7 +247,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 3.00,
+            EDIBLE: 1.5,
 			DRINK: 0.60,
 			FURNITURE: 0.109375,
         },
@@ -272,7 +272,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 3.50,
+            EDIBLE: 1.75,
 			DRINK: 0.70,
 			FURNITURE: 0.125,
         },
@@ -297,7 +297,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 4.00,
+            EDIBLE: 2.00,
 			DRINK: 0.80,
 			FURNITURE: 0.140625,
         },
@@ -322,7 +322,7 @@ LEVELS: [
 			TOOLS: 0.018,
         },
         CONSUMPTION_PREFERRED_CAPITAL_POP: {
-            EDIBLE: 5.00,
+            EDIBLE: 2.5,
 			DRINK: 1.00,
 			FURNITURE: 0.171875,
         },

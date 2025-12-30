@@ -106,9 +106,7 @@ public class KingLevelRealmBuilder {
         // do genocide aggression, tolerance, mercy, rng on king name?
         double proclivity = noble.AGRESSION.get(king)
                 / noble.TOLERANCE.get(king)
-                / noble.MERCY.get(king)
-                * (KingLevels.getInstance().maxLevel() + 1)
-                / (KingLevels.getInstance().getLevel(faction) + 1);
+                / noble.MERCY.get(king);
 
         double[] genocide = new double[racesAll.size()];
 
@@ -144,7 +142,9 @@ public class KingLevelRealmBuilder {
         strategies.Add(1, ReduceWorkforceDeficitMutationStrategy);
         strategies.Add(1, HealthMutationStrategy);
         strategies.Add(1, LoyaltyMutationStrategy);
-        strategies.Add(2, LoyaltyPruningMutationStrategy);
+        strategies.Add(1, ProtectionMutationStrategy);
+        strategies.Add(1, LoyaltyPruningMutationStrategy);
+        strategies.Add(1, ProtectionPruningMutationStrategy);
         strategies.Add(1, ReduceDeficitMutationStrategy);
         strategies.Add(1, GlobalBuildingStrategy);
         strategies.Add(4, PrimarySectorStrategy);
@@ -165,7 +165,9 @@ public class KingLevelRealmBuilder {
     private static final HealthMutationStrategy HealthMutationStrategy = new HealthMutationStrategy();
     private static final HealthImprovementStrategy HealthImprovementStrategy = new HealthImprovementStrategy();
     private static final LoyaltyMutationStrategy LoyaltyMutationStrategy = new LoyaltyMutationStrategy();
+    private static final ProtectionMutationStrategy ProtectionMutationStrategy = new ProtectionMutationStrategy();
     private static final LoyaltyPruningMutationStrategy LoyaltyPruningMutationStrategy = new LoyaltyPruningMutationStrategy();
+    private static final ProtectionPruningMutationStrategy ProtectionPruningMutationStrategy = new ProtectionPruningMutationStrategy();
     private static final ReduceDeficitMutationStrategy ReduceDeficitMutationStrategy = new ReduceDeficitMutationStrategy();
     private static final PrimarySectorStrategy PrimarySectorStrategy = new PrimarySectorStrategy();
     private static final IndustrializeMutationStrategy IndustrializeMutationStrategy = new IndustrializeMutationStrategy();

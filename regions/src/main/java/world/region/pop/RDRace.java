@@ -131,11 +131,14 @@ public class RDRace implements INDEXED{
 
 				@Override
 				public double get(Region t) {
-					// 0.1 to compensate for the Poor capital scaling
-					// 0.66 to compensate for max level pop boost
-					double fa = KingLevels.isActive() ? 0.066 : 1;
+					if (KingLevels.isActive()){
+						double d = RD.RACES().popTarget.getD(t)/7000.0;
+						d = (int)(d*100)/100.0;
 
-					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop() * fa);
+						return d;
+					}
+
+					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop());
 					d = (int)(d*100)/100.0;
 
 					return d;

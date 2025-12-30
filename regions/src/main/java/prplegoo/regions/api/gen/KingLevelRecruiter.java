@@ -5,6 +5,7 @@ import game.faction.npc.FactionNPC;
 import init.constant.Config;
 import init.race.RACES;
 import init.race.Race;
+import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import settlement.stats.colls.StatsBattle;
 import settlement.stats.equip.EquipBattle;
@@ -37,7 +38,6 @@ public class KingLevelRecruiter {
             return;
 
         int menTarget = AD.conscripts().total(null).get(f);
-        // increasing the max needs really good testing, maybe it causes a save issue
         int armies = CLAMP.i(1 + menTarget/10000, 1, 3);
 
         while(f.armies().all().size() < armies && f.armies().canCreate()) {
@@ -50,6 +50,7 @@ public class KingLevelRecruiter {
             return;
         }
 
+        boolean kingWantsToExpandArmy = wantsToExpandArmy(f);
         int menPerArmy = menTarget / f.armies().all().size();
 
         tree.clear();
@@ -73,7 +74,8 @@ public class KingLevelRecruiter {
 
                         continue;
                     }
-                } else if (divisionSize < Config.battle().MEN_PER_DIVISION
+                } else if (kingWantsToExpandArmy
+                        && divisionSize < Config.battle().MEN_PER_DIVISION
                         && getArmySize(army) < menPerArmy){
                     int availableConscripts = AD.conscripts().available(division.race()).get(f);
                     int totalPips = (availableConscripts + divisionSize) / 10;
@@ -103,7 +105,8 @@ public class KingLevelRecruiter {
                         continue;
                     }
 
-                    if (f.stockpile.amount(equipment.resource) > division.menTarget()
+                    if (kingWantsToExpandArmy
+                            && f.stockpile.amount(equipment.resource) > division.menTarget()
                             && division.target.equip(equipment) < 1.0) {
                         division.target.equipSet(equipment, currentPips + 0.2);
                     }
@@ -113,7 +116,8 @@ public class KingLevelRecruiter {
             }
 
             for (Race race : RACES.all()) {
-                if (army.divs().size() >= Config.battle().DIVISIONS_PER_ARMY) {
+                if (army.divs().size() >= Config.battle().DIVISIONS_PER_ARMY
+                    || !kingWantsToExpandArmy) {
                     break;
                 }
 
@@ -133,7 +137,7 @@ public class KingLevelRecruiter {
             ADSupplies.ADArtillery arts = AD.supplies().arts().rnd();
             if (AD.supplies().isMissingArtsEquip(arts, army)) {
                 arts.target.inc(army, -1);
-            } else {
+            } else if (kingWantsToExpandArmy) {
                 int artsTargetPerArmy = (int) (menTarget * BOOSTABLES.NOBLE().AGRESSION.get(f.court().king().roy().induvidual)) / 250;
 
                 if (arts.target.get(army) < artsTargetPerArmy) {
@@ -151,6 +155,10 @@ public class KingLevelRecruiter {
                 }
             }
         }
+    }
+
+    private static boolean wantsToExpandArmy(FactionNPC faction) {
+        return KingLevels.getInstance().getMissingResourceCountAtLevel(faction, KingLevels.getInstance().getLevel(faction)) < KingLevels.maxMissingResourcesForRankUp;
     }
 
     private static int getArmySize(WArmy army) {

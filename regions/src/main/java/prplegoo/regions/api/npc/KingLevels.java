@@ -277,7 +277,8 @@ public class KingLevels {
         pickMaxLevel(faction, false);
     }
 
-    private static final int maxMissingResourcesForRankUp = 5;
+    public static final int maxMissingResourcesForRankUp = 4;
+    public static final boolean testing = true;
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;
@@ -291,39 +292,23 @@ public class KingLevels {
         kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(2));
 
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
-        int maxLevel = (currentYear / 15) + FACTIONS.player().realm().regions();
-
-        double pride = BOOSTABLES.NOBLE().PRIDE.get(faction.king().induvidual);
+        int maxLevel = testing ? kingLevels.length
+                : ((currentYear / 15) + FACTIONS.player().realm().regions() + 1);
 
         for (int i = desiredLevel; i > 0; i--) {
             if (i > maxLevel) {
                 continue;
             }
 
-            int missingResourceCount = 0;
-
-            resource:
-            for (RESOURCE resource : RESOURCES.ALL()) {
-                for (EquipBattle equipment : STATS.EQUIP().BATTLE_ALL()) {
-                    if (equipment.resource.index() == resource.index()) {
-                        continue resource;
-                    }
-                }
-
-                double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[i], resource);
-
-                if (amountConsumedBeforeNextCycle > 0
-                        // Prideful kings will be riskier with their ambition.
-                        && faction.stockpile.offset(resource) < amountConsumedBeforeNextCycle / pride) {
-                    missingResourceCount++;
-
-                    if (missingResourceCount >= maxMissingResourcesForRankUp) {
-                        break;
-                    }
-                }
-            }
+            int missingResourceCount = getMissingResourceCountAtLevel(faction, i);
 
             if (missingResourceCount < maxMissingResourcesForRankUp) {
+                if (i < kingLevelIndexes.getLevel(faction)) {
+                    kingLevelIndexes.setNextPickYear(faction, currentYear + 1);
+                    kingLevelIndexes.setLevel(faction, Math.max(i, kingLevelIndexes.getLevel(faction) - 1));
+
+                    return;
+                }
                 kingLevelIndexes.setLevel(faction, i);
 
                 return;
@@ -331,7 +316,27 @@ public class KingLevels {
         }
 
         kingLevelIndexes.setNextPickYear(faction, currentYear + 1);
-        kingLevelIndexes.setLevel(faction, 0);
+        kingLevelIndexes.setLevel(faction, Math.max(0, kingLevelIndexes.getLevel(faction) - 1));
+    }
+
+    public int getMissingResourceCountAtLevel(FactionNPC faction, int level) {
+        int missingResourceCount = 0;
+
+        for (RESOURCE resource : RESOURCES.ALL()) {
+
+            double amountConsumedBeforeNextCycle = getDesiredStockpileAtLevel(faction, kingLevels[level], resource);
+
+            if (amountConsumedBeforeNextCycle > 0
+                    && faction.stockpile.offset(resource) < amountConsumedBeforeNextCycle) {
+                missingResourceCount++;
+
+                if (missingResourceCount >= maxMissingResourcesForRankUp) {
+                    break;
+                }
+            }
+        }
+
+        return missingResourceCount;
     }
 
     private static int getCurrentYear() {

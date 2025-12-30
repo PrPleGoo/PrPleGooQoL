@@ -95,12 +95,17 @@ public class GeneticVariables {
 
         loyaltyBuildingIndeces[buildingIndex] = 1;
         if (mutationNotAllowed(buildingIndex)
-            || isGlobalBuilding(buildingIndex)) {
+                || isGlobalBuilding(buildingIndex)) {
             return;
         }
 
         LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
         for (int i = 0; i < boosts.size(); i++) {
+            if (isGarrisonBuilding(buildingIndex) || isFortificationBuilding(buildingIndex)) {
+                loyaltyBuildingIndeces[buildingIndex] = 1;
+                break;
+            }
+
             BoostSpec boost = boosts.get(i);
             if (boost.boostable.key.startsWith("WORLD_LOYALTY") && (!boost.booster.isMul && boost.booster.to() > 0 || boost.booster.isMul && boost.booster.to() > 1)) {
                 loyaltyBuildingIndeces[buildingIndex] = 2;
@@ -118,9 +123,65 @@ public class GeneticVariables {
 
         if (loyaltyBuildingIndeces[buildingIndex] == 2) {
             actualLoyaltyBuildingIndeces.add(buildingIndex);
+        }
+    }
 
+    private static int[] garrisonBuildingIndeces;
+    public static boolean isGarrisonBuilding(int buildingIndex) {
+        if (garrisonBuildingIndeces == null) {
+            garrisonBuildingIndeces = new int[RD.BUILDINGS().all.size()];
         }
 
+        if (garrisonBuildingIndeces[buildingIndex] != 0) {
+            return garrisonBuildingIndeces[buildingIndex] == 2;
+        }
+
+        garrisonBuildingIndeces[buildingIndex] = 1;
+        if (mutationNotAllowed(buildingIndex)
+                || isGlobalBuilding(buildingIndex)) {
+            return garrisonBuildingIndeces[buildingIndex] == 2;
+        }
+
+        LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
+        for (int i = 0; i < boosts.size(); i++) {
+            BoostSpec boost = boosts.get(i);
+            if (boost.boostable.key.startsWith("WORLD_GARRISON")) {
+                garrisonBuildingIndeces[buildingIndex] = 2;
+
+                break;
+            }
+        }
+
+        return garrisonBuildingIndeces[buildingIndex] == 2;
+    }
+
+    private static int[] fortificationBuildingIndeces;
+    public static boolean isFortificationBuilding(int buildingIndex) {
+        if (fortificationBuildingIndeces == null) {
+            fortificationBuildingIndeces = new int[RD.BUILDINGS().all.size()];
+        }
+
+        if (fortificationBuildingIndeces[buildingIndex] != 0) {
+            return fortificationBuildingIndeces[buildingIndex] == 2;
+        }
+
+        fortificationBuildingIndeces[buildingIndex] = 1;
+        if (mutationNotAllowed(buildingIndex)
+                || isGlobalBuilding(buildingIndex)) {
+            return fortificationBuildingIndeces[buildingIndex] == 2;
+        }
+
+        LIST<BoostSpec> boosts = RD.BUILDINGS().all.get(buildingIndex).boosters().all();
+        for (int i = 0; i < boosts.size(); i++) {
+            BoostSpec boost = boosts.get(i);
+            if (boost.boostable.key.startsWith("WORLD_FORTIFICATION")) {
+                fortificationBuildingIndeces[buildingIndex] = 2;
+
+                break;
+            }
+        }
+
+        return fortificationBuildingIndeces[buildingIndex] == 2;
     }
 
     private static int[] workforceConsumerIndeces;

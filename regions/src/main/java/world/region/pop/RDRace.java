@@ -289,10 +289,39 @@ public class RDRace implements INDEXED{
 				}
 			}.add(dtarget);
 
-			new RBooster(new BSourceInfo(Dic.¤¤Base, UI.icons().s.cancel), 0, 1, true) {
+			new RBooster(new BSourceInfo(Dic.¤¤Base, UI.icons().s.cancel), 0, 2, true) {
 				@Override
 				public double get(Region t) {
-					return growthBase;
+					double modifiedGrowth = growthBase / max();
+					if (t.faction() == null) {
+						return modifiedGrowth;
+					}
+
+					if (t.faction().realm().regions() <= 1) {
+						return modifiedGrowth;
+					}
+
+					int fullRegions = 0;
+					for (int i = 0; i < t.faction().realm().regions(); i++) {
+						Region region = t.faction().realm().region(i);
+						if (t.faction() == FACTIONS.player()
+								&& t.capitol()){
+							continue;
+						}
+
+						int current = RD.RACES().get(race).pop.get(region);
+						if (current == 0) {
+							continue;
+						}
+
+						if (current >= RD.RACES().get(race).pop.target(region)) {
+							fullRegions++;
+						}
+					}
+
+					double growingRegions = t.faction().realm().regions() - fullRegions - (t.faction() == FACTIONS.player() ? 1 : 0);
+
+					return modifiedGrowth + modifiedGrowth * fullRegions / growingRegions;
 				}
 			}.add(growth);
 

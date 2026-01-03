@@ -30,6 +30,8 @@ public class KingLevelRealmBuilder {
         if (region.capitol()) {
             handleGenocide(faction);
             optimizeGrowth(faction);
+
+            PrimarySectorProfitCache.getInstance().setCache(faction);
         }
 
         FactionGenetic original = new FactionGenetic(faction, region);

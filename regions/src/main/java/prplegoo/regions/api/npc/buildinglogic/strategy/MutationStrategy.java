@@ -57,6 +57,13 @@ public abstract class MutationStrategy {
         return false;
     }
 
+    protected boolean tryDestroyBuilding(BuildingGenetic buildingGenetic, Region region) {
+        INT_O.INT_OE<Region> levelInt = RD.BUILDINGS().all.get(buildingGenetic.buildingIndex).level;
+
+        return tryDestroyBuilding(levelInt, buildingGenetic, region);
+    }
+
+
     protected boolean tryDestroyBuilding(INT_O.INT_OE<Region> levelInt, BuildingGenetic buildingGenetic, Region region) {
         if (buildingGenetic.level > 0) {
             buildingGenetic.level = 0;

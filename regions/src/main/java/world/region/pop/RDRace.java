@@ -305,7 +305,7 @@ public class RDRace implements INDEXED{
 					for (int i = 0; i < t.faction().realm().regions(); i++) {
 						Region region = t.faction().realm().region(i);
 						if (t.faction() == FACTIONS.player()
-								&& t.capitol()){
+								&& region.capitol()){
 							continue;
 						}
 

@@ -12,6 +12,7 @@ import lombok.Getter;
 import prplegoo.regions.api.RDSlavery;
 import prplegoo.regions.api.gen.ProspectCache;
 import prplegoo.regions.api.gen.RacePreferenceCache;
+import prplegoo.regions.api.npc.buildinglogic.strategy.PrimarySectorProfitCache;
 import settlement.stats.STATS;
 import settlement.stats.equip.EquipBattle;
 import snake2d.util.file.Json;
@@ -78,6 +79,7 @@ public class KingLevels {
 
         RacePreferenceCache.Reset();
         ProspectCache.Reset();
+        PrimarySectorProfitCache.Reset();
     }
 
     public static void setActive(boolean active) {
@@ -278,7 +280,7 @@ public class KingLevels {
     }
 
     public static final int maxMissingResourcesForRankUp = 4;
-    public static final boolean testing = false;
+    public static final boolean testing = true;
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;

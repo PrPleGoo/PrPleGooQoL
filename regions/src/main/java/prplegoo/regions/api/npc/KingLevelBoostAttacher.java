@@ -149,5 +149,24 @@ public class KingLevelBoostAttacher {
                 return BOOSTABLES.NOBLE().COMPETANCE.get(faction.king().induvidual) * KingLevels.getInstance().getKingLevel(faction).getIncome() / 1000000;
             }
         }.add(RD.OUTPUT().MONEY.boost);
+
+        new RBooster(new BSourceInfo("NPC Faction Capital boost", SPRITES.icons().s.crown), 1, 2, true) {
+            @Override
+            public double get(Region t) {
+                if (!KingLevels.isActive()) {
+                    return 0;
+                }
+
+                if (!(t.faction() instanceof FactionNPC)) {
+                    return 0;
+                }
+
+                if (t.faction().capitolRegion().index() != t.index()) {
+                    return 0;
+                }
+
+                return 1;
+            }
+        }.add(RD.SLAVERY().getWorkforce().bo);
     }
 }

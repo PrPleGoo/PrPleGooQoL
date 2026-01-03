@@ -157,7 +157,7 @@ public class RDMilitary {
             dz *= 1 + 0.25*(-8 + RD.RAN().get(reg, 9, 4))/8.0;
             dz = CLAMP.d(dz, 0, 1);
 
-            dz *= CLAMP.d(STATS.POP().POP.data().get(null)/8000.0, 0.1, 1);
+            dz *= KingLevels.isActive() ? 0.1 : CLAMP.d(STATS.POP().POP.data().get(null)/8000.0, 0.1, 1);
 
 
             if (reg.faction() instanceof FactionNPC) {

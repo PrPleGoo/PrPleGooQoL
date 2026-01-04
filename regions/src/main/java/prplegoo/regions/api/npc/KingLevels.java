@@ -280,7 +280,7 @@ public class KingLevels {
     }
 
     public static final int maxMissingResourcesForRankUp = 4;
-    public static final boolean testing = true;
+    public static final boolean testing = false;
     public void pickMaxLevel(FactionNPC faction, boolean force) {
         if (!isActive) {
             return;

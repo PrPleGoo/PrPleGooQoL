@@ -87,7 +87,7 @@ public class KingLevelRecruiter {
                     }
                 }
 
-                double trainingTarget = 0.4 * BOOSTABLES.NOBLE().COMPETANCE.get(f.court().king().roy().induvidual);
+                double trainingTarget = 0.60 * BOOSTABLES.NOBLE().COMPETANCE.get(f.court().king().roy().induvidual);
                 for (StatsBattle.StatTraining trainingType : STATS.BATTLE().TRAINING_ALL) {
                     division.target.trainingSet(trainingType, trainingTarget);
                 }
@@ -99,7 +99,9 @@ public class KingLevelRecruiter {
                         continue;
                     }
 
-                    if (AD.supplies().get(equipment).amountValue(army) < 0.75) {
+                    double equipValue = AD.supplies().get(equipment).amountValue(army);
+                    if ((!kingWantsToExpandArmy && equipValue < 0.99)
+                            || equipValue < 0.75) {
                         division.target.equipSet(equipment, currentPips - 0.2);
 
                         continue;

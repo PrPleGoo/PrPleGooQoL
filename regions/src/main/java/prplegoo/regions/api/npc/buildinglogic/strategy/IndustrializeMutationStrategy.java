@@ -75,11 +75,11 @@ public class IndustrializeMutationStrategy extends BigMutationStrategy {
 
                 outputPrice += ratePrice;
             }
-
-            double profit = (outputPrice - inputPrice);
-            if (profit < 500) {
-                continue;
-            }
+//
+//            double profit = (outputPrice - inputPrice);
+//            if (profit < 500) {
+//                continue;
+//            }
 
             double margin = (outputPrice / inputPrice) - 1;
             boolean profitableRecipe = margin * multiplier > RND.rFloat(1.0);

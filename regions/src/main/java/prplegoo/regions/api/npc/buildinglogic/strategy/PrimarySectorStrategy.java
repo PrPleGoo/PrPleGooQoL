@@ -46,8 +46,6 @@ public class PrimarySectorStrategy extends BigMutationStrategy {
                 didMutationOccur = didMutationOccur | tryLevelDowngrade(building.level, buildingGenetic, region);
             } else if (RND.rFloat() < profit / PrimarySectorProfitCache.getInstance().getMax(faction)) {
                 didMutationOccur = didMutationOccur | tryLevelUpgrade(building.level, buildingGenetic, region);
-            } else {
-                didMutationOccur = didMutationOccur | tryLevelDowngrade(building.level, buildingGenetic, region);
             }
         }
 

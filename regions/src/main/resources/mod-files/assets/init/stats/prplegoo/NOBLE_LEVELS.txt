@@ -67,9 +67,9 @@ LEVELS: [
         MAX_REGIONS: 1,
 
         CONSUMPTION: {
-			LEATHER: 10,
-			CLAY: 10,
-			TOOLS: 10,
+			CLAY: 3,
+			PAPER: 3,
+			TOOLS: 20,
         },
         CONSUMPTION_CAPITAL_POP: {
         },
@@ -90,9 +90,9 @@ LEVELS: [
         MAX_REGIONS: 2,
 
         CONSUMPTION: {
-			LEATHER: 20,
-			CLAY: 20,
-			TOOLS: 20,
+			CLAY: 6,
+			PAPER: 6,
+			TOOLS: 40,
         },
         CONSUMPTION_CAPITAL_POP: {
         },
@@ -113,9 +113,9 @@ LEVELS: [
         MAX_REGIONS: 5,
 
         CONSUMPTION: {
-			LEATHER: 30,
-			CLAY: 30,
-			TOOLS: 30,
+			CLAY: 9,
+			PAPER: 9,
+			TOOLS: 60,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -138,9 +138,9 @@ LEVELS: [
         MAX_REGIONS: 7,
 
         CONSUMPTION: {
-			LEATHER: 40,
-			CLAY: 40,
-			TOOLS: 40,
+			CLAY: 12,
+			PAPER: 12,
+			TOOLS: 80,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -163,9 +163,9 @@ LEVELS: [
         MAX_REGIONS: 9,
 
         CONSUMPTION: {
-			LEATHER: 50,
-			CLAY: 50,
-			TOOLS: 50,
+			CLAY: 15,
+			PAPER: 15,
+			TOOLS: 100,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -188,9 +188,9 @@ LEVELS: [
         MAX_REGIONS: 12,
 
         CONSUMPTION: {
-			LEATHER: 60,
-			CLAY: 60,
-			TOOLS: 60,
+			CLAY: 18,
+			PAPER: 18,
+			TOOLS: 120,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -213,9 +213,9 @@ LEVELS: [
         MAX_REGIONS: 15,
 
         CONSUMPTION: {
-			LEATHER: 70,
-			CLAY: 70,
-			TOOLS: 70,
+			CLAY: 21,
+			PAPER: 21,
+			TOOLS: 140,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -238,9 +238,9 @@ LEVELS: [
         MAX_REGIONS: 18,
 
         CONSUMPTION: {
-			LEATHER: 80,
-			CLAY: 80,
-			TOOLS: 80,
+			CLAY: 24,
+			PAPER: 24,
+			TOOLS: 160,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -263,9 +263,9 @@ LEVELS: [
         MAX_REGIONS: 25,
 
         CONSUMPTION: {
-			LEATHER: 90,
-			CLAY: 90,
-			TOOLS: 90,
+			CLAY: 27,
+			PAPER: 27,
+			TOOLS: 180,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -288,9 +288,9 @@ LEVELS: [
         MAX_REGIONS: 30,
 
         CONSUMPTION: {
-			LEATHER: 100,
-			CLAY: 100,
-			TOOLS: 100,
+			CLAY: 30,
+			PAPER: 30,
+			TOOLS: 200,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,
@@ -313,9 +313,9 @@ LEVELS: [
         MAX_REGIONS: 64,
 
         CONSUMPTION: {
-			LEATHER: 100,
-			CLAY: 100,
-			TOOLS: 100,
+			CLAY: 30,
+			PAPER: 30,
+			TOOLS: 200,
         },
         CONSUMPTION_CAPITAL_POP: {
 			OPIATES: 0.03,

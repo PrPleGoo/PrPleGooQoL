@@ -291,8 +291,6 @@ public class KingLevels {
             return;
         }
 
-        kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(2));
-
         int desiredLevel = getDesiredKingLevel(faction).getIndex();
         int maxLevel = testing ? kingLevels.length
                 : ((currentYear / 15) + FACTIONS.player().realm().regions() + 1);
@@ -300,6 +298,17 @@ public class KingLevels {
         for (int i = desiredLevel; i > 0; i--) {
             if (i > maxLevel) {
                 continue;
+            }
+
+            if (i > kingLevelIndexes.getLevel(faction)) {
+                int menTarget = AD.conscripts().total(null).get(faction);
+
+                if (menTarget > 200
+                        && RND.rFloat() + 0.3 > (double) AD.conscripts().used(null).get(faction) / menTarget) {
+                    kingLevelIndexes.setNextPickYear(faction, currentYear + 1);
+
+                    continue;
+                }
             }
 
             int missingResourceCount = getMissingResourceCountAtLevel(faction, i);
@@ -311,6 +320,8 @@ public class KingLevels {
 
                     return;
                 }
+
+                kingLevelIndexes.setNextPickYear(faction, currentYear + 3 + RND.rInt(2));
                 kingLevelIndexes.setLevel(faction, i);
 
                 return;

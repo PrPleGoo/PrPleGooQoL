@@ -158,7 +158,6 @@ public abstract class WArmyState implements INDEXED{
 						double output = RD.OUTPUT().get(res).loot(reg)*d*10.0;
 						if (KingLevels.isActive() && reg.faction() instanceof FactionNPC) {
 							output /= KingLevels.getInstance().getPlayerScalingMul();
-							output /= 10;
 						}
 
 						int am = (int) (KingLevels.isActive()

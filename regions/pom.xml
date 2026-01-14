@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.70.21.11</version>
+    <version>0.70.26.0</version>
 
     <profiles>
         <profile>
@@ -158,7 +158,7 @@ Credits:
 - Dinosaure, refactoring
         </mod.info>
         <game.version.major>70</game.version.major>
-        <game.version.minor>21</game.version.minor>
+        <game.version.minor>26</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

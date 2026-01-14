@@ -15,6 +15,9 @@ import world.region.RDHealth;
 
 public class KingLevelBoostAttacher {
     public static void attachKingLevelBoosts() {
+        if(!KingLevels.isActive()){
+            return;
+        }
         new RBooster(new BSourceInfo("King level", SPRITES.icons().s.crown), 0, 40000, false) {
             @Override
             public double get(Region t) {

@@ -12,6 +12,7 @@
         <module>qol</module>
         <module>regions</module>
         <module>loyalty</module>
+        <module>employment</module>
     </modules>
 
     <profiles>

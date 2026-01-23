@@ -9,6 +9,7 @@ import init.race.Race;
 import init.resources.RESOURCE;
 import init.sprite.UI.UI;
 import init.type.HCLASSES;
+import prplegoo.regions.api.npc.KingLevels;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
@@ -36,7 +37,7 @@ public final class UIDealConfig extends GuiSection{
 			return true;
 		}
 
-		return RD.DIST().reachable(party.f()) || RD.DIST().factionCanAttackPlayerAllies(party.f());
+		return !KingLevels.isActive() || RD.DIST().reachable(party.f()) || RD.DIST().factionCanAttackPlayerAllies(party.f());
 	}
 	
 	private static CharSequence ¤¤offer = "¤Offer";

@@ -5,6 +5,7 @@ import game.boosting.BSourceInfo;
 import game.boosting.Boostable;
 import game.boosting.BoostableCat;
 import game.faction.FACTIONS;
+import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import init.race.RACES;
 import init.race.Race;
@@ -126,6 +127,44 @@ public class RDRaces {
 		pop = new RDataE("POPULATION", init.count.new DataInt("POPULATION"), init, Dic.¤¤Population);
 		population = pop;
 		GVALUES.REGION.pushI("POPULATION", Dic.¤¤Population, UI.icons().s.human, pop);
+		GVALUES.REGION.pushI("POPULATION_TARGET", Dic.¤¤Population + ": " + Dic.¤¤Target, UI.icons().s.human, new INT_O<Region>() {
+
+			@Override
+			public int get(Region t) {
+				return (int) popTarget.getD(t);
+			}
+
+			@Override
+			public int min(Region t) {
+				return 0;
+			}
+
+			@Override
+			public int max(Region t) {
+				return Integer.MAX_VALUE;
+			}
+
+		});
+		GVALUES.FACTION.pushI("POPULATION_KINGDOM", Dic.¤¤Population + ": " + Dic.¤¤Realm, UI.icons().s.human, new INT_O<Faction>() {
+
+			@Override
+			public int get(Faction t) {
+				if (t == null)
+					return 0;
+				return pop.faction().get(t);
+			}
+
+			@Override
+			public int min(Faction t) {
+				return 0;
+			}
+
+			@Override
+			public int max(Faction t) {
+				return Integer.MAX_VALUE;
+			}
+
+		});
 		GVALUES.REGION.pushI("POPULATION_KINGDOM", Dic.¤¤Population + ": " + Dic.¤¤Realm, UI.icons().s.human, new INT_O<Region>() {
 
 			@Override

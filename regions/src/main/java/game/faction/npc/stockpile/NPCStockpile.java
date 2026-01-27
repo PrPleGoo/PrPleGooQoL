@@ -297,6 +297,7 @@ public class NPCStockpile extends NPCResource{
 
 		KingLevels.getInstance().pickMaxLevel(faction);
 		if (!KingLevels.isActive()) {
+			workforce = wf*PILE_SIZE/RESOURCES.ALL().size();
 			updater.tree.update(faction);
 
 			//int wf =  RD.RACES().population.get(faction.capitolRegion());

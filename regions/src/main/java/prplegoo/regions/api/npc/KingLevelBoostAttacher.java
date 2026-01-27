@@ -153,6 +153,17 @@ public class KingLevelBoostAttacher {
             }
         }.add(RD.OUTPUT().MONEY.boost);
 
+        new RBooster(new BSourceInfo("AI Liquidity", SPRITES.icons().s.money), 0, 10, true) {
+            @Override
+            public double get(Region t) {
+                if (KingLevels.isActive()) {
+                    return 1;
+                }
+
+                return 0;
+            }
+        }.add(RD.OUTPUT().MONEY.boost);
+
         new RBooster(new BSourceInfo("NPC Faction Capital boost", SPRITES.icons().s.crown), 1, 2, true) {
             @Override
             public double get(Region t) {

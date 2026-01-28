@@ -220,25 +220,20 @@ public final class WArmy extends WEntity{
     }
 
     private void returnResources() {
-        Shipment ship = null;
-        if (faction() == FACTIONS.player()) {
-            ship = WORLD.ENTITIES().caravans.create(ctx(), cty(), faction().capitolRegion(), ITYPE.spoils);
-        }
-
-        if (ship != null
-                || faction() != FACTIONS.player()) {
+        Shipment ship = WORLD.ENTITIES().caravans.create(ctx(), cty(), faction().capitolRegion(), ITYPE.spoils);
+        if (ship != null) {
             for (ADSupply ss : AD.supplies().all) {
-                int am = (int) (ss.current().get(this)-ss.targetAmount(this));
+                int am = (int) (ss.current().get(this) - ss.targetAmount(this));
                 am = CLAMP.i(am, 0, Short.MAX_VALUE);
                 if (am > 0) {
-                    if (ship != null) {
-                        ship.loadAndReserve(ss.res, am);
-                    }
+                    ship.loadAndReserve(ss.res, am);
+//					if (ss.baseHealth == 0)
+//						ship.loadAndReserve(ss.res, am);
+                    ss.current().inc(this, -am);
 
                     if (faction() instanceof FactionNPC) {
                         ((FactionNPC) faction()).stockpile.inc(ss.res, am);
                     }
-                    ss.current().inc(this, -am);
                 }
             }
         }

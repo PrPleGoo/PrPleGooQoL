@@ -174,8 +174,12 @@ public final class ADSupplies {
 				}else {
 					for (ADSupply s : AD.supplies().all) {
 						double am = Math.ceil(s.targetAmount(a)/16.0);
-						am = CLAMP.d(am, 0, s.minimumAmount(a));
-						s.current().inc(a, (int)am);
+						double tar = s.minimumAmount(a);
+						am += s.current().get(a);
+						if (am > tar)
+							am = tar;
+						s.current().set(a, (int)am);
+
 					}
 				}
 

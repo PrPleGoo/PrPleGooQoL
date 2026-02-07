@@ -21,7 +21,6 @@ import init.value.Lockable;
 import lombok.Getter;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
-import prplegoo.regions.api.npc.KingLevels;
 import settlement.main.SETT;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.INDUSTRY_HASER;
@@ -492,30 +491,10 @@ final class Creator {
 							return scienceValue * RD.SCHOOL().booster.get(reg);
 						}
 
-						if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
-                            return 0;
-                        }
-
-						return KingLevels.getInstance().getModifiedTechD(bu, (FactionNPC) reg.faction());
+						return 0;
                     }
                 };
                 appliedScience.add(bu.efficiency);
-
-				Bo playingScaling = new Bo(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
-					@Override
-					public double get(Region reg) {
-						if (!KingLevels.isActive()) {
-							return 1;
-						}
-
-						if (!(reg.faction() instanceof FactionNPC)) {
-							return 1;
-						}
-
-						return min() + KingLevels.getInstance().getPlayerScalingD();
-					}
-				};
-				playingScaling.add(bu.efficiency);
 			}
 		};
 

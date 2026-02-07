@@ -5,7 +5,6 @@ import game.boosting.BoostSpecs;
 import game.boosting.BoosterImp;
 import game.faction.FACTIONS;
 import game.faction.Faction;
-import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.LIST;
@@ -36,10 +35,6 @@ public class RDRaceEdictMassacre extends RDEdicts.RDRaceEdict {
 
                 @Override
                 public double vGet(Region t) {
-                    if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
-                        return 0;
-                    }
-
                     if (t.faction() != null && realm.get(r.index()).get(t.faction()) > 0)
                         return CLAMP.d(realm.get(r.index()).getD(t.faction()), 0, 1);
                     return 0;

@@ -10,7 +10,6 @@ import init.race.RACES;
 import init.race.Race;
 import init.religion.Religion;
 import init.resources.RESOURCE;
-import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -60,11 +59,6 @@ final class Builder {
 	public void build(Region reg) {
 		RealmBuilder builder = rebBuilder;
 		if (reg.faction() instanceof FactionNPC) {
-			if (KingLevels.isActive()) {
-				KingLevels.getInstance().getBuilder().build((FactionNPC) reg.faction(), reg);
-
-				return;
-			}
 			builder = ((FactionNPC)reg.faction()).court().king().builder;
 		}
 		build(reg, builder);
@@ -353,7 +347,7 @@ final class Builder {
 		public double value(RealmBuilder current, Region rcurrent) {
 			double v1 = 0;
 			for (RSpec<T> b : bos) {
-				v1 +=  b.bo.booster.getValue(1.0)*value(b.t, current, rcurrent);
+				v1 +=  b.bo.booster.to()*value(b.t, current, rcurrent);
 			}
 			return v1;
 		}

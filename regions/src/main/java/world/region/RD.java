@@ -13,10 +13,7 @@ import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import init.race.Race;
 import init.sprite.UI.UI;
-import lombok.Getter;
 import prplegoo.regions.api.*;
-import prplegoo.regions.api.npc.KingLevelBoostAttacher;
-import prplegoo.regions.api.npc.KingLevels;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -63,7 +60,6 @@ public class RD extends WorldResource {
     private final RDSchoolScience schoolScience;
     private final RDRecipe recipes;
     private final RDDeficits deficits;
-    private final KingLevels kingLevels;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -103,8 +99,6 @@ public class RD extends WorldResource {
         schoolScience = new RDSchoolScience();
         recipes = new RDRecipe();
         deficits = new RDDeficits();
-        kingLevels = new KingLevels();
-        KingLevelBoostAttacher.attachKingLevelBoosts();
 
         Arrays.fill(factionI, -1);
 

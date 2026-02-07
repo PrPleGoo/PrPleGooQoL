@@ -18,7 +18,6 @@ import init.type.HCLASSES;
 import init.type.TERRAINS;
 import init.value.GVALUES;
 import prplegoo.regions.api.gen.RacePreferenceCache;
-import prplegoo.regions.api.npc.KingLevels;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -131,16 +130,8 @@ public class RDRace implements INDEXED{
 
 				@Override
 				public double get(Region t) {
-					if (KingLevels.isActive()){
-						double d = RD.RACES().popTarget.getD(t)/7000.0;
-						d = (int)(d*100)/100.0;
-
-						return d;
-					}
-
 					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop());
 					d = (int)(d*100)/100.0;
-
 					return d;
 				}
 			}.add(target);
@@ -148,10 +139,6 @@ public class RDRace implements INDEXED{
 			new RBooster(new BSourceInfo(¤¤Armies, UI.icons().s.sword), 0, 20, false) {
 				@Override
 				public double get(Region t) {
-					if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
-						return 0;
-					}
-
 					double power = 0;
 					for (WArmy a : WORLD.ENTITIES().armies.fill(t))
 						if (a.faction() == t.faction())
@@ -164,10 +151,6 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
-						return 0.5;
-					}
-
 					int cit = STATS.POP().POP.data(HCLASSES.CITIZEN()).get(race);
 					int slaves = STATS.POP().POP.data(HCLASSES.SLAVE()).get(race);
 					int tot = STATS.POP().POP.data().get(null) + 1;
@@ -185,10 +168,6 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
-						return 0.5;
-					}
-
 					int cit = STATS.POP().POP.data(HCLASSES.NOBLE()).get(race);
 					int tot = STATS.POP().POP.data(HCLASSES.NOBLE()).get(null);
 					if (cit == 0) {

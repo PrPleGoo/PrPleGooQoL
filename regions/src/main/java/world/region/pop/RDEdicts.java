@@ -8,7 +8,6 @@ import game.time.TIME;
 import init.sprite.UI.UI;
 import init.type.HCLASSES;
 import lombok.Getter;
-import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.api.resettlement.RDRaceEdictDiscourage;
 import prplegoo.regions.api.resettlement.RDRaceEdictEncourage;
 import prplegoo.regions.api.resettlement.RDRaceEdictMassacre;
@@ -80,10 +79,6 @@ public class RDEdicts {
 
 				@Override
 				public double get(Region t) {
-					if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
-						return 0;
-					}
-
 					return STATS.MULTIPLIERS().PROSECUTION.value(HCLASSES.CITIZEN(), r.race, 0);
 				}
 			

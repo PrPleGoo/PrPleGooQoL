@@ -1,6 +1,5 @@
 package prplegoo.regions;
 
-import prplegoo.regions.persistence.data.RDFoodConsumptionData;
 import prplegoo.regions.api.npc.KingLevels;
 import prplegoo.regions.persistence.FileGetterApi;
 import prplegoo.regions.persistence.FilePutterApi;
@@ -21,7 +20,6 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
     public void save(FilePutter file) {
         FilePutterApi putter = new FilePutterApi();
 
-        putter.put(RD.FOOD_CONSUMPTION().getKey(), RD.FOOD_CONSUMPTION().getData());
         putter.put(RD.SLAVERY().getKey(), RD.SLAVERY().getData());
         putter.put(RD.RECIPES().getKey(), RD.RECIPES().getData());
         putter.put(RD.DEFICITS().getKey(), RD.DEFICITS().getData());
@@ -38,8 +36,6 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         FileGetterApi getter = new FileGetterApi();
         getter.onGameLoaded(file);
 
-        RDFoodConsumptionData gotten = getter.get(RD.FOOD_CONSUMPTION());
-        RD.FOOD_CONSUMPTION().putData(gotten);
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
         RD.RECIPES().putData(getter.get(RD.RECIPES()));
         RD.DEFICITS().putData(getter.get(RD.DEFICITS()));

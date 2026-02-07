@@ -5,12 +5,8 @@ public class MagicStringChecker {
         return key.startsWith("WORLD_RESOURCE_PRODUCTION_");
     }
 
-    public static boolean isFoodStallBuilding(String key){
-        return key.equals("NONADMIN_FOODSTALL");
-    }
-
-    public static boolean isSlaverBuilding(String key){
-        return key.equals("NONADMIN_SLAVER");
+    public static boolean isLawBuilding(String key){
+        return key.equals("INFRA_GALLOWS");
     }
 
     public static boolean isWorkforceBoostableKey(String key) { return key.equals("WORLD_POINT_WORKFORCE"); }

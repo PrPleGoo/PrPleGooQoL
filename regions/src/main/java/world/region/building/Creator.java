@@ -19,7 +19,6 @@ import init.type.CLIMATES;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
-import prplegoo.regions.api.PrPleGooEfficiencies;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
 import prplegoo.regions.api.npc.KingLevels;
@@ -110,25 +109,6 @@ final class Creator {
 			l.local.read("BOOST", j, BValue.VALUE1);
 			l.global.read("BOOST_GLOBAL", j, BValue.VALUE1, Dic.¤¤global, true, "ADMIN");
 			l.cost = j.i("CREDITS", 0, 1000000, 0);
-		}
-
-		if (json.bool("FOOD_CONSUMER", false)) {
-			BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
-			BOOSTING.connecter(() -> {
-					Bo deficit = new Bo(new BSourceInfo("Lacking input material", UI.icons().s.alert), 0, 1, true) {
-						@Override
-						double get(Region reg) {
-							if (reg.faction() != FACTIONS.player()) {
-								return 1;
-							}
-
-							return RD.DEFICITS().getFoodDeficit(reg);
-						}
-					};
-
-					deficit.add(b.efficiency);
-				});
-
 		}
 
 		return b;

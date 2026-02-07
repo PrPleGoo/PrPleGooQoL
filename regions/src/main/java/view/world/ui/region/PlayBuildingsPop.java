@@ -29,7 +29,6 @@ import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListResize;
 import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.ui.FoodSelector;
 import prplegoo.regions.ui.SlaveSelector;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
@@ -110,30 +109,39 @@ class PlayBuildingsPop {
             GuiSection row = new GuiSection();
             rows.add(row);
             Butt[] butts = new Butt[wam];
+            boolean lawBuildingHad = false;
+            boolean lawBuildingAccountedFor = false;
             for (RDBuilding b : cat.all()) {
-                if (i >= wam) {
+                if (i >= wam
+                        || (lawBuildingAccountedFor && (i + 3) >= wam)
+                        || MagicStringChecker.isLawBuilding(b.key())) {
                     butts = new Butt[wam];
                     row = new GuiSection();
                     rows.add(row);
                     i = 0;
+                    lawBuildingHad = false;
+                    lawBuildingAccountedFor = false;
                 }
                 Butt bb = new Butt(b);
                 hi = bb.body.height()+12;
                 butts[i] = bb;
-                if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
+                if (i == 0) {
                     row.addRightC(0, bb);
                 } else {
-                    row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
+                    if (lawBuildingHad) {
+                        row.add(bb, butts[i - 1].body.x2() + (butts[i - 1].body.width() * 3), butts[i - 1].body.y1());
+                        lawBuildingHad = false;
+                        lawBuildingAccountedFor = true;
+                    } else {
+                        row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
+                    }
+
                 }
 
-                if(MagicStringChecker.isFoodStallBuilding(b.key())){
-                    GuiSection foodSelector = new FoodSelector(g);
-                    row.addRightC(0, foodSelector);
-                }
-
-                if(MagicStringChecker.isSlaverBuilding(b.key())){
+                if(MagicStringChecker.isLawBuilding(b.key())){
                     GuiSection slaveSelector = new SlaveSelector(g);
                     row.addRightC(0, slaveSelector);
+                    lawBuildingHad = true;
                 }
                 i++;
             }

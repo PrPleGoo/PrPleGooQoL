@@ -60,7 +60,6 @@ public class RD extends WorldResource {
     private final RDEvent event;
     private final RDProspects prospects;
     private final RDSlavery slavery;
-    private final RDFoodConsumption foodConsumption;
     private final RDSchoolScience schoolScience;
     private final RDRecipe recipes;
     private final RDDeficits deficits;
@@ -101,7 +100,6 @@ public class RD extends WorldResource {
         prospects = new RDProspects(init);
 
         slavery = new RDSlavery();
-        foodConsumption = new RDFoodConsumption();
         schoolScience = new RDSchoolScience();
         recipes = new RDRecipe();
         deficits = new RDDeficits();
@@ -380,10 +378,6 @@ public class RD extends WorldResource {
 
     public static RDSlavery SLAVERY() {
         return self.slavery;
-    }
-
-    public static RDFoodConsumption FOOD_CONSUMPTION() {
-        return self.foodConsumption;
     }
 
     public static RDSchoolScience SCHOOL() {

@@ -29,6 +29,8 @@ import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.IndustryResource;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
+import settlement.room.main.furnisher.FurnisherItemGroup;
+import settlement.room.main.furnisher.FurnisherStat;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
 import settlement.stats.Induvidual;
@@ -47,6 +49,7 @@ import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RD.RDInit;
+import world.region.RDOutputs;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDReligions.RDReligion;
 import world.region.pop.RDRace;
@@ -243,7 +246,26 @@ final class Creator {
 			}
 
 			levels.add(l);
-//			levels.get(0).local.all().get(0).get(WORLD.REGIONS().all().get(0));
+
+			for(int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++)
+			{
+				double costPerWorker = getConstructionCostPerWorker(resourceIndex, blue, 0);
+				double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, 0);
+
+				if (costPerWorker == 0) {
+					continue;
+				}
+
+				double workerCount = output*d * 1.25;
+				double costForEfficientWorker = (costPerWorker + costPerEfficiency);
+				double degradeRatePerDay = blue.degradeRate()*SETT.MAINTENANCE().resRate;
+
+
+				BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
+				BoosterValue bo = new BoosterValue(BValue.VALUE1, info, -workerCount*costForEfficientWorker*degradeRatePerDay, false);
+
+				l.local.push(bo, RD.OUTPUT().RES.get(blue.constructor().resource(resourceIndex).index()).boost);
+			}
 		}
 
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
@@ -297,6 +319,76 @@ final class Creator {
 
 		return b;
 
+	}
+
+	private double getConstructionCostPerWorker(int resourceIndex, RoomBlueprintImp blue, int level) {
+		if (blue.degradeRate() == 0 || blue.constructor().stats().isEmpty()) {
+			return 0;
+		}
+
+		LIST<FurnisherItemGroup> furnishings = blue.constructor().groups();
+
+		double totalWorkers = 0.0;
+		double totalCost = 0.0;
+
+		for (FurnisherItemGroup furnishing : furnishings) {
+			double workersPerItem = furnishing.stat(0);
+
+			if (workersPerItem == 0) {
+				continue;
+			}
+
+			totalWorkers += workersPerItem;
+			totalCost += furnishing.cost(resourceIndex, level);
+		}
+
+		if (totalWorkers == 0) {
+			return 0;
+		}
+
+		return totalCost / totalWorkers;
+	}
+
+	private double getConstructionCostPerEfficiency(int resourceIndex, RoomBlueprintImp blue, int level) {
+		if (blue.degradeRate() == 0) {
+			return 0;
+		}
+
+		LIST<FurnisherStat> stats = blue.constructor().stats();
+		int indexOfEfficiency = -1;
+		for(FurnisherStat stat : stats) {
+			if (stat instanceof FurnisherStat.FurnisherStatEfficiency) {
+				indexOfEfficiency = stat.index();
+
+				break;
+			}
+		}
+
+		if (indexOfEfficiency == -1) {
+			return 0;
+		}
+
+		LIST<FurnisherItemGroup> furnishings = blue.constructor().groups();
+
+		double totalWorkers = 0.0;
+		double totalCost = 0.0;
+
+		for (FurnisherItemGroup furnishing : furnishings) {
+			double workersPerItem = furnishing.stat(indexOfEfficiency);
+
+			if (workersPerItem == 0) {
+				continue;
+			}
+
+			totalWorkers += workersPerItem;
+			totalCost += furnishing.cost(resourceIndex, level);
+		}
+
+		if (totalWorkers == 0) {
+			return 0;
+		}
+
+		return totalCost / totalWorkers;
 	}
 
 	private void pushDeficitHandling(RDBuilding building, LIST<Industry> industries) {

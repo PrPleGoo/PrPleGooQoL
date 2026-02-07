@@ -13,6 +13,7 @@ LEVELS: [
 		},
 		BOOST_GLOBAL: {
 			WORLD_HEALTH>ADD: 0.1,
+			WORLD_POINT_WORKFORCE>ADD: 0.1,
 		},
 	},
 ],

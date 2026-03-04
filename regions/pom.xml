@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.70.26.5</version>
+    <version>0.70.71.0</version>
 
     <profiles>
         <profile>
@@ -119,15 +119,12 @@ This mod is for you if:
 Features:
 - You can build refineries and workshops in regions.
 - Ship resources to regions to keep them crafting (new building for your capital).
-- A food stall to use food instead of gov points to grow cities.
-- Population numbers in regions have been reduced drastically.
-- Production scaling now goes off the "normal"-racial values, instead of weird "region"-racial values.
+- You can generate science and train ambassadors in regions.
+- Estates that occupy entire regions to generate Gov points, at the cost of supplies from your capital.
 - Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
 - School reworked to apply your science to regions.
 - Law gives you PoWs as tax from a region.
-- Slaver's guild building that specializes in PoW output.
 - Max level of region building based on terrain/prospect instead of scaling output.
-- AI empires use their regions for their economy, armies, etc.
 
 This mod completely reworks regions.
 As per my idea listed in the suggestion forum on discord.
@@ -143,6 +140,7 @@ Known compatible mods, these mods have been used by me or others and no problems
 - PrPleGoo's Quality of Life Mod, https://steamcommunity.com/sharedfiles/filedetails/?id=3260671025
 - Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
 - Cute Race!, https://steamcommunity.com/sharedfiles/filedetails/?id=3418470482
+- Classic Races, https://steamcommunity.com/sharedfiles/filedetails/?id=2527476367
 
 If you use a different mod than any of the above and notice no game breaking issues, please let me know so I can update the list!
 

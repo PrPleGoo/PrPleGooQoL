@@ -98,7 +98,7 @@ public final class Boostable extends INFO implements MAPPED{
     public double get(BOOSTABLE_O t) {
         if (deadlockCheck > 1) {
             throw new RuntimeException(
-                    "boostable " + key + "seems to be deadlocked. Make sure it's not a factor in its own factors");
+                    "boostable " + key + " seems to be deadlocked. Make sure it's not a factor in its own factors");
         }
 
         deadlockCheck++;

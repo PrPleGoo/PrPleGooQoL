@@ -571,6 +571,12 @@ public final class RDBuilding implements MAPPED{
 			double ta = tos(RD.BUILDINGS().tmp().level(bu, t));
 			if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
 				return ta;
+
+			// Prevents negative multiplier from needing efficiency (Workforce *0 from estate)
+			if (b.booster.isMul && MagicStringChecker.isWorkforceBoostableKey(b.boostable.key)) {
+				return ta;
+			}
+
 			int i = RD.BUILDINGS().tmp().level(bu, t);
 			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
 				return bu.efficiency.get(t) * gs(i, t);

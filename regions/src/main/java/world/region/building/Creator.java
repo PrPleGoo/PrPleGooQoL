@@ -12,6 +12,7 @@ import game.faction.player.PTech;
 import game.faction.player.Player;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
+import init.resources.RESOURCE;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
@@ -20,9 +21,9 @@ import init.type.CLIMATES;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
-import prplegoo.regions.api.RDInputs;
 import prplegoo.regions.api.RDOptionalConsumption;
 import prplegoo.regions.api.RDRecipe;
+import prplegoo.regions.api.RDUpgrades;
 import prplegoo.regions.api.gen.ProspectCache;
 import settlement.main.SETT;
 import settlement.room.industry.module.Industry;
@@ -260,9 +261,6 @@ final class Creator {
 
 				if (optional) {
 					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * i.rate, all.size(), i.resource.index());
-
-					BoosterValue optionalProduction = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * boostedAmount, all.size(), i.resource.index());
-					l.local.push(optionalProduction, outputboost);
 				}
 				else {
 					consumption = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
@@ -276,7 +274,6 @@ final class Creator {
 			l.local.push(production, outputboost);
 
 			levels.add(l);
-			pushMaintenance(blue, output, d, l);
 		}
 
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
@@ -285,6 +282,7 @@ final class Creator {
 
 		pushLevelCapping(b, data);
 		pushFactionBoosts(b);
+		pushMaintenance(blue, b);
 
 		if (optional) {
 			pushDeficitHandlingOptional(b, ins);
@@ -322,6 +320,9 @@ final class Creator {
 						IndustryResource i = ins.get(ri);
 
 						RD.OPTIONAL_CONSUMPTION().putRate(b.index(), i.resource.index(), i.rate);
+
+						OptionalConsumptionBo bo = new OptionalConsumptionBo(b, i.resource);
+						bo.add(b.efficiency);
 					}
 				}
 			}
@@ -384,8 +385,6 @@ final class Creator {
 			}
 
 			levels.add(l);
-
-			pushMaintenance(blue, output, d, l);
 		}
 
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
@@ -395,6 +394,7 @@ final class Creator {
 		pushLevelCapping(b, data);
 		pushDeficitHandlingRecipe(b, industries);
 		pushFactionBoosts(b);
+		pushMaintenance(blue, b);
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
 		sp.read(data, BValue.VALUE1);
@@ -441,28 +441,43 @@ final class Creator {
 
 	}
 
-	private void pushMaintenance(RoomBlueprintImp blue, double output, double d, RDBuildingLevel l) {
-		for(int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++)
-		{
-			double costPerWorkplace = getConstructionCostPerWorker(resourceIndex, blue, 0);
-			double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, 0);
+	private void pushMaintenance(RoomBlueprintImp blue, RDBuilding building) {
+		for (int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++) {
+			for (int level = 0; level <= blue.upgrades().max(); level++) {
+				double costPerWorkplace = getConstructionCostPerWorker(resourceIndex, blue, level);
+				double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, level);
 
-			double costPerEfficientWorker = costPerWorkplace + (costPerEfficiency / 2);
+				double costPerEfficientWorker = costPerWorkplace + (costPerEfficiency / 2);
 
-			if (costPerEfficientWorker == 0) {
-				continue;
+				if (costPerEfficientWorker == 0) {
+					continue;
+				}
+
+				for (RDBuildingLevel l : building.levels) {
+					double workerCount = 50 * l.index;
+					double degradeRatePerDay = blue.degradeRate() * SETT.MAINTENANCE().resRate;
+					double dailyCostPerWorker = degradeRatePerDay * costPerEfficientWorker;
+					double totalCost = workerCount * dailyCostPerWorker;
+
+					BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
+
+					BoosterValue bo = new RDUpgrades.RDUpgradeMaintenanceBooster(BValue.VALUE1, info, -totalCost, building.index(), level);
+
+					l.local.push(bo, RD.OUTPUT().RES.get(blue.constructor().resource(resourceIndex).index()).boost);
+				}
 			}
-
-			double workerCount = output * d * 1.25;
-			double degradeRatePerDay = blue.degradeRate()*SETT.MAINTENANCE().resRate;
-			double dailyCostPerWorker = degradeRatePerDay * costPerEfficientWorker;
-			double totalCost = workerCount*dailyCostPerWorker;
-
-			BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
-			BoosterValue bo = new BoosterValue(BValue.VALUE1, info, -totalCost, false);
-
-			l.local.push(bo, RD.OUTPUT().RES.get(blue.constructor().resource(resourceIndex).index()).boost);
 		}
+		ACTION a = new ACTION() {
+			@Override
+			public void exe() {
+				if (blue.upgrades().max() > 0) {
+					UpgradeBo bo = new UpgradeBo(building);
+					bo.add(building.efficiency);
+				}
+			}
+		};
+
+		BOOSTING.connecter(a);
 	}
 
 	private double getConstructionCostPerWorker(int resourceIndex, RoomBlueprintImp blue, int level) {
@@ -688,7 +703,7 @@ final class Creator {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, false) {
+                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 0, 15, false) {
 					private int index = -1;
                     @Override
                     double get(Region reg) {
@@ -803,4 +818,39 @@ final class Creator {
 		}
 	}
 
+	static class OptionalConsumptionBo extends Bo {
+		private final int buildingIndex;
+		private final int resourceIndex;
+
+		public OptionalConsumptionBo(RDBuilding building, RESOURCE resource) {
+			super(new BSourceInfo("Bonus input", resource.icon().small), 0, 15, false);
+
+			this.buildingIndex = building.index();
+			this.resourceIndex = resource.index();
+		}
+
+		@Override
+		double get(Region reg) {
+			return RD.OPTIONAL_CONSUMPTION().isEnabled(reg, buildingIndex, resourceIndex) ? 1 : 0;
+		}
+	}
+
+	static class UpgradeBo extends Bo {
+		private final int buildingIndex;
+
+		public UpgradeBo(RDBuilding building) {
+			super(new BSourceInfo("Building upgrade", UI.icons().s.arrowUp), 0, 15, false);
+
+			this.buildingIndex = building.index();
+		}
+
+		private RDBuilding building() {
+			return RD.BUILDINGS().all.get(buildingIndex);
+		}
+
+		@Override
+		double get(Region reg) {
+			return building().getBlue().upgrades().boost(RD.UPGRADES().getLevel(reg, buildingIndex));
+		}
+	}
 }

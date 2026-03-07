@@ -16,6 +16,7 @@ import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
 import prplegoo.regions.ui.OptionalConsumptionButt;
 import prplegoo.regions.ui.RecipeButt;
+import prplegoo.regions.ui.UpgradeButt;
 import settlement.room.industry.module.IndustryResource;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
@@ -514,7 +515,15 @@ class PlayBuildingsPop {
                 lPop.addDown(0, new LevelButt(b, i));
             }
             RoomBlueprintImp blue = b.getBlue();
-            if(blue != null){
+            if(blue != null) {
+                if (blue.upgrades().max() > 0) {
+                    GuiSection box = new GuiSection();
+                    for (int i = 0; i <= blue.upgrades().max(); i++) {
+                        box.addRight(4, new UpgradeButt(g, num, bu.index(), i));
+                    }
+                    lPop.addDown(0, box);
+                }
+
                 if (blue instanceof INDUSTRY_HASER){
                     INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
                     LIST<Industry> industries = industryHaser.industries();
@@ -526,6 +535,7 @@ class PlayBuildingsPop {
                 }
 
                 if (RD.OPTIONAL_CONSUMPTION().hasRate(b)) {
+                    GuiSection box = new GuiSection();
                     for (RESOURCE resource : RESOURCES.ALL()) {
                         double rate = RD.OPTIONAL_CONSUMPTION().getRate(b.index(), resource.index());
 
@@ -533,8 +543,9 @@ class PlayBuildingsPop {
                             continue;
                         }
 
-                        lPop.addDown(0, new OptionalConsumptionButt(g, num, b.index(), resource.index()));
+                        box.addRight(4, new OptionalConsumptionButt(g, num, b.index(), resource.index()));
                     }
+                    lPop.addDown(0, box);
                 }
             }
         }

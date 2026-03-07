@@ -26,6 +26,7 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         putter.put(RD.DEFICITS().getKey(), RD.DEFICITS().getData());
         putter.put(RD.UPDATER().getShipper().getKey(), RD.UPDATER().getShipper().getData());
         putter.put(RD.OPTIONAL_CONSUMPTION().getKey(), RD.OPTIONAL_CONSUMPTION().getData());
+        putter.put(RD.UPGRADES().getKey(), RD.UPGRADES().getData());
 
         putter.onGameSaved(file);
     }
@@ -40,6 +41,7 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         RD.DEFICITS().putData(getter.get(RD.DEFICITS()));
         RD.UPDATER().getShipper().putData(getter.get(RD.UPDATER().getShipper()));
         RD.OPTIONAL_CONSUMPTION().putData(getter.get(RD.OPTIONAL_CONSUMPTION()));
+        RD.UPGRADES().putData(getter.get(RD.UPGRADES()));
 
         RacePreferenceCache.Reset();
         ProspectCache.Reset();

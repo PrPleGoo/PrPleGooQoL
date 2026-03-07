@@ -582,6 +582,10 @@ public final class RDBuilding implements MAPPED{
 			int level = RD.BUILDINGS().tmp().level(bu, t);
 			double toAtLevel = tos(level);
 
+			if (toAtLevel < 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
+				return gs(level, t);
+			}
+
 			if (!b.booster.isMul && toAtLevel < 0)
 				return toAtLevel;
 
@@ -591,6 +595,7 @@ public final class RDBuilding implements MAPPED{
 			}
 
 			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)
+				|| MagicStringChecker.isResourceConsumptionBooster(b.boostable.key)
 				|| b.boostable == BOOSTABLES.CIVICS().DIPLOMACY
 				|| (b.boostable == BOOSTABLES.CIVICS().GOV && toAtLevel > 0)
 				|| MagicStringChecker.isTech(b.boostable.key)) {

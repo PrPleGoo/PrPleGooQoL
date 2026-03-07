@@ -2,6 +2,7 @@ package prplegoo.regions.ui;
 
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import init.sprite.UI.UI;
 import settlement.main.SETT;
 import settlement.room.main.RoomBlueprint;
 import snake2d.SPRITE_RENDERER;
@@ -27,7 +28,7 @@ public class OptionalConsumptionButt extends CLICKABLE.ClickableAbs {
     private final int resourceIndex;
 
     public OptionalConsumptionButt(GETTER.GETTER_IMP<Region> g, GText num, int buildingIndex, int resource){
-        body.setDim(128, 40);
+        body.setDim(40, 40);
         this.g = g;
         this.num = num;
         this.buildingIndex = buildingIndex;
@@ -45,11 +46,7 @@ public class OptionalConsumptionButt extends CLICKABLE.ClickableAbs {
             GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
         }
 
-        RESOURCES.ALL().get(resourceIndex).icon().medium.renderCY(r, body().x1()+4, body().cY());
-
-        num.clear();
-        num.color(COLOR.WHITE100);
-        num.renderCY(r, body().x1()+48, body.cY());
+        RESOURCES.ALL().get(resourceIndex).icon().medium.renderCY(r, body().x1()+8, body().cY());
     }
 
     @Override

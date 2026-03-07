@@ -62,6 +62,7 @@ public class RD extends WorldResource {
     private final RDDeficits deficits;
     private final RDOptionalConsumption optionalConsumption;
     private final RDInputs inputs;
+    private final RDUpgrades upgrades;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -103,6 +104,7 @@ public class RD extends WorldResource {
         recipes = new RDRecipe();
         deficits = new RDDeficits();
         optionalConsumption = new RDOptionalConsumption();
+        upgrades = new RDUpgrades();
 
         Arrays.fill(factionI, -1);
 
@@ -396,6 +398,10 @@ public class RD extends WorldResource {
 
     public static RDInputs INPUTS() {
         return self.inputs;
+    }
+
+    public static RDUpgrades UPGRADES() {
+        return self.upgrades;
     }
 
     public static Realm REALM(Region reg) {

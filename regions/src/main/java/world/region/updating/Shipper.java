@@ -33,7 +33,6 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     }
 
     private void initialize(){
-
         since = new double[WORLD.REGIONS().all().size()];
         resources = new double[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
         slaves = new int[WORLD.REGIONS().all().size()][RACES.all().size()];
@@ -66,7 +65,7 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         }
 
         for (RDResource res : RD.OUTPUT().RES) {
-            int a = amount(f, res, r, seconds);
+            int a = amount(res, r, seconds);
 
             if (a < 0) {
                 a = RD.DEFICITS().handleDeficit(res.res, a);
@@ -146,11 +145,14 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     }
 
     public int getAccumulatedTaxes(Region region, RDSlavery.RDSlave rdSlave){
-        return (int) slaves[region.index()][rdSlave.rdRace.race.index()];
+        return slaves[region.index()][rdSlave.rdRace.race.index()];
     }
 
-    private int amount(Faction f, RDResource res, Region r, double seconds) {
-        return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI());
+    private int amount(RDResource res, Region r, double seconds) {
+        double production = res.boost.get(r)*seconds*TIME.secondsPerDayI();
+        double consumption = RD.INPUTS().get(res.res).get(r)*seconds*TIME.secondsPerDayI();
+
+        return (int) Math.ceil(production - consumption);
     }
 
     public void shipAll(Faction f, double days) {

@@ -579,31 +579,27 @@ public final class RDBuilding implements MAPPED{
 		}
 
 		private double g(Region t) {
-			double ta = tos(RD.BUILDINGS().tmp().level(bu, t));
-			if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
-				return ta;
+			int level = RD.BUILDINGS().tmp().level(bu, t);
+			double toAtLevel = tos(level);
+
+			if (!b.booster.isMul && toAtLevel < 0)
+				return toAtLevel;
 
 			// Prevents negative multiplier from needing efficiency (Workforce *0 from estate)
-			if (b.booster.isMul && ta <= 1) {
-				return ta;
+			if (b.booster.isMul && toAtLevel <= 1) {
+				return toAtLevel;
 			}
 
-			int i = RD.BUILDINGS().tmp().level(bu, t);
-			double vv = tos(i);
-			// This causes maintenance to scale with efficiency
-			// This behavior will be solved when:
-				// maintenance is a negative number,
-				// consumption is positive -> also allows the removal of custom booster logic
-				// and this if is removed.
 			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)
 				|| b.boostable == BOOSTABLES.CIVICS().DIPLOMACY
+				|| (b.boostable == BOOSTABLES.CIVICS().GOV && toAtLevel > 0)
 				|| MagicStringChecker.isTech(b.boostable.key)) {
-				return bu.efficiency.get(t) * gs(i, t);
+				return bu.efficiency.get(t) * gs(level, t);
 			}
-			if (b.booster.isMul || vv > 0) {
-				return froms(i) + bu.efficiency.get(t)*(tos(i)-froms(i));
+			if (b.booster.isMul || toAtLevel > 0) {
+				return froms(level) + bu.efficiency.get(t)*(tos(level)-froms(level));
 			}
-			return vv;
+			return toAtLevel;
 
 		}
 

@@ -61,6 +61,7 @@ public class RD extends WorldResource {
     private final RDRecipe recipes;
     private final RDDeficits deficits;
     private final RDOptionalConsumption optionalConsumption;
+    private final RDInputs inputs;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -87,6 +88,7 @@ public class RD extends WorldResource {
         random = new RDRandom(init);
         health = new RDHealth(init);
         resources = new RDOutputs(init);
+        inputs = new RDInputs();
         military = new RDMilitary(init);
         races = new RDRaces(init);
         religion = new RDReligions(init);
@@ -390,6 +392,10 @@ public class RD extends WorldResource {
 
     public static RDOptionalConsumption OPTIONAL_CONSUMPTION() {
         return self.optionalConsumption;
+    }
+
+    public static RDInputs INPUTS() {
+        return self.inputs;
     }
 
     public static Realm REALM(Region reg) {

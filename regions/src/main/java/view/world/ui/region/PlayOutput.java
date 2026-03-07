@@ -1,20 +1,14 @@
 package view.world.ui.region;
 
 import game.boosting.Boostable;
-import game.boosting.Booster;
-import game.time.TIME;
 import init.race.Race;
-import init.resources.Growable;
 import init.resources.RESOURCE;
-import init.resources.RESOURCES;
 import init.sprite.UI.UI;
-import settlement.room.industry.module.IndustryResource;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
 import snake2d.util.gui.renderable.RENDEROBJ;
-import snake2d.util.misc.ACTION;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import util.colors.GCOLOR;
@@ -29,7 +23,6 @@ import util.gui.table.GTableBuilder;
 import util.gui.table.GTableBuilder.GRowBuilder;
 import util.info.GFORMAT;
 import util.text.D;
-import view.main.VIEW;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RDOutputs.RDOutput;
@@ -199,7 +192,7 @@ final class PlayOutput extends GuiSection{
         activeButts.clearSloppy();
 		for (PlayButt b : butts) {
 
-			if (hasValue(b.getBoostable(), g.get())
+			if (hasValue(b.getBoostables(), g.get())
             ) {
                 activeButts.add(b);
             }
@@ -207,8 +200,14 @@ final class PlayOutput extends GuiSection{
         super.render(r, ds);
     }
 
-    private boolean hasValue(Boostable bo, Region reg) {
-        return bo.get(reg) != 0;
+    private boolean hasValue(Boostable[] bos, Region reg) {
+        for(Boostable bo : bos) {
+            if (bo.get(reg) != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private class Row extends GuiSection{
@@ -237,7 +236,7 @@ final class PlayOutput extends GuiSection{
     }
 
     private abstract class PlayButt extends ClickableAbs {
-        abstract Boostable getBoostable();
+        abstract Boostable[] getBoostables();
     }
 
     private class ResButt extends PlayButt{
@@ -258,25 +257,26 @@ final class PlayOutput extends GuiSection{
 
             bu.boost.icon.medium.renderC(r, body.x1()+16, body.cY());
 
+            double am = bu.boost.get(g.get()) + bu.boostYearlyPart.get(g.get());
+
+            if (bu instanceof RDResource) {
+                RDResource res = (RDResource) bu;
+
+                am -= RD.INPUTS().get(res.res).get(g.get());
+            }
+
             tt.clear();
-			GFORMAT.i(tt, (long) (bu.boost.get(g.get()) + bu.boostYearlyPart.get(g.get())));
+			GFORMAT.i(tt, (long) Math.floor(am));
 
             tt.renderC(r, body.x1()+32, body.cY());
-
-
-
         }
 
         @Override
         public void hoverInfoGet(GUI_BOX text) {
-
-
-
-
+            GBox b = (GBox) text;
 
 			if (bu.boostYearlyPart.get(g.get()) > 0) {
 				bu.boostYearlyPart.hover(text, g.get(), true);
-                GBox b = (GBox) text;
 				b.sep();
                     GText t = b.text();
                     t.add(¤¤ship);
@@ -288,16 +288,26 @@ final class PlayOutput extends GuiSection{
 				if (bu.boost.get(g.get()) > 0) {
                     bu.boost.hover(text, g.get(), true);
                 }
-
-
             }else {
                 bu.boost.hover(text, g.get(), true);
+
+                b.sep();
+
+                if (bu instanceof RDResource) {
+                    RDResource res = (RDResource) bu;
+
+                    RD.INPUTS().get(res.res).hover(text, g.get(), true);
+                }
             }
         }
 
         @Override
-        Boostable getBoostable() {
-            return bu.boost;
+        Boostable[] getBoostables() {
+            if (bu instanceof RDResource) {
+                RDResource res = (RDResource) bu;
+                return new Boostable[] { bu.boost, RD.INPUTS().get(res.res) };
+            }
+            return new Boostable[] { bu.boost };
         }
     }
     private class RaceButt extends PlayButt {
@@ -329,8 +339,8 @@ final class PlayOutput extends GuiSection{
         }
 
         @Override
-        Boostable getBoostable() {
-            return rdSlave.boost;
+        Boostable[] getBoostables() {
+            return new Boostable[] { rdSlave.boost };
         }
     }
 }

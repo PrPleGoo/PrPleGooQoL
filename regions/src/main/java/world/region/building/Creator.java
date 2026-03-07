@@ -20,6 +20,7 @@ import init.type.CLIMATES;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
+import prplegoo.regions.api.RDInputs;
 import prplegoo.regions.api.RDOptionalConsumption;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
@@ -258,17 +259,16 @@ final class Creator {
 				BoosterValue consumption;
 
 				if (optional) {
-					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, -output * d * i.rate, all.size(), i.resource.index());
+					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * i.rate, all.size(), i.resource.index());
 
 					BoosterValue optionalProduction = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * boostedAmount, all.size(), i.resource.index());
 					l.local.push(optionalProduction, outputboost);
 				}
 				else {
-					consumption = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);
+					consumption = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
 				}
 
-				RDOutput in = RD.OUTPUT().get(i.resource);
-				l.local.push(consumption, in.boost);
+				l.local.push(consumption, RD.INPUTS().get(i.resource));
 			}
 
 			BoosterValue production = new BoosterValue(BValue.VALUE1, info, output * d * boostedAmount, false);
@@ -377,10 +377,9 @@ final class Creator {
 				for (int ri = 0; ri < ins.size(); ri++) {
 					IndustryResource i = ins.get(ri);
 
-					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex, all.size());
+					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
 
-					RDOutput in = RD.OUTPUT().get(i.resource);
-					l.local.push(recipe, in.boost);
+					l.local.push(recipe, RD.INPUTS().get(i.resource));
 				}
 			}
 

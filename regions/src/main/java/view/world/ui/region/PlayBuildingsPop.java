@@ -9,9 +9,13 @@ import game.boosting.Boostable;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import init.constant.C;
+import init.resources.RESOURCE;
+import init.resources.RESOURCES;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
+import prplegoo.regions.ui.OptionalConsumptionButt;
+import prplegoo.regions.ui.RecipeButt;
 import settlement.room.industry.module.IndustryResource;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
@@ -281,76 +285,7 @@ class PlayBuildingsPop {
 
     }
 
-    private class RecipeButt extends ClickableAbs{
 
-        private final Industry industry;
-        private final RoomBlueprintImp blue;
-        private final RDBuilding bu;
-        private final int industryIndexOnBlue;
-
-        RecipeButt(RDBuilding bu, Industry industry, RoomBlueprintImp blue, int industryIndexOnBlue){
-            body.setDim(128, 40);
-            this.industry = industry;
-            this.blue = blue;
-            this.bu = bu;
-            this.industryIndexOnBlue = industryIndexOnBlue;
-        }
-
-        @Override
-        protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
-            GCOLOR.UI().border().render(r, body,-1);
-
-            if (RD.RECIPES().isEnabled(g.get(), bu.index(), blue, industryIndexOnBlue)) {
-                COLOR.WHITE100.render(r, body,-2);
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
-            }else {
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
-            }
-
-            int rendered = 0;
-            for (IndustryResource res : industry.ins()){
-                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-                rendered++;
-            }
-
-            UI.icons().m.arrow_right.medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-            rendered++;
-
-            for (IndustryResource res : industry.outs()){
-                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-                rendered++;
-            }
-
-            num.clear();
-            num.color(COLOR.WHITE100);
-            num.renderCY(r, body().x1()+48, body.cY());
-
-            if (!this.industry.lockable().passes(g.get().faction())) {
-                OPACITY.O50.bind();
-                COLOR.BLACK.render(r, body, -1);
-                OPACITY.unbind();
-            }
-
-        }
-
-        @Override
-        public void hoverInfoGet(GUI_BOX text) {
-            GBox b = (GBox) text;
-
-            b.title(bu.info.name);
-            b.sep();
-
-            hoverRecipe(industry, text);
-        }
-
-        @Override
-        protected void clickA() {
-            if (S.get().developer || this.industry.lockable().passes(g.get().faction())) {
-                RD.RECIPES().setRecipe(g.get(), bu.index() ,blue, industryIndexOnBlue);
-                VIEW.inters().popup.close();
-            }
-        }
-    }
 
     private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r) {
         double d = bu.baseEfficiency(g.get())-1;
@@ -419,21 +354,6 @@ class PlayBuildingsPop {
             }
             bu.boosters().hover(b, s, getB(bu, fromL, toL, s, true), 0);
             b.NL();
-        }
-    }
-
-    private void hoverRecipe(Industry industry, GUI_BOX text) {
-        GBox b = (GBox) text;
-
-        b.add(b.text().lablify().add(Dic.¤¤ProductionRate));
-        b.NL();
-
-        for (IndustryResource res : industry.outs()){
-            hoverCost(b, res.resource.icon(), res.resource.name, res.rate);
-        }
-
-        for (IndustryResource res : industry.ins()){
-            hoverCost(b, res.resource.icon(), res.resource.name, -res.rate);
         }
     }
 
@@ -521,31 +441,6 @@ class PlayBuildingsPop {
         b.NL();
     }
 
-    private static void hoverCost(GUI_BOX text, SPRITE icon, CharSequence name, double value) {
-
-        if (value == 0)
-            return;
-        GBox b = (GBox) text;
-
-        b.add(icon);
-        GText nn = b.text();
-        GText vv = b.text();
-        nn.add(name);
-        GFORMAT.iOrF(vv, value);
-        if (value > 0) {
-            nn.normalify2();
-            vv.normalify2();
-        } else {
-            nn.errorify();
-            vv.errorify();
-        }
-
-        b.add(nn);
-        b.tab(7);
-        b.add(vv);
-        b.NL();
-    }
-
     private static class Levs extends RENDEROBJ.RenderImp {
         RDBuilding bu;
         int current;
@@ -619,12 +514,26 @@ class PlayBuildingsPop {
                 lPop.addDown(0, new LevelButt(b, i));
             }
             RoomBlueprintImp blue = b.getBlue();
-            if(blue != null && blue instanceof INDUSTRY_HASER){
-                INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
-                LIST<Industry> industries = industryHaser.industries();
-                if(industries.size() > 1){
-                    for (int i = industries.size()-1; i >= 0; i--) {
-                        lPop.addDown(0, new RecipeButt(bu, industries.get(i), blue, i));
+            if(blue != null){
+                if (blue instanceof INDUSTRY_HASER){
+                    INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
+                    LIST<Industry> industries = industryHaser.industries();
+                    if(industries.size() > 1){
+                        for (int i = industries.size()-1; i >= 0; i--) {
+                            lPop.addDown(0, new RecipeButt(g, num, bu, industries.get(i), blue, i));
+                        }
+                    }
+                }
+
+                if (RD.OPTIONAL_CONSUMPTION().hasRate(b)) {
+                    for (RESOURCE resource : RESOURCES.ALL()) {
+                        double rate = RD.OPTIONAL_CONSUMPTION().getRate(b.index(), resource.index());
+
+                        if (rate == 0) {
+                            continue;
+                        }
+
+                        lPop.addDown(0, new OptionalConsumptionButt(g, num, b.index(), resource.index()));
                     }
                 }
             }

@@ -12,7 +12,6 @@ import game.faction.player.PTech;
 import game.faction.player.Player;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
-import init.resources.RESOURCE;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
@@ -21,6 +20,7 @@ import init.type.CLIMATES;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
+import prplegoo.regions.api.RDOptionalConsumption;
 import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
 import settlement.main.SETT;
@@ -54,7 +54,6 @@ import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RD;
 import world.region.RD.RDInit;
-import world.region.RDOutputs;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDReligions.RDReligion;
 import world.region.pop.RDRace;
@@ -188,11 +187,13 @@ final class Creator {
 			LIST<IndustryResource> industryIns = null;
 			AdminData adminData = null;
 			Boostable outputBoost = null;
+			boolean optional = true;
 
 			if (b instanceof ROOM_ADMIN) {
 				ROOM_ADMIN room = (ROOM_ADMIN) b;
 				industryIns = room.industries().get(0).ins();
 				adminData = room.data;
+				optional = false;
 			}
 
 			if (b instanceof ROOM_LABORATORY) {
@@ -223,13 +224,13 @@ final class Creator {
 			RoomBlueprintImp blue = (RoomBlueprintImp) b;
 			double boostedAmount = adminData.knowledgePerStation;
 
-			res.add(generate(all, init, cat, blue, data, industryIns, outputBoost, boostedAmount));
+			res.add(generate(all, init, cat, blue, data, industryIns, outputBoost, boostedAmount, optional));
 		}
 
 		return res;
 	}
 
-	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, RoomBlueprintImp blue, Json data, LIST<IndustryResource> ins, Boostable outputboost, double boostedAmount) {
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, RoomBlueprintImp blue, Json data, LIST<IndustryResource> ins, Boostable outputboost, double boostedAmount, boolean optional) {
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
 
 		double output = data.d("OUTPUT");
@@ -254,7 +255,14 @@ final class Creator {
 			for (int ri = 0; ri < ins.size(); ri++) {
 				IndustryResource i = ins.get(ri);
 
-				BoosterValue consumption = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);
+				BoosterValue consumption;
+
+				if (optional) {
+					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, -output * d * i.rate, all.size(), i.resource.index());
+				}
+				else {
+					consumption = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);
+				}
 
 				RDOutput in = RD.OUTPUT().get(i.resource);
 				l.local.push(consumption, in.boost);
@@ -273,8 +281,13 @@ final class Creator {
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
-//		pushDeficitHandling(b, industries);
 		pushFactionBoosts(b);
+
+		if (optional) {
+			pushDeficitHandlingOptional(b, ins);
+		} else {
+			pushDeficitHandling(b, ins);
+		}
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
 		sp.read(data, BValue.VALUE1);
@@ -300,10 +313,17 @@ final class Creator {
 						}
 					}
 				}
+
+				if (optional) {
+					for (int ri = 0; ri < ins.size(); ri++) {
+						IndustryResource i = ins.get(ri);
+
+						RD.OPTIONAL_CONSUMPTION().putRate(b.index(), i.resource.index(), i.rate);
+					}
+				}
 			}
 		};
 		BOOSTING.connecter(a);
-
 
 		return b;
 	}
@@ -371,7 +391,7 @@ final class Creator {
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
-		pushDeficitHandling(b, industries);
+		pushDeficitHandlingRecipe(b, industries);
 		pushFactionBoosts(b);
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
@@ -506,22 +526,70 @@ final class Creator {
 		return totalCost / totalEfficiency;
 	}
 
-	private void pushDeficitHandling(RDBuilding building, LIST<Industry> industries) {
+	private void pushDeficitHandlingRecipe(RDBuilding building, LIST<Industry> industries) {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-				Bo deficit = new Bo(new BSourceInfo("Lacking input material", UI.icons().s.alert), 0, 1, true) {
+				Bo deficit = new Bo(new BSourceInfo("Lacking input material for recipe", UI.icons().s.alert), 0, 1, true) {
 					@Override
 					double get(Region reg) {
 						if (reg.faction() != FACTIONS.player()) {
 							return 1;
 						}
 
-						return RD.DEFICITS().getWorstDeficit(reg, building, industries);
+						return RD.DEFICITS().getWorstDeficitRecipe(reg, building, industries);
 					}
 				};
 
 				deficit.add(building.efficiency);
+			}
+		};
+
+		BOOSTING.connecter(ca);
+	}
+
+	private void pushDeficitHandlingOptional(RDBuilding building, LIST<IndustryResource> ins) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+				for(IndustryResource resource : ins) {
+					Bo deficit = new Bo(new BSourceInfo("Lacking optional: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
+						@Override
+						double get(Region reg) {
+							if (reg.faction() != FACTIONS.player()) {
+								return 1;
+							}
+
+							return RD.DEFICITS().getDeficitOptional(reg, building.index(), resource.resource.index());
+						}
+					};
+
+					deficit.add(building.efficiency);
+				}
+			}
+		};
+
+		BOOSTING.connecter(ca);
+	}
+
+	private void pushDeficitHandling(RDBuilding building, LIST<IndustryResource> ins) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+				for(IndustryResource resource : ins) {
+					Bo deficit = new Bo(new BSourceInfo("Lacking: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
+						@Override
+						double get(Region reg) {
+							if (reg.faction() != FACTIONS.player()) {
+								return 1;
+							}
+
+							return RD.DEFICITS().getDeficitModifier(resource.resource);
+						}
+					};
+
+					deficit.add(building.efficiency);
+				}
 			}
 		};
 

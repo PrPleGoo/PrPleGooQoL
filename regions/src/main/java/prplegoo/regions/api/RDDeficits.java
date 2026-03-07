@@ -166,11 +166,15 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     }
 
     public double getDeficitModifier(RESOURCE resource) {
-        if (unresolvedDeficits[resource.index()] >= -250) {
+        return getDeficitModifier(resource.index());
+    }
+
+    public double getDeficitModifier(int resourceIndex) {
+        if (unresolvedDeficits[resourceIndex] >= -250) {
             return 1;
         }
 
-        double shortage = (1000 + unresolvedDeficits[resource.index()]);
+        double shortage = (1000 + unresolvedDeficits[resourceIndex]);
 
         double result = CLAMP.d(shortage / 1000.0, 0, 1);
 
@@ -181,7 +185,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         return result;
     }
 
-    public double getWorstDeficit(Region region, RDBuilding building, LIST<Industry> industries) {
+    public double getWorstDeficitRecipe(Region region, RDBuilding building, LIST<Industry> industries) {
         Industry selectedRecipe = industries.get(RD.RECIPES().getRecipeIndex(region, building.index(), building.getBlue()));
 
         double worst = 1;
@@ -193,6 +197,14 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         }
 
         return worst;
+    }
+
+    public double getDeficitOptional(Region region, int buildingIndex, int resourceIndex) {
+        if (!RD.OPTIONAL_CONSUMPTION().isEnabled(region, buildingIndex, resourceIndex)) {
+            return 1;
+        }
+
+        return RD.DEFICITS().getDeficitModifier(resourceIndex);
     }
 
     public int getOutstandingDeficit(RESOURCE resource) {

@@ -573,11 +573,16 @@ public final class RDBuilding implements MAPPED{
 				return ta;
 
 			// Prevents negative multiplier from needing efficiency (Workforce *0 from estate)
-			if (b.booster.isMul && MagicStringChecker.isWorkforceBoostableKey(b.boostable.key)) {
+			if (b.booster.isMul && ta <= 1) {
 				return ta;
 			}
 
 			int i = RD.BUILDINGS().tmp().level(bu, t);
+			// This causes maintenance to scale with efficiency
+			// This behavior will be solved when:
+				// maintenance is a negative number,
+				// consumption is positive -> also allows the removal of custom booster logic
+				// and this if is removed.
 			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
 				return bu.efficiency.get(t) * gs(i, t);
 			}

@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>loyalty</artifactId>
-    <version>0.70.21.0</version>
+    <version>0.70.33.0</version>
 
     <profiles>
         <profile>
@@ -124,7 +124,7 @@ Enjoy!
 Available on github.
         </mod.info>
         <game.version.major>70</game.version.major>
-        <game.version.minor>21</game.version.minor>
+        <game.version.minor>33</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>

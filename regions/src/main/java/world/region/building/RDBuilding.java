@@ -3,17 +3,7 @@ package world.region.building;
 import java.util.Arrays;
 
 import game.battle.div.Div;
-import game.boosting.BOOSTABLE_O;
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BUtil;
-import game.boosting.BValue;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.Boostable;
-import game.boosting.BoostableCat;
-import game.boosting.Booster;
-import game.boosting.BoosterImp;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
@@ -517,6 +507,27 @@ public final class RDBuilding implements MAPPED{
 		public double vGet(Faction f) {
 			if (f == null)
 				return 0;
+
+			if (!global) {
+				double res = b.booster.isMul ? 1 : 0;
+
+				for (Region region : f.realm().all()) {
+					if (region.capitol()) {
+						continue;
+					}
+
+					double value = vGet(region);
+
+					if (b.booster.isMul) {
+						res *= value;
+					} else {
+						res += value;
+					}
+				}
+
+				return res;
+			}
+
 			double res = 0;
 			for (int i = 1; i < boosters.length; i++) {
 				double am = bu.levelAm.get(i-1).get(f);
@@ -578,15 +589,17 @@ public final class RDBuilding implements MAPPED{
 			}
 
 			int i = RD.BUILDINGS().tmp().level(bu, t);
+			double vv = tos(i);
 			// This causes maintenance to scale with efficiency
 			// This behavior will be solved when:
 				// maintenance is a negative number,
 				// consumption is positive -> also allows the removal of custom booster logic
 				// and this if is removed.
-			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
+			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)
+				|| b.boostable == BOOSTABLES.CIVICS().DIPLOMACY
+				|| MagicStringChecker.isTech(b.boostable.key)) {
 				return bu.efficiency.get(t) * gs(i, t);
 			}
-			double vv = tos(i);
 			if (b.booster.isMul || vv > 0) {
 				return froms(i) + bu.efficiency.get(t)*(tos(i)-froms(i));
 			}

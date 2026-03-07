@@ -259,6 +259,9 @@ final class Creator {
 
 				if (optional) {
 					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, -output * d * i.rate, all.size(), i.resource.index());
+
+					BoosterValue optionalProduction = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * boostedAmount, all.size(), i.resource.index());
+					l.local.push(optionalProduction, outputboost);
 				}
 				else {
 					consumption = new BoosterValue(BValue.VALUE1, info, -output * d * i.rate, false);

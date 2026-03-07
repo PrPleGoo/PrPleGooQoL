@@ -5,6 +5,11 @@ public class MagicStringChecker {
         return key.startsWith("WORLD_RESOURCE_PRODUCTION_");
     }
 
+    public static boolean isTech(String key) {
+        return key.equals("CIVIC_INNOVATION")
+                || key.equals("CIVIC_KNOWLEDGE");
+    }
+
     public static boolean isLawBuilding(String key){
         return key.equals("INFRA_GALLOWS");
     }

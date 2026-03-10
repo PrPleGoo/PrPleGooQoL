@@ -13,6 +13,7 @@ import game.faction.player.Player;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
 import init.resources.RESOURCE;
+import init.resources.RESOURCES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
@@ -442,34 +443,42 @@ final class Creator {
 	}
 
 	private void pushMaintenance(RoomBlueprintImp blue, RDBuilding building) {
-		for (int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++) {
-			for (int level = 0; level <= blue.upgrades().max(); level++) {
-				double costPerWorkplace = getConstructionCostPerWorker(resourceIndex, blue, level);
-				double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, level);
-
-				double costPerEfficientWorker = costPerWorkplace + (costPerEfficiency / 2);
-
-				if (costPerEfficientWorker == 0) {
-					continue;
-				}
-
-				for (RDBuildingLevel l : building.levels) {
-					double workerCount = 50 * l.index;
-					double degradeRatePerDay = blue.degradeRate() * SETT.MAINTENANCE().resRate;
-					double dailyCostPerWorker = degradeRatePerDay * costPerEfficientWorker;
-					double totalCost = workerCount * dailyCostPerWorker;
-
-					BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
-
-					BoosterValue bo = new RDUpgrades.RDUpgradeMaintenanceBooster(BValue.VALUE1, info, -totalCost, building.index(), level);
-
-					l.local.push(bo, RD.OUTPUT().RES.get(blue.constructor().resource(resourceIndex).index()).boost);
-				}
-			}
-		}
 		ACTION a = new ACTION() {
 			@Override
 			public void exe() {
+				for (int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++) {
+					int realResourceIndex = blue.constructor().resource(resourceIndex).index();
+					MaintenanceEfficiencyBo efficiencyBo = new MaintenanceEfficiencyBo(building, realResourceIndex);
+
+					for (int level = 0; level <= blue.upgrades().max(); level++) {
+						double costPerWorkplace = getConstructionCostPerWorker(resourceIndex, blue, level);
+						double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, level);
+
+						double costPerEfficientWorker = costPerWorkplace + (costPerEfficiency / 2);
+
+						if (costPerEfficientWorker == 0) {
+							continue;
+						}
+
+						efficiencyBo.register(level);
+
+						for (RDBuildingLevel l : building.levels) {
+							double workerCount = 50 * l.index;
+							double degradeRatePerDay = blue.degradeRate() * SETT.MAINTENANCE().resRate;
+							double dailyCostPerWorker = degradeRatePerDay * costPerEfficientWorker;
+							double totalCost = workerCount * dailyCostPerWorker;
+
+							BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
+
+							BoosterValue bo = new RDUpgrades.RDUpgradeMaintenanceBooster(BValue.VALUE1, info, -totalCost, building.index(), level);
+
+							l.local.push(bo, RD.OUTPUT().RES.get(realResourceIndex).boost);
+						}
+					}
+
+					efficiencyBo.add(building.efficiency);
+				}
+
 				if (blue.upgrades().max() > 0) {
 					UpgradeBo bo = new UpgradeBo(building);
 					bo.add(building.efficiency);
@@ -672,8 +681,6 @@ final class Creator {
 
 		}
 
-
-
 		INFO info = new INFO(shrine.info.name, temple.religion.info.desc);
 
 		RDBuilding b = new RDBuilding(all, init, cat, temple.key, info, levels, true, false, temple.key);
@@ -851,6 +858,38 @@ final class Creator {
 		@Override
 		double get(Region reg) {
 			return building().getBlue().upgrades().boost(RD.UPGRADES().getLevel(reg, buildingIndex));
+		}
+	}
+
+	static class MaintenanceEfficiencyBo extends Bo {
+		private final int buildingIndex;
+		private final int resourceIndex;
+		private final boolean[] levels;
+
+		public MaintenanceEfficiencyBo(RDBuilding building, int resourceIndex) {
+			super(new BSourceInfo("Degrade: " + RESOURCES.ALL().get(resourceIndex).name, UI.icons().s.arrowUp), 0, 1, true);
+
+			this.buildingIndex = building.index();
+			this.resourceIndex = resourceIndex;
+
+			this.levels = new boolean[building().getBlue().upgrades().max() + 1];
+		}
+
+		public void register(int level) {
+			levels[level] = true;
+		}
+
+		private RDBuilding building() {
+			return RD.BUILDINGS().all.get(buildingIndex);
+		}
+
+		@Override
+		double get(Region reg) {
+			if (!levels[RD.UPGRADES().getLevel(reg, buildingIndex)]) {
+				return 1;
+			}
+
+			return RD.DEFICITS().getDeficitModifier(resourceIndex);
 		}
 	}
 }

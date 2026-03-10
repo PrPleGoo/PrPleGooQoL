@@ -1,4 +1,4 @@
-package prplegoo.regions.api;
+package prplegoo.regions.api.region.rd;
 
 import game.boosting.BOOSTABLE_O;
 import game.boosting.BSourceInfo;

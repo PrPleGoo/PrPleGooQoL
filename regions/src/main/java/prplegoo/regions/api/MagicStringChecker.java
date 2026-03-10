@@ -20,10 +20,7 @@ public class MagicStringChecker {
 
     public static boolean isWorkforceBoostableKey(String key) { return key.equals("WORLD_POINT_WORKFORCE"); }
 
-    public static boolean isGrowthBuilding(String key) {
-        return key.equals("CIVIC_GROWTH");
-    }
-    public static boolean isQuarantineBuilding(String key) {
-        return key.equals("INFRA_HYGINE");
+    public static boolean isEstateBuilding(String key) {
+        return key.equals("CIVIC_CENTRE");
     }
 }

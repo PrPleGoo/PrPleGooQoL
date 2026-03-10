@@ -27,7 +27,7 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDOutputs.RDResource;
-import prplegoo.regions.api.RDSlavery;
+import prplegoo.regions.api.region.rd.RDSlavery;
 import world.region.updating.Shipper;
 
 final class PlayOutput extends GuiSection{

@@ -1,4 +1,4 @@
-package prplegoo.regions.api;
+package prplegoo.regions.api.region.rd;
 
 import game.faction.FACTIONS;
 import game.faction.FResources;

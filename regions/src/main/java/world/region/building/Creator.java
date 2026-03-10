@@ -12,8 +12,6 @@ import game.faction.player.PTech;
 import game.faction.player.Player;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
-import init.resources.RESOURCE;
-import init.resources.RESOURCES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
@@ -22,10 +20,14 @@ import init.type.CLIMATES;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
-import prplegoo.regions.api.RDOptionalConsumption;
-import prplegoo.regions.api.RDRecipe;
-import prplegoo.regions.api.RDUpgrades;
 import prplegoo.regions.api.gen.ProspectCache;
+import prplegoo.regions.api.region.building.EstateConsumptionReader;
+import prplegoo.regions.api.region.building.MaintenanceEfficiencyBo;
+import prplegoo.regions.api.region.building.OptionalConsumptionBo;
+import prplegoo.regions.api.region.building.UpgradeBo;
+import prplegoo.regions.api.region.rd.RDOptionalConsumption;
+import prplegoo.regions.api.region.rd.RDRecipe;
+import prplegoo.regions.api.region.rd.RDUpgrades;
 import settlement.main.SETT;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.INDUSTRY_HASER;
@@ -61,7 +63,7 @@ import world.region.RDOutputs.RDOutput;
 import world.region.RDReligions.RDReligion;
 import world.region.pop.RDRace;
 
-final class Creator {
+public final class Creator {
 	@Getter
 	private static CharSequence ¤¤prospect = "Prospect";
 	private static CharSequence ¤¤desc = "Produces";
@@ -118,6 +120,8 @@ final class Creator {
 			l.global.read("BOOST_GLOBAL", j, BValue.VALUE1, Dic.¤¤global, true, "ADMIN");
 			l.cost = j.i("CREDITS", 0, 1000000, 0);
 		}
+
+		EstateConsumptionReader.read(jsons, BValue.VALUE1, b);
 
 		return b;
 
@@ -558,7 +562,7 @@ final class Creator {
 			public void exe() {
 				Bo deficit = new Bo(new BSourceInfo("Lacking input material for recipe", UI.icons().s.alert), 0, 1, true) {
 					@Override
-					double get(Region reg) {
+					public double get(Region reg) {
 						if (reg.faction() != FACTIONS.player()) {
 							return 1;
 						}
@@ -581,7 +585,7 @@ final class Creator {
 				for(IndustryResource resource : ins) {
 					Bo deficit = new Bo(new BSourceInfo("Lacking optional: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							if (reg.faction() != FACTIONS.player()) {
 								return 1;
 							}
@@ -605,7 +609,7 @@ final class Creator {
 				for(IndustryResource resource : ins) {
 					Bo deficit = new Bo(new BSourceInfo("Lacking: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							if (reg.faction() != FACTIONS.player()) {
 								return 1;
 							}
@@ -713,7 +717,7 @@ final class Creator {
                 Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 0, 15, false) {
 					private int index = -1;
                     @Override
-                    double get(Region reg) {
+					public double get(Region reg) {
 						if (reg.faction() instanceof Player) {
 							if (index == -1) {
 								for (int i = 0; i < bu.getBlue().bonus().all().size(); i++) {
@@ -758,7 +762,7 @@ final class Creator {
 					double mul = p[1];
 					Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.plusBig), from, from+mul, true) {
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							return ProspectCache.getInstance().getLevelCap(reg, bu);
 						}
 					};
@@ -770,13 +774,13 @@ final class Creator {
 		BOOSTING.connecter(ca);
 	}
 
-	static abstract class Bo extends BoosterImp {
+	public static abstract class Bo extends BoosterImp {
 
 		public Bo(BSourceInfo info, double from, double to, boolean isMul) {
 			super(info, from, to, isMul);
 		}
 
-		abstract double get(Region reg);
+		public abstract double get(Region reg);
 
 		@Override
 		public double vGet(FactionNPC f) {
@@ -822,74 +826,6 @@ final class Creator {
 		@Override
 		public double getValue(double input) {
 			return input;
-		}
-	}
-
-	static class OptionalConsumptionBo extends Bo {
-		private final int buildingIndex;
-		private final int resourceIndex;
-
-		public OptionalConsumptionBo(RDBuilding building, RESOURCE resource) {
-			super(new BSourceInfo("Bonus input", resource.icon().small), 0, 15, false);
-
-			this.buildingIndex = building.index();
-			this.resourceIndex = resource.index();
-		}
-
-		@Override
-		double get(Region reg) {
-			return RD.OPTIONAL_CONSUMPTION().isEnabled(reg, buildingIndex, resourceIndex) ? 1 : 0;
-		}
-	}
-
-	static class UpgradeBo extends Bo {
-		private final int buildingIndex;
-
-		public UpgradeBo(RDBuilding building) {
-			super(new BSourceInfo("Building upgrade", UI.icons().s.arrowUp), 0, 15, false);
-
-			this.buildingIndex = building.index();
-		}
-
-		private RDBuilding building() {
-			return RD.BUILDINGS().all.get(buildingIndex);
-		}
-
-		@Override
-		double get(Region reg) {
-			return building().getBlue().upgrades().boost(RD.UPGRADES().getLevel(reg, buildingIndex));
-		}
-	}
-
-	static class MaintenanceEfficiencyBo extends Bo {
-		private final int buildingIndex;
-		private final int resourceIndex;
-		private final boolean[] levels;
-
-		public MaintenanceEfficiencyBo(RDBuilding building, int resourceIndex) {
-			super(new BSourceInfo("Degrade: " + RESOURCES.ALL().get(resourceIndex).name, UI.icons().s.arrowUp), 0, 1, true);
-
-			this.buildingIndex = building.index();
-			this.resourceIndex = resourceIndex;
-
-			this.levels = new boolean[building().getBlue().upgrades().max() + 1];
-		}
-
-		public void register(int level) {
-			levels[level] = true;
-		}
-
-		private RDBuilding building() {
-			return RD.BUILDINGS().all.get(buildingIndex);
-		}
-
-		@Override
-		double get(Region reg) {
-			if (!levels[RD.UPGRADES().getLevel(reg, buildingIndex)]) {
-				return 1;
-			}
-
-			return RD.DEFICITS().getDeficitModifier(resourceIndex);
 		}
 	}
 }

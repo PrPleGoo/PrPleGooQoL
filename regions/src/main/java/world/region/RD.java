@@ -13,7 +13,7 @@ import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import init.race.Race;
 import init.sprite.UI.UI;
-import prplegoo.regions.api.*;
+import prplegoo.regions.api.region.rd.*;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
 import snake2d.util.file.SAVABLE;
@@ -63,6 +63,7 @@ public class RD extends WorldResource {
     private final RDOptionalConsumption optionalConsumption;
     private final RDInputs inputs;
     private final RDUpgrades upgrades;
+    private final RDEstates estates;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -105,6 +106,7 @@ public class RD extends WorldResource {
         deficits = new RDDeficits();
         optionalConsumption = new RDOptionalConsumption();
         upgrades = new RDUpgrades();
+        estates = new RDEstates();
 
         Arrays.fill(factionI, -1);
 
@@ -402,6 +404,10 @@ public class RD extends WorldResource {
 
     public static RDUpgrades UPGRADES() {
         return self.upgrades;
+    }
+
+    public static RDEstates ESTATES() {
+        return self.estates;
     }
 
     public static Realm REALM(Region reg) {

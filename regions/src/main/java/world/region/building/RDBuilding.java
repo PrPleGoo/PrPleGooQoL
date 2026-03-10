@@ -266,7 +266,7 @@ public final class RDBuilding implements MAPPED{
 					new Creator.Bo(new BSourceInfo(c.info.name, c.bo.icon), 0, 1, true) {
 
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							return c.eff(reg);
 						};
 
@@ -493,6 +493,10 @@ public final class RDBuilding implements MAPPED{
 
 			if (global && t.realm() != null) {
 				int ll = bu.level.get(t);
+				if (tos(ll) > 0 && b.boostable == BOOSTABLES.CIVICS().GOV) {
+					return g(t);
+				}
+
 				int l = RD.BUILDINGS().tmp().level(bu, t);
 				if (ll != l) {
 					return vGet(t.faction()) - (tos(ll)-froms(ll)) + (tos(l)-froms(l));

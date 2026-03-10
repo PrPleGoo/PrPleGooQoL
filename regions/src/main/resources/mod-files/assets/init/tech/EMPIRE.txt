@@ -1,5 +1,5 @@
 TREE: {
-	0: [_____,_____,_____,_____,_____,],
+	0: [_____,_____,ESTAT,_____,_____,],
 	1: [_____,WORK0,_____,LOYA0,_____,],
 	3: [_____,_____,CENT0,_____,_____,],
 	4: [_____,HEAL0,CENT1,TAX00,_____,],
@@ -9,6 +9,17 @@ TREE: {
 COLOR: 178_0_255,
 
 TECHS: {
+    ESTAT: {
+        LEVEL_MAX: 50,
+        LEVEL_COST_INC: 50,
+        COSTS: {
+            CIVIC_KNOWLEDGE: 50,
+        },
+        BOOST: {
+            CIVIC_MAX_ESTATE_COUNT>ADD: 1,
+        },
+        ICON: 32->world->CENTRE->3,
+    },
 	CENT0: {
 		COSTS: {
 			CIVIC_INNOVATION: 5,

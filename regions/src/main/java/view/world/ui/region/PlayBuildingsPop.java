@@ -3,9 +3,7 @@ package view.world.ui.region;
 import java.util.LinkedList;
 
 import game.GAME;
-import game.boosting.BHoverer;
-import game.boosting.BoostSpec;
-import game.boosting.Boostable;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import init.constant.C;
@@ -376,7 +374,11 @@ class PlayBuildingsPop {
 
                 double value = getB(bu, fromL, toL, s, true);
 
-                hoverCost(text, s.boostable.icon, s.boostable.name, value, s.boostable.get(reg));
+                double costValue = s.boostable == BOOSTABLES.CIVICS().GOV
+                        ? s.boostable.get(reg.faction())
+                        : s.boostable.get(reg);
+
+                hoverCost(text, s.boostable.icon, s.boostable.name, value, costValue);
                 b.NL();
             }
         }
@@ -813,18 +815,24 @@ class PlayBuildingsPop {
 
                 @Override
                 public void update(GText text) {
-                    bo.get(g.get());
-                    GFORMAT.iIncr(text, (int)bo.get(g.get()));
+                    double value = bo == BOOSTABLES.CIVICS().GOV
+                        ? bo.get(g.get().faction())
+                        : bo.get(g.get());
+                    GFORMAT.iIncr(text, (int)value);
                 }
 
 
                 @Override
                 public void hoverInfoGet(GBox b) {
-
                     b.title(bo.name);
                     b.text(bo.desc);
                     b.sep();
-                    bo.hover(b, g.get(), null, true);
+
+                    BOOSTABLE_O boostableO = bo == BOOSTABLES.CIVICS().GOV
+                            ? g.get().faction()
+                            : g.get();
+
+                    bo.hover(b, boostableO, null, true);
                 };
 
             }.hh(icon);

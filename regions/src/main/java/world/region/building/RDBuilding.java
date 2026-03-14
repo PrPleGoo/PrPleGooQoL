@@ -627,6 +627,11 @@ public final class RDBuilding implements MAPPED{
 				double am = tos(current) - tos(level);
 				if (am <= 0)
 					return true;
+
+				if (b.boostable == BOOSTABLES.CIVICS().GOV) {
+					return am <= b.boostable.get(reg.faction());
+				}
+
 				return am <= b.boostable.get(reg);
 			}
 			return true;

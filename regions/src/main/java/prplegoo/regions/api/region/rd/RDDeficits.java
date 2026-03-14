@@ -21,6 +21,7 @@ import world.map.regions.Region;
 import world.region.RD;
 import world.region.building.RDBuilding;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class RDDeficits implements IDataPersistence<RDDeficitData> {
@@ -157,6 +158,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
     public int handleDeficit(RESOURCE resource, int amount) {
         if (amount < 0) {
+            amount = RD.LOGISTICS().handleLogistics(resource, amount);
             newDeficits[resource.index()] += amount;
 
             return 0;

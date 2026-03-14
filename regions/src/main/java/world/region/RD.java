@@ -64,6 +64,7 @@ public class RD extends WorldResource {
     private final RDInputs inputs;
     private final RDUpgrades upgrades;
     private final RDEstates estates;
+    private final RDLogistics logistics;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -107,6 +108,7 @@ public class RD extends WorldResource {
         optionalConsumption = new RDOptionalConsumption();
         upgrades = new RDUpgrades();
         estates = new RDEstates();
+        logistics = new RDLogistics();
 
         Arrays.fill(factionI, -1);
 
@@ -408,6 +410,10 @@ public class RD extends WorldResource {
 
     public static RDEstates ESTATES() {
         return self.estates;
+    }
+
+    public static RDLogistics LOGISTICS() {
+        return self.logistics;
     }
 
     public static Realm REALM(Region reg) {

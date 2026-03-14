@@ -73,7 +73,7 @@ public class RDLevelsTmp {
         if (cost() > FACTIONS.player().credits().getD())
             return false;
         for (RDBuildPoint b : RD.BUILDINGS().costs.ALL) {
-            if (b.bo == BOOSTABLES.CIVICS().GOV) {
+            if (b.bo == BOOSTABLES.CIVICS().GOV && reg.faction() != null) {
                 if (b.bo.get(reg.faction()) < 0) {
                     return false;
                 }

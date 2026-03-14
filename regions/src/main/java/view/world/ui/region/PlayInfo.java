@@ -212,7 +212,7 @@ final class PlayInfo extends GuiSection {
 
                 @Override
                 public void update(GText text) {
-                    double value = c.bo == BOOSTABLES.CIVICS().GOV
+                    double value = c.bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
                         ? c.bo.get(g.get().faction())
                         : c.bo.get(g.get());
                     GFORMAT.iIncr(text, (int)value);
@@ -220,7 +220,7 @@ final class PlayInfo extends GuiSection {
 
                 @Override
                 public void hoverInfoGet(GBox b) {
-                    BOOSTABLE_O boostableValue = c.bo == BOOSTABLES.CIVICS().GOV
+                    BOOSTABLE_O boostableValue = c.bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
                             ? g.get().faction()
                             : g.get();
                     c.hover(b, boostableValue);

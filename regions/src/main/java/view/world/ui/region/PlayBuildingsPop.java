@@ -374,7 +374,7 @@ class PlayBuildingsPop {
 
                 double value = getB(bu, fromL, toL, s, true);
 
-                double costValue = s.boostable == BOOSTABLES.CIVICS().GOV
+                double costValue = s.boostable == BOOSTABLES.CIVICS().GOV && reg.faction() != null
                         ? s.boostable.get(reg.faction())
                         : s.boostable.get(reg);
 
@@ -815,7 +815,7 @@ class PlayBuildingsPop {
 
                 @Override
                 public void update(GText text) {
-                    double value = bo == BOOSTABLES.CIVICS().GOV
+                    double value = bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
                         ? bo.get(g.get().faction())
                         : bo.get(g.get());
                     GFORMAT.iIncr(text, (int)value);
@@ -828,7 +828,7 @@ class PlayBuildingsPop {
                     b.text(bo.desc);
                     b.sep();
 
-                    BOOSTABLE_O boostableO = bo == BOOSTABLES.CIVICS().GOV
+                    BOOSTABLE_O boostableO = bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
                             ? g.get().faction()
                             : g.get();
 

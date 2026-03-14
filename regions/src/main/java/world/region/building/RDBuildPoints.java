@@ -123,7 +123,7 @@ public final class RDBuildPoints {
                         for (int bi = 0; bi < co.bo.all().size(); bi++) {
                             Booster b = co.bo.all().get(bi);
                             double bv = b.get(r);
-                            if (!b.isMul && bv < 0)
+                            if (!b.isMul && (bv < 0 || (co.bo == BOOSTABLES.CIVICS().GOV && b instanceof RDBuilding.BBoost)))
                                 co.consumed[r.index()] += bv;
                         }
 

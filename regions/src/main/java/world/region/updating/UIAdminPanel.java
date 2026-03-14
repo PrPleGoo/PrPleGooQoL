@@ -85,8 +85,6 @@ public final class UIAdminPanel extends ISidePanel{
                         Region r = FACTIONS.player().realm().region(ier.get()+1);
                         if (r != null)
                             GFORMAT.iIncr(text, RD.BUILDINGS().costs.GOV.consumed(r));
-                        text.s();
-                        text.add(RD.BUILDINGS().costs.GOV.consumed(FACTIONS.player()));
                     }
                 });
 

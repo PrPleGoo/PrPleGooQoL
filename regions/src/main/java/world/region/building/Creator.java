@@ -21,10 +21,7 @@ import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
 import prplegoo.regions.api.gen.ProspectCache;
-import prplegoo.regions.api.region.building.EstateConsumptionReader;
-import prplegoo.regions.api.region.building.MaintenanceEfficiencyBo;
-import prplegoo.regions.api.region.building.OptionalConsumptionBo;
-import prplegoo.regions.api.region.building.UpgradeBo;
+import prplegoo.regions.api.region.building.*;
 import prplegoo.regions.api.region.rd.RDOptionalConsumption;
 import prplegoo.regions.api.region.rd.RDRecipe;
 import prplegoo.regions.api.region.rd.RDUpgrades;
@@ -134,6 +131,10 @@ public final class Creator {
 			return res;
 
 		Json[] data = new Json(f.init.get("_GEN")).jsons("GENS");
+		if (f.init.get().toString().contains("logistics")) {
+			return LogisticsReader.generate(all, init, cat, data);
+		}
+
 		for (Json j : data)
 			res.add(generate(all, init, cat, j));
 
@@ -285,7 +286,6 @@ public final class Creator {
 
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
-		pushLevelCapping(b, data);
 		pushFactionBoosts(b);
 		pushMaintenance(blue, b);
 
@@ -827,5 +827,12 @@ public final class Creator {
 		public double getValue(double input) {
 			return input;
 		}
+	}
+
+	public static RDBuildingLevel RDBuildingLevel(CharSequence name, Icon icon, Lockable<Region> needs) {
+		return new RDBuildingLevel(name, icon, needs);
+	}
+	public static RDBuilding RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, RoomBlueprintImp blue) {
+		return new RDBuilding(all, init, cat, key, info, levels, AIBuilds, notify, order, blue);
 	}
 }

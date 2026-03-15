@@ -599,7 +599,8 @@ public final class RDBuilding implements MAPPED{
 			}
 
 			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)
-				|| MagicStringChecker.isResourceConsumptionBooster(b.boostable.key)
+					|| MagicStringChecker.isResourceConsumptionBooster(b.boostable.key)
+					|| MagicStringChecker.isResourceLogisticsBooster(b.boostable.key)
 				|| b.boostable == BOOSTABLES.CIVICS().DIPLOMACY
 				|| (b.boostable == BOOSTABLES.CIVICS().GOV && toAtLevel > 0)
 				|| MagicStringChecker.isTech(b.boostable.key)) {

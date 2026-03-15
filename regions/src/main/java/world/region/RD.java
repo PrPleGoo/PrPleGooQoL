@@ -92,6 +92,7 @@ public class RD extends WorldResource {
         health = new RDHealth(init);
         resources = new RDOutputs(init);
         inputs = new RDInputs();
+        logistics = new RDLogistics();
         military = new RDMilitary(init);
         races = new RDRaces(init);
         religion = new RDReligions(init);
@@ -108,7 +109,6 @@ public class RD extends WorldResource {
         optionalConsumption = new RDOptionalConsumption();
         upgrades = new RDUpgrades();
         estates = new RDEstates();
-        logistics = new RDLogistics();
 
         Arrays.fill(factionI, -1);
 

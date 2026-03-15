@@ -1,0 +1,11 @@
+GENS: [
+	{
+		LEVELS: 10,
+		COUNT: 4,
+		OUTPUT: 4000,
+		CREDITS: 5000,
+		BOOST: {
+			WORLD_POINT_WORKFORCE>ADD: -20,
+		},
+	},
+],

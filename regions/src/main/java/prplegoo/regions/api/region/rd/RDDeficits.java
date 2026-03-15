@@ -28,7 +28,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     private static double timer;
     // Deficits are always negative.
     // Deficits added this tick
-    private int[] newDeficits;
+    private double[] newDeficits;
     // Deficits added last tick
     private int[] deficits;
     // Deficits added that will be unresolved next tick
@@ -43,7 +43,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
 
     private void initialize() {
         timer = TIME.secondsPerDay();
-        newDeficits = new int[RESOURCES.ALL().size()];
+        newDeficits = new double[RESOURCES.ALL().size()];
         deficits = new int[RESOURCES.ALL().size()];
         oldDeficits = new int[RESOURCES.ALL().size()];
         supplies = new int[RESOURCES.ALL().size()];
@@ -134,8 +134,8 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
             unresolvedDeficits[i] = oldDeficits[i];
 
             oldDeficits[i] += deficits[i];
-            deficits[i] = newDeficits[i];
-            newDeficits[i] = 0;
+            deficits[i] = (int) newDeficits[i];
+            newDeficits[i] -= deficits[i];
         }
     }
 
@@ -156,7 +156,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
         return null;
     }
 
-    public int handleDeficit(RESOURCE resource, int amount) {
+    public double handleDeficit(RESOURCE resource, double amount) {
         if (amount < 0) {
             amount = RD.LOGISTICS().handleLogistics(resource, amount);
             newDeficits[resource.index()] += amount;
@@ -214,7 +214,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     }
 
     public int getDeficit(RESOURCE resource) {
-        return newDeficits[resource.index()] + deficits[resource.index()] + oldDeficits[resource.index()];
+        return (int) newDeficits[resource.index()] + deficits[resource.index()] + oldDeficits[resource.index()];
     }
 
     public int getSupplies(RESOURCE resource) {

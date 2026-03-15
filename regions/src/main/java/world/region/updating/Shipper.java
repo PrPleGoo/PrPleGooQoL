@@ -13,6 +13,7 @@ import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.ShipperData;
 import snake2d.LOG;
 import world.WORLD;
+import world.entity.army.WArmy;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
 import world.region.RD;
@@ -64,10 +65,20 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         }
 
         for (RDResource res : RD.OUTPUT().RES) {
-            int a = amount(res, r, seconds);
+            double a = amount(res, r, seconds);
 
             if (a < 0) {
                 a = RD.DEFICITS().handleDeficit(res.res, a);
+            }
+
+            if (a > 0) {
+                double logi = RD.LOGISTICS().get(res.res).getDelivery(r)*seconds*TIME.secondsPerDayI();
+
+                logi = Math.min(logi, a);
+
+                RD.LOGISTICS().addLogistics(r, res.res, logi);
+
+                a -= logi;
             }
 
             if (a == 0)
@@ -147,11 +158,11 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         return slaves[region.index()][rdSlave.rdRace.race.index()];
     }
 
-    private int amount(RDResource res, Region r, double seconds) {
+    private double amount(RDResource res, Region r, double seconds) {
         double production = res.boost.get(r)*seconds*TIME.secondsPerDayI();
         double consumption = RD.INPUTS().get(res.res).get(r)*seconds*TIME.secondsPerDayI();
 
-        return (int) Math.ceil(production - consumption);
+        return production - consumption;
     }
 
     public void shipAll(Faction f, double days) {

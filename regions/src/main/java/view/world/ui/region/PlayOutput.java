@@ -263,6 +263,10 @@ final class PlayOutput extends GuiSection{
                 RDResource res = (RDResource) bu;
 
                 am -= RD.INPUTS().get(res.res).get(g.get());
+
+                if (am > 0) {
+                    am -= Math.min(am, RD.LOGISTICS().get(res.res).getDelivery(g.get()));
+                }
             }
 
             tt.clear();
@@ -297,6 +301,8 @@ final class PlayOutput extends GuiSection{
                     RDResource res = (RDResource) bu;
 
                     RD.INPUTS().get(res.res).hover(text, g.get(), true);
+                    b.sep();
+                    RD.LOGISTICS().get(res.res).boost.hover(text, g.get(), true);
                 }
             }
         }

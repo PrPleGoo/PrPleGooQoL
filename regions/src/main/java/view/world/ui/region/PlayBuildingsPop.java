@@ -12,10 +12,10 @@ import init.resources.RESOURCES;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
-import prplegoo.regions.ui.OptionalConsumptionButt;
-import prplegoo.regions.ui.RecipeButt;
-import prplegoo.regions.ui.UpgradeButt;
+import prplegoo.regions.api.region.rd.RDLogistics;
+import prplegoo.regions.ui.*;
 import settlement.room.industry.module.IndustryResource;
+import settlement.room.infra.transport.ROOM_TRANSPORT;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -32,7 +32,6 @@ import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListResize;
 import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.ui.SlaveSelector;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import settlement.room.main.RoomBlueprintImp;
@@ -549,6 +548,25 @@ class PlayBuildingsPop {
                     }
                     lPop.addDown(0, box);
                 }
+
+                if (blue instanceof ROOM_TRANSPORT) {
+                    GuiSection box = new GuiSection();
+                    int added = 0;
+                    for (int i = -1; i < RESOURCES.ALL().size(); i++) {
+                        box.addRight(0, new LogisticsElectorButt(g, bu, i));
+                        added++;
+
+                        if (added == 6) {
+                            lPop.addDown(0, box);
+                            box = new GuiSection();
+                            added = 0;
+                        }
+                    }
+
+                    if (added > 0) {
+                        lPop.addDown(0, box);
+                    }
+                }
             }
         }
 
@@ -599,6 +617,13 @@ class PlayBuildingsPop {
 
 
         bu.levels().get(Math.max(tl, 1)).icon.huge.renderC(r, body.cX(), body.cY()+2);
+        if (bu.getBlue() instanceof ROOM_TRANSPORT) {
+            RESOURCE resource = RD.LOGISTICS().findElected(g.get().index(), RDLogistics.getIndex(bu));
+            if (resource != null) {
+                resource.icon().big.render(r, body.x2() - 40, body.y2() - 40);
+            }
+        }
+
         renderEfficiency(bu, body, r);
 
 

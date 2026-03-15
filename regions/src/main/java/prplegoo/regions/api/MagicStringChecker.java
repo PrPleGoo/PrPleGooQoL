@@ -9,6 +9,10 @@ public class MagicStringChecker {
         return key.startsWith("WORLD_RESOURCE_CONSUMPTION_");
     }
 
+    public static boolean isResourceLogisticsBooster(String key) {
+        return key.startsWith("WORLD_RESOURCE_LOGISTICS_");
+    }
+
     public static boolean isTech(String key) {
         return key.equals("CIVIC_INNOVATION")
                 || key.equals("CIVIC_KNOWLEDGE");

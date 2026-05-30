@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("InnerClassMayBeStatic")
 public class RDDeficitData {
-    public int[] newDeficits;
+    public double[] newDeficits;
     public int[] deficits;
     public int[] oldDeficits;
     public int[] supplies;
     public int[] unresolvedDeficits;
     public double since;
 
-    public RDDeficitData(int[] newDeficits, int[] deficits, int[] oldDeficits, int[] supplies, int[] unresolvedDeficits, double since){
+    public RDDeficitData(double[] newDeficits, int[] deficits, int[] oldDeficits, int[] supplies, int[] unresolvedDeficits, double since){
         this.newDeficits = newDeficits;
         this.deficits = deficits;
         this.oldDeficits = oldDeficits;
@@ -27,3 +27,4 @@ public class RDDeficitData {
         this.since = since;
     }
 }
+

@@ -11,6 +11,7 @@ import settlement.entity.humanoid.ai.main.AISUB.AISubActivation;
 import settlement.entity.humanoid.ai.work.WorkAbs.Works;
 import settlement.main.SETT;
 import settlement.stats.STATS;
+import snake2d.util.datatypes.DIR;
 
 import static settlement.main.SETT.PATH;
 
@@ -110,10 +111,11 @@ final class PrPleGooWorkTransporterLogistics extends PlanBlueprint {
 			if (PATH().finders.entryPoints.find(a.tc().x(), a.tc().y(), d.path, Integer.MAX_VALUE)) {
 				AISubActivation s =AI.SUBS().walkTo.pathFull(a, d);
 				if (s != null) {
+					DIR dir = DIR.ORTHO.get(SETT.ROOMS().fData.item.get(d.planTile).rotation);
 					int dx = d.planTile.x();
 					int dy = d.planTile.y();
 					int ran = SETT.tileRan(dx, dy);
-					SETT.HALFENTS().transports.make(a, dx, dy, RESOURCES.ALL().get(d.planByte2), (byte) ran, true);
+					SETT.HALFENTS().transports.military(dx, dy, (byte) ran, RESOURCES.ALL().get(d.planByte2), 1, dir);
 					return s;
 				}
 			}

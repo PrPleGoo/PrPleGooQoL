@@ -1,17 +1,19 @@
 INFO: {
-	NAME: "Regional Supply Distribution Depot",
-	NAMES: "Regional Supply Distribution Depots",
-	DESC: "Needed to supply region on the world map with crafting materials.",
+	NAME: "Regional Supply Depot",
+	NAMES: "Regional Supply Depots",
+	DESC: "Needed to supply regions on the world map with resources.",
 	WIKI: {
 		CATEGORY: "Logistics",
-		NAME: "Regional Supply Distribution Depot",
-		TEXT: "This building can be used to send supplies to regions on the world map. Workers will gather the selected resources here and then transport them off map. Note that regions that supply themselves with crafting materials have no such need for logistics.",
+		NAME: "Regional Supply Depot",
+		TEXT: "This building can be used to send supplies to regions on the world map. Workers will gather the selected resources here and then transport them off map. Note that regions that supply themselves with crafting materials have no such need for logistics.
+
+		Loading stations can be built in regions. These buildings allow you to move a single resource from that region to others. It works by loading net output of the region into a separate storage. Before other regions will request resources from the capital, they will use the stockpile from loading stations in your empire.",
 	},
 },
 
 WORK: {
 	TITLE: "Trader",
-	VERB: "Delivering crafting supplies to regions",
+	VERB: "Delivering resources to regions",
 },
 
 STATS: [

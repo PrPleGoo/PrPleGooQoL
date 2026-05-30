@@ -6,15 +6,13 @@ import init.race.Race;
 import init.resources.RESOURCES;
 import init.resources.ResG;
 import init.sprite.UI.UI;
+import init.type.CRIME_PUNISHMENTS;
+import init.type.CRIME_PUNISHMENTS.PUNISHMENT;
 import settlement.entity.ENTITY;
 import settlement.entity.humanoid.Humanoid;
 import settlement.entity.humanoid.ai.types.prisoner.AIModule_Prisoner;
 import settlement.main.SETT;
 import settlement.stats.STATS;
-import settlement.stats.law.LAW;
-import settlement.stats.law.Processing.Punishment;
-import snake2d.CORE;
-import snake2d.KEYCODES;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
@@ -177,7 +175,7 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                 ss.addGrid(b, gi++, 6, 2, 2);
             }
 
-            for (Punishment p : LAW.process().punishments) {
+            for (PUNISHMENT p : CRIME_PUNISHMENTS.ALL()) {
                 GButt.ButtPanel b = new GButt.ButtPanel(p.icon) {
 
                     ACTION a = new ACTION() {
@@ -190,8 +188,10 @@ class Gui extends UIRoomModuleImp<StockInstance, ROOM_STOCKADE> {
                                     continue;
                                 }
 
-                                AIModule_Prisoner.DATA().punishmentSet.set(h.ai(), p);
-                                h.interrupt();
+                                if (p.available(AIModule_Prisoner.DATA().clas(h.indu()))) {
+                                    AIModule_Prisoner.DATA().punishmentSet.set(h.ai(), p);
+                                    h.interrupt();
+                                }
                             }
                         }
                     };

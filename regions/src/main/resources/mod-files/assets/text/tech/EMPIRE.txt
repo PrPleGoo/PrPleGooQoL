@@ -1,0 +1,72 @@
+NAME: "Empire",
+TECHS: {
+	ESTAT: {
+		NAME: "Governor negotiations",
+		DESC: "Increase the amount of Gov Points we can generate with estates without incurring penalties.",
+	},
+	CENT0: {
+		NAME: "Organization I",
+		DESC: "Allows us to build more powerful regional centres and exert more control over our dominion.",
+	},
+	CENT1: {
+		NAME: "Organization II",
+		DESC: "Allows us to build more powerful regional centres and exert more control over our dominion.",
+	},
+	CENT2: {
+		NAME: "Organization III",
+		DESC: ""Allows us to build more powerful regional centres and exert more control over our dominion.",
+	},
+	CENT3: {
+		NAME: "Organization IV",
+		DESC: "Allows us to build more powerful regional centres and exert more control over our dominion.",
+	},
+	HEAL0: {
+		NAME: "Rural Health",
+		DESC: "Allows us to offer more sanitation in our domain.",
+	},
+	HEAL1: {
+		NAME: "Rural Health II",
+		DESC: "Allows us to offer more sanitation in our domain.",
+	},
+	HEAL2: {
+		NAME: "Rural Health III",
+		DESC: "Allows us to offer more sanitation in our domain.",
+	},
+	LOYA0: {
+		NAME: "Loving Subjects",
+		DESC: "Gives us more loyalty from our regions.",
+	},
+	LOYA1: {
+		NAME: "Loving Subjects II",
+		DESC: "Gives us more loyalty from our regions.",
+	},
+	LOYA2: {
+		NAME: "Loving Subjects III",
+		DESC: "Gives us more loyalty from our regions.",
+	},
+	TAX00: {
+		NAME: "Tax Collection",
+		DESC: "Gathers more tax from our regions.",
+	},
+	TAX01: {
+		NAME: "Tax Collection II",
+		DESC: "Gathers more tax from our regions.",
+	},
+	TAX02: {
+		NAME: "Tax Collection III",
+		DESC: "Gathers more tax from our regions.",
+	},
+	WORK0: {
+		NAME: "Skilled Workforce",
+		DESC: "Lets us get more out of our regional workforce.",
+	},
+	WORK1: {
+		NAME: "Skilled Workforce II",
+		DESC: "Lets us get more out of our regional workforce.",
+	},
+	WORK2: {
+		NAME: "Skilled Workforce III",
+		DESC: "Lets us get more out of our regional workforce.",
+	},
+},
+

@@ -1,3 +1,4 @@
+__OVERWRITE: true,
 AI_BUILDS: true,
 LEVELS: [
 	{
@@ -13,6 +14,7 @@ LEVELS: [
 		},
 		BOOST_GLOBAL: {
 			WORLD_HEALTH>ADD: 0.1,
+			WORLD_POPULATION_CAPACITY>ADD: 0.1,
 		},
 	},
 ],

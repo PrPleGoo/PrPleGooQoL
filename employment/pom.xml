@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>employment</artifactId>
-    <version>0.70.21.0</version>
+    <version>0.71.15.0</version>
 
     <profiles>
         <profile>
@@ -92,7 +92,7 @@
     </profiles>
 
     <properties>
-        <!-- Songs of Syx uses Java 1.8 -->
+        <!-- Songs of Syx uses Java 21 -->
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -115,8 +115,8 @@ Enjoy!
 
 Available on github.
         </mod.info>
-        <game.version.major>70</game.version.major>
-        <game.version.minor>21</game.version.minor>
+        <game.version.major>71</game.version.major>
+        <game.version.minor>19</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>
@@ -138,7 +138,7 @@ Available on github.
         <junit-jupiter-engine.version>5.9.2</junit-jupiter-engine.version>
         <mockito-core.version>4.11.0</mockito-core.version>
         <assertj-core.version>3.24.2</assertj-core.version>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
 
         <!-- Build plugin versions -->
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>

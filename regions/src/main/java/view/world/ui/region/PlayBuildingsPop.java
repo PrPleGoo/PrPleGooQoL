@@ -3,16 +3,19 @@ package view.world.ui.region;
 import java.util.LinkedList;
 
 import game.GAME;
-import game.boosting.BHoverer;
-import game.boosting.BoostSpec;
-import game.boosting.Boostable;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import init.constant.C;
+import init.resources.RESOURCE;
+import init.resources.RESOURCES;
 import init.settings.S;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
+import prplegoo.regions.api.region.rd.RDLogistics;
+import prplegoo.regions.ui.*;
 import settlement.room.industry.module.IndustryResource;
+import settlement.room.infra.transport.ROOM_TRANSPORT;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.color.ColorImp;
@@ -29,8 +32,6 @@ import snake2d.util.misc.ACTION;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListResize;
 import prplegoo.regions.api.MagicStringChecker;
-import prplegoo.regions.ui.FoodSelector;
-import prplegoo.regions.ui.SlaveSelector;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.Industry;
 import settlement.room.main.RoomBlueprintImp;
@@ -110,30 +111,39 @@ class PlayBuildingsPop {
             GuiSection row = new GuiSection();
             rows.add(row);
             Butt[] butts = new Butt[wam];
+            boolean lawBuildingHad = false;
+            boolean lawBuildingAccountedFor = false;
             for (RDBuilding b : cat.all()) {
-                if (i >= wam) {
+                if (i >= wam
+                        || (lawBuildingAccountedFor && (i + 3) >= wam)
+                        || MagicStringChecker.isLawBuilding(b.key())) {
                     butts = new Butt[wam];
                     row = new GuiSection();
                     rows.add(row);
                     i = 0;
+                    lawBuildingHad = false;
+                    lawBuildingAccountedFor = false;
                 }
                 Butt bb = new Butt(b);
                 hi = bb.body.height()+12;
                 butts[i] = bb;
-                if (i == 0 || MagicStringChecker.isSlaverBuilding(b.key())) {
+                if (i == 0) {
                     row.addRightC(0, bb);
                 } else {
-                    row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
+                    if (lawBuildingHad) {
+                        row.add(bb, butts[i - 1].body.x2() + (butts[i - 1].body.width() * 3), butts[i - 1].body.y1());
+                        lawBuildingHad = false;
+                        lawBuildingAccountedFor = true;
+                    } else {
+                        row.add(bb, butts[i - 1].body.x2(), butts[i - 1].body.y1());
+                    }
+
                 }
 
-                if(MagicStringChecker.isFoodStallBuilding(b.key())){
-                    GuiSection foodSelector = new FoodSelector(g);
-                    row.addRightC(0, foodSelector);
-                }
-
-                if(MagicStringChecker.isSlaverBuilding(b.key())){
+                if(MagicStringChecker.isLawBuilding(b.key())){
                     GuiSection slaveSelector = new SlaveSelector(g);
                     row.addRightC(0, slaveSelector);
+                    lawBuildingHad = true;
                 }
                 i++;
             }
@@ -273,76 +283,7 @@ class PlayBuildingsPop {
 
     }
 
-    private class RecipeButt extends ClickableAbs{
 
-        private final Industry industry;
-        private final RoomBlueprintImp blue;
-        private final RDBuilding bu;
-        private final int industryIndexOnBlue;
-
-        RecipeButt(RDBuilding bu, Industry industry, RoomBlueprintImp blue, int industryIndexOnBlue){
-            body.setDim(128, 40);
-            this.industry = industry;
-            this.blue = blue;
-            this.bu = bu;
-            this.industryIndexOnBlue = industryIndexOnBlue;
-        }
-
-        @Override
-        protected void render(SPRITE_RENDERER r, float ds, boolean isActive, boolean isSelected, boolean isHovered) {
-            GCOLOR.UI().border().render(r, body,-1);
-
-            if (RD.RECIPES().isEnabled(g.get(), bu.index(), blue, industryIndexOnBlue)) {
-                COLOR.WHITE100.render(r, body,-2);
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-4);
-            }else {
-                GCOLOR.UI().bg(isActive, isSelected, isHovered).render(r, body,-2);
-            }
-
-            int rendered = 0;
-            for (IndustryResource res : industry.ins()){
-                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-                rendered++;
-            }
-
-            UI.icons().m.arrow_right.medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-            rendered++;
-
-            for (IndustryResource res : industry.outs()){
-                res.resource.icon().medium.renderCY(r, body().x1()+4+(24*rendered), body().cY());
-                rendered++;
-            }
-
-            num.clear();
-            num.color(COLOR.WHITE100);
-            num.renderCY(r, body().x1()+48, body.cY());
-
-            if (!this.industry.lockable().passes(g.get().faction())) {
-                OPACITY.O50.bind();
-                COLOR.BLACK.render(r, body, -1);
-                OPACITY.unbind();
-            }
-
-        }
-
-        @Override
-        public void hoverInfoGet(GUI_BOX text) {
-            GBox b = (GBox) text;
-
-            b.title(bu.info.name);
-            b.sep();
-
-            hoverRecipe(industry, text);
-        }
-
-        @Override
-        protected void clickA() {
-            if (S.get().developer || this.industry.lockable().passes(g.get().faction())) {
-                RD.RECIPES().setRecipe(g.get(), bu.index() ,blue, industryIndexOnBlue);
-                VIEW.inters().popup.close();
-            }
-        }
-    }
 
     private void renderEfficiency(RDBuilding bu, RECTANGLE body, SPRITE_RENDERER r) {
         double d = bu.baseEfficiency(g.get())-1;
@@ -414,21 +355,6 @@ class PlayBuildingsPop {
         }
     }
 
-    private void hoverRecipe(Industry industry, GUI_BOX text) {
-        GBox b = (GBox) text;
-
-        b.add(b.text().lablify().add(Dic.¤¤ProductionRate));
-        b.NL();
-
-        for (IndustryResource res : industry.outs()){
-            hoverCost(b, res.resource.icon(), res.resource.name, res.rate);
-        }
-
-        for (IndustryResource res : industry.ins()){
-            hoverCost(b, res.resource.icon(), res.resource.name, -res.rate);
-        }
-    }
-
     private static void hoverCosts(Region reg, RDBuilding bu, int fromL, int toL, GUI_BOX text) {
         GBox b = (GBox) text;
 
@@ -447,7 +373,11 @@ class PlayBuildingsPop {
 
                 double value = getB(bu, fromL, toL, s, true);
 
-                hoverCost(text, s.boostable.icon, s.boostable.name, value, s.boostable.get(reg));
+                double costValue = s.boostable == BOOSTABLES.CIVICS().GOV && reg.faction() != null
+                        ? s.boostable.get(reg.faction())
+                        : s.boostable.get(reg);
+
+                hoverCost(text, s.boostable.icon, s.boostable.name, value, costValue);
                 b.NL();
             }
         }
@@ -510,31 +440,6 @@ class PlayBuildingsPop {
         cc.add('(');
         GFORMAT.iOrF(cc, current).add(')');
         b.add(cc);
-        b.NL();
-    }
-
-    private static void hoverCost(GUI_BOX text, SPRITE icon, CharSequence name, double value) {
-
-        if (value == 0)
-            return;
-        GBox b = (GBox) text;
-
-        b.add(icon);
-        GText nn = b.text();
-        GText vv = b.text();
-        nn.add(name);
-        GFORMAT.iOrF(vv, value);
-        if (value > 0) {
-            nn.normalify2();
-            vv.normalify2();
-        } else {
-            nn.errorify();
-            vv.errorify();
-        }
-
-        b.add(nn);
-        b.tab(7);
-        b.add(vv);
         b.NL();
     }
 
@@ -611,12 +516,55 @@ class PlayBuildingsPop {
                 lPop.addDown(0, new LevelButt(b, i));
             }
             RoomBlueprintImp blue = b.getBlue();
-            if(blue != null && blue instanceof INDUSTRY_HASER){
-                INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
-                LIST<Industry> industries = industryHaser.industries();
-                if(industries.size() > 1){
-                    for (int i = industries.size()-1; i >= 0; i--) {
-                        lPop.addDown(0, new RecipeButt(bu, industries.get(i), blue, i));
+            if(blue != null) {
+                if (blue.upgrades().max() > 0) {
+                    GuiSection box = new GuiSection();
+                    for (int i = 0; i <= blue.upgrades().max(); i++) {
+                        box.addRight(4, new UpgradeButt(g, num, bu.index(), i));
+                    }
+                    lPop.addDown(0, box);
+                }
+
+                if (blue instanceof INDUSTRY_HASER){
+                    INDUSTRY_HASER industryHaser = (INDUSTRY_HASER) blue;
+                    LIST<Industry> industries = industryHaser.industries();
+                    if(industries.size() > 1){
+                        for (int i = industries.size()-1; i >= 0; i--) {
+                            lPop.addDown(0, new RecipeButt(g, num, bu, industries.get(i), blue, i));
+                        }
+                    }
+                }
+
+                if (RD.OPTIONAL_CONSUMPTION().hasRate(b)) {
+                    GuiSection box = new GuiSection();
+                    for (RESOURCE resource : RESOURCES.ALL()) {
+                        double rate = RD.OPTIONAL_CONSUMPTION().getRate(b.index(), resource.index());
+
+                        if (rate == 0) {
+                            continue;
+                        }
+
+                        box.addRight(4, new OptionalConsumptionButt(g, num, b.index(), resource.index()));
+                    }
+                    lPop.addDown(0, box);
+                }
+
+                if (blue instanceof ROOM_TRANSPORT) {
+                    GuiSection box = new GuiSection();
+                    int added = 0;
+                    for (int i = -1; i < RESOURCES.ALL().size(); i++) {
+                        box.addRight(0, new LogisticsElectorButt(g, bu, i));
+                        added++;
+
+                        if (added == 6) {
+                            lPop.addDown(0, box);
+                            box = new GuiSection();
+                            added = 0;
+                        }
+                    }
+
+                    if (added > 0) {
+                        lPop.addDown(0, box);
                     }
                 }
             }
@@ -669,6 +617,13 @@ class PlayBuildingsPop {
 
 
         bu.levels().get(Math.max(tl, 1)).icon.huge.renderC(r, body.cX(), body.cY()+2);
+        if (bu.getBlue() instanceof ROOM_TRANSPORT) {
+            RESOURCE resource = RD.LOGISTICS().findElected(g.get().index(), RDLogistics.getIndex(bu));
+            if (resource != null) {
+                resource.icon().big.render(r, body.x2() - 40, body.y2() - 40);
+            }
+        }
+
         renderEfficiency(bu, body, r);
 
 
@@ -885,18 +840,24 @@ class PlayBuildingsPop {
 
                 @Override
                 public void update(GText text) {
-                    bo.get(g.get());
-                    GFORMAT.iIncr(text, (int)bo.get(g.get()));
+                    double value = bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
+                        ? bo.get(g.get().faction())
+                        : bo.get(g.get());
+                    GFORMAT.iIncr(text, (int)value);
                 }
 
 
                 @Override
                 public void hoverInfoGet(GBox b) {
-
                     b.title(bo.name);
                     b.text(bo.desc);
                     b.sep();
-                    bo.hover(b, g.get(), null, true);
+
+                    BOOSTABLE_O boostableO = bo == BOOSTABLES.CIVICS().GOV && g.get().faction() != null
+                            ? g.get().faction()
+                            : g.get();
+
+                    bo.hover(b, boostableO, null, true);
                 };
 
             }.hh(icon);

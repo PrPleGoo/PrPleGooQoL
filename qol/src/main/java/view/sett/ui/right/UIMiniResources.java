@@ -2,6 +2,7 @@ package view.sett.ui.right;
 
 import game.GAME;
 import game.time.TIME;
+import game.faction.FACTIONS;
 import init.constant.C;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
@@ -33,7 +34,7 @@ import util.text.D;
 import view.main.VIEW;
 import view.sett.ui.right.UIPanelRightSett.Expansion;
 
-final class UIMiniResources extends Expansion {
+final class UIMiniResources extends Expansion{
 
     private static CharSequence ¤¤desc = "¤Click to open resource details, right click to go to warehouse.";
 
@@ -44,7 +45,7 @@ final class UIMiniResources extends Expansion {
     private GuiSection mini;
     private GuiSection full;
 
-    public UIMiniResources(int index, int y1) {
+    public UIMiniResources(int index, int y1){
         super(index);
 
         full = new Full(y1);
@@ -61,7 +62,7 @@ final class UIMiniResources extends Expansion {
                 body().moveY1(y1);
             }
         };
-        mini.add(c, mini.body().x2() - c.body().width() - 4, mini.body().y1() + 4);
+        mini.add(c, mini.body().x2()-c.body().width()-4, mini.body().y1()+4);
         c = new GButt.Glow(SPRITES.icons().s.arrow_right) {
             @Override
             protected void clickA() {
@@ -71,7 +72,7 @@ final class UIMiniResources extends Expansion {
                 body().moveY1(y1);
             }
         };
-        full.add(c, full.body().x2() - c.body().width() - 4, full.body().y1() + 4);
+        full.add(c, full.body().x2()-c.body().width()-4, full.body().y1()+4);
 
 
 
@@ -83,7 +84,7 @@ final class UIMiniResources extends Expansion {
 
         private final INTE t;
 
-        Mini(int y1) {
+        Mini(int y1){
             RENDEROBJ row = mini(RESOURCES.ALL().get(0));
             int width = row.body().width();
             body().moveY1(y1);
@@ -101,7 +102,7 @@ final class UIMiniResources extends Expansion {
                         rows.add(new RENDEROBJ.RenderImp(width, 16) {
                             @Override
                             public void render(SPRITE_RENDERER r, float ds) {
-                                GCOLOR.UI().borderH(r, body().x1() + 4, body().x2() - 4, body().y1() + 7, body().y1() + 10);
+                                GCOLOR.UI().borderH(r, body().x1()+4, body().x2()-4, body().y1()+7,  body().y1()+10);
                             }
                         });
                         cat = r.category;
@@ -113,10 +114,10 @@ final class UIMiniResources extends Expansion {
             }
 
 
-            body().setDim(width + 6, C.HEIGHT() - y1);
+            body().setDim(width+6,C.HEIGHT()-y1);
 
             RENDEROBJ c;
-            y1 = y1 + 4;
+            y1 = y1+4;
 
             c = new GButt.Glow(UI.decor().up) {
                 @Override
@@ -128,12 +129,12 @@ final class UIMiniResources extends Expansion {
                     t.inc(-1);
                 }
             };
-            c.body().moveCX(body().cX() + 2);
+            c.body().moveCX(body().cX()+2);
             c.body().moveY1(y1);
             add(c);
 
 
-            GScrollRows sc = new GScrollRows(rows, C.HEIGHT() - getLastY2() - c.body().height() - 8, 0, false);
+            GScrollRows sc = new GScrollRows(rows, C.HEIGHT()-getLastY2()-c.body().height()-8, 0, false);
             addDownC(0, sc.view());
 
             t = sc.target;
@@ -159,10 +160,10 @@ final class UIMiniResources extends Expansion {
 
         private final INTE t;
 
-        Full(int y1) {
+        Full(int y1){
             RENDEROBJ row = big(RESOURCES.ALL().get(0));
-            int width = row.body().width() * 2;
-            body().setDim(width + 6, C.HEIGHT() - y1);
+            int width = row.body().width()*2;
+            body().setDim(width+6,C.HEIGHT()-y1);
             body().moveY1(y1);
             int cats = 0;
             for (RESOURCE r : RESOURCES.ALL())
@@ -179,7 +180,7 @@ final class UIMiniResources extends Expansion {
                         rows.add(new RENDEROBJ.RenderImp(width, 16) {
                             @Override
                             public void render(SPRITE_RENDERER r, float ds) {
-                                GCOLOR.UI().borderH(r, body().x1() + 4, body().x2() - 4, body().y1() + 7, body().y1() + 10);
+                                GCOLOR.UI().borderH(r, body().x1()+4, body().x2()-4, body().y1()+7,  body().y1()+10);
                             }
                         });
                         s = new GuiSection();
@@ -204,7 +205,7 @@ final class UIMiniResources extends Expansion {
 
 
             RENDEROBJ c;
-            y1 = y1 + 4;
+            y1 = y1+4;
 
             c = new GButt.Glow(UI.decor().up) {
                 @Override
@@ -222,7 +223,7 @@ final class UIMiniResources extends Expansion {
             add(c);
 
 
-            GScrollRows sc = new GScrollRows(rows, C.HEIGHT() - getLastY2() - c.body().height() - 6, 0, false);
+            GScrollRows sc = new GScrollRows(rows, C.HEIGHT()-getLastY2()-c.body().height()-6, 0, false);
             addDownC(0, sc.view());
 
             t = sc.target;
@@ -262,12 +263,12 @@ final class UIMiniResources extends Expansion {
 
                 super.hoverInfoGet(text);
             }
-
+            int ri = 0;
             @Override
             public void render(SPRITE_RENDERER r, float ds) {
                 int currentDay = TIME.days().bitCurrent();
                 if(currentDay != lastDayChecked){
-                    productionLastYear = GAME.player().res().total().history(res).getPeriodSum(-3, 0);
+                    productionLastYear = GAME.player().res().total().history(res.tr()).getPeriodSum(-3, 0);
                     lastDayChecked = currentDay;
                 }
 
@@ -275,7 +276,7 @@ final class UIMiniResources extends Expansion {
                 double c = SETT.ROOMS().STOCKPILE.tally().space.total(res);
                 double d = 0;
                 if (c > 0)
-                    d = a / c;
+                    d = a/c;
                 if (d > 0.9)
                     GMeter.render(r, GMeter.C_REDPURPLE, d, body());
                 else if (c > 0)
@@ -284,10 +285,10 @@ final class UIMiniResources extends Expansion {
                     GMeter.render(r, GMeter.C_INACTIVE, d, body());
 
                 if (SETT.ROOMS().IMPORT.tally.capacity.get(res) > 0) {
-                    d = SETT.ROOMS().IMPORT.tally.importWhenBelow.getD(res);
+                    d = FACTIONS.player().buyer(res.tr()).limit.getD();
                     if (d > 0) {
-                        int x1 = (int) (body().x1() + d * (body().width() - 2));
-                        COLOR.WHITE85.render(r, x1, x1 + 1, body().y1(), body().y2());
+                        int x1 = (int) (body().x1() + d*(body().width()-2));
+                        COLOR.WHITE85.render(r, x1, x1+1, body().y1(), body().y2());
                     }
                 }
 
@@ -300,10 +301,10 @@ final class UIMiniResources extends Expansion {
                 }
 
                 //COLOR.WHITE30.render(r, body());
-                if (hoveredIs()) {
+                if (Math.abs(ri-VIEW.RI()) <= 1 && hoveredIs()) {
                     if (MButt.RIGHT.consumeClick()) {
 
-                        for (int i = 0; i < SETT.ROOMS().STOCKPILE.instancesSize(); i++) {
+                        for (int i = 0 ; i < SETT.ROOMS().STOCKPILE.instancesSize(); i++) {
                             wI++;
                             if (wI >= SETT.ROOMS().STOCKPILE.instancesSize())
                                 wI = 0;
@@ -318,12 +319,9 @@ final class UIMiniResources extends Expansion {
                         }
                     }
                 }
-
+                ri = VIEW.RI();
                 super.render(r, ds);
 
-                if (productionLastYear < 0) {
-                    decr.render(r, body().x2() - decr.width(), body().y2() - decr.height());
-                }
             }
 
             @Override
@@ -353,11 +351,11 @@ final class UIMiniResources extends Expansion {
             @Override
             public void render(SPRITE_RENDERER r, int X1, int X2, int Y1, int Y2) {
                 OPACITY.O018.bind();
-                COLOR.BLACK.render(r, X1 - 1, X2 + 1, Y1 - 1, Y2 + 1);
+                COLOR.BLACK.render(r, X1-1, X2+1, Y1-1, Y2+1);
                 OPACITY.unbind();
                 super.render(r, X1, X2, Y1, Y2);
 
-			};
+            };
         }.r(DIR.NW);
     }
 

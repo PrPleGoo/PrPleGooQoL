@@ -8,27 +8,38 @@ import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.npc.stockpile.NPCStockpile;
+import game.faction.player.PTech;
 import game.faction.player.Player;
 import init.paths.PATHS.ResFolder;
 import init.race.RACES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
+import init.trade.TR;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
+import init.type.HCLASS_RACE;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
-import prplegoo.regions.api.PrPleGooEfficiencies;
-import prplegoo.regions.api.RDRecipe;
 import prplegoo.regions.api.gen.ProspectCache;
-import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.api.region.building.*;
+import prplegoo.regions.api.region.rd.RDOptionalConsumption;
+import prplegoo.regions.api.region.rd.RDRecipe;
+import prplegoo.regions.api.region.rd.RDUpgrades;
 import settlement.main.SETT;
 import settlement.room.industry.module.Industry;
 import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.industry.module.IndustryResource;
+import settlement.room.infra.admin.AdminData;
+import settlement.room.infra.admin.ROOM_ADMIN;
+import settlement.room.infra.embassy.ROOM_EMBASSY;
+import settlement.room.knowledge.laboratory.ROOM_LABORATORY;
+import settlement.room.knowledge.library.ROOM_LIBRARY;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintImp;
+import settlement.room.main.furnisher.FurnisherItemGroup;
+import settlement.room.main.furnisher.FurnisherStat;
 import settlement.room.spirit.shrine.ROOM_SHRINE;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
 import settlement.stats.Induvidual;
@@ -51,7 +62,7 @@ import world.region.RDOutputs.RDOutput;
 import world.region.RDReligions.RDReligion;
 import world.region.pop.RDRace;
 
-final class Creator {
+public final class Creator {
 	@Getter
 	private static CharSequence ¤¤prospect = "Prospect";
 	private static CharSequence ¤¤desc = "Produces";
@@ -109,24 +120,7 @@ final class Creator {
 			l.cost = j.i("CREDITS", 0, 1000000, 0);
 		}
 
-		if (json.bool("FOOD_CONSUMER", false)) {
-			BOOSTING.connecter(() -> PrPleGooEfficiencies.FOOD_CONSUMER(b));
-			BOOSTING.connecter(() -> {
-					Bo deficit = new Bo(new BSourceInfo("Lacking input material", UI.icons().s.alert), 0, 1, true) {
-						@Override
-						double get(Region reg) {
-							if (reg.faction() != FACTIONS.player()) {
-								return 1;
-							}
-
-							return RD.DEFICITS().getFoodDeficit(reg);
-						}
-					};
-
-					deficit.add(b.efficiency);
-				});
-
-		}
+		EstateConsumptionReader.read(jsons, BValue.VALUE1, b);
 
 		return b;
 
@@ -139,6 +133,10 @@ final class Creator {
 			return res;
 
 		Json[] data = new Json(f.init.get("_GEN")).jsons("GENS");
+		if (f.init.get().toString().contains("logistics")) {
+			return LogisticsReader.generate(all, init, cat, data);
+		}
+
 		for (Json j : data)
 			res.add(generate(all, init, cat, j));
 
@@ -147,6 +145,9 @@ final class Creator {
 	}
 
 	private LIST<RDBuilding> generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, Json data){
+		if (data.has("ADMIN")) {
+			return generateAdmin(all, init, cat, data);
+		}
 
 		ArrayListGrower<RDBuilding> res = new ArrayListGrower<>();
 
@@ -169,14 +170,14 @@ final class Creator {
 				}
 
 				if (h.industries().size() > 2) {
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_A"));
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_B"));
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_C"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, "_A"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, "_B"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, "_C"));
 				} else if (h.industries().size() > 1) {
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_A"));
-					res.add(generate(all, init, cat, h.industries(), blue, data, b.index(), "_B"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, "_A"));
+					res.add(generate(all, init, cat, h.industries(), blue, data, "_B"));
 				} else {
-					RDBuilding bu = generate(all, init, cat, h.industries(), blue, data, b.index());
+					RDBuilding bu = generate(all, init, cat, h.industries(), blue, data);
 					res.add(bu);
 				}
 			}
@@ -188,12 +189,161 @@ final class Creator {
 
 	}
 
-	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex) {
-		return generate(all, init, cat, industries, blue, data, buildingIndex, "");
+	private LIST<RDBuilding> generateAdmin(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, Json data) {
+		LIST<RoomBlueprint> rooms = SETT.ROOMS().collection.readMany("ADMIN", data);
+		ArrayListGrower<RDBuilding> res = new ArrayListGrower<>();
+
+		for (RoomBlueprint b : rooms) {
+			LIST<IndustryResource> industryIns = null;
+			AdminData adminData = null;
+			Boostable outputBoost = null;
+			boolean optional = true;
+
+			if (b instanceof ROOM_ADMIN) {
+				ROOM_ADMIN room = (ROOM_ADMIN) b;
+				industryIns = room.consumption().ins();
+				adminData = room.data;
+				outputBoost = adminData.target;
+			}
+
+			if (b instanceof ROOM_LABORATORY) {
+				ROOM_LABORATORY room = (ROOM_LABORATORY) b;
+				industryIns = room.consumption().ins();
+				adminData = room.data;
+				outputBoost = adminData.target;
+			}
+
+			if (b instanceof ROOM_LIBRARY) {
+				ROOM_LIBRARY room = (ROOM_LIBRARY) b;
+				industryIns = room.consumption().ins();
+				adminData = room.data;
+				outputBoost = adminData.target;
+			}
+
+			if (b instanceof ROOM_EMBASSY) {
+				ROOM_EMBASSY room = (ROOM_EMBASSY) b;
+				industryIns = room.consumption().ins();
+				adminData = room.admin();
+				outputBoost = BOOSTABLES.CIVICS().DIPLOMACY;
+			}
+
+			if (industryIns == null || adminData == null || outputBoost == null) {
+				throw new RuntimeException("Building with key " + b.key + " can't initialize ADMIN data");
+			}
+
+			RoomBlueprintImp blue = (RoomBlueprintImp) b;
+			double boostedAmount = adminData.knowledgePerStation;
+
+			res.add(generate(all, init, cat, blue, data, industryIns, outputBoost, boostedAmount, optional));
+		}
+
+		return res;
 	}
 
-	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, int buildingIndex, String appendix) {
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, RoomBlueprintImp blue, Json data, LIST<IndustryResource> ins, Boostable outputboost, double boostedAmount, boolean optional) {
+		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
 
+		double output = data.d("OUTPUT");
+		double credits = data.i("CREDITS", 0, Integer.MAX_VALUE);
+
+
+		String kkk = (blue.key.startsWith("_") ? blue.key.substring(1) : blue.key);
+
+		String desc = ¤¤desc + ": ";
+
+		for (int li = 0; li < levels.max(); li++) {
+			CharSequence name = blue.info.name + ": " + GFORMAT.toNumeral(new Str(4), li + 1);
+			Icon icon = blue.iconBig();
+
+			double d = (double) (li + 1) / (levels.max());
+
+			Lockable<Region> needs = GVALUES.REGION.LOCK.push("BUILDING_" + cat.key + "_" + kkk + "_" + (li + 1), name, desc, icon);
+			RDBuildingLevel l = new RDBuildingLevel(name, icon, needs);
+			l.cost = (int) (NPCStockpile.AVERAGE_PRICE * credits * d);
+
+			BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
+			for (int ri = 0; ri < ins.size(); ri++) {
+				IndustryResource i = ins.get(ri);
+
+				BoosterValue consumption;
+
+				if (optional) {
+					consumption = new RDOptionalConsumption.RDOptionalConsumptionBooster(BValue.VALUE1, info, output * d * i.rate, all.size(), i.resource.index());
+				}
+				else {
+					consumption = new BoosterValue(BValue.VALUE1, info, output * d * i.rate, false);
+				}
+
+				l.local.push(consumption, RD.INPUTS().get(i.resource));
+			}
+
+			BoosterValue production = new BoosterValue(BValue.VALUE1, info, output * d * boostedAmount, false);
+
+			l.local.push(production, outputboost);
+
+			levels.add(l);
+		}
+
+		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
+
+		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
+
+		pushFactionBoosts(b);
+		pushMaintenance(blue, b);
+
+		if (optional) {
+			pushDeficitHandlingOptional(b, ins);
+		} else {
+			pushDeficitHandling(b, ins);
+		}
+
+		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
+		sp.read(data, BValue.VALUE1);
+		ACTION a = new ACTION() {
+			BSourceInfo info = new BSourceInfo(blue.info.name, blue.icon);
+			@Override
+			public void exe() {
+				for (int i = 1; i < b.levels.size(); i++) {
+					for (BoostSpec s : sp.all()) {
+						double am = (s.booster.to()*i/(b.levels.size()-1));
+						b.levels.get(i).local.push(new BoosterValue(BValue.VALUE1, info, am, s.booster.isMul), s.boostable);
+					}
+				}
+
+				for (RDRace c : RD.RACES().all) {
+					for (int si = 0; si < c.race.boosts.all().size(); si++) {
+						BoostSpec s = c.race.boosts.all().get(si);
+						if (s.boostable == blue.bonus()) {
+
+							BoostSpec sp = RACES.boosts().pushIfDoesntExist(c.race, s.booster.to(), b.efficiency, s.booster.isMul);
+							if (sp != null && !sp.boostable.contains(sp.booster))
+								sp.booster.add(sp.boostable);
+						}
+					}
+				}
+
+				if (optional) {
+					for (int ri = 0; ri < ins.size(); ri++) {
+						IndustryResource i = ins.get(ri);
+
+						RD.OPTIONAL_CONSUMPTION().putRate(b.index(), i.resource.index(), i.rate);
+
+						OptionalConsumptionBo bo = new OptionalConsumptionBo(b, i.resource);
+						bo.add(b.efficiency);
+					}
+				}
+			}
+		};
+		BOOSTING.connecter(a);
+
+		return b;
+	}
+
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data) {
+		return generate(all, init, cat, industries, blue, data, "");
+	}
+
+	private RDBuilding generate(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, LIST<Industry> industries, RoomBlueprintImp blue, Json data, String appendix) {
 		ArrayList<RDBuildingLevel> levels = new ArrayList<>(data.i("LEVELS", 1, 10));
 
 		double output = data.d("OUTPUT");
@@ -224,7 +374,7 @@ final class Creator {
 
 					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
 
-					RDOutput out = RD.OUTPUT().get(i.resource);
+					RDOutput out = RD.OUTPUT().get(TR.get(i.resource));
 					l.local.push(recipe, out.boost);
 
 					if (li == 0) {
@@ -235,15 +385,13 @@ final class Creator {
 				for (int ri = 0; ri < ins.size(); ri++) {
 					IndustryResource i = ins.get(ri);
 
-					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, -output * d * i.rate, false, blue, recipeIndex, all.size());
+					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
 
-					RDOutput in = RD.OUTPUT().get(i.resource);
-					l.local.push(recipe, in.boost);
+					l.local.push(recipe, RD.INPUTS().get(i.resource));
 				}
 			}
 
 			levels.add(l);
-//			levels.get(0).local.all().get(0).get(WORLD.REGIONS().all().get(0));
 		}
 
 		INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
@@ -251,8 +399,9 @@ final class Creator {
 		RDBuilding b = new RDBuilding(all, init, cat, kkk, info, levels, true, false, kkk, blue);
 
 		pushLevelCapping(b, data);
-		pushDeficitHandling(b, industries);
+		pushDeficitHandlingRecipe(b, industries);
 		pushFactionBoosts(b);
+		pushMaintenance(blue, b);
 
 		BoostSpecs sp = new BoostSpecs(blue.info.name, blue.icon, false);
 		sp.read(data, BValue.VALUE1);
@@ -299,22 +448,180 @@ final class Creator {
 
 	}
 
-	private void pushDeficitHandling(RDBuilding building, LIST<Industry> industries) {
+	private void pushMaintenance(RoomBlueprintImp blue, RDBuilding building) {
+		ACTION a = new ACTION() {
+			@Override
+			public void exe() {
+				for (int resourceIndex = 0; resourceIndex < blue.constructor().resources(); resourceIndex++) {
+					int realResourceIndex = blue.constructor().resource(resourceIndex).index();
+					MaintenanceEfficiencyBo efficiencyBo = new MaintenanceEfficiencyBo(building, realResourceIndex);
+
+					for (int level = 0; level <= blue.upgrades().max(); level++) {
+						double costPerWorkplace = getConstructionCostPerWorker(resourceIndex, blue, level);
+						double costPerEfficiency = getConstructionCostPerEfficiency(resourceIndex, blue, level);
+
+						double costPerEfficientWorker = costPerWorkplace + (costPerEfficiency / 2);
+
+						if (costPerEfficientWorker == 0) {
+							continue;
+						}
+
+						efficiencyBo.register(level);
+
+						for (RDBuildingLevel l : building.levels) {
+							double workerCount = 50 * l.index;
+							double degradeRatePerDay = blue.degradeRate() * SETT.MAINTENANCE().resRate;
+							double dailyCostPerWorker = degradeRatePerDay * costPerEfficientWorker;
+							double totalCost = workerCount * dailyCostPerWorker;
+
+							BSourceInfo info = new BSourceInfo(blue.info.name + ", maintenance", blue.icon);
+
+							BoosterValue bo = new RDUpgrades.RDUpgradeMaintenanceBooster(BValue.VALUE1, info, -totalCost, building.index(), level);
+
+							l.local.push(bo, RD.OUTPUT().RES.get(realResourceIndex).boost);
+						}
+					}
+
+					efficiencyBo.add(building.efficiency);
+				}
+
+				if (blue.upgrades().max() > 0) {
+					UpgradeBo bo = new UpgradeBo(building);
+					bo.add(building.efficiency);
+				}
+			}
+		};
+
+		BOOSTING.connecter(a);
+	}
+
+	private double getConstructionCostPerWorker(int resourceIndex, RoomBlueprintImp blue, int level) {
+		if (blue.degradeRate() == 0 || blue.constructor().stats().isEmpty()) {
+			return 0;
+		}
+
+		LIST<FurnisherItemGroup> furnishings = blue.constructor().groups();
+
+		double totalWorkers = 0.0;
+		double totalCost = 0.0;
+
+		for (FurnisherItemGroup furnishing : furnishings) {
+			double workersPerItem = furnishing.stat(0);
+
+			if (workersPerItem == 0) {
+				continue;
+			}
+
+			totalWorkers += workersPerItem;
+			totalCost += furnishing.cost(resourceIndex, level);
+		}
+
+		if (totalWorkers == 0) {
+			return 0;
+		}
+
+		return totalCost / totalWorkers;
+	}
+
+	private double getConstructionCostPerEfficiency(int resourceIndex, RoomBlueprintImp blue, int level) {
+		if (blue.degradeRate() == 0) {
+			return 0;
+		}
+
+		LIST<FurnisherStat> stats = blue.constructor().stats();
+		LIST<FurnisherItemGroup> furnishings = blue.constructor().groups();
+
+		double totalEfficiency = 0.0;
+		double totalCost = 0.0;
+
+		for(FurnisherStat stat : stats) {
+			if (!(stat instanceof FurnisherStat.FurnisherStatEfficiency)) {
+				continue;
+			}
+
+			for (FurnisherItemGroup furnishing : furnishings) {
+				double efficiencyPerItem = furnishing.stat(stat.index());
+
+				if (efficiencyPerItem == 0) {
+					continue;
+				}
+
+				totalEfficiency += efficiencyPerItem;
+				totalCost += furnishing.cost(resourceIndex, level);
+			}
+		}
+
+		if (totalEfficiency == 0) {
+			return 0;
+		}
+
+		return totalCost / totalEfficiency;
+	}
+
+	private void pushDeficitHandlingRecipe(RDBuilding building, LIST<Industry> industries) {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-				Bo deficit = new Bo(new BSourceInfo("Lacking input material", UI.icons().s.alert), 0, 1, true) {
+				Bo deficit = new Bo(new BSourceInfo("Lacking input material for recipe", UI.icons().s.alert), 0, 1, true) {
 					@Override
-					double get(Region reg) {
+					public double get(Region reg) {
 						if (reg.faction() != FACTIONS.player()) {
 							return 1;
 						}
 
-						return RD.DEFICITS().getWorstDeficit(reg, building, industries);
+						return RD.DEFICITS().getWorstDeficitRecipe(reg, building, industries);
 					}
 				};
 
 				deficit.add(building.efficiency);
+			}
+		};
+
+		BOOSTING.connecter(ca);
+	}
+
+	private void pushDeficitHandlingOptional(RDBuilding building, LIST<IndustryResource> ins) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+				for(IndustryResource resource : ins) {
+					Bo deficit = new Bo(new BSourceInfo("Lacking optional: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
+						@Override
+						public double get(Region reg) {
+							if (reg.faction() != FACTIONS.player()) {
+								return 1;
+							}
+
+							return RD.DEFICITS().getDeficitOptional(reg, building.index(), resource.resource.index());
+						}
+					};
+
+					deficit.add(building.efficiency);
+				}
+			}
+		};
+
+		BOOSTING.connecter(ca);
+	}
+
+	private void pushDeficitHandling(RDBuilding building, LIST<IndustryResource> ins) {
+		ACTION ca = new ACTION() {
+			@Override
+			public void exe() {
+				for(IndustryResource resource : ins) {
+					Bo deficit = new Bo(new BSourceInfo("Lacking: " + resource.resource.name, UI.icons().s.alert), 0, 1, true) {
+						@Override
+						public double get(Region reg) {
+							if (reg.faction() != FACTIONS.player()) {
+								return 1;
+							}
+
+							return RD.DEFICITS().getDeficitModifier(resource.resource);
+						}
+					};
+
+					deficit.add(building.efficiency);
+				}
 			}
 		};
 
@@ -374,14 +681,11 @@ final class Creator {
 					bo = new BoosterValue(BValue.VALUE1, info, global[i], false);
 					l.global.push(bo, reg.boost);
 				}
-
 			}
 
 			levels.add(l);
 
 		}
-
-
 
 		INFO info = new INFO(shrine.info.name, temple.religion.info.desc);
 
@@ -412,38 +716,29 @@ final class Creator {
 		ACTION ca = new ACTION() {
 			@Override
 			public void exe() {
-                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 1, 15, false) {
+                Bo appliedScience = new Bo(new BSourceInfo("Applied science", UI.icons().s.vial), 0, 15, false) {
+					private int index = -1;
                     @Override
-                    double get(Region reg) {
+					public double get(Region reg) {
 						if (reg.faction() instanceof Player) {
-							double scienceValue = Math.max(1, bu.getBlue().bonus().get(reg.faction())) - 1;
-							return scienceValue * RD.SCHOOL().booster.get(reg);
+							if (index == -1) {
+								for (int i = 0; i < bu.getBlue().bonus().all().size(); i++) {
+									if (bu.getBlue().bonus().all().get(i).info.name.equals(PTech.¤¤name)) {
+										index = i;
+										break;
+									}
+								}
+							}
+
+							if (index != -1) {
+								return RD.SCHOOL().booster.get(reg) * bu.getBlue().bonus().all().get(index).get(reg.faction());
+							}
 						}
 
-						if(!(KingLevels.isActive() && reg.faction() instanceof FactionNPC)) {
-                            return 0;
-                        }
-
-						return KingLevels.getInstance().getModifiedTechD(bu, (FactionNPC) reg.faction());
+						return 0;
                     }
                 };
                 appliedScience.add(bu.efficiency);
-
-				Bo playingScaling = new Bo(new BSourceInfo("King level, player scaling", SPRITES.icons().s.crown), 1, 40, true) {
-					@Override
-					public double get(Region reg) {
-						if (!KingLevels.isActive()) {
-							return 1;
-						}
-
-						if (!(reg.faction() instanceof FactionNPC)) {
-							return 1;
-						}
-
-						return min() + KingLevels.getInstance().getPlayerScalingD();
-					}
-				};
-				playingScaling.add(bu.efficiency);
 			}
 		};
 
@@ -469,7 +764,7 @@ final class Creator {
 					double mul = p[1];
 					Bo bo = new Bo(new BSourceInfo(¤¤prospect, UI.icons().s.plusBig), from, from+mul, true) {
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							return ProspectCache.getInstance().getLevelCap(reg, bu);
 						}
 					};
@@ -481,13 +776,13 @@ final class Creator {
 		BOOSTING.connecter(ca);
 	}
 
-	static abstract class Bo extends BoosterImp {
+	public static abstract class Bo extends BoosterImp {
 
 		public Bo(BSourceInfo info, double from, double to, boolean isMul) {
 			super(info, from, to, isMul);
 		}
 
-		abstract double get(Region reg);
+		public abstract double get(Region reg);
 
 		@Override
 		public double vGet(FactionNPC f) {
@@ -511,7 +806,7 @@ final class Creator {
 		};
 
 		@Override
-		public double vGet(PopTime t) {
+		public double vGet(HCLASS_RACE t) {
 			return vGet((Faction)FACTIONS.player());
 		}
 
@@ -536,4 +831,10 @@ final class Creator {
 		}
 	}
 
+	public static RDBuildingLevel RDBuildingLevel(CharSequence name, Icon icon, Lockable<Region> needs) {
+		return new RDBuildingLevel(name, icon, needs);
+	}
+	public static RDBuilding RDBuilding(LISTE<RDBuilding> all, RDInit init, RDBuildingCat cat, String key, INFO info, LIST<RDBuildingLevel> levels, boolean AIBuilds, boolean notify, String order, RoomBlueprintImp blue) {
+		return new RDBuilding(all, init, cat, key, info, levels, AIBuilds, notify, order, blue);
+	}
 }

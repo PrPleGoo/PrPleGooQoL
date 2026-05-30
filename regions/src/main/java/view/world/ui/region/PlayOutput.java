@@ -1,49 +1,43 @@
 package view.world.ui.region;
 
 import game.boosting.Boostable;
-import game.boosting.Booster;
-import game.time.TIME;
 import init.race.Race;
-import init.resources.Growable;
 import init.resources.RESOURCE;
-import init.resources.RESOURCES;
 import init.sprite.UI.UI;
-import settlement.room.industry.module.IndustryResource;
+import init.trade.TR;
+import prplegoo.regions.api.region.rd.RDSlavery;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.datatypes.DIR;
 import snake2d.util.gui.GUI_BOX;
 import snake2d.util.gui.GuiSection;
 import snake2d.util.gui.renderable.RENDEROBJ;
-import snake2d.util.misc.ACTION;
 import snake2d.util.sets.ArrayList;
 import snake2d.util.sets.ArrayListGrower;
 import util.colors.GCOLOR;
 import util.data.GETTER;
 import util.data.GETTER.GETTER_IMP;
-import util.data.INT.INTE;
 import util.gui.misc.GBox;
 import util.gui.misc.GButt;
 import util.gui.misc.GText;
-import util.gui.slider.GSliderInt;
 import util.gui.table.GTableBuilder;
 import util.gui.table.GTableBuilder.GRowBuilder;
 import util.info.GFORMAT;
 import util.text.D;
-import view.main.VIEW;
+import util.text.Dic;
 import world.map.regions.Region;
 import world.region.RD;
+import world.region.RDOutputs;
 import world.region.RDOutputs.RDOutput;
 import world.region.RDOutputs.RDResource;
-import prplegoo.regions.api.RDSlavery;
 import world.region.updating.Shipper;
 
 final class PlayOutput extends GuiSection{
 
-    private static CharSequence ¤¤ship = "This resource is shipped annually after harvest. Harvest is in {0} days.";
+    private static CharSequence ¤¤ship = "This resource is shipped annually in {0} days. Accumulated so far: {1}.";
     static {
         D.ts(PlayOutput.class);
     }
-	private final ArrayListGrower<PlayButt> butts = new ArrayListGrower<PlayButt>();
+    private final ArrayListGrower<PlayButt> butts = new ArrayListGrower<PlayButt>();
     private final GETTER_IMP<Region> g;
     private final ArrayList<RENDEROBJ> activeButts;
     private final int width;
@@ -51,6 +45,50 @@ final class PlayOutput extends GuiSection{
     private final int amX;
 
     public PlayOutput(GETTER_IMP<Region> g, int width) {
+        {
+            GButt b = new GButt.ButtPanel(RDOutputs.¤¤Squeeze) {
+
+                @Override
+                protected void clickA() {
+                    RD.OUTPUT().squeze(g.get());
+                    super.clickA();
+                }
+
+                @Override
+                protected void renAction() {
+                    activeSet(RD.RACES().loyaltyAll.getD(g.get()) > 0.40);
+                }
+
+                @Override
+                public void hoverInfoGet(GUI_BOX text) {
+                    GBox b = (GBox) text;
+                    b.title(RDOutputs.¤¤Squeeze);
+                    b.text(RDOutputs.¤¤SqueezeD);
+                    b.NL();
+
+                    b.add(UI.icons().s.money);
+                    b.textLL(Dic.¤¤Currs);
+                    b.tab(6);
+                    b.add(GFORMAT.iIncr(b.text(), (long) (RD.OUTPUT().MONEY.boost.get(g.get())*RD.OUTPUT().sqeezeAmountDays)));
+                    b.NL();
+
+                    Shipper shipper = RD.UPDATER().getShipper();
+                    extracted(shipper, b, g);
+
+                    b.textLL(RD.RACES().loyaltyAll.info().name);
+                    b.tab(6);
+                    b.add(GFORMAT.perc(b.text(), -0.4));
+                    b.NL();
+                    super.hoverInfoGet(text);
+                }
+
+            };
+
+            b.body().moveX2(body().x2()-16);
+            b.body().moveY1(4);
+            add(b);
+        }
+
         {
             GButt.ButtPanel taxInfo = new GButt.ButtPanel(UI.icons().s.time) {
                 @Override
@@ -72,86 +110,11 @@ final class PlayOutput extends GuiSection{
                     b.text(" Accumulated so far:");
                     b.NL();
 
-                    for (RDResource res : RD.OUTPUT().RES) {
-                        int amount = shipper.getAccumulatedTaxes(g.get(), res);
-
-                        if (amount <= 0)
-                        {
-                            continue;
-                        }
-
-                        RESOURCE rr = res.res;
-
-                        b.add(rr.icon());
-                        b.text(rr.name);
-
-                        b.tab(7);
-                        b.add(GFORMAT.i(b.text(), amount));
-
-                        b.NL();
-                    }
-
-                    for (int i = 0; i < RD.SLAVERY().all().size(); i++) {
-                        RDSlavery.RDSlave rdSlave = RD.SLAVERY().all().get(i);
-                        int amount = shipper.getAccumulatedTaxes(g.get(), rdSlave);
-
-                        if (amount <= 0)
-                        {
-                            continue;
-                        }
-
-                        Race race = rdSlave.rdRace.race;
-
-                        b.add(race.appearance().icon);
-                        b.textL(race.info.name);
-                        b.textL("(Prisoners)");
-
-                        b.tab(7);
-                        b.add(GFORMAT.i(b.text(), amount));
-
-                        b.NL();
-                    }
+                    extracted(shipper, b, g);
                 }
             };
 
             addRight(4, taxInfo);
-        }
-
-        {
-            INTE ii = new INTE() {
-
-                @Override
-                public int min() {
-                    return 0;
-                }
-
-                @Override
-                public int max() {
-                    return RD.OUTPUT().taxRate.max(g.get());
-                }
-
-                @Override
-                public int get() {
-                    return RD.OUTPUT().taxRate.get(g.get());
-                }
-
-                @Override
-                public void set(int t) {
-                    RD.OUTPUT().taxRate.set(g.get(), t);
-                }
-            };
-
-            GSliderInt sl = new GSliderInt(ii, 140, 24, true) {
-                @Override
-                public void hoverInfoGet(GUI_BOX text) {
-                    RD.OUTPUT().taxRate.info().hover(text);
-                    super.hoverInfoGet(text);
-                }
-            };
-
-            addRight(4, sl);
-
-            sl.body().moveY1(sl.body().y1() - 2);
         }
 
 
@@ -186,10 +149,56 @@ final class PlayOutput extends GuiSection{
                 }
             });
 
-			addRelBody(2, DIR.S, builder.createHeight((height)*2, false));
+            addRelBody(2, DIR.S, builder.createHeight((height)*2, false));
         }
 
         pad(6, 6);
+    }
+
+    private static void extracted(Shipper shipper, GBox b, GETTER_IMP<Region> g) {
+        for (RDResource res : RD.OUTPUT().RES) {
+            if (!TR.RES().contains(res.res.index())) {
+                continue;
+            }
+
+            int amount = shipper.getAccumulatedTaxes(g.get(), res);
+
+            if (amount <= 0)
+            {
+                continue;
+            }
+
+            RESOURCE rr = TR.RES().get(res.res.index()).t;
+
+            b.add(rr.icon());
+            b.text(rr.name);
+
+            b.tab(7);
+            b.add(GFORMAT.i(b.text(), amount));
+
+            b.NL();
+        }
+
+        for (int i = 0; i < RD.SLAVERY().all().size(); i++) {
+            RDSlavery.RDSlave rdSlave = RD.SLAVERY().all().get(i);
+            int amount = shipper.getAccumulatedTaxes(g.get(), rdSlave);
+
+            if (amount <= 0)
+            {
+                continue;
+            }
+
+            Race race = rdSlave.rdRace.race;
+
+            b.add(race.appearance().icon);
+            b.textL(race.info.name);
+            b.textL("(Prisoners)");
+
+            b.tab(7);
+            b.add(GFORMAT.i(b.text(), amount));
+
+            b.NL();
+        }
     }
 
     @Override
@@ -198,17 +207,20 @@ final class PlayOutput extends GuiSection{
         GButt.ButtPanel.renderFrame(r, body());
         activeButts.clearSloppy();
 		for (PlayButt b : butts) {
-
-			if (hasValue(b.getBoostable(), g.get())
-            ) {
+			if (hasValue(b.getBoostables(), g.get())) {
                 activeButts.add(b);
             }
         }
         super.render(r, ds);
     }
 
-    private boolean hasValue(Boostable bo, Region reg) {
-        return bo.get(reg) != 0;
+    private boolean hasValue(Boostable[] bos, Region reg) {
+        for(Boostable bo : bos) {
+            if (bo.get(reg) != 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class Row extends GuiSection{
@@ -237,7 +249,7 @@ final class PlayOutput extends GuiSection{
     }
 
     private abstract class PlayButt extends ClickableAbs {
-        abstract Boostable getBoostable();
+        abstract Boostable[] getBoostables();
     }
 
     private class ResButt extends PlayButt{
@@ -258,8 +270,19 @@ final class PlayOutput extends GuiSection{
 
             bu.boost.icon.medium.renderC(r, body.x1()+16, body.cY());
 
+            double am = bu.boost.get(g.get()) + bu.boostYearlyPart.get(g.get());
+
+            if (bu instanceof RDResource && TR.RES().contains(((RDResource) bu).res.index())) {
+                RDResource res = (RDResource) bu;
+                am -= RD.INPUTS().get(TR.RES().get(res.res.index()).t).get(g.get());
+
+                if (am > 0) {
+                    am -= Math.min(am, RD.LOGISTICS().get(TR.RES().get(res.res.index()).t).getDelivery(g.get()));
+                }
+            }
+
             tt.clear();
-			GFORMAT.i(tt, (long) (bu.boost.get(g.get()) + bu.boostYearlyPart.get(g.get())));
+            GFORMAT.i(tt, (long) Math.floor(am));
 
             tt.renderC(r, body.x1()+32, body.cY());
 
@@ -269,35 +292,46 @@ final class PlayOutput extends GuiSection{
 
         @Override
         public void hoverInfoGet(GUI_BOX text) {
+            GBox b = (GBox) text;
 
+            if (bu.boostYearlyPart.get(g.get()) > 0) {
+                bu.boostYearlyPart.hover(text, g.get(), true);
+                b.sep();
+                GText t = b.text();
+                t.add(¤¤ship);
+                t.insert(0, bu.daysUntilDailydelivery());
+                t.insert(1, bu.yearlyAccumilation.get(g.get()));
+                b.add(t);
+                b.sep();
 
-
-
-
-			if (bu.boostYearlyPart.get(g.get()) > 0) {
-				bu.boostYearlyPart.hover(text, g.get(), true);
-                GBox b = (GBox) text;
-				b.sep();
-                    GText t = b.text();
-                    t.add(¤¤ship);
-				t.insert(0, bu.daysUntilDailydelivery());
-				t.insert(1, bu.yearlyAccumilation.get(g.get()));
-                    b.add(t);
-                    b.sep();
-
-				if (bu.boost.get(g.get()) > 0) {
+                if (bu.boost.get(g.get()) > 0) {
                     bu.boost.hover(text, g.get(), true);
                 }
 
 
             }else {
                 bu.boost.hover(text, g.get(), true);
+
+                b.sep();
+
+                if (bu instanceof RDResource && TR.RES().contains(((RDResource) bu).res.index())) {
+                    RDResource res = (RDResource) bu;
+
+                    RD.INPUTS().get(TR.RES().get(res.res.index()).t).hover(text, g.get(), true);
+                    b.sep();
+                    RD.LOGISTICS().get(TR.RES().get(res.res.index()).t).boost.hover(text, g.get(), true);
+                }
             }
         }
 
         @Override
-        Boostable getBoostable() {
-            return bu.boost;
+        Boostable[] getBoostables() {
+            if (bu instanceof RDResource && TR.RES().contains(((RDResource) bu).res.index())) {
+                RDResource res = (RDResource) bu;
+
+                return new Boostable[]{bu.boost, RD.INPUTS().get(TR.RES().get(res.res.index()).t)};
+            }
+            return new Boostable[] { bu.boost };
         }
     }
     private class RaceButt extends PlayButt {
@@ -329,8 +363,9 @@ final class PlayOutput extends GuiSection{
         }
 
         @Override
-        Boostable getBoostable() {
-            return rdSlave.boost;
+        Boostable[] getBoostables() {
+            return new Boostable[] { rdSlave.boost };
         }
     }
+
 }

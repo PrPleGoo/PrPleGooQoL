@@ -33,7 +33,7 @@ public class Race implements MAPPED {
     //	private RaceBoosts bonuses;
     private RacePreferrence pref;
     public final RaceInfo info;
-    public Physics physics;
+    public final Physics physics;
     public final int index;
     public final boolean playable;
     public final String key;
@@ -63,6 +63,7 @@ public class Race implements MAPPED {
 
         info = new RaceInfo(data, text);
         playable = data.bool("PLAYABLE");
+        physics = new Physics(data);
         //population = new RacePopulation(data);
         boosts = new BoostSpecs(info.names, new SPRITE.Imp(Icon.S) {
 
@@ -80,9 +81,9 @@ public class Race implements MAPPED {
 
     void expand(ExpandInit init) throws IOException {
 
-        Json data = new Json(init.p.get(key));
+        Json data = new Json(init.p.gets(key));
         population = new RacePopulation(data);
-        physics = new Physics(data);
+
         appearance = new RAppearence(this, data, init, physics.hitBoxsize());
         pref = new RacePreferrence(data, this);
 

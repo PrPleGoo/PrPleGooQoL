@@ -8,6 +8,7 @@ import init.sprite.UI.UI;
 import settlement.main.SETT;
 import settlement.room.infra.logistics.MoveDic;
 import settlement.room.infra.logistics.MoveOrderPullUI;
+import settlement.room.infra.transport.ROOM_TRANSPORT;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.COORDINATE;
@@ -333,7 +334,12 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_LOGISTICS> {
 		b.tab(6);
 		b.add(GFORMAT.i(b.text(), SETT.ROOMS().STOCKPILE.tally().amountReservable.get(res)));
 		b.NL();
-		
+
+		b.textL(Dic.¤¤Region + " " + SETT.ROOMS().TRANSPORT.info.name);
+		b.tab(6);
+		b.add(GFORMAT.i(b.text(), RD.LOGISTICS().getValue(res)));
+		b.NL();
+
 		b.NL(4);
 		
 		b.textLL(neededDelivery);

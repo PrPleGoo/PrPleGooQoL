@@ -18,7 +18,7 @@ import init.type.HCLASSES;
 import init.type.TERRAINS;
 import init.value.GVALUES;
 import prplegoo.regions.api.gen.RacePreferenceCache;
-import prplegoo.regions.api.npc.KingLevels;
+import settlement.stats.POP;
 import settlement.stats.STATS;
 import snake2d.util.file.FileGetter;
 import snake2d.util.file.FilePutter;
@@ -131,16 +131,8 @@ public class RDRace implements INDEXED{
 
 				@Override
 				public double get(Region t) {
-					if (KingLevels.isActive()){
-						double d = RD.RACES().popTarget.getD(t)/7000.0;
-						d = (int)(d*100)/100.0;
-
-						return d;
-					}
-
-					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop());
+					double d = (double)RD.RACES().popTarget.getD(t)/(1.0+RD.RACES().maxPop(t));
 					d = (int)(d*100)/100.0;
-
 					return d;
 				}
 			}.add(target);
@@ -148,10 +140,6 @@ public class RDRace implements INDEXED{
 			new RBooster(new BSourceInfo(¤¤Armies, UI.icons().s.sword), 0, 20, false) {
 				@Override
 				public double get(Region t) {
-					if (KingLevels.isActive() && FACTIONS.player() != t.faction()) {
-						return 0;
-					}
-
 					double power = 0;
 					for (WArmy a : WORLD.ENTITIES().armies.fill(t))
 						if (a.faction() == t.faction())
@@ -164,13 +152,9 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
-						return 0.5;
-					}
-
-					int cit = STATS.POP().POP.data(HCLASSES.CITIZEN()).get(race);
-					int slaves = STATS.POP().POP.data(HCLASSES.SLAVE()).get(race);
-					int tot = STATS.POP().POP.data().get(null) + 1;
+					int cit = POP.tot(HCLASSES.CITIZEN(), race);
+					int slaves = POP.tot(HCLASSES.SLAVE(), race);
+					int tot = POP.tot(null) + 1;
 					if (cit == 0) {
 						if (slaves > 0)
 							return 0.5-CLAMP.d(250.0*slaves/tot, 0, 0.5);
@@ -185,12 +169,8 @@ public class RDRace implements INDEXED{
 
 				@Override
 				protected double get(Region reg) {
-					if (KingLevels.isActive() && FACTIONS.player() != reg.faction()) {
-						return 0.5;
-					}
-
-					int cit = STATS.POP().POP.data(HCLASSES.NOBLE()).get(race);
-					int tot = STATS.POP().POP.data(HCLASSES.NOBLE()).get(null);
+					int cit = POP.tot(HCLASSES.NOBLE(), race);
+					int tot = POP.tot(HCLASSES.NOBLE(), null);
 					if (cit == 0) {
 						if (tot > RACES.playable().size())
 							return CLAMP.d(0.5-(tot-RACES.playable().size())/4.0, 0, 0.5);
@@ -289,23 +269,24 @@ public class RDRace implements INDEXED{
 				}
 			}.add(dtarget);
 
-			new RBooster(new BSourceInfo(Dic.¤¤Base, UI.icons().s.cancel), 0, 2, true) {
+			new RBooster(new BSourceInfo(Dic.¤¤Base, UI.icons().s.cancel), 0, 1, true) {
 				@Override
 				public double get(Region t) {
-					double modifiedGrowth = growthBase / max();
-					if (t.faction() == null) {
-						return modifiedGrowth;
-					}
+					return growthBase;
+				}
+			}.add(growth);
 
-					if (t.faction().realm().regions() <= 1) {
-						return modifiedGrowth;
+			new RBooster(new BSourceInfo("Full " + Dic.¤¤Regions, UI.icons().s.arrow_left), 1, 10, true) {
+				@Override
+				public double get(Region t) {
+					if (t.faction() != FACTIONS.player()) {
+						return 0;
 					}
 
 					int fullRegions = 0;
 					for (int i = 0; i < t.faction().realm().regions(); i++) {
 						Region region = t.faction().realm().region(i);
-						if (t.faction() == FACTIONS.player()
-								&& region.capitol()){
+						if (region.capitol()){
 							continue;
 						}
 
@@ -319,22 +300,11 @@ public class RDRace implements INDEXED{
 						}
 					}
 
-					double growingRegions = t.faction().realm().regions() - fullRegions - (t.faction() == FACTIONS.player() ? 1 : 0);
+					double growingRegions = t.faction().realm().regions() - fullRegions - 1;
 
-					return modifiedGrowth + modifiedGrowth * fullRegions / growingRegions;
+					return fullRegions / growingRegions / (max() - min());
 				}
 			}.add(growth);
-
-//			new RBooster(new BSourceInfo(RDRaces.¤¤Loyalty + ": " + race.race.info.names, UI.icons().s.happy), 0, 10, true) {
-//				@Override
-//				public double get(Region t) {
-//					if (t.faction() == FACTIONS.player())
-//						return CLAMP.d(race.loyalty.getD(t), 0, 10)/10.0;
-//					return 1;
-//				}
-//			}.add(growth);
-
-
 
 			GVALUES.REGION.pushI("POPULATION_RACE_" + race.key, Dic.¤¤Population + ": " + race.info.names, race.appearance().iconBig, this);
 		}

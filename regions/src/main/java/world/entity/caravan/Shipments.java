@@ -2,9 +2,9 @@ package world.entity.caravan;
 
 import java.io.IOException;
 
-import game.faction.trade.ITYPE;
 import init.paths.PATHS;
 import init.sprite.UI.Icon;
+import init.trade.TRADE_TYPE;
 import snake2d.SPRITE_RENDERER;
 import snake2d.util.color.COLOR;
 import snake2d.util.datatypes.COORDINATE;
@@ -59,35 +59,36 @@ public final class Shipments extends WEntityConstructor<Shipment> {
         };
     }
 
-    public Shipment create(Region start, Region dest, ITYPE type) {
+    public Shipment create(Region start, Region dest, TRADE_TYPE type) {
         COORDINATE cc = WORLD.PATH().rnd(start);
+
         if (cc != null) {
             return create(cc.x(), cc.y(), dest, type);
         }
         return null;
     }
 
-    public Shipment createActualDest(Region start, Region dest, ITYPE type) {
-        COORDINATE cc = WORLD.PATH().rnd(start);
-        if (cc != null) {
-            Shipment c = create();
-            c.add(cc.x(), cc.y(), dest, type);
-            if (c.added())
-                return c;
-
-            free.push(c);
-        }
-        return null;
-    }
-
-    public Shipment create(int sx, int sy, Region dest, ITYPE type) {
+    public Shipment create(int sx, int sy, Region dest, TRADE_TYPE type) {
         Shipment c = create();
         c.add(sx, sy, dest.faction(), type);
         if (c.added())
             return c;
 
-
         free.push(c);
+        return null;
+    }
+
+    public Shipment createActualDest(Region start, Region dest, TRADE_TYPE type) {
+        COORDINATE cc = WORLD.PATH().rnd(start);
+        if (cc != null) {
+            Shipment c = create();
+            c.add(cc.x(), cc.y(), dest.faction(), type);
+            if (c.added())
+                return c;
+
+            free.push(c);
+            return null;
+        }
         return null;
     }
 

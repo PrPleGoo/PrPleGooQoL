@@ -1,7 +1,7 @@
 package prplegoo.regions;
 
-import prplegoo.regions.persistence.data.RDFoodConsumptionData;
-import prplegoo.regions.api.npc.KingLevels;
+import prplegoo.regions.api.gen.ProspectCache;
+import prplegoo.regions.api.gen.RacePreferenceCache;
 import prplegoo.regions.persistence.FileGetterApi;
 import prplegoo.regions.persistence.FilePutterApi;
 import script.SCRIPT;
@@ -21,14 +21,13 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
     public void save(FilePutter file) {
         FilePutterApi putter = new FilePutterApi();
 
-        putter.put(RD.FOOD_CONSUMPTION().getKey(), RD.FOOD_CONSUMPTION().getData());
         putter.put(RD.SLAVERY().getKey(), RD.SLAVERY().getData());
         putter.put(RD.RECIPES().getKey(), RD.RECIPES().getData());
         putter.put(RD.DEFICITS().getKey(), RD.DEFICITS().getData());
-        putter.put(KingLevels.getInstance().stockpileSmoothing.getKey(), KingLevels.getInstance().stockpileSmoothing.getData());
-        putter.put(KingLevels.getInstance().soldGoodsTracker.getKey(), KingLevels.getInstance().soldGoodsTracker.getData());
-        putter.put(KingLevels.getInstance().kingLevelIndexes.getKey(), KingLevels.getInstance().kingLevelIndexes.getData());
         putter.put(RD.UPDATER().getShipper().getKey(), RD.UPDATER().getShipper().getData());
+        putter.put(RD.OPTIONAL_CONSUMPTION().getKey(), RD.OPTIONAL_CONSUMPTION().getData());
+        putter.put(RD.UPGRADES().getKey(), RD.UPGRADES().getData());
+        putter.put(RD.LOGISTICS().getKey(), RD.LOGISTICS().getData());
 
         putter.onGameSaved(file);
     }
@@ -38,15 +37,16 @@ public class RegionsPersistence implements SCRIPT, SCRIPT.SCRIPT_INSTANCE {
         FileGetterApi getter = new FileGetterApi();
         getter.onGameLoaded(file);
 
-        RDFoodConsumptionData gotten = getter.get(RD.FOOD_CONSUMPTION());
-        RD.FOOD_CONSUMPTION().putData(gotten);
         RD.SLAVERY().putData(getter.get(RD.SLAVERY()));
         RD.RECIPES().putData(getter.get(RD.RECIPES()));
         RD.DEFICITS().putData(getter.get(RD.DEFICITS()));
-        KingLevels.getInstance().stockpileSmoothing.putData(getter.get(KingLevels.getInstance().stockpileSmoothing));
-        KingLevels.getInstance().soldGoodsTracker.putData(getter.get(KingLevels.getInstance().soldGoodsTracker));
-        KingLevels.getInstance().kingLevelIndexes.putData(getter.get(KingLevels.getInstance().kingLevelIndexes));
         RD.UPDATER().getShipper().putData(getter.get(RD.UPDATER().getShipper()));
+        RD.OPTIONAL_CONSUMPTION().putData(getter.get(RD.OPTIONAL_CONSUMPTION()));
+        RD.UPGRADES().putData(getter.get(RD.UPGRADES()));
+        RD.LOGISTICS().putData(getter.get(RD.LOGISTICS()));
+
+        RacePreferenceCache.Reset();
+        ProspectCache.Reset();
     }
 
     @Override

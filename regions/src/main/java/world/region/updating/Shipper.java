@@ -3,14 +3,13 @@ package world.region.updating;
 import game.faction.FACTIONS;
 import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
-import game.faction.trade.ITYPE;
 import game.time.TIME;
 import init.race.RACES;
 import init.resources.RESOURCES;
-import init.type.HTYPES;
-import prplegoo.regions.api.RDSlavery;
+import init.trade.TR;
+import init.trade.TRADE_TYPE;
+import prplegoo.regions.api.region.rd.RDSlavery;
 import prplegoo.regions.persistence.IDataPersistence;
-import prplegoo.regions.persistence.data.ShipperData;
 import prplegoo.regions.persistence.data.ShipperData;
 import snake2d.LOG;
 import world.WORLD;
@@ -33,7 +32,6 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     }
 
     private void initialize(){
-
         since = new double[WORLD.REGIONS().all().size()];
         resources = new double[WORLD.REGIONS().all().size()][RESOURCES.ALL().size()];
         slaves = new int[WORLD.REGIONS().all().size()][RACES.all().size()];
@@ -66,10 +64,24 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         }
 
         for (RDResource res : RD.OUTPUT().RES) {
-            int a = amount(f, res, r, seconds);
+            if (!TR.RES().contains(res.res.index())) {
+                continue;
+            }
+
+            double a = amount(res, r, seconds);
 
             if (a < 0) {
-                a = RD.DEFICITS().handleDeficit(res.res, a);
+                a = RD.DEFICITS().handleDeficit(TR.RES().get(res.res.index()).t, a);
+            }
+
+            if (a > 0) {
+                double logi = RD.LOGISTICS().get(TR.RES().get(res.res.index()).t).getDelivery(r)*seconds*TIME.secondsPerDayI();
+
+                logi = Math.min(logi, a);
+
+                RD.LOGISTICS().addLogistics(r, TR.RES().get(res.res.index()).t, logi);
+
+                a -= logi;
             }
 
             if (a == 0)
@@ -91,9 +103,13 @@ public final class Shipper implements IDataPersistence<ShipperData> {
             return;
         }
 
-        Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), ITYPE.tax);
+        Shipment c = WORLD.ENTITIES().caravans.create(r, f.capitolRegion(), TRADE_TYPE.tax);
         if (c != null) {
             for (RDResource res : RD.OUTPUT().RES) {
+                if (!TR.RES().contains(res.res.index())) {
+                    continue;
+                }
+
                 int a = (int) resources[r.index()][res.res.index()];
 
                 c.loadAndReserve(res.res, a);
@@ -104,7 +120,7 @@ public final class Shipper implements IDataPersistence<ShipperData> {
             for (RDSlavery.RDSlave rdSlave : RD.SLAVERY().all()) {
                 int a = slaves[r.index()][rdSlave.rdRace.race.index()];
 
-                c.load(rdSlave.rdRace.race, a, HTYPES.PRISONER());
+                c.load(TR.get(rdSlave.rdRace.race), a);
 
                 slaves[r.index()][rdSlave.rdRace.race.index()] -= a;
             }
@@ -121,12 +137,20 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         return daysUntilShipment + 1;
     }
 
+    public void setShipOnNextUpdate(Region region) {
+        since[region.index()] = shipmentInterval + 1;
+    }
+
     private boolean timeToShip(Region region) {
         return since[region.index()] > shipmentInterval;
     }
 
     private boolean hasAnythingToShip(Region region) {
         for (RDResource res : RD.OUTPUT().RES) {
+            if (!TR.RES().contains(res.res.index())) {
+                continue;
+            }
+
             if (resources[region.index()][res.res.index()] > 0) {
                 return true;
             }
@@ -146,11 +170,14 @@ public final class Shipper implements IDataPersistence<ShipperData> {
     }
 
     public int getAccumulatedTaxes(Region region, RDSlavery.RDSlave rdSlave){
-        return (int) slaves[region.index()][rdSlave.rdRace.race.index()];
+        return slaves[region.index()][rdSlave.rdRace.race.index()];
     }
 
-    private int amount(Faction f, RDResource res, Region r, double seconds) {
-        return (int) Math.ceil(res.boost.get(r)*seconds*TIME.secondsPerDayI());
+    private double amount(RDResource res, Region r, double seconds) {
+        double production = res.boost.get(r)*seconds*TIME.secondsPerDayI();
+        double consumption = RD.INPUTS().get(TR.RES().get(res.res.index()).t).get(r)*seconds*TIME.secondsPerDayI();
+
+        return production - consumption;
     }
 
     public void shipAll(Faction f, double days) {
@@ -158,9 +185,13 @@ public final class Shipper implements IDataPersistence<ShipperData> {
         for (int ri = 0; ri < f.realm().regions(); ri++) {
             Region reg = f.realm().region(ri);
             for (RDResource res : RD.OUTPUT().RES) {
+                if (!TR.RES().contains(res.res.index())) {
+                    continue;
+                }
+
                 int a = (int) Math.ceil(res.boost.get(reg)*days);
                 if (a > 0) {
-                    f.buyer().deliver(res.res, a, ITYPE.tax);
+                    f.buyer(res.res).addDeliver(a, TRADE_TYPE.tax);
                 }
             }
 

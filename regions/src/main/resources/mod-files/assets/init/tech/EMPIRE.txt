@@ -1,5 +1,6 @@
+__OVERWRITE: true,
 TREE: {
-	0: [_____,_____,_____,_____,_____,],
+	0: [_____,_____,ESTAT,_____,_____,],
 	1: [_____,WORK0,_____,LOYA0,_____,],
 	3: [_____,_____,CENT0,_____,_____,],
 	4: [_____,HEAL0,CENT1,TAX00,_____,],
@@ -9,9 +10,20 @@ TREE: {
 COLOR: 178_0_255,
 
 TECHS: {
+    ESTAT: {
+        LEVEL_MAX: 50,
+        LEVEL_COST_INC: 50,
+        COSTS: {
+            CIVIC_KNOWLEDGE: 50,
+        },
+        BOOST: {
+            CIVIC_MAX_ESTATE_COUNT>ADD: 1,
+        },
+        ICON: 32->world->CENTRE->3,
+    },
 	CENT0: {
 		COSTS: {
-			CIVIC_INNOVATION: 5,
+			CIVIC_INNOVATION: 50,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_3,
@@ -20,7 +32,7 @@ TECHS: {
 	},
 	CENT1: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 50,
+			CIVIC_INNOVATION: 100,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT0: 1,
@@ -33,7 +45,7 @@ TECHS: {
 	},
 	CENT2: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 100,
+			CIVIC_INNOVATION: 200,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT1: 1,
@@ -46,7 +58,7 @@ TECHS: {
 
 	HEAL0: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 25,
+			CIVIC_ADMIN: 75,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT0: 1,
@@ -57,7 +69,7 @@ TECHS: {
 	},
 	LOYA0: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 25,
+			CIVIC_ADMIN: 75,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_A_POLICE_1,
@@ -66,7 +78,7 @@ TECHS: {
 	
 	TAX00: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 25,
+			CIVIC_ADMIN: 75,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_TAX_1,
@@ -74,7 +86,7 @@ TECHS: {
 	},
 	WORK0: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 25,
+			CIVIC_ADMIN: 75,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_WGUILD_1,

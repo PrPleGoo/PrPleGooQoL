@@ -1,0 +1,10 @@
+NAME: "Noble estate",
+DESC: "A private estate for a governor in your employ to manage your realm for you. Generates Gov points in exchange for resources. The more you have the higher the running cost for each of them will be.",
+
+LEVELS: [
+    "Minor estate",
+    "Decent estate",
+    "Large estate",
+    "Lavish estate",
+    "Fortress estate",
+],

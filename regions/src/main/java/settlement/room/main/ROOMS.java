@@ -53,8 +53,8 @@ import settlement.room.knowledge.university.ROOM_UNIVERSITY;
 import settlement.room.law.court.ROOM_COURT;
 import settlement.room.law.execution.ROOM_EXECTUTION;
 import settlement.room.law.guard.ROOM_GUARD;
+import settlement.room.law.police.ROOM_POLICE;
 import settlement.room.law.prison.ROOM_PRISON;
-import settlement.room.law.slaver.ROOM_SLAVER;
 import settlement.room.law.stockade.ROOM_STOCKADE;
 import settlement.room.law.stocks.ROOM_STOCKS;
 import settlement.room.main.category.RoomCategories;
@@ -62,6 +62,7 @@ import settlement.room.main.category.RoomCategorySub;
 import settlement.room.main.construction.CONSTRUCTION;
 import settlement.room.main.copy.ROOM_COPY;
 import settlement.room.main.employment.RoomEmployments;
+import settlement.room.main.job.ResourceUnderflow;
 import settlement.room.main.placement.PLACEMENT;
 import settlement.room.main.throne.THRONE;
 import settlement.room.main.util.Deleter;
@@ -77,6 +78,7 @@ import settlement.room.military.training.barracks.ROOM_BARRACKS;
 import settlement.room.service.arena.grand.ROOM_ARENA;
 import settlement.room.service.arena.pit.ROOM_FIGHTPIT;
 import settlement.room.service.barber.ROOM_BARBER;
+import settlement.room.service.breeder.ROOM_BREEDER;
 import settlement.room.service.food.canteen.ROOM_CANTEEN;
 import settlement.room.service.food.eatery.ROOM_EATERY;
 import settlement.room.service.food.tavern.ROOM_TAVERN;
@@ -137,8 +139,8 @@ public final class ROOMS extends TileMap.Resource {
 	public final RoomStats stats = new RoomStats();
 	public final RoomUtil util = new RoomUtil();
 	private RoomInitData init = new RoomInitData(this).setType(null);
-	
-	
+
+
 	public final ROOM_STOCKPILE STOCKPILE = new ROOM_STOCKPILE(init, CATS.LOGISTICS);
 	public final ROOM_EXPORT EXPORT = new ROOM_EXPORT(init, CATS.LOGISTICS);
 	public final ROOM_IMPORT IMPORT = new ROOM_IMPORT(init, CATS.LOGISTICS);
@@ -154,12 +156,12 @@ public final class ROOMS extends TileMap.Resource {
 
 	public final ROOM_CANNIBAL CANNIBAL = new ROOM_CANNIBAL(init, CATS.MAIN_INDUSTRY.misc);
 	public final ROOM_WATER WATER = new ROOM_WATER(init, CATS.WATER);
-	
+
 	public final ROOM_STOCKADE STOCKADE = new ROOM_STOCKADE(init, CATS.LAW);
 	public final ROOM_GUARD GUARD = new ROOM_GUARD(init, CATS.LAW);
 	public final ROOM_PRISON PRISON = new ROOM_PRISON(init, CATS.LAW);
 	public final ROOM_EXECTUTION EXECUTION = new ROOM_EXECTUTION(init, CATS.LAW);
-	public final ROOM_SLAVER SLAVER = new ROOM_SLAVER(init, CATS.LAW);
+	public final ROOM_POLICE POLICE = new ROOM_POLICE(init, CATS.LAW);
 	public final ROOM_STOCKS STOCKS = new ROOM_STOCKS(init, CATS.LAW);
 	public final ROOM_COURT COURT = new ROOM_COURT(init, CATS.LAW);
 	public final THRONE THRONE = new THRONE(init, CATS.MAIN_INFRA.misc);
@@ -171,34 +173,36 @@ public final class ROOMS extends TileMap.Resource {
 
 	public final ROOM_HOSPITAL HOSPITAL = new ROOM_HOSPITAL(init, CATS.SER_HEALTH);
 	public final ROOM_INN INN = new ROOM_INN(init, CATS.ADMIN);
-	
+
 	public final ROOM_MONUMENTS MONUMENTS = new ROOM_MONUMENTS(init, CATS);
 
 	public final ROOM_BENCH BENCH = new ROOM_BENCH(init, CATS.DECOR);
-	
+
+	public final ResourceUnderflow resourceUnderflow = new ResourceUnderflow();
+
 	public final LIST<ROOM_POOL> POOLS = new RoomsCreator<ROOM_POOL>(init, "POOL",
 			CATS.WATER) {
-		
+
 		@Override
 		public ROOM_POOL create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
 			return new ROOM_POOL(index, data, key, cat);
 		}
 	}.all();
-	
+
 	public final LIST<ROOM_BARRACKS> BARRACKS = new RoomsCreator<ROOM_BARRACKS>(init, "BARRACKS",
 			CATS.MILITARY) {
-		
+
 		@Override
 		public ROOM_BARRACKS create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
 			return new ROOM_BARRACKS(index, data, key);
 		}
 	}.all();
-	
+
 	public final LIST<ROOM_ARCHERY> ARCHERIES = new RoomsCreator<ROOM_ARCHERY>(init, "ARCHERY",
 			CATS.MILITARY) {
-		
+
 		@Override
 		public ROOM_ARCHERY create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
@@ -209,7 +213,7 @@ public final class ROOMS extends TileMap.Resource {
 
 	public final LIST<ROOM_GATE> GATES = new RoomsCreator<ROOM_GATE>(init, ROOM_GATE.type,
 			CATS.MILITARY) {
-		
+
 		@Override
 		public ROOM_GATE create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
@@ -219,27 +223,27 @@ public final class ROOMS extends TileMap.Resource {
 
 	public final LIST<ROOM_ARTILLERY> ARTILLERY = new RoomsCreator<ROOM_ARTILLERY>(init, ROOM_ARTILLERY.type,
 			CATS.MILITARY) {
-		
+
 		@Override
 		public ROOM_ARTILLERY create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
 			return new ROOM_ARTILLERY(index, data, key, cat);
 		}
 	}.all();
-	
 
 
-	
+
+
 	public final LIST<ROOM_FISHERY> FISHERIES = new RoomsCreator<ROOM_FISHERY>(init, ROOM_FISHERY.type,
 			CATS.FISH) {
-		
+
 		@Override
 		public ROOM_FISHERY create(String key, RoomInitData data, RoomCategorySub cat, int index)
 				throws IOException {
 			return new ROOM_FISHERY(data, key, index, cat);
 		}
 	}.all();
-	
+
 	public final LIST<ROOM_MINE> MINES = new RoomsCreator<ROOM_MINE>(init, ROOM_MINE.type,
 			CATS.MINES) {
 		@Override
@@ -248,7 +252,7 @@ public final class ROOMS extends TileMap.Resource {
 			return new ROOM_MINE(data, key, index, cat);
 		}
 	}.all();
-	
+
 
 	public final LIST<ROOM_FARM> FARMS = new RoomsCreator<ROOM_FARM>(init, ROOM_FARM.type, CATS.FARMS) {
 
@@ -258,7 +262,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_ORCHARD> ORCHARDS = new RoomsCreator<ROOM_ORCHARD>(init, ROOM_ORCHARD.type, CATS.FARMS) {
 
 		@Override
@@ -276,7 +280,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_HUNTER> HUNTERS = new RoomsCreator<ROOM_HUNTER>(init, ROOM_HUNTER.type, CATS.MAIN_AGRIULTURE.misc) {
 
 		@Override
@@ -342,7 +346,7 @@ public final class ROOMS extends TileMap.Resource {
 	public final LIST<ROOM_SPECTATOR_HASER> ENTERTAINMENT = new ArrayList<ROOM_SPECTATOR_HASER>(0).join(SPEAKERS).join(STAGES).join(FIGHTPITS).join(GARENAS);
 
 	public final SFinderRoomService graveServiceSpots = new SFinderRoomService("mourn") {
-		
+
 		@Override
 		public FSERVICE get(int tx, int ty) {
 			RoomBlueprint p = ROOMS.this.map.blueprint.get(tx, ty);
@@ -361,7 +365,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_TOMB> TOMBS = new RoomsCreator<ROOM_TOMB>(init, "TOMB",
 			CATS.SER_DEATH) {
 
@@ -371,7 +375,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<GraveData.GRAVE_DATA_HOLDER> GRAVES = new ArrayList<GraveData.GRAVE_DATA_HOLDER>(0).join(GRAVEYARDS).join(TOMBS);
 
 	public final ROOM_TEMPLES TEMPLES = new ROOM_TEMPLES(this, init);
@@ -384,7 +388,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_EATERY> EATERIES = new RoomsCreator<ROOM_EATERY>(init, "EATERY", CATS.SER_CONSUMPTION) {
 
 		@Override
@@ -393,9 +397,9 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_SERVICE_ACCESS_HASER> FOOD = new ArrayList<ROOM_SERVICE_ACCESS_HASER>(0).join(CANTEENS).join(EATERIES);
-	
+
 	public final LIST<ROOM_TAVERN> TAVERNS = new RoomsCreator<ROOM_TAVERN>(init, "TAVERN", CATS.SER_CONSUMPTION) {
 
 		@Override
@@ -404,7 +408,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_BATH> BATHS = new RoomsCreator<ROOM_BATH>(init, "BATH", CATS.SER_HEALTH) {
 
 		@Override
@@ -413,7 +417,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_WELL> WELLS = new RoomsCreator<ROOM_WELL>(init, "WELL", CATS.SER_HEALTH) {
 
 		@Override
@@ -431,7 +435,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_PLEASURE> BROTHELS = new RoomsCreator<ROOM_PLEASURE>(init, ROOM_PLEASURE.TYPE, CATS.SER_ENTERTAIN) {
 
 		@Override
@@ -440,8 +444,8 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
-	public final LIST<ROOM_MARKET> MARKET = new RoomsCreator<ROOM_MARKET>(init, ROOM_MARKET.TYPE, CATS.SER_CONSUMPTION) {
+
+	public final LIST<ROOM_MARKET> MARKET = new RoomsCreator<ROOM_MARKET>(init, "MARKET", CATS.SER_CONSUMPTION) {
 
 		@Override
 		public ROOM_MARKET create(String key, RoomInitData data, RoomCategorySub cat, int index) throws IOException {
@@ -449,7 +453,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_LAVATORY> LAVATORIES = new RoomsCreator<ROOM_LAVATORY>(init, "LAVATORY", CATS.SER_HEALTH) {
 
 		@Override
@@ -458,7 +462,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_PHYSICIAN> PHYSICIANS = new RoomsCreator<ROOM_PHYSICIAN>(init, "PHYSICIAN", CATS.SER_HEALTH) {
 
 		@Override
@@ -467,14 +471,14 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 //	public final LIST<ROOM_SERVICE_ACCESS_HASER> HYGINE = new ArrayList<ROOM_SERVICE_ACCESS_HASER>().join(BATHS).join(WELLS);
 //	public final LIST<ROOM_SERVICE_ACCESS_HASER> EAT = new ArrayList<ROOM_SERVICE_ACCESS_HASER>().join(EATERIES).join(CANTEENS);
 //	public final LIST<ROOM_SERVICE_ACCESS_HASER> DRINK = new ArrayList<ROOM_SERVICE_ACCESS_HASER>().join(TAVERNS);
 //	public final LIST<ROOM_SERVICE_ACCESS_HASER> ENTERTAINMENT = new ArrayList<ROOM_SERVICE_ACCESS_HASER>(0)
 //			.join(SPEAKERS).join(STAGES).join(ARENAS).join(GARENAS);
 
-	
+
 	public final LIST<ROOM_LABORATORY> LABORATORIES = new RoomsCreator<ROOM_LABORATORY>(init, ROOM_LABORATORY.type, CATS.ADMIN) {
 
 		@Override
@@ -483,7 +487,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_LIBRARY> LIBRARIES = new RoomsCreator<ROOM_LIBRARY>(init, ROOM_LIBRARY.type, CATS.ADMIN) {
 
 		@Override
@@ -492,8 +496,8 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
-	public final LIST<ROOM_SCHOOL> SCHOOLS = new RoomsCreator<ROOM_SCHOOL>(init, "SCHOOL", CATS.ADMIN) {
+
+	public final LIST<ROOM_SCHOOL> SCHOOLS = new RoomsCreator<ROOM_SCHOOL>(init, "SCHOOL", CATS.BREEDING) {
 
 		@Override
 		public ROOM_SCHOOL create(String key, RoomInitData data, RoomCategorySub cat, int index) throws IOException {
@@ -517,7 +521,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_ADMIN> ADMINS = new RoomsCreator<ROOM_ADMIN>(init, ROOM_ADMIN.type, CATS.ADMIN) {
 
 		@Override
@@ -526,7 +530,7 @@ public final class ROOMS extends TileMap.Resource {
 		}
 
 	}.all();
-	
+
 	public final LIST<ROOM_NURSERY> NURSERIES = new RoomsCreator<ROOM_NURSERY>(init, "NURSERY", CATS.BREEDING) {
 
 		@Override
@@ -536,37 +540,46 @@ public final class ROOMS extends TileMap.Resource {
 
 	}.all();
 
+	public final LIST<ROOM_BREEDER> BREEDERS = new RoomsCreator<ROOM_BREEDER>(init, "BREEDER", CATS.BREEDING) {
+
+		@Override
+		public ROOM_BREEDER create(String key, RoomInitData data, RoomCategorySub cat, int index) throws IOException {
+			return new ROOM_BREEDER(index, data, cat, key);
+		}
+
+	}.all();
+
 	public final RoomEmployments employment;
-	
+
 	public final int AMOUNT_OF_BLUEPRINTS = RoomBlueprint.ALL.size();
 
-	
+
 	public final BonusExperience exp;
-	
+
 	static ROOMSLookup lookup;
-	
+
 	public final RBonus bonus;
-	
+
 	public final RoomIndustries industries;
-	
+
 	public final RoomProduction PROD;
-	
+
 	public final RMAPS<RoomBlueprint> collection = new RMAPS<RoomBlueprint>("ROOM", RoomBlueprint.ALL);
-	
-	
+
+
 	public ROOMS() throws IOException {
-		
+
 		industries = new RoomIndustries(this);
-		
+
 		int am = 0;
 		for (RoomBlueprint b : all()) {
 			if (b instanceof INDUSTRY_HASER) {
 				INDUSTRY_HASER h = (INDUSTRY_HASER) b;
 				am += h.industries().size();
 			}
-				
+
 		}
-		
+
 		ArrayList<Industry> hh = new ArrayList<>(am);
 		for (RoomBlueprint b : all()) {
 			if (b instanceof INDUSTRY_HASER) {
@@ -574,7 +587,7 @@ public final class ROOMS extends TileMap.Resource {
 				for (Industry i : h.industries())
 					hh.add(i);
 			}
-				
+
 		}
 		lookup = new ROOMSLookup(this);
 		employment = new RoomEmployments(this);
@@ -596,9 +609,8 @@ public final class ROOMS extends TileMap.Resource {
 		map.saver.save(file);
 		extraBit.save(file);
 		updater.save(file);
+		resourceUnderflow.save(file);
 
-		
-		
 		file.i(RoomBlueprint.ALL.size());
 		for (RoomBlueprint p : RoomBlueprint.ALL) {
 			file.chars(p.key());
@@ -607,7 +619,7 @@ public final class ROOMS extends TileMap.Resource {
 			p.save(file);
 			file.setAtPosition(pos, file.getPosition()-pos-4);
 		}
-		
+
 		employment.saver.save(file);
 		((RoomResource)stats).save(file);
 		exp.save(file);
@@ -621,23 +633,23 @@ public final class ROOMS extends TileMap.Resource {
 		map.saver.load(file);
 		extraBit.load(file);
 		updater.load(file);
+		resourceUnderflow.load(file);
 
-		
-		
+
 		int am = file.i();
-		
+
 		for (int i = 0; i < am; i++) {
 			String key = file.chars();
 			int le = file.i();
 			int pos = file.getPosition();
 			RoomBlueprint p = collection.tryGet(key);
-			
+
 			if (p == null) {
 				LOG.ln("skipping " + key);
 				file.setPosition(pos+le);
 			}else {
 				p.load(file);
-				
+
 				if (file.getPosition()-le != pos) {
 					LOG.ln("room save corrupt: " + key);
 					file.setPosition(pos+le);
@@ -645,7 +657,7 @@ public final class ROOMS extends TileMap.Resource {
 				}
 			}
 		}
-		
+
 		employment.saver.load(file);
 		((RoomResource)stats).load(file);
 		exp.load(file);
@@ -654,12 +666,12 @@ public final class ROOMS extends TileMap.Resource {
 
 	@Override
 	protected void clearAll() {
-		
+
 		pData.clear();
 		fData.saver.clear();
 		map.saver.clear();
 		extraBit.clear();
-
+		resourceUnderflow.clear();
 		employment.saver.clear();
 
 		for (RoomBlueprint p : RoomBlueprint.ALL)
@@ -728,8 +740,10 @@ public final class ROOMS extends TileMap.Resource {
 	protected void update(double ds, Profiler profiler) {
 		profiler.logStart(RoomBlueprint.class);
 		for (RoomBlueprint b : RoomBlueprint.ALL) {
+			profiler.logStart(b.getClass());
 			b.update(ds);
-			
+			profiler.logEnd(b.getClass());
+
 		}
 		profiler.logEnd(RoomBlueprint.class);
 		profiler.logStart(RoomEmployments.class);
@@ -745,9 +759,9 @@ public final class ROOMS extends TileMap.Resource {
 			return map.get(t).getAvailability(t);
 		return null;
 	}
-	
+
 	public SMinimapGetter miniC = new SMinimapGetter() {
-		
+
 		@Override
 		public COLOR miniColorPimped(ColorImp origional, int tx, int ty, boolean northern, boolean southern) {
 			Room r = map.getRaw(tx, ty);
@@ -755,7 +769,7 @@ public final class ROOMS extends TileMap.Resource {
 				return r.blueprint().miniCPimped(origional, tx, ty, northern, southern);
 			return origional;
 		}
-		
+
 		@Override
 		public COLOR miniC(int tx, int ty) {
 			Room r = map.getRaw(tx, ty);
@@ -768,32 +782,32 @@ public final class ROOMS extends TileMap.Resource {
 	public LIST<RoomBlueprint> all() {
 		return RoomBlueprint.ALL;
 	}
-	
+
 	public LIST<RoomBlueprintImp> imps() {
 		return RoomBlueprintImp.IMPS;
 	}
-	
+
 	public LIST<RoomBlueprintIns<?>> ins() {
 		return RoomBlueprintIns.INS;
 	}
-	
+
 	@Override
 	protected void afterTick() {
 		isolation.update();
 	}
-	
+
 	public TmpArea tmpArea(Object user) {
 		tmpArea.init(user);
 		return tmpArea;
 	}
-	
+
 	final static class ROOMSLookup {
 
 		final KeyMap<RoomBlueprintImp> look = new KeyMap<>();
 		final KeyMap<LinkedList<RoomBlueprintImp>> cats = new KeyMap<>();
-		
+
 		ROOMSLookup(ROOMS rooms) {
-			
+
 			for (RoomBlueprintImp bi : rooms.imps()) {
 				look.put(bi.key, bi);
 				if (bi.type == null)
@@ -802,10 +816,10 @@ public final class ROOMS extends TileMap.Resource {
 					cats.put(bi.type, new LinkedList<>());
 				cats.get(bi.type).add(bi);
 			}
-			
+
 		}
 	}
-	
+
 	public static abstract class RoomResource{
 
 		protected abstract void save(FilePutter file);
@@ -813,31 +827,31 @@ public final class ROOMS extends TileMap.Resource {
 		protected abstract void load(FileGetter file) throws IOException;
 
 		protected abstract void clear();
-		
+
 		protected abstract void update(double ds);
-		
-		
+
+
 	}
-	
+
 	public static final class RBonus {
 
-		
+
 		public final LIST<RoomBlueprintImp> all;
 		private final RoomBlueprintImp[] map = new RoomBlueprintImp[BOOSTING.ALL().size()];
 		{
-			
+
 		}
-		
+
 		public RoomBlueprintImp get(Boostable bo) {
 			if (bo.index() >= map.length)
 				return null;
 			return map[bo.index()];
-			
+
 		}
-		
+
 		RBonus(LIST<RoomBlueprint> rooms){
 			LinkedList<RoomBlueprintImp> all = new LinkedList<>();
-			
+
 			for (RoomBlueprint p : rooms) {
 				if (p instanceof RoomBlueprintImp) {
 					RoomBlueprintImp b = (RoomBlueprintImp) p;
@@ -849,7 +863,7 @@ public final class ROOMS extends TileMap.Resource {
 			}
 			this.all = new ArrayList<RoomBlueprintImp>(all);
 		}
-		
+
 	}
-	
+
 }

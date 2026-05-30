@@ -3,22 +3,13 @@ package world.region.building;
 import java.util.Arrays;
 
 import game.battle.div.Div;
-import game.boosting.BOOSTABLE_O;
-import game.boosting.BOOSTING;
-import game.boosting.BSourceInfo;
-import game.boosting.BUtil;
-import game.boosting.BValue;
-import game.boosting.BoostSpec;
-import game.boosting.BoostSpecs;
-import game.boosting.Boostable;
-import game.boosting.BoostableCat;
-import game.boosting.Booster;
-import game.boosting.BoosterImp;
+import game.boosting.*;
 import game.faction.FACTIONS;
 import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.player.Player;
 import init.sprite.UI.UI;
+import init.type.HCLASS_RACE;
 import init.value.GVALUES;
 import init.value.Lock;
 import lombok.Getter;
@@ -276,7 +267,7 @@ public final class RDBuilding implements MAPPED{
 					new Creator.Bo(new BSourceInfo(c.info.name, c.bo.icon), 0, 1, true) {
 
 						@Override
-						double get(Region reg) {
+						public double get(Region reg) {
 							return c.eff(reg);
 						};
 
@@ -503,6 +494,10 @@ public final class RDBuilding implements MAPPED{
 
 			if (global && t.realm() != null) {
 				int ll = bu.level.get(t);
+				if (tos(ll) > 0 && b.boostable == BOOSTABLES.CIVICS().GOV) {
+					return g(t);
+				}
+
 				int l = RD.BUILDINGS().tmp().level(bu, t);
 				if (ll != l) {
 					return vGet(t.faction()) - (tos(ll)-froms(ll)) + (tos(l)-froms(l));
@@ -517,6 +512,27 @@ public final class RDBuilding implements MAPPED{
 		public double vGet(Faction f) {
 			if (f == null)
 				return 0;
+
+			if (!global) {
+				double res = b.booster.isMul ? 1 : 0;
+
+				for (Region region : f.realm().all()) {
+					if (region.capitol()) {
+						continue;
+					}
+
+					double value = vGet(region);
+
+					if (b.booster.isMul) {
+						res *= value;
+					} else {
+						res += value;
+					}
+				}
+
+				return res;
+			}
+
 			double res = 0;
 			for (int i = 1; i < boosters.length; i++) {
 				double am = bu.levelAm.get(i-1).get(f);
@@ -541,7 +557,7 @@ public final class RDBuilding implements MAPPED{
 		}
 
 		@Override
-		public double vGet(PopTime t) {
+		public double vGet(HCLASS_RACE t) {
 			return vGet(FACTIONS.player());
 		}
 
@@ -568,18 +584,33 @@ public final class RDBuilding implements MAPPED{
 		}
 
 		private double g(Region t) {
-			double ta = tos(RD.BUILDINGS().tmp().level(bu, t));
-			if (!b.booster.isMul && ta < 0 && !MagicStringChecker.isResourceProductionBooster(b.boostable.key))
-				return ta;
-			int i = RD.BUILDINGS().tmp().level(bu, t);
-			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
-				return bu.efficiency.get(t) * gs(i, t);
+			int level = RD.BUILDINGS().tmp().level(bu, t);
+			double toAtLevel = tos(level);
+
+			if (toAtLevel < 0 && MagicStringChecker.isResourceProductionBooster(b.boostable.key)) {
+				return gs(level, t);
 			}
-			double vv = tos(i);
-			if (b.booster.isMul || vv > 0) {
-				return froms(i) + bu.efficiency.get(t)*(tos(i)-froms(i));
+
+			if (!b.booster.isMul && toAtLevel < 0)
+				return toAtLevel;
+
+			// Prevents negative multiplier from needing efficiency (Workforce *0 from estate)
+			if (b.booster.isMul && toAtLevel <= 1) {
+				return toAtLevel;
 			}
-			return vv;
+
+			if(MagicStringChecker.isResourceProductionBooster(b.boostable.key)
+					|| MagicStringChecker.isResourceConsumptionBooster(b.boostable.key)
+					|| MagicStringChecker.isResourceLogisticsBooster(b.boostable.key)
+				|| b.boostable == BOOSTABLES.CIVICS().DIPLOMACY
+				|| (b.boostable == BOOSTABLES.CIVICS().GOV && toAtLevel > 0)
+				|| MagicStringChecker.isTech(b.boostable.key)) {
+				return bu.efficiency.get(t) * gs(level, t);
+			}
+			if (b.booster.isMul || toAtLevel > 0) {
+				return froms(level) + bu.efficiency.get(t)*(tos(level)-froms(level));
+			}
+			return toAtLevel;
 
 		}
 
@@ -598,6 +629,11 @@ public final class RDBuilding implements MAPPED{
 				double am = tos(current) - tos(level);
 				if (am <= 0)
 					return true;
+
+				if (b.boostable == BOOSTABLES.CIVICS().GOV && reg.faction() != null) {
+					return am <= b.boostable.get(reg.faction());
+				}
+
 				return am <= b.boostable.get(reg);
 			}
 			return true;

@@ -3,10 +3,11 @@ package prplegoo.regions.api.region.rd;
 import game.faction.FACTIONS;
 import game.faction.FResources;
 import game.faction.Faction;
-import game.faction.trade.ITYPE;
 import game.time.TIME;
 import init.resources.RESOURCE;
 import init.resources.RESOURCES;
+import init.trade.TR;
+import init.trade.TRADE_TYPE;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDDeficitData;
 import settlement.room.industry.module.Industry;
@@ -119,11 +120,11 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
                 Region caravanDestination = findRandomRegionConsuming(resource);
                 if (caravanDestination != null) {
                     if (!caravanByRegionIndex.containsKey(caravanDestination.index())) {
-                        caravanByRegionIndex.put(caravanDestination.index(), WORLD.ENTITIES().caravans.createActualDest(player.capitolRegion(), caravanDestination, ITYPE.tax));
+                        caravanByRegionIndex.put(caravanDestination.index(), WORLD.ENTITIES().caravans.createActualDest(player.capitolRegion(), caravanDestination, TRADE_TYPE.tax));
                     }
 
                     Shipment caravan = caravanByRegionIndex.get(caravanDestination.index());
-                    caravan.loadAlreadyReserved(resource, toResolve);
+                    caravan.load(resource.tr(), toResolve);
                 }
 
                 player.res().dec(resource, FResources.RTYPE.TAX, toResolve);
@@ -148,7 +149,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
                 continue;
             }
 
-            if (RD.OUTPUT().get(resource).boost.get(region) < 0) {
+            if (RD.OUTPUT().get(TR.get(resource)).boost.get(region) < 0) {
                 return region;
             }
         }

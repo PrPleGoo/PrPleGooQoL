@@ -1,3 +1,4 @@
+__OVERWRITE: true,
 ORDER: 2,
 AI_BUILDS: false,
 LEVELS: [

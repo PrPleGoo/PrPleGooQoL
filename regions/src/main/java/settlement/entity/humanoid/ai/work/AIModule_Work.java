@@ -18,6 +18,7 @@ import settlement.main.SETT;
 import settlement.room.food.farm.ROOM_FARM;
 import settlement.room.food.fish.ROOM_FISHERY;
 import settlement.room.food.hunter.ROOM_HUNTER;
+import settlement.room.infra.stockpile.ROOM_STOCKPILE;
 import settlement.room.main.RoomBlueprint;
 import settlement.room.main.RoomBlueprintIns;
 import settlement.room.main.RoomInstance;
@@ -33,36 +34,28 @@ import util.text.D;
 
 public final class AIModule_Work extends AIModule{
 
+	public static int MAX_FETCH_DISTANCE = 250;
+	public static int MAX_FETCH_AMOUNT = ROOM_STOCKPILE.MIN_CARRY-1;
 
 	private final PlanBlueprint[] map = new PlanBlueprint[ROOMS().all().size()];
-	
+
 	private final AIPLAN hangArround = new PlanHangArround("workHang");
-	
+
 	final PlanOddjobber oddjobber = new PlanOddjobber("workOdd");
 	private final PlanFetchEquip equip = new PlanFetchEquip("workEquip");
-	
+
 	private static CharSequence ¤¤name = "Work";
 	private static CharSequence ¤¤desc = "Spend time working";
 	static {
 		D.ts(AIModule_Work.class);
 	}
-	
+
 	public AIModule_Work(){
 		super(UI.icons().s.hammer, ¤¤name, ¤¤desc);
 		Works w = new WorkAbs.Works();
 
-		if (false) {
-			// scrap the priorities. Use work groups. Make work groups a priority list. Keep track of work groups and employees and their priority.
-			//use master prio to set employee caps. To find a workplace, iterate all industries, and find the higest prio. If full, see if you can kick out any low prio workers.
-		}
-		
 		for (ROOM_FARM  b : ROOMS().FARMS) {
-			new WorkAbs(this, b, map, w) {
-				@Override
-				public boolean shouldReportWorkFailure(Humanoid a, AIManager d) {
-					return b.shouldReportWorkFailure();
-				}
-			};
+			new WorkFarmer(this, b, map, w);
 		}
 		new WorkAbs(this, ROOMS().WOOD_CUTTER, map, w);
 		for (RoomBlueprintIns<?> b : ROOMS().MINES)
@@ -86,11 +79,9 @@ public final class AIModule_Work extends AIModule{
 		for (ROOM_PLEASURE h : SETT.ROOMS().BROTHELS)
 			new WorkHooker(h, this, map);
 		new WorkCannibal(this, map);
-		new WorkGuard(this, map);
-		new WorkExecutioner(this, map);
 		new WorkJudge(this, map);
 		new WorkBuilder(this, map);
-		new WorkSlaver(this, map);
+		new WorkPolice(this, map, w);
 		new WorkTransporter(this, map, w);
 		new WorkTransporterSupply(this, map, w);
 		new PrPleGooWorkTransporterLogistics(this, map, w);
@@ -130,18 +121,18 @@ public final class AIModule_Work extends AIModule{
 
 		for (RoomBlueprintIns<?> p : ROOMS().SPEAKERS)
 			WorkOrator.getSpeaker(this, p, map);
-		
+
 		for (RoomBlueprintIns<?> p : ROOMS().STAGES)
 			WorkOrator.getDancer(this, p, map);
-	
+
 		for (ROOM_FIGHTPIT b : SETT.ROOMS().FIGHTPITS) {
 			new WorkGladiator(b.work, b, this, map);
 		}
-		
+
 		for (ROOM_ARENA b : SETT.ROOMS().GARENAS) {
 			new WorkGladiator(b.work, b, this, map);
 		}
-		
+
 		for (RoomBlueprint b : SETT.ROOMS().all()) {
 			if ( b instanceof RoomBlueprintIns<?>) {
 				RoomBlueprintIns<?> p = (RoomBlueprintIns<?>) b;
@@ -149,20 +140,20 @@ public final class AIModule_Work extends AIModule{
 					new WorkAbs(this, p, map, w);
 			}
 		}
-		
 
-		
+
+
 //		new RoomWorker(ROOMS().CONSTRUCTION.jobTitle, ROOMS().CONSTRUCTION);
 
-		
+
 	}
-	
 
-	
-	
 
-	
-	
+
+
+
+
+
 	@Override
 	public AiPlanActivation getPlan(Humanoid a, AIManager d) {
 		AIModules.data().byte2.set(d, 0);
@@ -180,47 +171,47 @@ public final class AIModule_Work extends AIModule{
 		if (b == null) {
 			throw new RuntimeException(""+work(a).blueprintI().info.name);
 		}
-		
+
 		{
 			AiPlanActivation p = equip.activate(a, d);
 			if (p != null)
 				return p;
 		}
-		
-		
+
+
 		AiPlanActivation p = b.activate(a, d);
 		if (p == null) {
-			
-			
+
+
 			if (b.shouldReportWorkFailure(a, d))
 				AIModules.data().byte2.set(d, 1);
 			if (PlanOddjobber.hasOddjob(a, false) && GAME.ARMIES().enemy().men() == 0) {
 				p = oddjobber.activateHelpOut(a, d);
 				if (p != null)
 					return p;
-				
+
 			}
 			if (p == null) {
 				return hangArround.activate(a, d);
 			}
-			
+
 		}else {
 			AIModules.data().byte2.set(d, 2);
 		}
-		
+
 		return p;
 	}
-	
+
 	public void swapInstance(Humanoid a) {
 		swapper.swap(a);
 	}
-	
-	
+
+
 	@Override
 	protected void update(Humanoid a, AIManager d, boolean newDay, int byteDelta, int upI) {
-		
+
 	}
-	
+
 	@Override
 	protected void finish(Humanoid a, AIManager d) {
 		int i = AIModules.data().byte2.get(d);
@@ -234,28 +225,28 @@ public final class AIModule_Work extends AIModule{
 
 	@Override
 	public int getPriority(Humanoid a, AIManager d) {
-		
+
 		if (work(a) == null && !ROOMS().employment.hasWork(a)) {
 			if (GAME.ARMIES().enemy().men() > 0)
 				return 0;
 			if (!PlanOddjobber.hasOddjob(a, true))
 				return 0;
-			
+
 		}
 		if (GAME.events().riot.onStrike(a))
 			return 0;
-		
+
 		if (STATS.WORK().getWorkPriority(a) > 0) {
 			return 5;
 		}
-		
+
 		return 0;
 	}
-	
+
 	public int getPriority(Humanoid a) {
 		return getPriority(a, (AIManager) a.ai());
 	}
-	
+
 	private static RoomInstance work(Humanoid a) {
 		return STATS.WORK().EMPLOYED.get(a.indu());
 	}
@@ -263,18 +254,18 @@ public final class AIModule_Work extends AIModule{
 	private final Swapper swapper = new Swapper();
 	private boolean validateEmployment(Humanoid a, AIManager d) {
 		ROOMS().employment.setWork(a);
-	
-		
-		
+
+
+
 		if(work(a) != null && work(a).acceptsWork() && map[work(a).blueprint().index()] != null) {
-			
+
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isLawEnforcement(Humanoid a, AIManager d) {
-		return a.indu().hType() == HTYPES.RECRUIT() || (work(a) != null && (map[work(a).blueprint().index()] instanceof WorkGuard));
+		return a.indu().hType() == HTYPES.RECRUIT() || (a.indu().hType() == HTYPES.GUARD());
 	}
 
 	public static double getTransportAmount(Humanoid a) {
@@ -285,69 +276,69 @@ public final class AIModule_Work extends AIModule{
 		}
 		return -1;
 	}
-	
+
 	private static class Swapper {
-		
+
 		private W[] misplaced = new W[SETT.ROOMS().employment.ALLS().size()];
-		
+
 		Swapper(){
 			for (RoomEmploymentSimple s : SETT.ROOMS().employment.ALLS()) {
 				misplaced[s.eindex()] = new W(s);
 			}
 		}
-		
+
 		private void swap(Humanoid h) {
 			final RoomInstance w = work(h);
-			
+
 			WGROUP group = group(h);
 			double p = stayPriority(group, w);
 			if (p >= 1)
 				return;
-			
+
 			W wer = misplaced[w.blueprintI().employment().eindex()];
-			
-			
-			
+
+
+
 			{
-				
-				
+
+
 				RoomInstance w2 = updateBestRoom(wer, group);
-				
+
 				if (w2 != null && w != w2 && stayPriority(group, w2) > p) {
 					STATS.WORK().EMPLOYED.set(h, w2);
 					return;
 				}
-				
+
 			}
-			
+
 			{
 				Humanoid h2 = wer.get(group);
 				if (h2 != null) {
 					RoomInstance w2 = work(h2);
 					if (w != w2) {
-						
+
 						double swap = stayPriority(group, w2) + stayPriority(group(h2), w);
 						swap -=  stayPriority(group, w) + stayPriority(group(h2), w2);
-						
+
 						if (swap > 0) {
 							h2.interrupt();
-							
-							
-							
-							
-							
+
+
+
+
+
 							STATS.WORK().EMPLOYED.set(h2, w);
 							STATS.WORK().EMPLOYED.set(h, w2);
 							wer.set(null, group);
 							return;
 						}
-						
-						
-						
+
+
+
 					}
 				}
 			}
-			
+
 			for (int i = 0; i < WGROUP.all().size(); i++) {
 				WGROUP g = WGROUP.all().get(i);
 				if (group == g)
@@ -362,22 +353,22 @@ public final class AIModule_Work extends AIModule{
 					}else if(p == p2 && RND.oneIn(w.blueprintI().employment().employed())) {
 						wer.set(h, g);
 					}
-				}					
+				}
 			}
 		}
-		
+
 		private RoomInstance updateBestRoom(W wer, WGROUP group) {
-			
+
 			if (wer.roomCounts[group.index] >= wer.emp.blueprint().instancesSize()) {
 				wer.roomCounts[group.index] = 0;
 			}
 			RoomInstance nextBestWork = getEmployableRoom(wer.emp.blueprint(), wer.roomCounts[group.index]);
 			wer.roomCounts[group.index]++;
-			
+
 			RoomInstance currentBestWork = getEmployableRoom(wer.emp.blueprint(), wer.currentRoom[group.index]);
-			
+
 			if (nextBestWork != null) {
-				
+
 				if (currentBestWork == null) {
 					wer.currentRoom[group.index] = wer.roomCounts[group.index];
 					currentBestWork = nextBestWork;
@@ -390,10 +381,10 @@ public final class AIModule_Work extends AIModule{
 					}
 				}
 			}
-			
+
 			return currentBestWork;
 		}
-		
+
 		private RoomInstance getEmployableRoom(RoomBlueprintIns<?> current, int ri) {
 			if (ri < current.instancesSize()) {
 				RoomInstance ins = current.getInstance(ri);
@@ -403,28 +394,28 @@ public final class AIModule_Work extends AIModule{
 			}
 			return null;
 		}
-		
+
 		public double stayPriority(WGROUP group, RoomInstance work) {
 			if (work == null)
 				return 1.0;
-			
+
 			if (work.employees().preffered().is(group))
 				return 1.0;
 			return 0.5*group.race.pref().structure(BUILDING_PREFS.get(work.mX(), work.mY()));
 		}
-		
-		
+
+
 		private static class W {
-			
+
 			public final RoomEmploymentSimple emp;
 			private Humanoid[] as = new Humanoid[WGROUP.all().size()];
 			private int[] roomCounts = new int[WGROUP.all().size()];
 			private int[] currentRoom = new int[WGROUP.all().size()];
-			
+
 			W(RoomEmploymentSimple emp){
 				this.emp = emp;
 			}
-			
+
 			public Humanoid get(WGROUP g) {
 				Humanoid a = as[g.index];
 				if (a != null) {
@@ -437,19 +428,19 @@ public final class AIModule_Work extends AIModule{
 				}
 				return null;
 			}
-			
+
 			private void set(Humanoid h, WGROUP g) {
 				as[g.index] = h;
 			}
-			
+
 		}
-		
+
 		private static WGROUP group(Humanoid h) {
 			return WGROUP.get(h) == null ? WGROUP.get(HTYPES.SUBJECT() , h.race()): WGROUP.get(h);
 		}
-		
-		
+
+
 	}
-	
+
 
 }

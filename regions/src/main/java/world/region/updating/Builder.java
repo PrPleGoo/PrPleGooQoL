@@ -9,7 +9,7 @@ import game.faction.npc.FactionNPC;
 import init.race.RACES;
 import init.race.Race;
 import init.religion.Religion;
-import init.resources.RESOURCE;
+import init.trade.TRADABLE;
 import settlement.stats.STATS;
 import snake2d.util.misc.CLAMP;
 import snake2d.util.sets.ArrayListGrower;
@@ -23,6 +23,7 @@ import world.region.RDOutputs.RDResource;
 import world.region.RDReligions.RDReligion;
 import world.region.building.RDBuilding;
 import world.region.pop.RDEdicts;
+import world.region.pop.RDEdicts.RDRaceEdict;
 import world.region.pop.RDRace;
 
 final class Builder {
@@ -484,7 +485,7 @@ final class Builder {
 		}
 
 		@Override
-		public double priority(RESOURCE res, Region reg) {
+		public double priority(TRADABLE res, Region reg) {
 			return 1.0;
 		}
 

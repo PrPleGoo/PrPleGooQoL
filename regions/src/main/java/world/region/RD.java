@@ -26,6 +26,7 @@ import util.data.DataO;
 import util.text.D;
 import view.tool.PLACABLE;
 import view.tool.ToolManager;
+import view.world.panel.IDebugPanelWorld;
 import world.WORLD;
 import world.WORLD.WorldError;
 import world.WORLD.WorldResource;
@@ -39,9 +40,9 @@ import world.region.pop.RDRace;
 import world.region.pop.RDRaces;
 import world.region.updating.RDUpdater;
 
-public class RD extends WorldResource {
+public class RD extends WorldResource{
 
-	public static RD self;
+    public static RD self;
 
 
     private final RDBuildings buildings;
@@ -65,6 +66,7 @@ public class RD extends WorldResource {
     private final RDUpgrades upgrades;
     private final RDEstates estates;
     private final RDLogistics logistics;
+    private final RDProblem problem;
     private RDUpdater updater;
 
     private final long[][] regionData;
@@ -74,7 +76,7 @@ public class RD extends WorldResource {
 
 
     //	final RegData[] dreg = new RegData[WREGIONS.MAX];
-	final Realm[] drea = new Realm[FACTIONS.MAX()];
+    final Realm[] drea = new Realm[FACTIONS.MAX()];
     private final RDInit init = new RDInit();
 
     private static CharSequence ¤¤regChange = "{0} changes master from {1} to {2}.";
@@ -101,6 +103,7 @@ public class RD extends WorldResource {
         deva = new RDDevastation(init);
         event = new RDEvent(init);
         prospects = new RDProspects(init);
+        problem = new RDProblem();
 
         slavery = new RDSlavery();
         schoolScience = new RDSchoolScience();
@@ -113,7 +116,7 @@ public class RD extends WorldResource {
         Arrays.fill(factionI, -1);
 
         regionData = new long[WREGIONS.MAX][init.count.longCount()];
-		factionData = new long[FACTIONS.MAX()][init.rCount.longCount()];
+        factionData = new long[FACTIONS.MAX()][init.rCount.longCount()];
         for (int i = 0; i < drea.length; i++)
             drea[i] = new Realm(i);
 
@@ -122,9 +125,26 @@ public class RD extends WorldResource {
             @Override
             public void exe() {
                 buildings.init(init);
-                races.init();
                 updater = new RDUpdater(init);
+                races.init();
 
+            }
+        });
+
+        IDebugPanelWorld.add("INIT_REGIONS", new ACTION() {
+
+            @Override
+            public void exe() {
+                for (Region r : REGIONS().active()) {
+
+                    for (int i = 0; i < 2; i++) {
+                        RD.UPDATER().BUILD(r);
+                        for (RDUpdatable up : init.upers) {
+                            up.init(r);
+                        }
+                    }
+
+                }
             }
         });
 
@@ -184,7 +204,7 @@ public class RD extends WorldResource {
             Arrays.fill(factionI, -1);
 
             for (SAVABLE s : init.savable)
-				s.clear();;
+                s.clear();;
             updater.saver.clear();
             WORLD.MINIMAP().repaint();
         }
@@ -192,7 +212,7 @@ public class RD extends WorldResource {
         @Override
         public LIST<PLACABLE> makePlacers(ToolManager tm) {
             return new Placers();
-		};
+        };
 
         @Override
         public void generate(ACTION loadPrint) {
@@ -203,7 +223,7 @@ public class RD extends WorldResource {
             loadPrint.exe();
             prime();
             loadPrint.exe();
-		};
+        };
 
         @Override
         public void validateInit(WorldError error) {
@@ -221,7 +241,7 @@ public class RD extends WorldResource {
                 error.warning = "No factions have been set";
 
 
-		};
+        };
     };
 
     public void prime() {
@@ -275,7 +295,7 @@ public class RD extends WorldResource {
     }
 
     @Override
-	public void update(double ds, Profiler prof) {
+    public void update(double ds, Profiler prof) {
         prof.logStart(this);
 
         updater.update(ds);
@@ -376,6 +396,11 @@ public class RD extends WorldResource {
         return self.prospects;
     }
 
+    public static RDProblem PROBLEM() {
+        return self.problem;
+    }
+
+
     public static RDEvent event(){
         return self.event;
     }
@@ -436,9 +461,9 @@ public class RD extends WorldResource {
         self.factionI[region.index()] = -1;
 
         rr.regions.removeShort((short) region.index());
-        if (rr.capitolI == region.index()) {
+        if(rr.capitolI == region.index()) {
             if (rr.regions.size() > 0)
-                rr.capitolI = (short) rr.regions.get(rr.regions.size() - 1);
+                rr.capitolI = (short) rr.regions.get(rr.regions.size()-1);
             else
                 rr.capitolI = -1;
         }
@@ -452,7 +477,7 @@ public class RD extends WorldResource {
         if (f != null && REALM(f) == oldRealm)
             return;
 
-        RD.OWNER().ownerI.set(region, (RD.OWNER().ownerI.get(region) + 1) % RD.OWNER().ownerI.max(region));
+        RD.OWNER().ownerI.set(region, (RD.OWNER().ownerI.get(region)+1)%RD.OWNER().ownerI.max(region));
 
         final Faction fold = region.faction();
 
@@ -463,7 +488,7 @@ public class RD extends WorldResource {
             if (rr.regions.hasRoom()) {
                 self.factionI[region.index()] = f.index();
 
-                rr.regions.add((short) region.index());
+                rr.regions.add((short)region.index());
 
                 if (rr.capitolI == -1)
                     rr.capitolI = (short) region.index();
@@ -472,7 +497,7 @@ public class RD extends WorldResource {
             f.realm().ferArea = 0;
             for (int ri = 0; ri < f.realm().regions(); ri++) {
                 Region r = WORLD.REGIONS().all().get(ri);
-				f.realm().ferArea += r.info.area()*r.info.moisture();
+                f.realm().ferArea += r.info.area()*r.info.moisture();
             }
         }
 
@@ -480,14 +505,14 @@ public class RD extends WorldResource {
             fold.realm().ferArea = 0;
             for (int ri = 0; ri < fold.realm().regions(); ri++) {
                 Region r = WORLD.REGIONS().all().get(ri);
-				fold.realm().ferArea += r.info.area()*r.info.moisture();
+                fold.realm().ferArea += r.info.area()*r.info.moisture();
             }
         }
 
         WORLD.MINIMAP().updateRegion(region);
 
 
-        RDOwnerChanger.changeI++;
+        RDOwnerChanger.changeI ++;
         for (RDOwnerChanger ch : RDOwnerChanger.ownerChanges) {
             ch.change(region, fold, f);
         }
@@ -509,7 +534,7 @@ public class RD extends WorldResource {
     }
 
     public static void clearFaction(FactionNPC faction) {
-        while (faction.realm().regions() > 0)
+        while(faction.realm().regions() > 0)
             setFaction(faction.realm().region(0), null, false);
     }
 
@@ -557,5 +582,7 @@ public class RD extends WorldResource {
 
         public abstract void change(Region reg, Faction oldOwner, Faction newOwner);
     }
+
+
 
 }

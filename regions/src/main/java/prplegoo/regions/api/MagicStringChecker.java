@@ -2,7 +2,7 @@ package prplegoo.regions.api;
 
 public class MagicStringChecker {
     public static boolean isResourceProductionBooster(String key) {
-        return key.startsWith("WORLD_RESOURCE_PRODUCTION_");
+        return key.startsWith("WORLD_PRODUCTION_RES");
     }
 
     public static boolean isResourceConsumptionBooster(String key) {

@@ -15,9 +15,10 @@ import init.resources.RES_AMOUNT;
 import init.resources.ResGDrink;
 import init.resources.ResGEat;
 import init.sprite.UI.UI;
+import init.trade.TR;
 import init.type.HCLASS;
 import init.type.HCLASSES;
-import init.type.POP_CL;
+import init.type.HCLASS_RACE;
 import settlement.entity.ENTITY;
 import settlement.entity.humanoid.Humanoid;
 import settlement.main.SETT;
@@ -90,7 +91,7 @@ public class RoomProduction {
 
                 @Override
                 public double am() {
-                    return FACTIONS.player().res().out(RTYPE.CONSUMED).history(e.resource).get(1);
+                    return FACTIONS.player().res().out(RTYPE.CONSUMED).history(TR.get(e.resource)).get(1);
                 }
 
                 @Override
@@ -115,7 +116,7 @@ public class RoomProduction {
 
                 @Override
                 public double am() {
-                    return FACTIONS.player().res().out(RTYPE.CONSUMED).history(e.resource).get(1);
+                    return FACTIONS.player().res().out(RTYPE.CONSUMED).history(TR.get(e.resource)).get(1);
                 }
 
                 @Override
@@ -163,10 +164,10 @@ public class RoomProduction {
 
                 @Override
                 public double am() {
-                    double d = res.degradeSpeed()/(TIME.years().bitConversion(TIME.days())*BOOSTABLES.CIVICS().SPOILAGE.get(POP_CL.clP(null, null)));
+                    double d = res.degradeSpeed()/(TIME.years().bitConversion(TIME.days())*BOOSTABLES.CIVICS().SPOILAGE.get(HCLASS_RACE.clP(null, null)));
                     double am = d*SETT.ROOMS().STOCKPILE.tally().amountTotal(res)*0.5;
                     am += d*SETT.ROOMS().HAULER.tally.amountTotal(res);
-                    am += d*SETT.ROOMS().EXPORT.tally.forSale(res);
+                    am += d*SETT.ROOMS().EXPORT.tally.amount.get(res);
                     am += d*SETT.ROOMS().IMPORT.tally.amount.get(res);
                     return am;
                 }
@@ -262,7 +263,7 @@ public class RoomProduction {
 
                 for (RES_AMOUNT e : RACES.res().homeResMax(null)) {
 
-                    final ArrayListGrower<POP_CL> con = new ArrayListGrower<>();
+                    final ArrayListGrower<HCLASS_RACE> con = new ArrayListGrower<>();
                     final ArrayListGrower<Integer> conRI = new ArrayListGrower<>();
 
                     for (HCLASS cl : HCLASSES.ALL()) {
@@ -272,7 +273,7 @@ public class RoomProduction {
 
 
                                 if (rr.resource() == e.resource()) {
-                                    con.add(POP_CL.clP(ra, cl));
+                                    con.add(HCLASS_RACE.clP(ra, cl));
                                     conRI.add(ri);
                                 }
                                 ri++;
@@ -522,6 +523,7 @@ public class RoomProduction {
 
     }
 
+
     public class RegProduction extends Source{
 
         RegProduction(RESOURCE res){
@@ -533,7 +535,7 @@ public class RoomProduction {
         public double am() {
             int am = 0;
             for (int i = 0; i < FACTIONS.player().realm().regions(); i++) {
-                int aa = RD.OUTPUT().get(res).getDelivery(FACTIONS.player().realm().region(i));
+                int aa = RD.OUTPUT().get(TR.get(res)).getDelivery(FACTIONS.player().realm().region(i));
                 am += aa;
 
             }
@@ -589,6 +591,7 @@ public class RoomProduction {
             return  Dic.¤¤Region.toString() + " " + Dic.¤¤Consumed.toString();
         }
     }
+
 
     public class SourceR extends Source{
 

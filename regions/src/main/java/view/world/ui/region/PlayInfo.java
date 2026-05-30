@@ -8,7 +8,7 @@ import game.faction.FACTIONS;
 import game.faction.FWorth;
 import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
-import game.faction.royalty.opinion.ROPINIONS;
+import game.faction.royalty.opinion.ROPINION;
 import game.raiding.RaidingMap;
 import init.settings.S;
 import init.sprite.UI.UI;
@@ -104,15 +104,15 @@ final class PlayInfo extends GuiSection {
 
                 @Override
                 public void update(GText text) {
-                    GFORMAT.perc(text, CLAMP.d(RD.DIST().boostable.get(g.get()), 0, 1));
+                    GFORMAT.perc(text, CLAMP.d(RD.DIST().bProximity.get(g.get()), 0, 1));
                 }
 
                 @Override
                 public void hoverInfoGet(GBox b) {
-                    b.title(RD.DIST().boostable.name);
-                    b.text(RD.DIST().boostable.desc);
+                    b.title(RD.DIST().bProximity.name);
+                    b.text(RD.DIST().bProximity.desc);
                     b.sep();
-                    RD.DIST().boostable.hover(b, g.get(), null, true);
+                    RD.DIST().bProximity.hover(b, g.get(), null, true);
                 };
 
             }.hv(UI.icons().m.wheel);
@@ -255,7 +255,7 @@ final class PlayInfo extends GuiSection {
                     RD.setFaction(g.get(), null, true);
                     FactionNPC f = FACTIONS.activateNext(g.get(), null, true);
                     f.generate(RD.RACES().get(FACTIONS.player().race()), true);
-                    ROPINIONS.OTHER().liberate(f);
+                    ROPINION.OTHER().liberate(f);
                     DIP.VASSAL().set(f, FACTIONS.player());
                     GAME.events().world.dip.dismissWelcome(f);
 

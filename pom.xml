@@ -11,7 +11,6 @@
     <modules>
         <module>qol</module>
         <module>regions</module>
-        <module>loyalty</module>
         <module>employment</module>
     </modules>
 
@@ -84,9 +83,9 @@
     </profiles>
 
     <properties>
-        <!-- Songs of Syx uses Java 1.8 -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Songs of Syx uses Java 21 -->
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- These settings will go into the mods _Info.txt file -->
@@ -95,8 +94,8 @@
         <mod.description>NONE</mod.description>
         <mod.author>PrPleGoo</mod.author>
         <mod.info></mod.info>
-        <game.version.major>70</game.version.major>
-        <game.version.minor>21</game.version.minor>
+        <game.version.major>71</game.version.major>
+        <game.version.minor>19</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>
@@ -118,7 +117,7 @@
         <junit-jupiter-engine.version>5.9.2</junit-jupiter-engine.version>
         <mockito-core.version>4.11.0</mockito-core.version>
         <assertj-core.version>3.24.2</assertj-core.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <jackson.version>2.17.2</jackson.version>
         <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
         <dagger.version>2.42</dagger.version>
@@ -130,9 +129,9 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-install-plugin.version>3.1.0</maven-install-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
-        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+
     </properties>
 
     <dependencyManagement>
@@ -447,8 +446,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

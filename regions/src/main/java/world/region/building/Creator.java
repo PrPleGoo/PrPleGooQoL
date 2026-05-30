@@ -15,8 +15,10 @@ import init.race.RACES;
 import init.sprite.SPRITES;
 import init.sprite.UI.Icon;
 import init.sprite.UI.UI;
+import init.trade.TR;
 import init.type.CLIMATE;
 import init.type.CLIMATES;
+import init.type.HCLASS_RACE;
 import init.value.GVALUES;
 import init.value.Lockable;
 import lombok.Getter;
@@ -199,9 +201,9 @@ public final class Creator {
 
 			if (b instanceof ROOM_ADMIN) {
 				ROOM_ADMIN room = (ROOM_ADMIN) b;
-				industryIns = room.industries().get(0).ins();
+				industryIns = room.consumption().ins();
 				adminData = room.data;
-				optional = false;
+				outputBoost = adminData.target;
 			}
 
 			if (b instanceof ROOM_LABORATORY) {
@@ -372,7 +374,7 @@ public final class Creator {
 
 					BoosterValue recipe = new RDRecipe.RDEnabledRecipeBooster(BValue.VALUE1, info, output * d * i.rate, false, blue, recipeIndex, all.size());
 
-					RDOutput out = RD.OUTPUT().get(i.resource);
+					RDOutput out = RD.OUTPUT().get(TR.get(i.resource));
 					l.local.push(recipe, out.boost);
 
 					if (li == 0) {
@@ -804,7 +806,7 @@ public final class Creator {
 		};
 
 		@Override
-		public double vGet(PopTime t) {
+		public double vGet(HCLASS_RACE t) {
 			return vGet((Faction)FACTIONS.player());
 		}
 

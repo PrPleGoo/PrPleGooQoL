@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.70.71.10</version>
+    <version>0.71.19.0</version>
 
     <profiles>
         <profile>
@@ -94,9 +94,9 @@
     </profiles>
 
     <properties>
-        <!-- Songs of Syx uses Java 1.8 -->
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <!-- Songs of Syx uses Java 21 -->
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- These settings will go into the mods _Info.txt file -->
@@ -121,10 +121,13 @@ Features:
 - Ship resources to regions to keep them crafting (new building for your capital).
 - You can generate science and train ambassadors in regions.
 - Estates that occupy entire regions to generate Gov points, at the cost of supplies from your capital.
-- Global buildings can no longer be upgraded, but you can make more of them to compensate. Health and workforce buildings less so because these buildings are just too good already.
-- School reworked to apply your science to regions.
+- Global buildings can no longer be upgraded, but you can make more of them to compensate.
+- School reworked to apply your science to the production of regions.
 - Law gives you PoWs as tax from a region.
 - Max level of region building based on terrain/prospect instead of scaling output.
+- Convert regions into governor estates. Consuming resources and generating gov points.
+- Different edicts to allow the player some control over demographic composition without committing genocide.
+- When a race is full in one region and growing in another, the growth rate will be transferred over to increase the speed at which regions grow to target.
 
 This mod completely reworks regions.
 As per my idea listed in the suggestion forum on discord.
@@ -138,9 +141,6 @@ I would also not advise you combine this mod with any of the mods that are not c
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
 - PrPleGoo's Quality of Life Mod, https://steamcommunity.com/sharedfiles/filedetails/?id=3260671025
-- Extra Info, https://steamcommunity.com/sharedfiles/filedetails/?id=3352452572
-- Cute Race!, https://steamcommunity.com/sharedfiles/filedetails/?id=3418470482
-- Classic Races, https://steamcommunity.com/sharedfiles/filedetails/?id=2527476367
 
 If you use a different mod than any of the above and notice no game breaking issues, please let me know so I can update the list!
 
@@ -153,10 +153,9 @@ Available on github: https://github.com/PrPleGoo/PrPleGooQoL
 Credits:
 - Redic, thumbnail art
 - Argoon, technical support
-- Dinosaure, refactoring
         </mod.info>
-        <game.version.major>70</game.version.major>
-        <game.version.minor>26</game.version.minor>
+        <game.version.major>71</game.version.major>
+        <game.version.minor>19</game.version.minor>
 
         <!-- Build settings -->
         <game.version.directory>V${game.version.major}</game.version.directory>
@@ -178,8 +177,10 @@ Credits:
         <junit-jupiter-engine.version>5.9.2</junit-jupiter-engine.version>
         <mockito-core.version>4.11.0</mockito-core.version>
         <assertj-core.version>3.24.2</assertj-core.version>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <jackson.version>2.17.2</jackson.version>
+        <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
+        <dagger.version>2.42</dagger.version>
 
         <!-- Build plugin versions -->
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
@@ -189,6 +190,7 @@ Credits:
         <maven-install-plugin.version>3.1.0</maven-install-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     </properties>
 
     <dependencies>

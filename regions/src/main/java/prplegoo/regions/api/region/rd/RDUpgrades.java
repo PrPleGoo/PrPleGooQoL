@@ -82,6 +82,11 @@ public class RDUpgrades implements IDataPersistence<RDUpgradesData> {
         }
 
         @Override
+        public double to(){
+            return super.to();
+        }
+
+        @Override
         public double getValue(double input){
             return input;
         }

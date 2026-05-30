@@ -9,6 +9,7 @@ import game.faction.Faction;
 import game.faction.npc.FactionNPC;
 import game.faction.player.Player;
 import init.sprite.UI.UI;
+import init.type.HCLASS_RACE;
 import init.value.GVALUES;
 import init.value.Lock;
 import lombok.Getter;
@@ -556,7 +557,7 @@ public final class RDBuilding implements MAPPED{
 		}
 
 		@Override
-		public double vGet(PopTime t) {
+		public double vGet(HCLASS_RACE t) {
 			return vGet(FACTIONS.player());
 		}
 

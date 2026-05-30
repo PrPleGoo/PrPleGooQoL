@@ -15,6 +15,7 @@ import game.boosting.Booster;
 import game.faction.npc.FactionNPC;
 import game.faction.player.Player;
 import init.sprite.UI.UI;
+import init.type.HCLASS_RACE;
 import settlement.main.SETT;
 import settlement.room.main.employment.RoomEmploymentSimple;
 import settlement.stats.Induvidual;
@@ -238,13 +239,13 @@ public final class RaceBoosts {
                 }
 
                 @Override
-                public double vGet(PopTime popTime) {
-                    if (popTime.pop.race == null) {
+                public double vGet(HCLASS_RACE popTime) {
+                    if (popTime.race == null) {
                         double acc = 0;
                         double tot = 0;
                         for (int ri = 0; ri < RACES.all().size(); ri++) {
                             Race r = RACES.all().get(ri);
-                            double pop = STATS.POP().POP.data(popTime.pop.cl).get(r);
+                            double pop = STATS.POP().POP.data(popTime.cl).get(r);
 
                             acc += dd[r.index()]*pop;
                             tot += pop;
@@ -254,7 +255,7 @@ public final class RaceBoosts {
                         return acc/tot;
 
                     }else {
-                        return dd[popTime.pop.race.index()];
+                        return dd[popTime.race.index()];
                     }
                 }
 

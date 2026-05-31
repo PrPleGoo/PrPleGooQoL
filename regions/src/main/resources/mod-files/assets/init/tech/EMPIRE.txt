@@ -1,10 +1,10 @@
 __OVERWRITE: true,
 TREE: {
 	0: [_____,_____,ESTAT,_____,_____,],
-	1: [_____,WORK0,_____,LOYA0,_____,],
-	3: [_____,_____,CENT0,_____,_____,],
-	4: [_____,HEAL0,CENT1,TAX00,_____,],
-	5: [_____,_____,CENT2,_____,_____,],
+	1: [_____,WORK0,CENT0,LOYA0,_____,],
+	3: [_____,_____,CENT1,_____,_____,],
+	4: [_____,HEAL0,CENT2,TAX00,_____,],
+	5: [_____,_____,CENT3,_____,_____,],
 },
 
 COLOR: 178_0_255,
@@ -23,29 +23,36 @@ TECHS: {
     },
 	CENT0: {
 		COSTS: {
-			CIVIC_INNOVATION: 50,
+			CIVIC_KNOWLEDGE: 5,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_3,
+		],
+	},
+	CENT0: {
+		COSTS: {
+			CIVIC_KNOWLEDGE: 50,
+		},
+		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_4,
+            BUILDING_CIVIC_GROWTH_5,
 		],
 	},
 	CENT1: {
 		COSTS: {
-			CIVIC_INNOVATION: 100,
+			CIVIC_KNOWLEDGE: 100,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT0: 1,
 		},
 		UNLOCKS_REGION: [
-            BUILDING_CIVIC_GROWTH_5,
             BUILDING_CIVIC_GROWTH_6,
             BUILDING_CIVIC_GROWTH_7,
 		],
 	},
 	CENT2: {
 		COSTS: {
-			CIVIC_INNOVATION: 200,
+			CIVIC_KNOWLEDGE: 200,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT1: 1,

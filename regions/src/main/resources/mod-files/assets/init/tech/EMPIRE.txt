@@ -14,7 +14,7 @@ TECHS: {
         LEVEL_MAX: 50,
         LEVEL_COST_INC: 50,
         COSTS: {
-            CIVIC_KNOWLEDGE: 50,
+            CIVIC_ADMIN: 50,
         },
         BOOST: {
             CIVIC_MAX_ESTATE_COUNT>ADD: 1,
@@ -29,33 +29,36 @@ TECHS: {
 			BUILDING_CIVIC_GROWTH_3,
 		],
 	},
-	CENT0: {
+	CENT1: {
 		COSTS: {
 			CIVIC_KNOWLEDGE: 50,
+		},
+		REQUIRES_TECH_LEVEL: {
+			CENT0: 1,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_4,
             BUILDING_CIVIC_GROWTH_5,
 		],
 	},
-	CENT1: {
+	CENT2: {
 		COSTS: {
 			CIVIC_KNOWLEDGE: 100,
 		},
 		REQUIRES_TECH_LEVEL: {
-			CENT0: 1,
+			CENT1: 1,
 		},
 		UNLOCKS_REGION: [
             BUILDING_CIVIC_GROWTH_6,
             BUILDING_CIVIC_GROWTH_7,
 		],
 	},
-	CENT2: {
+	CENT3: {
 		COSTS: {
 			CIVIC_KNOWLEDGE: 200,
 		},
 		REQUIRES_TECH_LEVEL: {
-			CENT1: 1,
+			CENT2: 1,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_8,

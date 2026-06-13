@@ -31,6 +31,7 @@ import settlement.room.main.RoomInstance;
 import settlement.room.main.employment.RoomEquip;
 import settlement.room.spirit.temple.ROOM_TEMPLE;
 import settlement.stats.STATS;
+import settlement.stats.equip.Equip;
 import settlement.stats.equip.EquipCivic;
 import snake2d.util.misc.ACTION;
 import snake2d.util.sets.ArrayList;
@@ -212,7 +213,7 @@ public class RoomProduction {
 
             @Override
             public void exe() {
-                for (EquipCivic e : STATS.EQUIP().civics()) {
+				for (Equip e : STATS.EQUIP().allE()) {
 
                     consumers.get(e.resource.index()).all.add(new Source(e.resource) {
 

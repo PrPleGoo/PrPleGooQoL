@@ -5,6 +5,9 @@ import game.boosting.Boostable;
 import init.sprite.UI.UI;
 import settlement.main.SETT;
 import settlement.room.industry.module.INDUSTRY_HASER;
+import settlement.room.infra.admin.ROOM_ADMIN;
+import settlement.room.knowledge.laboratory.ROOM_LABORATORY;
+import settlement.room.knowledge.library.ROOM_LIBRARY;
 import settlement.room.main.RoomBlueprintImp;
 import settlement.room.main.RoomBlueprintIns;
 import snake2d.util.misc.CLAMP;
@@ -19,7 +22,8 @@ class NobleOfficeUtil {
 
 	private static CharSequence ¤¤Governing = "Governor";
 	private static CharSequence ¤¤GoverningD = "Gives you {0} gov points to use to develop regions with. Each additional rank yields {1} more points.";
-	private static CharSequence ¤¤rBoost = "Boosts {0} workers in your {1} with +2.0. Each additional rank boosts {2} more workers.";
+
+	private static CharSequence ¤¤rBoost = "Boosts {0} workers in your {1} with + {2}. Each additional rank boosts {3} more workers.";
 	private static CharSequence ¤¤name = "Master of {0}";
 
 
@@ -49,7 +53,9 @@ class NobleOfficeUtil {
 		for (INDUSTRY_HASER m : SETT.ROOMS().WORKSHOPS)
 			make(all, m, workers);
 
-//		CharSequence desc = "" + Str.TMP.clear().add(¤¤GoverningD).insert(0, gov).insert(1, NOBLES.RANK_INCREASE*gov);
+		CharSequence desc = "" + Str.TMP.clear().add(¤¤GoverningD).insert(0, gov).insert(1, NOBLES.RANK_INCREASE*gov);
+
+
 //		new NobleOffice(all, gov*1000, BOOSTABLES.CIVICS().GOV, ¤¤Governing, desc, UI.icons().l.admin) {
 //
 //			@Override
@@ -82,6 +88,47 @@ class NobleOfficeUtil {
 //		};
 //		all.get(all.size()-1).special = true;
 
+		make(all, SETT.ROOMS().EMBASSY, SETT.ROOMS().EMBASSY.bonus(), workers);
+		for (ROOM_LIBRARY l : SETT.ROOMS().LIBRARIES)
+			make(all, l,l.bonus(), workers);
+		for (ROOM_LABORATORY l : SETT.ROOMS().LABORATORIES)
+			make(all, l,l.bonus(), workers);
+		for (ROOM_ADMIN l : SETT.ROOMS().ADMINS)
+			make(all, l,l.bonus(), workers);
+
+//		desc = "" + Str.TMP.clear().add(¤¤DiplomatD).insert(0, workers).insert(1, NOBLES.RANK_INCREASE*workers);
+//		new NobleOffice(all, workers*1000,  BOOSTABLES.CIVICS().DIPLOMACY, ¤¤Emissary, desc, UI.icons().l.flags) {
+//
+//			@Override
+//			public double value(int slots) {
+//				return slots/(1000.0);
+//			}
+//
+//
+//			@Override
+//			public boolean leavesMap() {
+//				return true;
+//			}
+//
+//
+//			@Override
+//			public void hoverValue(GBox b, int slots) {
+//				b.add(target.icon);
+//				b.textLL(target.name);
+//				b.tab(6);
+//				b.add(GFORMAT.iIncr(b.text(), slots*workers));
+//				b.NL();
+//
+//			}
+//
+//
+//			@Override
+//			public int popBoosted(int slots) {
+//				return -1;
+//			}
+//		};
+//		all.get(all.size()-1).special = true;
+
 		return all;
 	}
 
@@ -90,10 +137,10 @@ class NobleOfficeUtil {
 	}
 
 	public static void make(ArrayListGrower<NobleOffice> all, RoomBlueprintImp blue, Boostable bo, int workers) {
-
-		CharSequence desc = "" + Str.TMP.clear().add(¤¤rBoost).insert(0, workers).insert(1, blue.info.names).insert(2, NOBLES.RANK_INCREASE*workers);
+		double inc = 2.5;
+		CharSequence desc = "" + Str.TMP.clear().add(¤¤rBoost).insert(0, workers).insert(1, blue.info.names).insert(2, inc, 1).insert(3, NOBLES.RANK_INCREASE*workers);
 		CharSequence name = "" + Str.TMP.clear().add(¤¤name).insert(0, blue.info.names);
-		new NobleOffice(all, 2.0, bo, name, desc, blue.icon) {
+		new NobleOffice(all, inc, bo, name, desc, blue.icon) {
 
 			@Override
 			public double value(int slots) {

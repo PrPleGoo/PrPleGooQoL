@@ -6,6 +6,7 @@ import game.boosting.BOOSTABLE_O;
 import game.boosting.tmp.TmpBoostingButt;
 import game.faction.FACTIONS;
 import game.faction.FWorth;
+import game.faction.FBanner;
 import game.faction.diplomacy.DIP;
 import game.faction.npc.FactionNPC;
 import game.faction.royalty.opinion.ROPINION;
@@ -35,6 +36,10 @@ import util.info.GFORMAT;
 import util.text.D;
 import util.text.Dic;
 import view.main.VIEW;
+import world.WORLD;
+import world.map.pathing.WRegFinder.RegDist;
+import world.map.pathing.WRegFinder.Treaty;
+import world.map.pathing.WRegSel;
 import world.map.regions.Region;
 import world.map.regions.RegionInfo;
 import world.region.RD;
@@ -48,6 +53,8 @@ final class PlayInfo extends GuiSection {
     private static CharSequence ¤¤autonomy = "Give Autonomy";
     private static CharSequence ¤¤autonomyD = "Do you wish to give this region autonomy and bestow upon it self-rule? The new faction will be in your debt.";
     private static CharSequence ¤¤autonomyE = "There simply are no suitable faction rulers to appoint a new king here. Perhaps we can gift this region to an ally or vassal instead?";
+
+	private static CharSequence ¤¤DistanceToCapitol = "Distance to Capitol";
 
     static {
         D.ts(PlayInfo.class);
@@ -166,41 +173,14 @@ final class PlayInfo extends GuiSection {
 
                 @Override
                 public void update(GText text) {
-                    double v = CLAMP.d(GAME.raiders().entry.get(g.get()).probability(), -100, 100);
-                    GFORMAT.f0Inv(text, v, 0);
+					double v = CLAMP.d(GAME.raiders().entry.get(g.get()).security(), -1, 1);
+					GFORMAT.perc(text, v, 0);
                 }
 
                 @Override
                 public void hoverInfoGet(GBox b) {
-                    b.title(RaidingMap.¤¤Name);
-                    b.text(RaidingMap.¤¤desc);
-                    b.NL();
 
-                    b.add(UI.icons().s.money);
-                    b.textLL(Dic.¤¤Riches);
-                    b.tab(6);
-                    b.add(GFORMAT.i(b.text(), (int)FWorth.region(g.get())));
-                    b.NL();
-
-                    b.add(UI.icons().s.shield);
-                    b.textLL(Dic.¤¤Garrison);
-                    b.tab(6);
-                    b.add(GFORMAT.i(b.text(), (int)RD.MILITARY().power.getD(g.get())));
-                    b.NL();
-
-                    b.add(UI.icons().s.sword);
-                    b.textLL(Dic.¤¤Armies);
-                    b.tab(6);
-                    b.add(GFORMAT.i(b.text(), (int)GAME.raiders().entry.get(g.get()).army()));
-                    b.NL();
-
-                    b.sep();
-
-                    double v = CLAMP.d(GAME.raiders().entry.get(g.get()).probability(), -100, 100);
-
-                    b.textLL(Dic.¤¤Current);
-                    b.tab(6);
-                    b.add(GFORMAT.f0Inv(b.text(), v, 0));
+					GAME.raiders().entry.get(g.get()).hoverInfoGet(b);
                 };
 
             }.hv(UI.icons().m.raider);

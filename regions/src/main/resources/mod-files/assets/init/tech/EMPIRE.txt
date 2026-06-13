@@ -2,8 +2,8 @@ __OVERWRITE: true,
 TREE: {
 	0: [_____,_____,ESTAT,_____,_____,],
 	1: [_____,WORK0,CENT0,LOYA0,_____,],
-	3: [_____,_____,CENT1,_____,_____,],
-	4: [_____,HEAL0,CENT2,TAX00,_____,],
+	3: [_____,HEAL0,CENT1,TAX00,_____,],
+	4: [_____,SCHO0,CENT2,GARR0,_____,],
 	5: [_____,_____,CENT3,_____,_____,],
 },
 
@@ -12,7 +12,7 @@ COLOR: 178_0_255,
 TECHS: {
     ESTAT: {
         LEVEL_MAX: 50,
-        LEVEL_COST_INC: 50,
+        LEVEL_COST_INC: 25,
         COSTS: {
             CIVIC_ADMIN: 50,
         },
@@ -23,7 +23,7 @@ TECHS: {
     },
 	CENT0: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 5,
+			CIVIC_ADMIN: 5,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_CIVIC_GROWTH_3,
@@ -31,7 +31,7 @@ TECHS: {
 	},
 	CENT1: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 50,
+			CIVIC_ADMIN: 50,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT0: 1,
@@ -43,7 +43,7 @@ TECHS: {
 	},
 	CENT2: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 100,
+			CIVIC_ADMIN: 100,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT1: 1,
@@ -55,7 +55,7 @@ TECHS: {
 	},
 	CENT3: {
 		COSTS: {
-			CIVIC_KNOWLEDGE: 200,
+			CIVIC_ADMIN: 200,
 		},
 		REQUIRES_TECH_LEVEL: {
 			CENT2: 1,
@@ -68,10 +68,7 @@ TECHS: {
 
 	HEAL0: {
 		COSTS: {
-			CIVIC_ADMIN: 75,
-		},
-		REQUIRES_TECH_LEVEL: {
-			CENT0: 1,
+			CIVIC_ADMIN: 50,
 		},
 		UNLOCKS_REGION: [
 	        BUILDING_GLOBAL_HYGINE_1,
@@ -79,7 +76,7 @@ TECHS: {
 	},
 	LOYA0: {
 		COSTS: {
-			CIVIC_ADMIN: 75,
+			CIVIC_ADMIN: 50,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_A_POLICE_1,
@@ -88,7 +85,7 @@ TECHS: {
 	
 	TAX00: {
 		COSTS: {
-			CIVIC_ADMIN: 75,
+			CIVIC_ADMIN: 50,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_TAX_1,
@@ -96,10 +93,26 @@ TECHS: {
 	},
 	WORK0: {
 		COSTS: {
-			CIVIC_ADMIN: 75,
+			CIVIC_ADMIN: 50,
 		},
 		UNLOCKS_REGION: [
 			BUILDING_GLOBAL_WGUILD_1,
+		],
+	},
+	SCHO0: {
+		COSTS: {
+			CIVIC_ADMIN: 50,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_GLOBAL_ACADEMY_1,
+		],
+	},
+	GARR0: {
+		COSTS: {
+			CIVIC_ADMIN: 50,
+		},
+		UNLOCKS_REGION: [
+			BUILDING_GLOBAL_TRAINING_1,
 		],
 	},
 },

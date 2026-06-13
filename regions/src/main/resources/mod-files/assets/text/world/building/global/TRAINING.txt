@@ -1,0 +1,6 @@
+NAME: "Border Guards",
+DESC: "The border guard, is an outpost that will enforce your local garrisons throughout the realm.",
+
+LEVELS: [
+	"Border Militia",
+],

@@ -24,48 +24,24 @@ TECHS: {
 		NAME: "Rural Health",
 		DESC: "Allows us to offer more sanitation in our domain.",
 	},
-	HEAL1: {
-		NAME: "Rural Health II",
-		DESC: "Allows us to offer more sanitation in our domain.",
-	},
-	HEAL2: {
-		NAME: "Rural Health III",
-		DESC: "Allows us to offer more sanitation in our domain.",
-	},
 	LOYA0: {
 		NAME: "Loving Subjects",
-		DESC: "Gives us more loyalty from our regions.",
-	},
-	LOYA1: {
-		NAME: "Loving Subjects II",
-		DESC: "Gives us more loyalty from our regions.",
-	},
-	LOYA2: {
-		NAME: "Loving Subjects III",
 		DESC: "Gives us more loyalty from our regions.",
 	},
 	TAX00: {
 		NAME: "Tax Collection",
 		DESC: "Gathers more tax from our regions.",
 	},
-	TAX01: {
-		NAME: "Tax Collection II",
-		DESC: "Gathers more tax from our regions.",
-	},
-	TAX02: {
-		NAME: "Tax Collection III",
-		DESC: "Gathers more tax from our regions.",
-	},
 	WORK0: {
 		NAME: "Skilled Workforce",
 		DESC: "Lets us get more out of our regional workforce.",
 	},
-	WORK1: {
-		NAME: "Skilled Workforce II",
-		DESC: "Lets us get more out of our regional workforce.",
+	SCHO0: {
+		NAME: "Schooling",
+		DESC: "Teach the people of regions how to apply the capital's scientific advances.",
 	},
-	WORK2: {
-		NAME: "Skilled Workforce III",
+	GARR0: {
+		NAME: "Military training",
 		DESC: "Lets us get more out of our regional workforce.",
 	},
 },

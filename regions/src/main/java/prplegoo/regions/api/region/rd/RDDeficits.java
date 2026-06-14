@@ -127,7 +127,7 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
                     caravan.load(resource.tr(), toResolve);
                 }
 
-                player.res().dec(resource, FResources.RTYPE.TAX, toResolve);
+                player.res().dec(resource.tr(), FResources.RTYPE.TAX, toResolve);
                 oldDeficits[i] += toResolve;
                 supplies[i] -= toResolve;
             }

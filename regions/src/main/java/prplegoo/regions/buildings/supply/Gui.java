@@ -325,7 +325,7 @@ class Gui extends UIRoomModuleImp<SupplyInstance, ROOM_LOGISTICS> {
 		b.add(GFORMAT.i(b.text(), supplied));
 		b.NL();
 		
-		b.textL(Dic.¤¤Missing);
+		b.textL(Dic.¤¤Needed);
 		b.tab(6);
 		b.add(GFORMAT.i(b.text(), deficit));
 		b.NL();

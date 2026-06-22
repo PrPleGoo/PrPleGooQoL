@@ -231,7 +231,7 @@ public class RDRace implements INDEXED{
 		//		private Boostable<Region> targetBase;
 		public final Boostable growth;
 		private static double DTime;
-		private final BoosterImp biome;
+		public final BoosterImp biome;
 
 		RDRacePopulation(RDInit init, Race race, double max, double growthBase) {
 			super("RACEPOP" + race.key, count(init, race), init, Dic.¤¤Population + ": " + race.info.names);

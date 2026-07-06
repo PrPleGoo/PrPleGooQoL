@@ -723,7 +723,8 @@ public final class Creator {
 						if (reg.faction() instanceof Player) {
 							if (index == -1) {
 								for (int i = 0; i < bu.getBlue().bonus().all().size(); i++) {
-									if (bu.getBlue().bonus().all().get(i).info.name.equals(PTech.¤¤name)) {
+									if (bu.getBlue().bonus().all().get(i).info.name.equals(PTech.¤¤name)
+										&& !bu.getBlue().bonus().all().get(i).isMul) {
 										index = i;
 										break;
 									}

@@ -6,7 +6,7 @@
 
     <groupId>org.github.prplegoo</groupId>
     <artifactId>region-rework-mod</artifactId>
-    <version>0.71.44.10</version>
+    <version>0.71.44.11</version>
 
     <profiles>
         <profile>
@@ -141,6 +141,7 @@ I would also not advise you combine this mod with any of the mods that are not c
 
 Known compatible mods, these mods have been used by me or others and no problems have been reported:
 - PrPleGoo's Quality of Life Mod, https://steamcommunity.com/sharedfiles/filedetails/?id=3260671025
+- [Comp Patch] Create-A-Culture+Region Rework, https://steamcommunity.com/sharedfiles/filedetails/?id=3759498367
 
 If you use a different mod than any of the above and notice no game breaking issues, please let me know so I can update the list!
 

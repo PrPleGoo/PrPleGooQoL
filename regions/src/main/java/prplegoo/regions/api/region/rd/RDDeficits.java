@@ -225,4 +225,14 @@ public class RDDeficits implements IDataPersistence<RDDeficitData> {
     public void addSupplies(RESOURCE resource, int amount) {
         supplies[resource.index()] += amount;
     }
+
+    public boolean anyDeficits() {
+        for (int i = 0; i < RESOURCES.ALL().size(); i++) {
+            if (oldDeficits[i] < -100) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

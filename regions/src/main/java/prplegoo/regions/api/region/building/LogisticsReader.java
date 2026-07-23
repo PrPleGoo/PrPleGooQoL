@@ -11,6 +11,7 @@ import init.value.Lockable;
 import prplegoo.regions.api.region.rd.RDLogistics;
 import prplegoo.regions.api.region.rd.RDOptionalConsumption;
 import prplegoo.regions.buildings.supply.ROOM_LOGISTICS;
+import settlement.environment.ENVIRONMENT;
 import settlement.main.SETT;
 import settlement.room.industry.module.IndustryResource;
 import settlement.room.infra.transport.ROOM_TRANSPORT;
@@ -48,7 +49,7 @@ public class LogisticsReader {
 
         ROOM_TRANSPORT blue = SETT.ROOMS().TRANSPORT;
 
-        String desc = Dic.¤¤Exporting + ": ";
+        String desc = "The " + blue.info.name + " allows you to move a single resource from this region to others. It works by loading output of this region into a separate storage. Before regions request resources from the capital, they will use the stockpile from loading stations in your empire.";
 
         for (int ci = 0; ci < count.max(); ci++) {
             String kkk = blue.key + "_" + (ci + 1);
@@ -76,7 +77,7 @@ public class LogisticsReader {
                 levels.add(l);
             }
 
-            INFO info = new INFO(blue.info.name, desc.substring(0, desc.length() - 2));
+            INFO info = new INFO(blue.info.name, desc);
 
             RDBuilding b = Creator.RDBuilding(all, init, cat, kkk, info, levels, false, false, kkk, blue);
 

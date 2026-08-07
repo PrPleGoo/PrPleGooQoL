@@ -9,6 +9,6 @@ public class RDSchoolScience {
     public final Boostable booster;
 
     public RDSchoolScience() {
-        booster = BOOSTING.push("SCHOOL_SCIENCE", 0, "Applied science", "How well the science from your capitol is applied across your realm.", UI.icons().s.vial, BoostableCat.ALL().WORLD);
+        booster = BOOSTING.push("SCHOOL_SCIENCE", 0, "Applied science", "How well the science from your capital is applied across your realm.", UI.icons().s.vial, BoostableCat.ALL().WORLD);
     }
 }

@@ -4,9 +4,13 @@ import game.boosting.BOOSTABLE_O;
 import game.boosting.BSourceInfo;
 import game.boosting.BValue;
 import game.boosting.BoosterValue;
+import init.resources.RESOURCE;
+import init.resources.RESOURCES;
+import init.type.HCLASS_RACE;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.RDRecipeData;
 import settlement.main.SETT;
+import settlement.room.industry.module.INDUSTRY_HASER;
 import settlement.room.main.RoomBlueprintImp;
 import snake2d.LOG;
 import world.WORLD;
@@ -91,7 +95,22 @@ public class RDRecipe implements IDataPersistence<RDRecipeData> {
         }
 
         public double getIfRecipe(Region reg, int buildingIndex, int recipeIndex){
-            return RD.RECIPES().isEnabled(reg, buildingIndex, blue, recipeIndex) ? to() : 0;
+            if (!RD.RECIPES().isEnabled(reg, buildingIndex, blue, recipeIndex)) {
+                return 0;
+            }
+
+            double appliedScience = RD.SCHOOL().booster.get(reg);
+            if (appliedScience == 0) {
+                return to();
+            }
+
+            INDUSTRY_HASER blue = (INDUSTRY_HASER) RD.BUILDINGS().all.get(buildingIndex).getBlue();
+            double div = blue.industries().get(recipeIndex).conBonus(HCLASS_RACE.clP());
+            div -= 1.0;
+            div *= appliedScience;
+            div += 1.0;
+
+            return to() / div;
         }
 
         @Override

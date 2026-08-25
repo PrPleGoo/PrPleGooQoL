@@ -5,6 +5,7 @@ import game.faction.FCredits.CTYPE;
 import game.faction.Faction;
 import game.time.TIME;
 import init.race.RACES;
+import init.resources.RESOURCE;
 import init.resources.RESOURCES;
 import init.trade.TR;
 import init.trade.TRADE_TYPE;
@@ -12,7 +13,13 @@ import prplegoo.regions.api.region.rd.RDSlavery;
 import prplegoo.regions.persistence.IDataPersistence;
 import prplegoo.regions.persistence.data.ShipperData;
 import snake2d.LOG;
+import snake2d.util.sets.LIST;
 import world.WORLD;
+import world.army.AD;
+import world.army.ADArmies;
+import world.army.ADSupply;
+import world.entity.army.WArmy;
+import world.entity.army.WArmyState;
 import world.entity.caravan.Shipment;
 import world.map.regions.Region;
 import world.region.RD;
@@ -69,19 +76,42 @@ public final class Shipper implements IDataPersistence<ShipperData> {
             }
 
             double a = amount(res, r, seconds);
+            RESOURCE resource = TR.RES().get(res.res.index()).t;
 
             if (a < 0) {
-                a = RD.DEFICITS().handleDeficit(TR.RES().get(res.res.index()).t, a);
+                a = RD.DEFICITS().handleDeficit(resource, a);
             }
 
             if (a > 0) {
-                double logi = RD.LOGISTICS().get(TR.RES().get(res.res.index()).t).getDelivery(r)*seconds*TIME.secondsPerDayI();
+                double logi = RD.LOGISTICS().get(resource).getDelivery(r)*seconds*TIME.secondsPerDayI();
 
-                logi = Math.min(logi, a);
+                double logiForResource = Math.min(logi, a);
 
-                RD.LOGISTICS().addLogistics(r, TR.RES().get(res.res.index()).t, logi);
+                RD.LOGISTICS().addLogistics(r, resource, logi);
 
-                a -= logi;
+                a -= logiForResource;
+
+                int logiForArmy = (int)Math.min((RD.LOGISTICS().get(resource).boost.get(r) - logiForResource), a);
+                if (logiForArmy > 0) {
+                    LIST<ADSupply> supplies = AD.supplies().get(resource);
+                    for (ADSupply supply : supplies) {
+                        ADArmies armies = AD.army(f);
+                        for (WArmy army : armies.all()) {
+                            int needed = (int) supply.needed(army);
+                            if (needed > 0) {
+                                int supplyable = Math.min(logiForArmy, needed);
+
+                                supply.current().inc(army, supplyable);
+                                logiForArmy -= supplyable;
+                                a -= supplyable;
+
+                                if (logiForArmy == 0) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (a == 0)
@@ -179,7 +209,6 @@ public final class Shipper implements IDataPersistence<ShipperData> {
 
         return production - consumption;
     }
-
     public void shipAll(Faction f, double days) {
 
         for (int ri = 0; ri < f.realm().regions(); ri++) {

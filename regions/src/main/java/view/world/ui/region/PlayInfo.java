@@ -275,6 +275,7 @@ final class PlayInfo extends GuiSection {
         }.hoverTitleSet(¤¤abandon));
 
 
+        GuiSection s = new GuiSection();
         GuiSection pop = MiscBasics.info(g);
         StringInputSprite name = new StringInputSprite(RegionInfo.nameSize, UI.FONT().H2) {
             @Override
@@ -283,13 +284,15 @@ final class PlayInfo extends GuiSection {
             };
         };
         pop.add(new GInput(name), 0, -48);
+        s.add(pop);
+        s.addDownC(2, MiscBasics.prospect(g));
 
         butts.addRightC(0, new GButt.ButtPanel(UI.icons().m.questionmark) {
 
             @Override
             protected void clickA() {
                 name.text().clear().add(g.get().info.name());
-                VIEW.inters().popup.show(pop, this);
+                VIEW.inters().popup.show(s, this);
             }
 
             @Override

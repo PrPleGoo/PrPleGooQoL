@@ -32,6 +32,7 @@ import util.spritecomposer.ComposerThings.ITileSheet;
 import util.spritecomposer.ComposerThings.ITileSprite;
 import util.text.DicTime;
 import util.spritecomposer.ComposerUtil;
+import util.text.DicTime;
 import view.keyboard.KEYS;
 import view.keyboard.Key;
 import view.keyboard.KeyButt;
@@ -156,7 +157,7 @@ public final class UISpecials {
 
         {
             CLICKABLE c;
-            c = speedButt(KEYS.MAIN().SPEED0, 0, GAME.SPEED.speed0);
+			c = speedButt(KEYS.MAIN().PAUSE, 0, GAME.SPEED.speed0);
             s.add(c, 32, 4);
             c = speedButt(KEYS.MAIN().SPEED1, 1, GAME.SPEED.speed1);
             s.addRightC(0, c);
@@ -215,6 +216,8 @@ public final class UISpecials {
 
             @Override
             protected void clickA() {
+				if (speed == GAME.SPEED.speed0)
+					GAME.SPEED.togglePause();
                 if (speed == GAME.SPEED.speed1 && GAME.SPEED.speedTarget() == GAME.SPEED.speed1)
                     GAME.SPEED.speedSet(GAME.SPEED.speed05);
                 if (speed == GAME.SPEED.speed3 && GAME.SPEED.speedTarget() == GAME.SPEED.speed3)

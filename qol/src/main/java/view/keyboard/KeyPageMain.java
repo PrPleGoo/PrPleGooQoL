@@ -29,8 +29,8 @@ public class KeyPageMain extends KeyPage{
 
 	public final Key QUICKSAVE = new Key("QUICKSAVE", D.g("Quicksave"),D.g("QuicksaveD", "Saves the game under the name 'Quicksave'."), this, KEYCODES.KEY_LEFT_CONTROL, KEYCODES.KEY_S);
 	public final Key QUICKLOAD = new Key("QUICKLOAD", D.g("Quick-Load"),D.g("QuickLoadD", "Loads the latest save."), this);
-	public final Key PAUSE = new Key("PAUSE", D.g("Pause"), D.g("PauseD", "Toggles game pause."), this,  KEYCODES.KEY_P);
-	public final Key SPEED0 = new Key("SPEED0", D.g("speed-paused"), D.g("speed-pausedD", "Sets 0 speed, thus pausing the game."),this,  KEYCODES.KEY_1);
+	public final Key PAUSE = new Key("PAUSE", D.g("Pause"), D.g("PauseD", "Toggles game pause."), this,  KEYCODES.KEY_1);
+	//public final Key SPEED0 = new Key("SPEED0", D.g("speed-paused"), D.g("speed-pausedD", "Sets 0 speed, thus pausing the game."),this,  KEYCODES.KEY_1);
 	public final Key SPEED1 = new Key("SPEED1", D.g("speed-normal"),D.g("speed-normalD", "Sets 1x speed. Double press for 1/4th speed."),this,  KEYCODES.KEY_2);
 	public final Key SPEED2 = new Key("SPEED2", D.g("speed-fast"),D.g("speed-fastD", "Sets 5x speed."),this,  KEYCODES.KEY_3);
 	public final Key SPEED3 = new Key("SPEED3", D.g("speed-fastest"),D.g("speed-fastestD", "Sets 25x speed. Double press for x250 speed."),this,  KEYCODES.KEY_4);
